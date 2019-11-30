@@ -1,13 +1,10 @@
 package tas.services.profiles;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
 import service.atomic.ServiceProfile;
-import service.atomic.ServiceProfileAttribute;
 import service.auxiliary.ServiceDescription;
-import service.utility.Time;
 
 
 public class ServiceFailureLoadProfile extends ServiceProfile {
@@ -23,7 +20,7 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 	// TODO Different fail rates per service?
 	private void constructFailRates() {
 		// Test fail rate
-		failureRate = new TreeMap();
+		failureRate = new TreeMap<>();
 		failureRate.put(0, 1.0);
 		failureRate.put(50, 1.0);
 		failureRate.put(75, 0.95);
@@ -40,16 +37,14 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		}
 		
 		double rate = 0.0;
-		Map.Entry<Integer, Double> high = failureRate.ceilingEntry(description.getLoad());
 		rate = (double) description.getCustomProperties().get("FailureRate");
+		Map.Entry<Integer, Double> entry = failureRate.ceilingEntry(description.getLoad());
 		
-		if (high != null) {
-			rate = rate * high.getValue();
+		if (entry == null) {
+			entry = failureRate.floorEntry(description.getLoad());
 		}
-		else {
-			Map.Entry<Integer, Double> low = failureRate.floorEntry(description.getLoad());
-			rate = rate * low.getValue();
-		}
+		
+		rate = rate * entry.getValue();
 		
 		Random rand=new Random();
 		

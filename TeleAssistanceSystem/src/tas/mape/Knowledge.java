@@ -1,10 +1,13 @@
 package tas.mape;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.composite.SDCache;
@@ -17,17 +20,56 @@ public class Knowledge {
 	
 	private String currentQoSRequirement;
 	private Map<Description, Double> servicesUsageChance;
-	private Map<String, Map<Integer, Double>> approximatedServiceFailureRates;
-	private Map<String, Double> defaultFailureRates;
+	private Map<String, TreeMap<Integer, Double>> approximatedServiceFailureRates;
+	private int workflowCyclesMax, loadFailureDelta;
+	
+	// TODO ServiceDescriptions must be copy
 	private Map<Description, List<ServiceDescription>> usableServices;
-	private int loadFailureDelta, workflowCyclesMax;
 	
 	// TODO
-	public Knowledge(int loadFailureDelta, String currentQoSRequirement, Map<Description, Double> servicesUsageChance) {
-		this.loadFailureDelta = loadFailureDelta;
+	public Knowledge(int workflowCyclesMax, int loadFailureDelta, String currentQoSRequirement, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+		
 		this.currentQoSRequirement = currentQoSRequirement;
-		this.servicesUsageChance = servicesUsageChance;
-		this.defaultFailureRates = defaultFailureRates;
+		this.workflowCyclesMax = workflowCyclesMax;
+		this.loadFailureDelta = loadFailureDelta;
+		
+		for (Description description : usableServicesAndChance.keySet()) {
+			servicesUsageChance.put(description, usableServicesAndChance.get(description).getValue());
+			usableServices.put(description, usableServicesAndChance.get(description).getKey());
+		}
+		
+		initializeApproximatedServiceFailureRates();
+	}
+	
+	private void initializeApproximatedServiceFailureRates() {
+		
+		// New HashMap
+		approximatedServiceFailureRates = new HashMap<>();
+		
+		// Loop over all service descriptions
+		for (List<ServiceDescription> serviceDescriptions : usableServices.values()) {
+			for (ServiceDescription serviceDescription : serviceDescriptions) {
+				
+				// If service description is new
+				if (approximatedServiceFailureRates.get(serviceDescription.getServiceEndpoint()) != null) {
+					
+					// New TreeMap
+					approximatedServiceFailureRates.put(serviceDescription.getServiceEndpoint(), new TreeMap<>());
+					
+					Map<Integer, Double> failureRates = new TreeMap<>();
+					double serviceFailureRate = 0;
+					
+					if (serviceDescription.getCustomProperties().containsKey("FailureRate")) {
+						serviceFailureRate = (double) serviceDescription.getCustomProperties().get("FailureRate");
+					}		
+					
+					// Fill failure rate map with the default service failure rate
+					for (int i = 0; i < workflowCyclesMax * loadFailureDelta; i++) {
+						failureRates.put(i * loadFailureDelta, serviceFailureRate);
+					}	
+				}
+			}
+		}
 	}
 	
 	public void setCurrentQoSRequirement(String currentQoSRequirement) {
@@ -39,28 +81,26 @@ public class Knowledge {
 	}
 	
 	public void setApproximatedServiceFailureRate(String serviceEndpoint, int load, double failureRate) {
-		Map<Integer, Double> approximatedFailureRate = approximatedServiceFailureRates.get(serviceEndpoint);
+		TreeMap<Integer, Double> approximatedFailureRate = approximatedServiceFailureRates.get(serviceEndpoint);
 		approximatedFailureRate.put(load, failureRate);
 		approximatedServiceFailureRates.put(serviceEndpoint, approximatedFailureRate);
 	}
 	
-	public Double getApproximatedServiceFailureRate(String serviceEndpoint, int load, double failureRate) {
+	public Double getApproximatedServiceFailureRate(String serviceEndpoint, int load) throws IllegalArgumentException {
 		
 		if (approximatedServiceFailureRates.get(serviceEndpoint) != null) {
 			
-			int keyLoad = load / loadFailureDelta * loadFailureDelta;
-			Map<Integer, Double> serviceFailureTable = approximatedServiceFailureRates.get(serviceEndpoint);
+			TreeMap<Integer, Double> serviceFailureTable = approximatedServiceFailureRates.get(serviceEndpoint);
+			Map.Entry<Integer, Double> entry = serviceFailureTable.ceilingEntry(load);
 			
-			if (serviceFailureTable.get(keyLoad) != null) {
-				
-				Double approximatedServiceFailureRate = serviceFailureTable.get(keyLoad);			
-				return approximatedServiceFailureRate;
+			if (entry == null) {
+				serviceFailureTable.floorEntry(load);
 			}
-	
+						
+			return entry.getValue();
 		}
 		
-		return defaultFailureRates.get(serviceEndpoint);
-
+		throw new IllegalArgumentException(serviceEndpoint);
 	}
 	
 	public Map<Description, List<ServiceDescription>> getUsableServices() {
