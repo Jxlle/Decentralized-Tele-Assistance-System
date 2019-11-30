@@ -14,7 +14,7 @@ import service.composite.CompositeService;
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
  * 
- * Represents the executer component in a MAPE-K component
+ * Class that represents the executer component in a MAPE-K component
  */
 public class Executer {
 	

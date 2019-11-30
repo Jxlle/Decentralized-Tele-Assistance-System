@@ -65,6 +65,13 @@ public class WorkflowEffector extends AbstractEffector {
     public void refreshAllServices(){
     	cacheEffector.refreshCache();
     }
+    
+    /**
+     * Update the cache
+     */
+    public void updateCache() {
+    	compositeService.updateCache();
+    }
 
     /**
      * Clear the workflow cache
@@ -74,7 +81,6 @@ public class WorkflowEffector extends AbstractEffector {
     public void refreshAllServices(String serviceType, String opName){
     	cacheEffector.getAllServices(serviceType, opName);
     }
-
 
     /**
      * Update the service description in the workflow cache
