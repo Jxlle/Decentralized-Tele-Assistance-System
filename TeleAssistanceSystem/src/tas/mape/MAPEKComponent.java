@@ -22,7 +22,7 @@ public class MAPEKComponent {
 		
 		//knowledge = new Knowledge(loadFailureDelta);
 		monitor = new Monitor(compositeService, knowledge, analyzer, amountOfCycles);
-		analyzer = new Analyzer(knowledge, planner);
+		//analyzer = new Analyzer(knowledge, planner);
 		planner = new Planner(executer);
 		executer = new Executer(compositeService);
 	}

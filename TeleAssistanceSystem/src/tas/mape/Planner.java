@@ -23,8 +23,9 @@ public class Planner {
 		this.executer = executer;
 	}
 	
-	public void execute() {
+	public void execute(List<Map<Description, WeightedCollection<String>>> chosenServicesList) {
 		// TODO
+		communicateWith(chosenServicesList);
 	}
 	
 	public void communicateWith(List<Map<Description, WeightedCollection<String>>> chosenServicesList) {

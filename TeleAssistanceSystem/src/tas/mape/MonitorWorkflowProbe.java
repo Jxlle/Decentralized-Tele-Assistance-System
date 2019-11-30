@@ -13,23 +13,12 @@ import service.auxiliary.ServiceDescription;
  */
 public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegistryProbeInterface {
 
-	private Monitor monitor;
 	private Map<String, Integer> serviceInvocations;
 	private Map<String, Integer> serviceFailures;
 	
-	private int workflowCycles;
-	private int workflowCyclesMax;
-	
-	public MonitorWorkflowProbe(int workflowCyclesMax) {
-		this.workflowCyclesMax = workflowCyclesMax;
-		workflowCycles = 0;
-		
+	public MonitorWorkflowProbe() {	
 		serviceInvocations = new HashMap<String, Integer>();
 		serviceFailures = new HashMap<String, Integer>();
-	}
-
-	public void connect(Monitor monitor) {
-		this.monitor = monitor;
 	}
 	
 	public void reset() {
@@ -52,12 +41,6 @@ public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegi
 
 	@Override
 	public void workflowEnded(Object result, String qosRequirement, Object[] params) {
-		
-		workflowCycles++;
-		
-		if (workflowCycles == workflowCyclesMax) {
-			reset();
-		}
 	}
 
 	@Override

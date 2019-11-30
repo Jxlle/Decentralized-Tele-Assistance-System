@@ -20,8 +20,7 @@ public class Monitor {
 		this.knowledge = knowledge;
 		this.analyzer = analyzer;
 		
-		workflowProbe = new MonitorWorkflowProbe(workflowCyclesMax);
-		workflowProbe.connect(this);
+		workflowProbe = new MonitorWorkflowProbe();
 		
 		// Subscribe to workflow probe
 		compositeService.getWorkflowProbe().register(workflowProbe);
@@ -32,7 +31,6 @@ public class Monitor {
 		}
 		
 	}
-	
 	
 	public void execute() {
 		

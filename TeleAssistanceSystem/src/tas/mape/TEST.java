@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import service.adaptation.effectors.WorkflowEffector;
+import service.auxiliary.Description;
+import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import service.registry.ServiceRegistry;
 import tas.services.alarm.AlarmService;
@@ -121,7 +123,7 @@ public class TEST {
 		// Assistance Service. Workflow is provided by TAS_gui through executeWorkflow method
 		assistanceService = new AssistanceService("TeleAssistanceService", "service.assistance", "resources/TeleAssistanceWorkflow.txt", Arrays.asList(serviceRegistry, serviceRegistry2));
 		assistanceService.startService();
-		assistanceService.register(serviceRegistry);
+		//assistanceService.register(serviceRegistry);
 		monitor = new AssistanceServiceCostProbe();
 		assistanceService.getCostProbe().register(monitor);
 		assistanceService.getWorkflowProbe().register(monitor);
@@ -186,6 +188,42 @@ public class TEST {
 		System.err.print("----------------------------------------------\n");
 		System.err.print(items.getChance("25% kans") + "\n");
 		
+		MinCostReq mcr = new MinCostReq();
+		//mcr.applyStrategy(1, 1, null);
+		
 		// TODO test fail rate
+		
+		Integer a = 1;
+		Integer b = 2;
+		System.err.print(a.compareTo(b));
+		
+		// TEST CACHE WEER OP PRIVATE ZETTEN HIERNA
+		assistanceService.getCache().getServiceWithEndpoint("service.alarmService3");
+		List<Map<Description, WeightedCollection<String>>> services = mcr.applyStrategy(1, 10, assistanceService.getCache().caches);
+		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);
+		
+		for (Map<Description, WeightedCollection<String>> map : services) {
+			System.err.print("-----------------------------------------------------------------------------------------\n");
+			
+			for (Description d : map.keySet()) {
+				
+				System.err.print("["+ d.toString() + "] : " + map.get(d).getItems().get(0) + "\n");
+				
+			}
+			
+			System.err.print("-------------------------------------------------------------------------------------------\n");
+		}
+		
+		/*for (Map<Description, ServiceDescription> map : services2) {
+			System.err.print("-----------------------------------------------------------------------------------------\n");
+			
+			for (Description d : map.keySet()) {
+				
+				System.err.print("["+ d.toString() + "] : " + map.get(d).getServiceEndpoint() + "\n");
+				
+			}
+			
+			System.err.print("-------------------------------------------------------------------------------------------\n");
+		}*/
 	}
 }

@@ -113,7 +113,7 @@ public class TASStart {
     	return atomicServices.get(name);
     }
 
-    // TODO GUI AANPASSEN VOOR MEERDERE SERVICE REGISTRIES
+    // TODO CHANGE GUI FOR MORE SERVICE REGISTRIES
     public List<ServiceRegistry> getServiceRegistries() {
     	return serviceRegistries;
     }
