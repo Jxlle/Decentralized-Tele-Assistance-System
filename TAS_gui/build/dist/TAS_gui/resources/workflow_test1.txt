@@ -1,0 +1,19 @@
+START [patientId,pick]
+
+	// Declaration of pick actions
+	vitalParamsMsg = 1
+	pButtonMsg = 2
+	stopMsg = 3
+	
+	// Declaration of analysisResults
+	changeDrug = 1
+	changeDoses = 2
+	sendAlarm = 3
+
+	parallel{		
+		DrugService.changeDrug(patientId)
+		AlarmService.triggerAlarm(patientId)
+	}
+
+
+RETURN

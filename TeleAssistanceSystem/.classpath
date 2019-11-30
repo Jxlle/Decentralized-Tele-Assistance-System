@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<accessrules>
+			<accessrule kind="accessible" pattern="javafx/**"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry exported="true" kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="libs/antlrworks-1.5.2-complete.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/javax.jms-api-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/xstream-1.5.0.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ResearchServicePlatform"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

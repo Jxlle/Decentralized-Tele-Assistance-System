@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+const int MAX_NUM = 7;
+typedef int[1, MAX_NUM] s_id;
+
+const bool FAILED = false;
+
+chan invokeService[s_id], serviceInvoked[s_id];
+broadcast chan serviceFailed;
+chan tryAgain, serviceTimeout, workflowStarted, serviceStarted;
+
+
+const int EmptyServiceCache[s_id] = {-1,-1,-1, -1, -1, -1,-1};
+const int InitialCache[s_id] = {1, 2, 3, 4, 5,6, 7};
+int serviceCache[s_id]=InitialCache;  // when remove one service from cache, set the id to -1
+
+int responseTime[s_id]={2,3,4,2,3,4, 2};    // the max waiting time of service to be invoked
+int failureRate[s_id]={3,4,1,2,3,4, 2};     // failure number of 100 invocation
+
+int currentService;
+bool currentServiceStatus;
+bool bWorkflowStarted;
+//const int MAX_PLAN_STEPS = 2;
+int serviceId;
+
+typedef struct{
+    int id;
+    int status;
+}Service;
+
+typedef struct
+{
+    int step;
+    int serviceId;
+}Plan;
+
+typedef struct { 
+	int currentService;
+    bool currentServiceStatus;
+    bool workflowStarted;
+    Service services[s_id];
+	Plan plan;
+}Knowledge;
+
+const Knowledge initialSettings = {-1, true, false,{{1, true},{2, true},{3, true}, {4, true},{5, true},{6, true}, {7, true}}, {-1, -1}};
+
+Knowledge k=initialSettings;
+
+chan analysis, planning, execute;
+chan refreshCache, removeService;
+
+// PLANS
+const int REMOVE_SERVICE=1, REFRESH_CACHE = 2;</declaration>
+	<template>
+		<name>AtomicService</name>
+		<parameter>s_id id</parameter>
+		<declaration>bool success;
+
+void invoke(int i){
+    if(i&lt;failureRate[id])
+        success=false;
+    else
+        success=true;  
+}</declaration>
+		<location id="id0" x="-238" y="-238">
+			<name x="-223" y="-266">Invoked</name>
+			<committed/>
+		</location>
+		<location id="id1" x="-476" y="-238">
+			<name x="-545" y="-256">Waiting</name>
+		</location>
+		<init ref="id1"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<nail x="-238" y="-170"/>
+			<nail x="-476" y="-170"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-399" y="-343">success</label>
+			<label kind="synchronisation" x="-421" y="-328">serviceInvoked[id]!</label>
+			<nail x="-238" y="-306"/>
+			<nail x="-476" y="-306"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="select" x="-393" y="-280">i:int[0,99]</label>
+			<label kind="synchronisation" x="-408" y="-260">invokeService[id]?</label>
+			<label kind="assignment" x="-384" y="-232">invoke(i)</label>
+		</transition>
+	</template>
+	<template>
+		<name>CompositeService</name>
+		<declaration>clock x;
+int retryAttempts;
+const int MAX_ATTEMPTS = 3;
+int select_service(){
+    int i;
+     if (serviceCache == EmptyServiceCache)
+        serviceCache = InitialCache;
+   
+    for(i=1;i&lt;=MAX_NUM;i++){
+        if(serviceCache[i]!=-1)
+            return serviceCache[i];
+    }
+    return -1;
+}
+</declaration>
+		<location id="id2" x="-476" y="102">
+			<committed/>
+		</location>
+		<location id="id3" x="102" y="102">
+			<name x="110" y="68">WorkflowExecutionError</name>
+			<committed/>
+		</location>
+		<location id="id4" x="-204" y="-136">
+			<name x="-214" y="-170">Start</name>
+		</location>
+		<location id="id5" x="-204" y="102">
+			<name x="-306" y="110">ServiceFailed</name>
+			<committed/>
+		</location>
+		<location id="id6" x="-204" y="0">
+			<name x="-181" y="-29">Invoke</name>
+			<label kind="invariant" x="-174" y="2">x&lt;=responseTime[serviceId]</label>
+		</location>
+		<location id="id7" x="-442" y="0">
+			<name x="-459" y="-42">Select</name>
+			<committed/>
+		</location>
+		<location id="id8" x="-680" y="0">
+			<name x="-816" y="-25">ExecutionStarted</name>
+			<urgent/>
+		</location>
+		<init ref="id4"/>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-442" y="59">retryAttempts &lt; MAX_ATTEMPTS</label>
+			<label kind="synchronisation" x="-442" y="76">serviceTimeout!</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<nail x="102" y="-136"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-178" y="76">retryAttempts &gt;= MAX_ATTEMPTS</label>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="-195" y="-102">serviceInvoked[serviceId]?</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-671" y="-102">workflowStarted!</label>
+			<label kind="assignment" x="-671" y="-85">bWorkflowStarted = true,
+retryAttempts = 0</label>
+			<nail x="-680" y="-136"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-663" y="76">tryAgain?</label>
+			<nail x="-680" y="102"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-195" y="42">x&lt;=responseTime[serviceId]</label>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="-425" y="-25">invokeService[serviceId]!</label>
+			<label kind="assignment" x="-371" y="0">x=0</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id7"/>
+			<label kind="assignment" x="-663" y="-34">serviceId=select_service(),
+retryAttempts++</label>
+		</transition>
+	</template>
+	<template>
+		<name>Probe</name>
+		<location id="id9" x="136" y="-102">
+			<committed/>
+		</location>
+		<location id="id10" x="-136" y="-102">
+			<committed/>
+		</location>
+		<location id="id11" x="0" y="0">
+		</location>
+		<init ref="id11"/>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="8" y="-102">serviceFailed!</label>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="144" y="-59">serviceTimeout?</label>
+			<label kind="assignment" x="144" y="-34">currentService = serviceId</label>
+			<nail x="136" y="0"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="-102" y="-102">serviceStarted!</label>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="-272" y="-42">workflowStarted?</label>
+			<label kind="assignment" x="-272" y="-25">currentService = 0</label>
+			<nail x="-136" y="0"/>
+		</transition>
+	</template>
+	<template>
+		<name>Effector</name>
+		<declaration>
+void refresh_cache(){
+    serviceCache[1]=1;
+    serviceCache[2]=2;
+    serviceCache[3]=3;
+}
+
+void remove_service(){
+    serviceCache[serviceId] = -1;
+}</declaration>
+		<location id="id12" x="-238" y="68">
+			<committed/>
+		</location>
+		<location id="id13" x="-238" y="1">
+			<name x="-195" y="17">Waiting</name>
+		</location>
+		<init ref="id13"/>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="-382" y="51">tryAgain!</label>
+			<label kind="assignment" x="-382" y="76">remove_service()</label>
+			<nail x="-306" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id12"/>
+			<label kind="synchronisation" x="-221" y="76">removeService?</label>
+			<nail x="-170" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="-289" y="-110">refreshCache?</label>
+			<label kind="assignment" x="-289" y="-93">refresh_cache()</label>
+			<nail x="-305" y="-67"/>
+			<nail x="-172" y="-67"/>
+		</transition>
+	</template>
+	<template>
+		<name>Monitor</name>
+		<declaration>void updateKnowledge(){
+    //k.currentService=currentService;
+    if (bWorkflowStarted == true){
+        k.workflowStarted = true;
+    }
+    else {
+        k.currentService=currentService;
+        k.currentServiceStatus=currentServiceStatus;
+    }
+
+}
+</declaration>
+		<location id="id14" x="-201" y="33">
+			<name x="-244" y="-15">MonitorCompleted</name>
+			<committed/>
+		</location>
+		<location id="id15" x="-408" y="34">
+			<name x="-435" y="-15">Prepare</name>
+			<committed/>
+		</location>
+		<location id="id16" x="-578" y="34">
+			<name x="-625" y="-9">Waiting</name>
+		</location>
+		<init ref="id16"/>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id15"/>
+			<label kind="synchronisation" x="-544" y="42">serviceFailed?</label>
+			<nail x="-544" y="68"/>
+			<nail x="-442" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id14"/>
+			<label kind="synchronisation" x="-356" y="-7">analysis!</label>
+			<label kind="assignment" x="-384" y="10">updateKnowledge()</label>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id15"/>
+			<label kind="synchronisation" x="-544" y="-25">serviceStarted?</label>
+			<nail x="-544" y="0"/>
+			<nail x="-442" y="0"/>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id16"/>
+			<nail x="-201" y="136"/>
+			<nail x="-578" y="136"/>
+		</transition>
+	</template>
+	<template>
+		<name>Analyzer</name>
+		<declaration>bool adaptationNeeded;
+
+bool analyze(){
+
+    
+    
+    if (k.currentServiceStatus == false){
+        k.services[k.currentService].status = k.currentServiceStatus;
+       return true; 
+    }
+    else if (bWorkflowStarted == true){
+        return true;
+    }
+
+    return false;
+
+}
+
+void findAlternativeService(){
+    int minFailureRate = 101, i;
+    
+    serviceId = -1;
+
+    for(i = 1; i &lt;= MAX_NUM; i++){
+        if (k.services[i].status == true){
+            if (failureRate[i] &lt; minFailureRate){
+                serviceId = i;
+            }
+        }
+    }    
+}
+
+</declaration>
+		<location id="id17" x="-136" y="68">
+			<name x="-212" y="8">NoAdaptationNeeded</name>
+			<committed/>
+		</location>
+		<location id="id18" x="-136" y="-68">
+			<name x="-204" y="-136">AdaptationNeeded</name>
+			<committed/>
+		</location>
+		<location id="id19" x="-340" y="0">
+			<name x="-391" y="-136">CheckAdaptation</name>
+			<committed/>
+		</location>
+		<location id="id20" x="-136" y="136">
+			<name x="-178" y="102">StartAnalysis</name>
+			<committed/>
+		</location>
+		<location id="id21" x="68" y="0" color="#00ff00">
+			<name x="59" y="-136">WaitingRS</name>
+		</location>
+		<init ref="id21"/>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id21"/>
+			<nail x="68" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="-51" y="-93">planning!</label>
+			<nail x="68" y="-68"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id17"/>
+			<label kind="guard" x="-323" y="42">!adaptationNeeded</label>
+			<nail x="-340" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-323" y="-93">adaptationNeeded</label>
+			<nail x="-340" y="-68"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="assignment" x="-384" y="114">adaptationNeeded=analyze()</label>
+			<nail x="-408" y="136"/>
+			<nail x="-408" y="0"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-34" y="110">analysis?</label>
+			<nail x="136" y="0"/>
+			<nail x="136" y="136"/>
+		</transition>
+	</template>
+	<template>
+		<name>Planner</name>
+		<declaration>
+
+void addPlanStep(int plan){
+
+    if (plan == REFRESH_CACHE){
+        k.plan.step = plan;
+    }
+    else if (plan == REMOVE_SERVICE){
+        k.plan.step = plan;
+        k.plan.serviceId = k.currentService;
+    }
+}
+
+
+
+
+</declaration>
+		<location id="id22" x="340" y="136">
+			<name x="289" y="76">RemoveService</name>
+			<committed/>
+		</location>
+		<location id="id23" x="340" y="34">
+			<name x="289" y="-25">RefreshCache</name>
+			<committed/>
+		</location>
+		<location id="id24" x="578" y="136">
+			<name x="535" y="-42">PlanCompleted</name>
+			<committed/>
+		</location>
+		<location id="id25" x="136" y="136">
+			<name x="93" y="-42">StartPlanning</name>
+			<committed/>
+		</location>
+		<location id="id26" x="0" y="136" color="#00ff00">
+			<name x="-25" y="17">Waiting</name>
+		</location>
+		<init ref="id26"/>
+		<transition>
+			<source ref="id24"/>
+			<target ref="id26"/>
+			<label kind="synchronisation" x="314" y="212">execute!</label>
+			<nail x="680" y="136"/>
+			<nail x="680" y="238"/>
+			<nail x="0" y="238"/>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id22"/>
+			<label kind="guard" x="170" y="93">k.currentServiceStatus
+== FAILED</label>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id24"/>
+			<label kind="assignment" x="374" y="93">addPlanStep(
+REMOVE_SERVICE)</label>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id23"/>
+			<label kind="guard" x="170" y="-8">k.workflowStarted
+== true</label>
+			<nail x="136" y="34"/>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id24"/>
+			<label kind="assignment" x="374" y="-8">addPlanStep(
+REFRESH_CACHE)</label>
+			<nail x="578" y="34"/>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id25"/>
+			<label kind="synchronisation" x="34" y="110">planning?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Executor</name>
+		<declaration>int plan;
+
+void readPlan(){
+	plan = k.plan.step;
+}
+
+void execRemoveService(){
+    serviceId = k.plan.serviceId;
+    k.currentServiceStatus = true;
+}
+
+void execRefreshCache(){
+    bWorkflowStarted = false;
+    k.workflowStarted = false;
+}
+
+/*
+void execNoServiceAvailable(){
+ //   krs.services = RS_NOT_AVAILABLE;
+    if (emergencyStatus != GREEN)
+        rescueService = FAILED;
+    else if (emergencyStatus == GREEN)
+        rescueService = !FAILED;
+}
+*/
+</declaration>
+		<location id="id27" x="340" y="-102">
+			<name x="289" y="-144">RemoveService</name>
+			<committed/>
+		</location>
+		<location id="id28" x="340" y="-170">
+			<name x="294" y="-223">RefreshCache</name>
+			<committed/>
+		</location>
+		<location id="id29" x="102" y="-102">
+			<name x="68" y="-255">ExecutePlan</name>
+			<committed/>
+		</location>
+		<location id="id30" x="578" y="-102">
+			<name x="535" y="-255">PlanExecuted</name>
+			<committed/>
+		</location>
+		<location id="id31" x="0" y="-102">
+			<name x="-25" y="-221">Waiting</name>
+		</location>
+		<init ref="id31"/>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="399" y="-144">removeService!</label>
+			<label kind="assignment" x="399" y="-127">execRemoveService()</label>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="399" y="-212">refreshCache!</label>
+			<label kind="assignment" x="399" y="-195">execRefreshCache()</label>
+			<nail x="578" y="-170"/>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id27"/>
+			<label kind="guard" x="127" y="-144">plan == 
+REMOVE_SERVICE</label>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id28"/>
+			<label kind="guard" x="127" y="-212">plan == 
+REFRESH_CACHE</label>
+			<nail x="102" y="-170"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id31"/>
+			<nail x="646" y="-102"/>
+			<nail x="646" y="-34"/>
+			<nail x="0" y="-34"/>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="17" y="-144">execute?</label>
+			<label kind="assignment" x="17" y="-127">readPlan()</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+
+system 
+//AtomicService, CompositeService, Effector,Probe,
+Monitor, Analyzer, Planner, Executor;</system>
+	<queries>
+		<query>
+			<formula>E&lt;&gt; CompositeService.ServiceFailed
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>CompositeService.ServiceFailed --&gt; Analyzer.AdaptationNeeded
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] CompositeService.WorkflowExecutionError imply CompositeService.retryAttempts == CompositeService.MAX_ATTEMPTS
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] not deadlock
+			</formula>
+			<comment>
+			</comment>
+		</query>
+	</queries>
+</nta>

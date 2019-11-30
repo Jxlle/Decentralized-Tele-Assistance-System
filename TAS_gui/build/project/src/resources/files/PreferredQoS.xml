@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><inputProfile>
+     <maxSteps>2000</maxSteps>
+     <qosRequirement>PreferencesQoS</qosRequirement>
+     <variables>
+          <variable>
+               <name>patientId</name>
+               <values>
+                    <value>
+                         <data class="int">1</data>
+                         <ratio>1.0</ratio>
+                    </value>
+               </values>
+          </variable>
+          <variable>
+               <name>pick</name>
+               <values>
+                    <value>
+                         <data class="int">1</data>
+                         <ratio>0.75</ratio>
+                    </value>
+                    <value>
+                         <data class="int">2</data>
+                         <ratio>0.25</ratio>
+                    </value>
+               </values>
+          </variable>
+     </variables>
+     <requirements>
+          <requirement>
+               <name>cost</name>
+               <type>Min/Max</type>
+               <data>Min</data>
+          </requirement>
+          <requirement>
+               <name>reliability</name>
+               <type>Threshold</type>
+               <data>20.2</data>
+          </requirement>
+     </requirements>
+</inputProfile>

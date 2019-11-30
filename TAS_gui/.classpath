@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/TeleAssistanceSystem"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<accessrules>
+			<accessrule kind="accessible" pattern="com/**"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="libs/antlrworks-1.5.2-complete.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/itext-pdfa-5.5.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/itext-xtra-5.5.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/itextpdf-5.5.5.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ResearchServicePlatform"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

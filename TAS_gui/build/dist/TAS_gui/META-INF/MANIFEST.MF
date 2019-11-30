@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Implementation-Title: TAS_gui
+Implementation-Version: 1.0.0
+JavaFX-Feature-Proxy: None
+JavaFX-Version: 8.0
+Class-Path: libs/antlrworks-1.5.2-complete.jar libs/itext-pdfa-5.5.5.j
+ ar libs/itext-xtra-5.5.5.jar libs/itextpdf-5.5.5.jar libs/javax.jms-a
+ pi-2.0.jar libs/xstream-1.5.0.jar
+Created-By: JavaFX Packager
+Implementation-Vendor: 
+Main-Class: application.MainGui
+

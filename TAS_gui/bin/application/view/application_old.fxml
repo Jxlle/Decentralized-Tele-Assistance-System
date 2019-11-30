@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<SplitPane dividerPositions="0.3494983277591973" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.ApplicationController">
+  <items>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+         <children>
+            <SplitPane layoutX="50.0" layoutY="68.0" />
+            <BorderPane layoutX="36.0" layoutY="68.0" prefHeight="295.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <top>
+                  <ToolBar BorderPane.alignment="CENTER">
+                    <items>
+                        <Label text="TAS Configuration" />
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
+                        <MenuButton mnemonicParsing="false" text="Open">
+                          <items>
+                            <MenuItem fx:id="openWorkflowMenuItem" mnemonicParsing="false" text="Open Workflow" />
+                            <MenuItem fx:id="openServicesMenuItem" mnemonicParsing="false" text="Open Available Services" visible="false" />
+                              <MenuItem fx:id="configureMenuItem" mnemonicParsing="false" text="Open Configuration" visible="false" />
+                          </items>
+                        </MenuButton>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
+                        <Button fx:id="configureButton" mnemonicParsing="false" text="Configure" />
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
+                        <MenuButton mnemonicParsing="false" text="Help">
+                          <items>
+                            <MenuItem fx:id="helpMenuItem" mnemonicParsing="false" text="User Interface" />
+                          </items>
+                        </MenuButton>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
+                        <Button fx:id="aboutButton" mnemonicParsing="false" text="About" wrapText="true" />
+                    </items>
+                  </ToolBar>
+               </top>
+               <center>
+                  <SplitPane dividerPositions="0.1" BorderPane.alignment="CENTER">
+                    <items>
+                      <AnchorPane maxWidth="400.0" minWidth="350.0" prefWidth="400.0">
+                           <children>
+                              <TitledPane animated="false" collapsible="false" layoutY="24.0" prefHeight="255.0" prefWidth="233.0" text="Available Concrete Services" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <content>
+                                  <AnchorPane fx:id="scrollAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <ListView fx:id="serviceListView" prefHeight="138.0" prefWidth="348.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                           <children>
+                              <TitledPane animated="false" collapsible="false" prefHeight="255.0" prefWidth="553.0" text="Workflow" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <content>
+                                    <TextArea fx:id="workflowTextArea" layoutX="36.0" prefHeight="255.0" prefWidth="632.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
+               </center>
+            </BorderPane>
+         </children></AnchorPane>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+         <children>
+            <BorderPane layoutX="53.0" prefHeight="249.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <top>
+                  <ToolBar fx:id="toolBar" BorderPane.alignment="CENTER">
+                     <items>
+                        <Label text="TAS Experimentation" />
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
+                        <MenuButton mnemonicParsing="false" text="Open">
+                           <items>
+                              <MenuItem fx:id="openProfileMenuItem" mnemonicParsing="false" text="Open Profile" />
+                              <MenuItem fx:id="openRunMenuItem" mnemonicParsing="false" text="Open Run" />
+                              <MenuItem fx:id="openLogMenuItem" mnemonicParsing="false" text="Open Log" />
+                           </items>
+                        </MenuButton>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
+                        <MenuButton mnemonicParsing="false" text="Save">
+                           <items>
+                              <MenuItem fx:id="saveRunMenuItem" mnemonicParsing="false" text="Save Run" />
+                              <MenuItem fx:id="saveLogMenuItem" mnemonicParsing="false" text="Save Log" />
+                              <MenuItem fx:id="saveReliabilityGraphMenuItem" mnemonicParsing="false" text="Save Reliability Graph" />
+                              <MenuItem fx:id="saveCostGraphMenuItem" mnemonicParsing="false" text="Save Cost Graph" />
+                              <MenuItem fx:id="savePerformanceGraphMenuItem" mnemonicParsing="false" text="Save Performance Graph" />
+                           </items>
+                        </MenuButton>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
+                     </items>
+                  </ToolBar>
+               </top>
+               <center>
+                  <SplitPane dividerPositions="0.1" BorderPane.alignment="CENTER">
+                    <items>
+                      <AnchorPane maxWidth="400.0" minWidth="350.0" prefWidth="400.0">
+                           <children>
+                              <TitledPane animated="false" collapsible="false" layoutX="16.0" prefHeight="255.0" prefWidth="233.0" text="Input Profile" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <ListView fx:id="profileListView" prefHeight="318.0" prefWidth="348.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                           <children>
+                              <TabPane layoutX="84.0" layoutY="28.0" prefHeight="255.0" prefWidth="555.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <tabs>
+                                  <Tab text="Reliability">
+                                    <content>
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <SplitPane dividerPositions="0.6" layoutX="85.0" layoutY="25.0" prefHeight="222.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                  <items>
+                                                      <AnchorPane>
+                                                         <children>
+                                                          <AnchorPane fx:id="reliabilityChartPane" minHeight="0.0" minWidth="0.0" prefHeight="220.0" prefWidth="291.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                                         <children>
+                                                            <TableView fx:id="reliabilityTableView" layoutX="-21.0" layoutY="-21.0" prefHeight="220.0" prefWidth="253.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                  </items>
+                                                </SplitPane>
+                                             </children>
+                                          </AnchorPane>
+                                    </content>
+                                  </Tab>
+                                    <Tab text="Performance">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <SplitPane dividerPositions="0.6" prefHeight="222.0" prefWidth="553.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <items>
+                                                      <AnchorPane fx:id="performanceChartPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
+                                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                                         <children>
+                                                            <TableView fx:id="performanceTableView" layoutX="-23.0" layoutY="10.0" prefHeight="220.0" prefWidth="216.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </items>
+                                                </SplitPane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
+                                    <Tab text="Cost">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <SplitPane dividerPositions="0.6" prefHeight="222.0" prefWidth="553.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                  <items>
+                                                    <AnchorPane fx:id="costChartPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
+                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                                         <children>
+                                                            <TableView fx:id="costTableView" layoutX="-23.0" layoutY="10.0" prefHeight="220.0" prefWidth="216.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                  </items>
+                                                </SplitPane>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </Tab>
+                                </tabs>
+                              </TabPane>
+                           </children>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
+               </center>
+            </BorderPane>
+         </children></AnchorPane>
+  </items>
+</SplitPane>
