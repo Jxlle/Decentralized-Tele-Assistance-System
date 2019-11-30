@@ -185,5 +185,7 @@ public class TEST {
 		
 		System.err.print("----------------------------------------------\n");
 		System.err.print(items.getChance("25% kans") + "\n");
+		
+		// TODO test fail rate
 	}
 }

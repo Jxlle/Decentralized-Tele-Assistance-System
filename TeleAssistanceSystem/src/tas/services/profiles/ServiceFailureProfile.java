@@ -37,7 +37,11 @@ public class ServiceFailureProfile extends ServiceProfile {
 	@Override
 	public boolean preInvokeOperation(ServiceDescription description, String operationName, Object... args) {	
 		
-		if (failureRate.size() == 1 && description.getCustomProperties().containsKey("FailureRate")) {
+		if (!description.getCustomProperties().containsKey("FailureRate")) {
+			return true;
+		}
+		
+		if (failureRate.size() == 1) {
 			failureRate.put(failureRate.firstKey(), (double) description.getCustomProperties().get("FailureRate"));
 		}
 		

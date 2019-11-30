@@ -48,7 +48,7 @@ public class Executer {
 			
 			// Search effector method
 			try {
-				effectorMethod = effector.getClass().getMethod(planComponentType.getMethodName(), planComponentType.getMethodParameters());
+				effectorMethod = effector.getClass().getMethod(planComponentType.getMethodName(), planComponentType.getMethodParameterTypes());
 			} catch (NoSuchMethodException | SecurityException e1) {
 				e1.printStackTrace();
 			}

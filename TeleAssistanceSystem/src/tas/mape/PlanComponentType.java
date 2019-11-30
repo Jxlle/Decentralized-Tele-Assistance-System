@@ -11,28 +11,48 @@ import java.util.Map;
  */
 public enum PlanComponentType {
 	
+	// Available types
 	INCREASE_LOAD("workflowEffector", "increaseServiceLoad", new Class<?>[] { String.class, int.class }),
 	SET_USED_SERVICES("workflowEffector", "updateUsedServicesInfo", new Class<?>[] { Map.class });
 	
+	// Properties
 	private final String effectorIdentifier;
 	private final String methodName;
-	private final Class<?>[] methodParameters;
+	private final Class<?>[] methodParameterTypes;
 	
-	private PlanComponentType(String effectorIdentifier, String methodName, Class<?>[] methodParameters) {
+	/**
+	 * Create a new plan component type with a given effector id, method name and method parameter types
+	 * @param effectorIdentifier the given effector id
+	 * @param methodName the given method name
+	 * @param methodParameterTypes the given method parameter types
+	 */
+	private PlanComponentType(String effectorIdentifier, String methodName, Class<?>[] methodParameterTypes) {
 		this.effectorIdentifier = effectorIdentifier;
 		this.methodName = methodName;
-		this.methodParameters = methodParameters;
+		this.methodParameterTypes = methodParameterTypes;
 	}
 	
+	/**
+	 * Return the effector identifier
+	 * @return the effector identifier
+	 */
 	public String getEffectorIdentifier() {
 		return effectorIdentifier;
 	}
 	
+	/**
+	 * Return the method name
+	 * @return the method name
+	 */
 	public String getMethodName() {
 		return methodName;
 	}
 	
-	public Class<?>[] getMethodParameters() {
-		return methodParameters;
+	/**
+	 * Return the parameter types
+	 * @return the parameter types
+	 */
+	public Class<?>[] getMethodParameterTypes() {
+		return methodParameterTypes;
 	}
 }
