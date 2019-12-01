@@ -39,6 +39,7 @@ public class Monitor {
 		
 		for (String serviceEndpoint : serviceInvocations.keySet()) {
 			double approximatedServiceFailureRate = serviceFailures.get(serviceEndpoint) / (double) serviceInvocations.get(serviceEndpoint);
+			// TODO Zeg welke aanpassing nodig is
 			knowledge.setApproximatedServiceFailureRate(serviceEndpoint, serviceInvocations.get(serviceEndpoint), approximatedServiceFailureRate);
 		}
 		
@@ -49,7 +50,7 @@ public class Monitor {
 	}
 	
 	private Boolean analyzerRequired() {
-		// TODO
+		// TODO false als er geen error aanpassing is.
 		return true;
 	}
 	

@@ -14,16 +14,16 @@ public class MAPEKComponent {
 	private Knowledge knowledge;
 	private CompositeService compositeService;
 	
-	public MAPEKComponent(int loadFailureDelta) {
-		initializeComponents(loadFailureDelta);
+	public MAPEKComponent(int loadFailureDelta, String plannerEndpoint) {
+		initializeComponents(loadFailureDelta, plannerEndpoint);
 	}
 	
-	private void initializeComponents(int loadFailureDelta) {
+	private void initializeComponents(int loadFailureDelta, String plannerEndpoint) {
 		
 		//knowledge = new Knowledge(loadFailureDelta);
 		monitor = new Monitor(compositeService, knowledge, analyzer, amountOfCycles);
 		//analyzer = new Analyzer(knowledge, planner);
-		planner = new Planner(executer);
+		planner = new Planner(plannerEndpoint, executer);
 		executer = new Executer(compositeService);
 	}
 	

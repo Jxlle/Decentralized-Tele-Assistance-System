@@ -29,7 +29,7 @@ import service.workflow.WorkflowEngine;
 
 /**
  * @author Jelle van de sijpe (jelle.vandesijpe@student.kuleuven.be)
- * @author Unknown other person
+ * @author Unknown other person(s)
  * 
  * Providing an abstraction to create composite services
  *
@@ -42,7 +42,7 @@ public class CompositeService extends AbstractService {
     private CostProbe costProbe = new CostProbe();
     private WorkflowProbe workflowProbe = new WorkflowProbe();
     // Initializing effectors
-    //private ConfigurationEffector configu,rationEffector = new ConfigurationEffector(this);
+    //private ConfigurationEffector configurationEffector = new ConfigurationEffector(this);
     
     // This variable will effect only one thread/invocation of the workflow
     private AtomicBoolean stopRetrying = new AtomicBoolean(false);
@@ -318,6 +318,8 @@ public class CompositeService extends AbstractService {
     
     @SuppressWarnings("unchecked")
 	public void updateCache() {
+    	
+    	cache.refresh();
     	
     	List<ServiceDescription> serviceDescriptions = new ArrayList<ServiceDescription>();
     	

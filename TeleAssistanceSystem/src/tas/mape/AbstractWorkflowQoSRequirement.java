@@ -16,10 +16,11 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param strategy
 	 * @param combinationLimit
 	 * @param usableServices
-	 * @return 
+	 * @return
+	 * @throws IllegalArgumentException
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Map<Description, WeightedCollection<String>>> applyStrategy(int strategy, int combinationLimit, Map<Description, List<ServiceDescription>> usableServices) {
+	public List<Map<Description, WeightedCollection<String>>> applyStrategy(int strategy, int combinationLimit, Map<Description, List<ServiceDescription>> usableServices) throws IllegalArgumentException {
 		
 		if (combinationLimit < 1) {
 			throw new IllegalArgumentException("Combination limit must be at least 1.");

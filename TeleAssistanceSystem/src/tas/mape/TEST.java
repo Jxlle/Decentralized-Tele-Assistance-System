@@ -198,7 +198,7 @@ public class TEST {
 		System.err.print(a.compareTo(b));
 		
 		// TEST CACHE WEER OP PRIVATE ZETTEN HIERNA
-		assistanceService.getCache().getServiceWithEndpoint("service.alarmService3");
+		/*assistanceService.getCache().getServiceWithEndpoint("service.alarmService3");
 		List<Map<Description, WeightedCollection<String>>> services = mcr.applyStrategy(1, 10, assistanceService.getCache().caches);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);
 		
@@ -212,7 +212,7 @@ public class TEST {
 			}
 			
 			System.err.print("-------------------------------------------------------------------------------------------\n");
-		}
+		}*/
 		
 		/*for (Map<Description, ServiceDescription> map : services2) {
 			System.err.print("-----------------------------------------------------------------------------------------\n");
@@ -225,5 +225,14 @@ public class TEST {
 			
 			System.err.print("-------------------------------------------------------------------------------------------\n");
 		}*/
+		
+		Planner p1 = new Planner("mape.planner1", executer);
+		Planner p2 = new Planner("mape.planner2", executer);
+		ComponentMessageHost host = new ComponentMessageHost();
+		host.register(p1);
+		host.register(p2);
+		System.err.print("host size " + host.getListeners().size() + " \n");
+		//p2.setEndpoint("mape.planner2new");
+		p1.sendMessage(new PlannerMessage(1, p2.getEndpoint(), p1.getEndpoint(), "test", null, null));
 	}
 }

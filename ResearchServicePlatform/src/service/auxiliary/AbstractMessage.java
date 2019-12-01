@@ -5,9 +5,10 @@ package service.auxiliary;
  * @author Yifan Ruan (ry222ad@student.lnu.se)
  */
 public class AbstractMessage {
-	private int id;
-	private String endpoint;
-	private String msgType;
+	
+	private final int id;
+	private final String receiverEndpoint;
+	private final String msgType;
 	
 	/**
 	 * Constructor
@@ -15,18 +16,10 @@ public class AbstractMessage {
 	 * @param endpoint the source endpoint
 	 * @param msgType the message type, request or response
 	 */
-	public AbstractMessage(int id, String endpoint, String msgType){
-		this.id=id;
-		this.endpoint=endpoint;
-		this.msgType=msgType;
-	}
-	
-	/**
-	 * Set the message id
-	 * @param id the new message id
-	 */
-	public void setId(int id) {
-	    this.id = id;
+	public AbstractMessage(int id, String receiverEndpoint, String msgType){
+		this.id = id;
+		this.receiverEndpoint = receiverEndpoint;
+		this.msgType = msgType;
 	}
 	
 	/**
@@ -38,27 +31,11 @@ public class AbstractMessage {
 	}
 	
 	/**
-	 * Set the source endpoint
-	 * @param endpoint the new source endpoint
-	 */
-	public void setEndpoint(String endpoint) {
-	    this.endpoint = endpoint;
-	}
-	
-	/**
 	 * Return the source endpoint
 	 * @return the source endpoint
 	 */
-	public String getEndpoint() {
-	    return endpoint;
-	}
-	
-	/**
-	 * Set the message type
-	 * @param msgType the message type, request or response
-	 */
-	public void setType(String msgType) {
-	    this.msgType = msgType;
+	public String getReceiverEndpoint() {
+	    return receiverEndpoint;
 	}
 	
 	/**

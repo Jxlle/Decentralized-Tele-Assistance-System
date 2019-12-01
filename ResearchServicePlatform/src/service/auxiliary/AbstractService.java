@@ -157,7 +157,7 @@ public abstract class AbstractService implements MessageReceiver {
 		try {
 			final int requestID = msg.getId();
 			String messageType = msg.getType();
-			final String destination = msg.getEndpoint();
+			final String destination = msg.getReceiverEndpoint();
 			switch (messageType) {
 			case "request": {
 				if (DEBUG)
