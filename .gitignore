@@ -27,3 +27,6 @@ tmp/
 */.classpath
 */.settings
 */.metadata
+*/build/
+TAS_gui/results/
+*/doc/
