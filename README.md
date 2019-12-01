@@ -8,4 +8,4 @@ The Tele Assistance System (TAS) is based on technology services for elderly and
 TAS is an exemplar of a service-based system (SBS). SBSs are widely used in e-commerce, online banking, e-health and many other applications. In these systems, services offered by third-party providers are dynamically composed into workflows delivering complex functionality. SBSs increasingly rely on self-adaptation to cope with the uncertainties associated with third-party services, as the loose coupling of services makes online reconfiguration feasible.
 
 # Why this repository?
-This simulator (v1.6) is currently being changed to work with multiple workflow entities to support decentralized decision making between them.
+The simulator (v1.6) is currently being worked on to work with multiple workflow entities to support decentralized decision making between them.
