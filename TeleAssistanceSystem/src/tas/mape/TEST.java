@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import service.adaptation.effectors.WorkflowEffector;
-import service.auxiliary.Description;
-import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import service.registry.ServiceRegistry;
 import tas.services.alarm.AlarmService;
@@ -16,10 +14,6 @@ import tas.services.assistance.AssistanceService;
 import tas.services.assistance.AssistanceServiceCostProbe;
 import tas.services.drug.DrugService;
 import tas.services.medical.MedicalAnalysisService;
-import tas.services.profiles.ServiceDelayProfile;
-import tas.services.profiles.ServiceFailureLoadProfile;
-import tas.services.profiles.ServiceFailureProfile;
-import tas.services.profiles.SimpleServiceFailureProfile;
 import tas.services.qos.MinCostQoS;
 import tas.services.qos.PreferencesQoS;
 import tas.services.qos.ReliabilityQoS;
@@ -188,6 +182,7 @@ public class TEST {
 		System.err.print("----------------------------------------------\n");
 		System.err.print(items.getChance("25% kans") + "\n");
 		
+		@SuppressWarnings("unused")
 		MinCostReq mcr = new MinCostReq();
 		//mcr.applyStrategy(1, 1, null);
 		
@@ -197,7 +192,7 @@ public class TEST {
 		Integer b = 2;
 		System.err.print(a.compareTo(b));
 		
-		// TEST CACHE WEER OP PRIVATE ZETTEN HIERNA
+		// TEST 
 		/*assistanceService.getCache().getServiceWithEndpoint("service.alarmService3");
 		List<Map<Description, WeightedCollection<String>>> services = mcr.applyStrategy(1, 10, assistanceService.getCache().caches);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import service.adaptation.effectors.CacheEffector;
 import service.adaptation.effectors.WorkflowEffector;
 import service.composite.CompositeService;
 

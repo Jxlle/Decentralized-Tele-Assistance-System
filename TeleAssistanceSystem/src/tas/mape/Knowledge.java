@@ -1,16 +1,13 @@
 package tas.mape;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
-import service.composite.SDCache;
 
 /**
  * @author Jelle Van De Sijpe

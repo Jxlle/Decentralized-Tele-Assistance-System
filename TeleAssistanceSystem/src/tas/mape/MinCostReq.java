@@ -1,7 +1,6 @@
 package tas.mape;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -92,7 +91,7 @@ public class MinCostReq extends AbstractWorkflowQoSRequirement {
 	public List<Map<Description, ServiceDescription>> getAllServiceCombinations(Map<Description, List<ServiceDescription>> usableServices) {
 		
 		//--------------------------------------------
-		// Create a List<List<>> from the given Map
+		// Create a List<List<.>> from the given Map
 		//--------------------------------------------
 		
 		List<List<ServiceDescription>> usableServicesList = new ArrayList<>();

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.util.Pair;
 import service.auxiliary.AbstractMessage;
 import service.auxiliary.Description;
 import service.auxiliary.WeightedCollection;
@@ -75,7 +74,6 @@ public class Planner extends CommunicationComponent {
 	@Override
 	public void receiveMessage(AbstractMessage message) {
 		System.err.print("RECEIVED " + message + " " + getEndpoint());
-		// TODO Auto-generated method stub
-		// TODO transform message into planner message
+		// TODO transform message into planner message, use protocol
 	}
 }
