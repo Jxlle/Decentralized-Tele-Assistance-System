@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import service.adaptation.effectors.WorkflowEffector;
+import service.auxiliary.Description;
 import service.auxiliary.WeightedCollection;
 import service.registry.ServiceRegistry;
 import tas.services.alarm.AlarmService;
@@ -194,19 +195,22 @@ public class TEST {
 		
 		// TEST 
 		/*assistanceService.getCache().getServiceWithEndpoint("service.alarmService3");
-		List<Map<Description, WeightedCollection<String>>> services = mcr.applyStrategy(1, 10, assistanceService.getCache().caches);
+		List<ServiceCombination> services = mcr.applyStrategy(1, 10, assistanceService.getCache().caches);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);
 		
-		for (Map<Description, WeightedCollection<String>> map : services) {
+		for (ServiceCombination comb : services) {
 			System.err.print("-----------------------------------------------------------------------------------------\n");
 			
-			for (Description d : map.keySet()) {
+			comb.getDescriptions();
+			
+			for (Description d : comb.getDescriptions()) {
 				
-				System.err.print("["+ d.toString() + "] : " + map.get(d).getItems().get(0) + "\n");
+				System.err.print("["+ d.toString() + "] : " + comb.getServices(d).getItems().get(0) + "\n");
 				
 			}
 			
 			System.err.print("-------------------------------------------------------------------------------------------\n");
+			System.err.print("cost: " + comb.getRate() + " \n");
 		}*/
 		
 		/*for (Map<Description, ServiceDescription> map : services2) {
@@ -229,5 +233,17 @@ public class TEST {
 		System.err.print("host size " + host.getListeners().size() + " \n");
 		//p2.setEndpoint("mape.planner2new");
 		p1.sendMessage(new PlannerMessage(1, p2.getEndpoint(), p1.getEndpoint(), "test", null, null));
+		
+		
+		ServiceCombination combination = new ServiceCombination(null, null, ratingType.NUMBER, 1.0);
+
+		
+		System.err.print("------------------------------------------------------------ \n");
+		System.err.print("test: " + combination.getRate().getClass() + "\n");
+		
+		
+		
+		
+		
 	}
 }

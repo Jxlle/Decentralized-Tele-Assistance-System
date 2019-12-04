@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.util.Pair;
 import service.auxiliary.AbstractMessage;
 import service.auxiliary.Description;
+import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 
 /**
@@ -18,22 +20,15 @@ public class Planner extends CommunicationComponent {
 	Executer executer;
 	Knowledge knowledge;
 	List<PlanComponent> plan;
+	List<ServiceCombination> chosenServicesList;
 	
 	public Planner(String endpoint, Executer executer) {
 		super(endpoint);
 		this.executer = executer;
 	}
 	
-	public void execute(List<Map<Description, WeightedCollection<String>>> chosenServicesList) {
-		// TODO
-		communicateWith(chosenServicesList);
-	}
-	
-	public void communicateWith(List<Map<Description, WeightedCollection<String>>> chosenServicesList) {
-		// TODO
-		
-		Map<String, Integer> serviceLoads = getServiceLoads(chosenServicesList.get(0));
-		makePlan(chosenServicesList.get(0), serviceLoads);
+	public void execute(List<ServiceCombination> chosenServicesList) {
+		this.chosenServicesList = chosenServicesList;
 	}
 	
 	private void makePlan(Map<Description, WeightedCollection<String>> chosenServices, Map<String, Integer> serviceLoads) {
@@ -47,13 +42,13 @@ public class Planner extends CommunicationComponent {
 		
 	}
 	
-	private Map<String, Integer> getServiceLoads(Map<Description, WeightedCollection<String>> chosenServices) {
+	private Map<String, Integer> getServiceLoads(ServiceCombination chosenServices) {
 		
 		Map<String, Integer> serviceLoads = new HashMap<String, Integer>();
 		
-		for (Description description : chosenServices.keySet()) {
+		for (Description description : chosenServices.getDescriptions()) {
 			
-			WeightedCollection<String> serviceUsage = chosenServices.get(description);
+			WeightedCollection<String> serviceUsage = chosenServices.getAllServices(description);
 			
 			for (String serviceEndpoint : serviceUsage.getItems()) {		
 				int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(serviceEndpoint));
@@ -62,6 +57,29 @@ public class Planner extends CommunicationComponent {
 		}
 		
 		return serviceLoads;
+	}
+	
+	private List<Pair<String, Double>> getPublicServiceChances(ServiceCombination chosenServices, List<String> registryEndpoints) {
+		
+		List<Pair<String, Double>> serviceChances = new ArrayList<>();
+		
+		for (String registryEndpoint : registryEndpoints) {
+			
+			for (Description description : chosenServices.getDescriptions()) {		
+				
+				for (String serviceEndpoint : chosenServices.getAllServices(description).getItems()) {
+					
+					if (chosenServices.getServiceRegistry(serviceEndpoint).equals(registryEndpoint)) {
+						serviceChances.add(new Pair<String, Double>(serviceEndpoint, chosenServices.getAllServices(description).getChance(serviceEndpoint)));
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		return serviceChances;
 	}
 	
 	/**

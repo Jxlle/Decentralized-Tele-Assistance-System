@@ -23,11 +23,11 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param combinationLimit the limit of returned service combinations
 	 * @param usableServices a map of usable services where each key is a service type & operation name combination (description) 
 	 *        and the value is a list of the usable services for that description 
-	 * @return a list of the chosen service combinations where each service combination is a map like the given services map
+	 * @return a list of the chosen service combinations
 	 * @throws IllegalArgumentException throw when the combination limit is illegal
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Map<Description, WeightedCollection<String>>> applyStrategy(int strategy, int combinationLimit, Map<Description, List<ServiceDescription>> usableServices) throws IllegalArgumentException {
+	public List<ServiceCombination> applyStrategy(int strategy, int combinationLimit, Map<Description, List<ServiceDescription>> usableServices) throws IllegalArgumentException {
 		
 		// Check if given combination limit is legal
 		if (combinationLimit < 1) {
@@ -35,7 +35,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 		}
 		
 		Method method = null;
-		List<Map<Description, WeightedCollection<String>>> result = null;
+		List<ServiceCombination> result = null;
 		
 		// Search strategy method
 		try {
@@ -46,7 +46,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 		
 		// Invoke method
 		try {
-			result = (List<Map<Description, WeightedCollection<String>>>) method.invoke(this, combinationLimit, usableServices);
+			result = (List<ServiceCombination>) method.invoke(this, combinationLimit, usableServices);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}

@@ -20,7 +20,7 @@ public class Analyzer {
 	private Planner planner;
 	private int combinationLimit;
 	private Map<String, Integer> QoSStrategies;
-	private List<Map<Description, WeightedCollection<String>>> chosenServicesList;
+	private List<ServiceCombination> chosenServicesList;
 	
 	/**
 	 * Create a new analyzer with a given knowledge and planner component, a combination limit and a map of QoS strategies.
@@ -79,9 +79,9 @@ public class Analyzer {
 	 * This method applies a strategy for a certain QoS requirement and returns the N (based on local property) best service combinations based on that.
 	 * @param requirementName the QoS requirement name
 	 * @param usableServices a map of services that can be used per description
-	 * @return a list of the N best service combinations where each element consists of a map that depicts which services (endpoint + weight) must be used for which description (method type + name)
+	 * @return The list of the best N chosen service combinations
 	 */
-	private List<Map<Description, WeightedCollection<String>>> chooseServices(String requirementName, Map<Description, List<ServiceDescription>> usableServices) {
+	private List<ServiceCombination> chooseServices(String requirementName, Map<Description, List<ServiceDescription>> usableServices) {
 		
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirementName);
 		int strategy = getQoSStrategy(requirementName);

@@ -16,6 +16,7 @@ import service.auxiliary.ServiceDescription;
 public class Knowledge {
 	
 	private String currentQoSRequirement;
+	private Map<String, Double> goals;
 	private Map<Description, Double> servicesUsageChance;
 	private Map<String, TreeMap<Integer, Double>> approximatedServiceFailureRates;
 	private Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses;
