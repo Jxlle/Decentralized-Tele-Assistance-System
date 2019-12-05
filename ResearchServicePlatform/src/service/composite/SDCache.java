@@ -21,6 +21,7 @@ import service.auxiliary.ServiceDescription;
 /**
  * Cache for available services
  * @author Yifan Ruan (ry222ad@student.lnu.se)
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  *
  */
 public class SDCache {
@@ -64,6 +65,14 @@ public class SDCache {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Return the cache probe
+	 * @return the cache probe
+	 */
+	public CacheProbe getCacheProbe() {
+		return cacheProbe;
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package tas.mape;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class Knowledge {
 	private Map<Description, Double> servicesUsageChance;
 	private Map<String, TreeMap<Integer, Double>> approximatedServiceFailureRates;
 	private Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses;
+	private List<PlanComponent> registryChangePlanComponents;
 	private int workflowCyclesMax, loadFailureDelta;
 	
 	// TODO ServiceDescriptions must be copy
@@ -39,6 +41,7 @@ public class Knowledge {
 		}
 		
 		initializeApproximatedServiceFailureRates();
+		registryChangePlanComponents = new ArrayList<>();
 	}
 	
 	public void setCurrentQoSRequirement(String currentQoSRequirement) {
@@ -84,8 +87,32 @@ public class Knowledge {
 		return usableServices;
 	}
 	
+	public void addUsableService(Description description, ServiceDescription serviceDescription) {	
+		if (usableServices.get(description) != null) {
+			usableServices.get(description).add(serviceDescription);
+		}
+	}
+	
+	public void removeUsableService(Description description, ServiceDescription serviceDescription) {
+		if (usableServices.get(description) != null) {
+			usableServices.get(description).remove(serviceDescription);
+		}
+	}
+	
 	public int getServiceLoad(Description description, double usePercentage) {
 		return (int) (servicesUsageChance.get(description) * usePercentage * workflowCyclesMax);
+	}
+	
+	public List<PlanComponent> getRegistryPlanComponents() {
+		return registryChangePlanComponents;
+	}
+	
+	public void addregistryChangePlanComponents(PlanComponent registryPlanComponent) {
+		registryChangePlanComponents.add(registryPlanComponent);
+	}
+	
+	public void resetRegistryPlanComponents() {
+		registryChangePlanComponents.clear();
 	}
 	
 	private void initializeApproximatedServiceFailureRates() {

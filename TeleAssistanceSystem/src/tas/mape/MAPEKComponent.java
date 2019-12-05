@@ -21,7 +21,7 @@ public class MAPEKComponent {
 	private void initializeComponents(int loadFailureDelta, String plannerEndpoint) {
 		
 		//knowledge = new Knowledge(loadFailureDelta);
-		monitor = new Monitor(compositeService, knowledge, analyzer, amountOfCycles);
+		//monitor = new Monitor(compositeService, knowledge, analyzer, amountOfCycles);
 		//analyzer = new Analyzer(knowledge, planner);
 		planner = new Planner(plannerEndpoint, executer);
 		executer = new Executer(compositeService);

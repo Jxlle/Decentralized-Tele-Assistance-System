@@ -13,11 +13,13 @@ import service.auxiliary.WeightedCollection;
  *  
  * Class that represents the analyzer component in a MAPE-K component
  */
+// TODO "plannerrequired" and "executed" add needed
 public class Analyzer {
 	
 	// Properties
 	private Knowledge knowledge;
 	private Planner planner;
+	private Boolean executed;
 	private int combinationLimit;
 	private Map<String, Integer> QoSStrategies;
 	private List<ServiceCombination> chosenServicesList;
@@ -65,13 +67,18 @@ public class Analyzer {
 		// Choose service options
 		Map<Description, List<ServiceDescription>> usableServices = knowledge.getUsableServices();
 		chosenServicesList = chooseServices(requirementName, usableServices);
+		
+		executed = true;
 	}
 	
 	/**
 	 * Trigger the planner
 	 */
 	public void triggerPlanner() {
-		planner.execute(chosenServicesList);
+		if (executed) {
+			planner.execute(chosenServicesList);
+			executed = false;
+		}
 	}
 	
 	/**

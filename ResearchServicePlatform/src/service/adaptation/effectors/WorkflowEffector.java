@@ -42,8 +42,16 @@ public class WorkflowEffector extends AbstractEffector {
     }
     
     /**
-     * Remove the service from workflow cache
-     * @param description  the service description
+     * Add a given service to the workflow cache
+     * @param description the service description
+     */
+    public void addService(ServiceDescription description){
+    	cacheEffector.addService(description);
+    }
+    
+    /**
+     * Remove a given service from the workflow cache
+     * @param description the service description
      */
     public void removeService(ServiceDescription description){
     	cacheEffector.removeService(description);

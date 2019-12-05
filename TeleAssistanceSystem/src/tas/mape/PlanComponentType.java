@@ -2,6 +2,8 @@ package tas.mape;
 
 import java.util.Map;
 
+import service.auxiliary.ServiceDescription;
+
 /**
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
@@ -13,7 +15,9 @@ public enum PlanComponentType {
 	
 	// Available types
 	INCREASE_LOAD("workflowEffector", "increaseServiceLoad", new Class<?>[] { String.class, int.class }),
-	SET_USED_SERVICES("workflowEffector", "updateUsedServicesInfo", new Class<?>[] { Map.class });
+	SET_USED_SERVICES("workflowEffector", "updateUsedServicesInfo", new Class<?>[] { Map.class }),
+	ADD_TO_CACHE("workflowEffector", "addService", new Class<?>[] { ServiceDescription.class }),
+	REMOVE_FROM_CACHE("workflowEffector", "removeService", new Class<?>[] { ServiceDescription.class });
 	
 	// Properties
 	private final String effectorIdentifier;

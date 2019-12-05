@@ -22,6 +22,14 @@ public class CacheEffector {
     public CacheEffector(CompositeService compositeService) {
     	this.compositeService = compositeService;
     }
+    
+    /**
+     * Add service to cache
+     * @param description the service description
+     */
+    public void addService(ServiceDescription description) {
+    	compositeService.getCache().addService(description);
+    }
 
     /**
      * Remove service from cache

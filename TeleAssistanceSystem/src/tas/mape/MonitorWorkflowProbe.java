@@ -1,20 +1,25 @@
 package tas.mape;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javafx.util.Pair;
+import service.adaptation.probes.interfaces.CacheProbeInterface;
 import service.adaptation.probes.interfaces.ServiceRegistryProbeInterface;
 import service.adaptation.probes.interfaces.WorkflowProbeInterface;
+import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 
 /**
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
  */
-public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegistryProbeInterface {
+public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegistryProbeInterface, CacheProbeInterface {
 
-	private Map<String, Integer> serviceInvocations;
-	private Map<String, Integer> serviceFailures;
+	private Map<String, Integer> serviceInvocations, serviceFailures;
+	private List<Pair<Pair<Description, ServiceDescription>, String>> servicesChangedInCache;
+	private List<Pair<ServiceDescription, String>> servicesChangedInRegistry;
 	
 	public MonitorWorkflowProbe() {	
 		serviceInvocations = new HashMap<String, Integer>();
@@ -24,6 +29,8 @@ public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegi
 	public void reset() {
 		serviceInvocations.clear();
 		serviceFailures.clear();
+		servicesChangedInCache.clear();
+		servicesChangedInRegistry.clear();
 	}
 	
 	public Map<String, Integer> getServiceInvocations() {
@@ -34,9 +41,12 @@ public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegi
 		return serviceFailures;
 	}
 	
-	@Override
-	public void workflowStarted(String qosRequirement, Object[] params) {
-		
+	public List<Pair<ServiceDescription, String>> getServicesChangedInRegistry() {
+		return servicesChangedInRegistry;
+	}
+	
+	public List<Pair<Pair<Description, ServiceDescription>, String>> getServicesChangedInCache() {
+		return servicesChangedInCache;
 	}
 
 	@Override
@@ -58,12 +68,26 @@ public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegi
 
 	@Override
 	public void serviceRemovedFromRegistry(ServiceDescription description) {
-		// TODO maybe? Mape loop can reconfigure cache if a registry change happens
+		servicesChangedInRegistry.add(new Pair<ServiceDescription, String>(description, "removed"));
 	}
 
 	@Override
 	public void serviceAddedToRegistry(ServiceDescription description) {	
-		// TODO maybe? Mape loop can reconfigure cache if a registry change happens
+		servicesChangedInRegistry.add(new Pair<ServiceDescription, String>(description, "added"));
+	}
+	
+	@Override
+	public void serviceAddedToCache(Description ServiceTypeOperation, ServiceDescription description) {
+		servicesChangedInCache.add(new Pair<Pair<Description, ServiceDescription>, String>(new Pair<Description, ServiceDescription>(ServiceTypeOperation, description), "added"));
+	}
+
+	@Override
+	public void serviceRemovedFromCache(Description ServiceTypeOperation, ServiceDescription description) {
+		servicesChangedInCache.add(new Pair<Pair<Description, ServiceDescription>, String>(new Pair<Description, ServiceDescription>(ServiceTypeOperation, description), "removed"));
+	}
+	
+	@Override
+	public void workflowStarted(String qosRequirement, Object[] params) {	
 	}
 	
 	@Override

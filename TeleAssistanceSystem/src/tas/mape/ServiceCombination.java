@@ -1,12 +1,9 @@
 package tas.mape;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 import java.util.Set;
 
-import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.WeightedCollection;
 

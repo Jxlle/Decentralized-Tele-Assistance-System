@@ -8,7 +8,6 @@ import java.util.Map;
 import javafx.util.Pair;
 import service.auxiliary.AbstractMessage;
 import service.auxiliary.Description;
-import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 
 /**
@@ -19,6 +18,7 @@ public class Planner extends CommunicationComponent {
 
 	Executer executer;
 	Knowledge knowledge;
+	private Boolean executed;
 	List<PlanComponent> plan;
 	List<ServiceCombination> chosenServicesList;
 	
@@ -29,6 +29,7 @@ public class Planner extends CommunicationComponent {
 	
 	public void execute(List<ServiceCombination> chosenServicesList) {
 		this.chosenServicesList = chosenServicesList;
+		executed = true;
 	}
 	
 	private void makePlan(Map<Description, WeightedCollection<String>> chosenServices, Map<String, Integer> serviceLoads) {
@@ -38,6 +39,15 @@ public class Planner extends CommunicationComponent {
 		
 		for (String loadEndpoint : serviceLoads.keySet()) {
 			plan.add(new PlanComponent(PlanComponentType.INCREASE_LOAD, loadEndpoint, serviceLoads.get(loadEndpoint)));
+		}
+		
+		// Extra: update cache with new registry info
+		if (knowledge.getRegistryPlanComponents().size() != 0) {
+			
+			for (PlanComponent registryPlanComponent : knowledge.getRegistryPlanComponents()) {
+				plan.add(registryPlanComponent);
+			}
+			
 		}
 		
 	}
@@ -86,7 +96,10 @@ public class Planner extends CommunicationComponent {
 	 * Trigger the executer
 	 */
 	public void triggerExecuter() {
-		executer.execute(plan);
+		if (executed) {
+			executer.execute(plan);
+			executed = false;
+		}
 	}
 
 	@Override
