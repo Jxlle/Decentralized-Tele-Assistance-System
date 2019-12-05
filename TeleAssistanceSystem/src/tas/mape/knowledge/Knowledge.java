@@ -1,4 +1,4 @@
-package tas.mape;
+package tas.mape.knowledge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,10 +9,14 @@ import java.util.TreeMap;
 import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import tas.mape.AbstractWorkflowQoSRequirement;
+import tas.mape.PlanComponent;
 
 /**
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
+ * 
+ * Class that represents the knowledge component in a MAPE-K component
  */
 public class Knowledge {
 	

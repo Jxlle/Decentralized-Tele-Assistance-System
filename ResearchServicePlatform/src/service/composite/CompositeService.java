@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import service.adaptation.probes.CostProbe;
 import service.adaptation.probes.WorkflowProbe;
+import service.atomic.AtomicService;
 import service.adaptation.probes.ServiceRegistryProbe;
 import service.auxiliary.AbstractService;
 import service.auxiliary.CompositeServiceConfiguration;
@@ -46,6 +47,9 @@ public class CompositeService extends AbstractService {
     
     // This variable will effect only one thread/invocation of the workflow
     private AtomicBoolean stopRetrying = new AtomicBoolean(false);
+    
+    // Test mode allowing workflow analyzing
+    private Boolean testMode = false;
     
     // List of all used service registries
     private List<RegistryData> serviceRegistriesData;
@@ -220,6 +224,14 @@ public class CompositeService extends AbstractService {
     public Map<String, AbstractQoSRequirement> getQosRequirements() {
     	return qosRequirements;
     }
+    
+    /**
+     * Set test mode of this composite service based on a given boolean
+     * @param testMode the given boolean
+     */
+    public void setTestMode(Boolean testMode) {
+    	this.testMode = testMode;
+    }
 
     /**
      * Returns list of QoS names added in to the composite service
@@ -243,7 +255,10 @@ public class CompositeService extends AbstractService {
      */
     @ServiceOperation
     public Object invokeCompositeService(String qosRequirement, Object params[]) {
-		//AbstractQoSRequirement qosRequirement = qosRequirements.get(qosRequirementName);
+    	
+    	if (testMode) {
+    		AtomicService.setNoFail(true);
+    	}
 		
 		// If SDCache shared is not on then a new cache object for the workflow should be created
 		//ToDo: Cache is shared among all the workflow invocations. separate local cache is not supported yet.
@@ -253,6 +268,11 @@ public class CompositeService extends AbstractService {
 		workflowProbe.notifyWorkflowStarted(qosRequirement, params);
 		Object result = engine.executeWorkflow(workflow, qosRequirement, params);
 		workflowProbe.notifyWorkflowEnded(result, qosRequirement, params);
+		
+    	if (testMode) {
+    		AtomicService.setNoFail(false);
+    	}
+		
 		return result;
     }
 
@@ -270,6 +290,7 @@ public class CompositeService extends AbstractService {
 							for (int i = 0; i < size; i++) {
 								args[i] = params[i].getValue();
 							}
+							
 							return operation.invoke(this, args);
 						}
 					}
@@ -423,43 +444,42 @@ public class CompositeService extends AbstractService {
 	    if (services == null || services.size() == 0) {
 	    	System.out.println("ServiceName: " + serviceName + "." + opName + " not found!");
 	    	getWorkflowProbe().notifyServiceNotFound(serviceName, opName);
-	    	resultVal = new TimeOutError();
+	    	return new TimeOutError();
 	    }
-
-	    // Apply strategy
-	    ServiceDescription service = applyQoSRequirement(qosRequirement, services, opName, params);
-	    
-	    // Find registry probe
-	    // Only one registry probe is searched. Same service in multiple probes will not trigger multiple probes.
-	    RegistryData registryData = serviceRegistriesData.stream().filter(x -> x.registryEndpoint.equals(service.getServiceRegistryEndpoint())).findFirst().orElse(null);
-	    ServiceRegistryProbe registryProbe = (ServiceRegistryProbe) this.sendRequest(registryData.registryName, registryData.registryEndpoint, true, "getRegistryProbe");
-	    
-	    //System.out.println("Operation " + service.getServiceType() + "." + opName + " has been selected with following custom properties:"
-		//    + service.getCustomProperties());
-
-	    this.getWorkflowProbe().notifyServiceOperationInvoked(service, opName, params);	
-	    
-	    int maxResponseTime = timeout != 0 ? timeout : service.getResponseTime() * 3;
-	    resultVal = this.sendRequest(service.getServiceType(), service.getServiceEndpoint(), true, maxResponseTime, opName, params);
-	    
-	    if (resultVal instanceof TimeOutError) {
+	    else {
 	    	
-	    	this.getWorkflowProbe().notifyServiceOperationTimeout(service, opName, params);
-	    	registryProbe.notifyServiceFailed(service);
+		    // Apply strategy
+		    ServiceDescription service = applyQoSRequirement(qosRequirement, services, opName, params);
+		    
+		    // Find registry probe
+		    // Only one registry probe is searched. Same service in multiple probes will not trigger multiple probes.
+		    RegistryData registryData = serviceRegistriesData.stream().filter(x -> x.registryEndpoint.equals(service.getServiceRegistryEndpoint())).findFirst().orElse(null);
+		    ServiceRegistryProbe registryProbe = (ServiceRegistryProbe) this.sendRequest(registryData.registryName, registryData.registryEndpoint, true, "getRegistryProbe");
 
-	    } else {
-	    	
-		    registryProbe.notifyServiceSucceeded(service);
-	    	this.getWorkflowProbe().notifyServiceOperationReturned(service, resultVal, opName, params);
-	    	this.getCostProbe().notifyCostSubscribers(service, opName);
-	    }
-	    
-	    if (stopRetrying.get() == true){
-		stopRetrying.set(false);
-		break;
-	    }
+		    this.getWorkflowProbe().notifyServiceOperationInvoked(service, opName, params);	
+		    
+		    int maxResponseTime = timeout != 0 ? timeout : service.getResponseTime() * 3;
+		    resultVal = this.sendRequest(service.getServiceName(), service.getServiceEndpoint(), true, maxResponseTime, opName, params);
+		    
+		    if (resultVal instanceof TimeOutError) {
+		    	
+		    	this.getWorkflowProbe().notifyServiceOperationTimeout(service, opName, params);
+		    	registryProbe.notifyServiceFailed(service);
 
-	    retryAttempts++;
+		    } else {
+		    	
+			    registryProbe.notifyServiceSucceeded(service);
+		    	this.getWorkflowProbe().notifyServiceOperationReturned(service, resultVal, opName, params);
+		    	this.getCostProbe().notifyCostSubscribers(service, opName);
+		    }
+		    
+		    if (stopRetrying.get() == true){
+				stopRetrying.set(false);
+				break;
+		    }
+
+		    retryAttempts++;
+	    }
 	    
 	} while (resultVal instanceof TimeOutError && retryAttempts < this.getConfiguration().maxRetryAttempts);
 

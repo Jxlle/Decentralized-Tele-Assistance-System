@@ -8,6 +8,7 @@ import service.adaptation.probes.ServiceRegistryProbe;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.composite.CompositeService;
+import tas.mape.knowledge.Knowledge;
 
 /**
  * @author Jelle Van De Sijpe

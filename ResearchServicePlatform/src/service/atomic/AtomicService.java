@@ -21,6 +21,7 @@ import service.auxiliary.ServiceOperation;
  */
 public abstract class AtomicService extends AbstractService {		
 	private List<ServiceProfile> serviceProfiles=new ArrayList<>();
+	private static boolean noFail;
 	
 	/**
 	 * Constructor
@@ -72,6 +73,14 @@ public abstract class AtomicService extends AbstractService {
     public List<ServiceProfile> getServiceProfiles(){
     	return this.serviceProfiles;
     }
+    
+    /**
+     * Set special no fail mode based on a given boolean
+     * @param noFail the given boolean
+     */
+    public static void setNoFail(Boolean noFail) {
+    	AtomicService.noFail = noFail;
+    }
 
     @Override
     public Object invokeOperation(String opName, Param[] params) {
@@ -93,9 +102,11 @@ public abstract class AtomicService extends AbstractService {
 							// if the current result is false, stop executing the next one
 							boolean flag = true;
 							
-							for (int i = 0; i < serviceProfileNum; i++) {
-								if (!(flag = serviceProfiles.get(i).preInvokeOperation(getServiceDescription(), opName, args))){
-									return new ServiceFailed();
+							if (!noFail) {
+								for (int i = 0; i < serviceProfileNum; i++) {
+									if (!(flag = serviceProfiles.get(i).preInvokeOperation(getServiceDescription(), opName, args))){
+										return new ServiceFailed();
+									}
 								}
 							}
 

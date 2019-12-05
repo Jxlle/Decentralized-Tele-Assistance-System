@@ -9,10 +9,13 @@ import javafx.util.Pair;
 import service.auxiliary.AbstractMessage;
 import service.auxiliary.Description;
 import service.auxiliary.WeightedCollection;
+import tas.mape.knowledge.Knowledge;
 
 /**
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
+ * 
+ * Class that represents the planner component in a MAPE-K component
  */
 public class Planner extends CommunicationComponent {
 

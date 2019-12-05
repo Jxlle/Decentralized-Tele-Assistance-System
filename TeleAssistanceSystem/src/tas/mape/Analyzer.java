@@ -6,6 +6,7 @@ import java.util.Map;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
+import tas.mape.knowledge.Knowledge;
 
 /**
  * @author Jelle Van De Sijpe

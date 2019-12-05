@@ -6,10 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.util.Pair;
 import service.adaptation.effectors.WorkflowEffector;
 import service.auxiliary.Description;
+import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import service.registry.ServiceRegistry;
+import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.services.alarm.AlarmService;
 import tas.services.assistance.AssistanceService;
 import tas.services.assistance.AssistanceServiceCostProbe;
@@ -176,12 +179,14 @@ public class TEST {
 		items.remove("50% kans");
 		System.err.print("----------------------------------------------\n");
 		
+		items.increaseWeight("25% kans", 1);
 		for (Integer s : items.getWeights()) {
 			System.err.print(s + "\n");
 		}
 		
 		System.err.print("----------------------------------------------\n");
 		System.err.print(items.getChance("25% kans") + "\n");
+		
 		
 		@SuppressWarnings("unused")
 		MinCostReq mcr = new MinCostReq();
@@ -242,8 +247,19 @@ public class TEST {
 		System.err.print("test: " + combination.getRate().getClass() + "\n");
 		
 		
+		WorkflowAnalyzer wpi = new WorkflowAnalyzer();
+		Map<Description, Pair<List<ServiceDescription>, Double>> test = wpi.analyzeWorkflow(5000, "resources/TeleAssistanceWorkflow.txt", "resources/files/PreferredQoS.xml", assistanceService);
 		
-		
-		
+		for (Description d : test.keySet()) {
+			System.err.print("------------------------------------------------------------ \n");
+			
+			for (ServiceDescription sd : test.get(d).getKey()) {
+				System.err.print("service name: " + sd.getServiceName() + " \n");
+			}
+			
+			System.err.print("=== \n");
+			System.err.print("description usage chance :" + test.get(d).getValue() + " \n");
+			System.err.print("------------------------------------------------------------ \n");
+		}
 	}
 }

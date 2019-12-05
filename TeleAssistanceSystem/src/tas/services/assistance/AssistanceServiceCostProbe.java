@@ -61,7 +61,7 @@ public class AssistanceServiceCostProbe implements WorkflowProbeInterface, CostP
     @Override
     public void workflowStarted(String qosRequirement, Object[] params) {
     	System.out.println("Probe: workflowStarted");
-	    Log.addLog("WorkflowStarted", "Workflow Started monitoring");
+	    //Log.addLog("WorkflowStarted", "Workflow Started monitoring");
     	resultBuilder=new StringBuilder();
     	totalCost=0;
     	workflowInvocationCount++;	    	

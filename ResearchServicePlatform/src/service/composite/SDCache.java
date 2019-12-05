@@ -121,6 +121,10 @@ public class SDCache {
 		});
 	}
 	
+	public List<ServiceDescription> getServiceDescriptions(Description description) {
+		return caches.get(description);
+	}
+	
 	
 	/**
 	 * Return max size of the cache

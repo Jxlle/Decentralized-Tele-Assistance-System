@@ -1,6 +1,7 @@
 package tas.mape;
 
 import service.composite.CompositeService;
+import tas.mape.knowledge.Knowledge;
 
 public class MAPEKComponent {
 	
