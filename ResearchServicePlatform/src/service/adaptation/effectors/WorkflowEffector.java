@@ -1,9 +1,7 @@
 package service.adaptation.effectors;
 
-import java.util.List;
 import java.util.Map;
 
-import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;

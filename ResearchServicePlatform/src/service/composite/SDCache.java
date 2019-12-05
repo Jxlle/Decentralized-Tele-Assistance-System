@@ -13,6 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import service.adaptation.probes.CacheProbe;
 import service.auxiliary.Description;
 import service.auxiliary.Operation;
 import service.auxiliary.ServiceDescription;
@@ -29,6 +30,7 @@ public class SDCache {
     //private int refreshPeriod=10*Time.scale;   
     private int refreshPeriod = 10;         
     private Timer timer = null;    
+    private CacheProbe cacheProbe = new CacheProbe();
     
     /**
      * Return cache refresh period
@@ -104,9 +106,10 @@ public class SDCache {
 			if(!caches.containsKey(description)){
 				caches.put(description, new ArrayList<>());
 			}
+			
 			caches.get(description).add(service);
+			cacheProbe.notifyServiceAddedToCache(description, service);
 		});
-		
 	}
 	
 	
@@ -140,7 +143,13 @@ public class SDCache {
 		for(ServiceDescription serviceDescription : serviceDescriptions)
 			services.add((ServiceDescription)serviceDescription.clone());
 		
-		caches.put(new Description(serviceType,opName),services);
+		Description description = new Description(serviceType,opName);
+		caches.put(description,services);
+		
+		for (ServiceDescription serviceDescription : services) {
+			cacheProbe.notifyServiceAddedToCache(description, serviceDescription);
+		}
+		
     	return true;
     }
     
@@ -170,6 +179,7 @@ public class SDCache {
     public void remove(ServiceDescription service) {
     	for (Operation operation : service.getOperationList())
     		remove(service, operation.getOpName());
+    		
     }
     
     /**
@@ -179,11 +189,20 @@ public class SDCache {
      * @return true if removed successfully, otherwise false
      */
     public boolean remove(String serviceType,String opName){
-    	Description description=new Description(serviceType,opName);
+    	
+    	Description description=new Description(serviceType, opName);
+    	
     	if(caches.containsKey(description)){
-    		caches.remove(new Description(serviceType,opName));
+    		
+    		for (ServiceDescription serviceDescription : caches.get(description)) {
+    			cacheProbe.notifyServiceRemovedFromCache(description, serviceDescription);
+    		}
+    		
+    		caches.remove(description);
+    		
     		return true;
     	}
+    	
     	return false;
     }
     
@@ -194,13 +213,15 @@ public class SDCache {
      * @param service the service description
      * @return true if removed successfully, otherwise false
      */
-    public boolean remove(String serviceType,String opName,ServiceDescription service){
-    	Description description=new Description(serviceType,opName);
-    	if(caches.containsKey(description)){
-    		List<ServiceDescription> services=caches.get(description);
-    		for(ServiceDescription s:services){
-    			if(s.equals(service)){
-    				return services.remove(s);
+    public boolean remove(String serviceType, String opName, ServiceDescription service){
+    	
+    	Description description = new Description(serviceType, opName);
+    	
+    	if(caches.containsKey(description)) {
+    		for(ServiceDescription serviceDescription : caches.get(description)){
+    			if(serviceDescription.equals(service)) {
+    				cacheProbe.notifyServiceRemovedFromCache(description, serviceDescription);
+    				return caches.get(description).remove(serviceDescription);
     			}
     		}
     	}

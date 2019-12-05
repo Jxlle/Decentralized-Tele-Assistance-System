@@ -64,18 +64,21 @@ public class ServiceRegistry extends AtomicService implements ServiceRegistryInt
     		services.put(type, set);
     	}	
     	
+    	serviceRegistryProbe.notifyServiceAddedToRegistry(description);
     	System.out.println("Service " + description.getServiceType() + " is registered with ID " + description.getRegisterID() + " and registry endpoint " + description.getServiceRegistryEndpoint() + " .");	
     }
 
     @ServiceOperation
     public void unRegister(int registerID) {
-    	ServiceDescription service = serviceList.get(registerID);
+    	ServiceDescription description = serviceList.get(registerID);
     	serviceList.remove(registerID);
-    	Set<ServiceDescription> set = services.get(service.getServiceType());
-    	set.remove(service);
+    	Set<ServiceDescription> set = services.get(description.getServiceType());
+    	set.remove(description);
     	if (set.size() == 0)
-    		services.remove(service.getServiceType());	
-    	System.out.println("Service " + service.getServiceType() + " is unregistered.");
+    		services.remove(description.getServiceType());	
+    	
+    	serviceRegistryProbe.notifyServiceRemovedFromRegistry(description);
+    	System.out.println("Service " + description.getServiceType() + " is unregistered.");
     }
 
     @ServiceOperation
@@ -135,6 +138,8 @@ public class ServiceRegistry extends AtomicService implements ServiceRegistryInt
     	
     	if(services.containsKey(type))
     		services.get(type).remove(description);
+    	
+    	serviceRegistryProbe.notifyServiceRemovedFromRegistry(description);
     }
     
     public void addService(ServiceDescription description){
@@ -142,6 +147,8 @@ public class ServiceRegistry extends AtomicService implements ServiceRegistryInt
     	int registerID=description.getRegisterID();
     	serviceList.put(registerID, description);
     	services.get(type).add(description);
+    	
+    	serviceRegistryProbe.notifyServiceAddedToRegistry(description);
     }
     
     /**

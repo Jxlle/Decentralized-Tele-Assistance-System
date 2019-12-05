@@ -58,8 +58,6 @@ public class WorkflowProbe extends AbstractProbe<WorkflowProbeInterface> {
     	}
     }
     
-    // TODO WEGDOEN
-    
     /**
      * 
      * @param description
