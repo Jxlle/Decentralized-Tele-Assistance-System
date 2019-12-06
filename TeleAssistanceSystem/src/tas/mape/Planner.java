@@ -8,6 +8,7 @@ import java.util.Map;
 import javafx.util.Pair;
 import service.auxiliary.AbstractMessage;
 import service.auxiliary.Description;
+import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import tas.mape.knowledge.Knowledge;
 
@@ -61,11 +62,11 @@ public class Planner extends CommunicationComponent {
 		
 		for (Description description : chosenServices.getDescriptions()) {
 			
-			WeightedCollection<String> serviceUsage = chosenServices.getAllServices(description);
+			WeightedCollection<ServiceDescription> serviceUsage = chosenServices.getAllServices(description);
 			
-			for (String serviceEndpoint : serviceUsage.getItems()) {		
-				int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(serviceEndpoint));
-				serviceLoads.compute(serviceEndpoint, (k, v) -> (v == null) ? 1 : v + serviceLoad);		
+			for (ServiceDescription service : serviceUsage.getItems()) {		
+				int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(service));
+				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? 1 : v + serviceLoad);		
 			}
 		}
 		
@@ -80,10 +81,10 @@ public class Planner extends CommunicationComponent {
 			
 			for (Description description : chosenServices.getDescriptions()) {		
 				
-				for (String serviceEndpoint : chosenServices.getAllServices(description).getItems()) {
+				for (ServiceDescription service : chosenServices.getAllServices(description).getItems()) {
 					
-					if (chosenServices.getServiceRegistry(serviceEndpoint).equals(registryEndpoint)) {
-						serviceChances.add(new Pair<String, Double>(serviceEndpoint, chosenServices.getAllServices(description).getChance(serviceEndpoint)));
+					if (service.getServiceRegistryEndpoint().equals(registryEndpoint)) {
+						serviceChances.add(new Pair<String, Double>(service.getServiceEndpoint(), chosenServices.getAllServices(description).getChance(service)));
 					}
 					
 				}

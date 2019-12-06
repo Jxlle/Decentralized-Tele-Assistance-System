@@ -154,9 +154,9 @@ public class TEST {
 		
 		
 		WeightedCollection<String> items = new WeightedCollection<String>();
-		items.add("50% kans", 50);
-		items.add("25% kans", 25);
-		items.add("25% kans 2", 25);
+		items.add("50% chance", 50);
+		items.add("25% chance", 25);
+		items.add("25% chance 2", 25);
 		
 		Map<String, Integer> kansenTest = new HashMap<String, Integer>();
 		
@@ -176,16 +176,16 @@ public class TEST {
 			System.err.print(s + " " + kansenTest.get(s) + " \n");
 		}
 		
-		items.remove("50% kans");
+		items.remove("50% chance");
 		System.err.print("----------------------------------------------\n");
 		
-		items.increaseWeight("25% kans", 1);
+		items.increaseWeight("25% chance", 1);
 		for (Integer s : items.getWeights()) {
 			System.err.print(s + "\n");
 		}
 		
 		System.err.print("----------------------------------------------\n");
-		System.err.print(items.getChance("25% kans") + "\n");
+		System.err.print(items.getChance("25% chance") + "\n");
 		
 		
 		@SuppressWarnings("unused")
@@ -240,7 +240,7 @@ public class TEST {
 		p1.sendMessage(new PlannerMessage(1, p2.getEndpoint(), p1.getEndpoint(), "test", null, null));
 		
 		
-		ServiceCombination combination = new ServiceCombination(null, null, ratingType.NUMBER, 1.0);
+		ServiceCombination combination = new ServiceCombination(null, ratingType.NUMBER, 1.0);
 
 		
 		System.err.print("------------------------------------------------------------ \n");

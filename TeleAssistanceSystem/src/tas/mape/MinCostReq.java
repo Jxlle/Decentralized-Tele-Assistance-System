@@ -51,26 +51,24 @@ public class MinCostReq extends AbstractWorkflowQoSRequirement {
 			}	
 		}
 		
+		ServiceCombination chosenServicesEntry;
+		Map<Description, WeightedCollection<ServiceDescription>> chosenServicesMap;
+		Map<Description, ServiceDescription> chosenServicesCombination;
+		
 		for (int i = 0; i < Math.min(combinationLimit, allServiceCombinations.size()); i++) {
 			
-			Map<Description, WeightedCollection<String>> chosenServicesMap = new HashMap<>();
-			Map<String, String> chosenServicesRegistryData = new HashMap<>();
-			Map<Description, ServiceDescription> chosenServicesCombination = allServiceCombinations.get(i);
-			ServiceCombination chosenServicesEntry;
+			chosenServicesMap = new HashMap<>();
+			chosenServicesCombination = allServiceCombinations.get(i);
 			
 			for (Description description : chosenServicesCombination.keySet()) {
 				
-				WeightedCollection<String> serviceCollection = new WeightedCollection<String>();
-				serviceCollection.add(chosenServicesCombination.get(description).getServiceEndpoint(), 100);		
+				WeightedCollection<ServiceDescription> serviceCollection = new WeightedCollection<ServiceDescription>();
+				serviceCollection.add(chosenServicesCombination.get(description), 100);		
 				chosenServicesMap.put(description, serviceCollection);
 				
 			}
 			
-			for (ServiceDescription serviceDescription : chosenServicesCombination.values()) {
-				chosenServicesRegistryData.put(serviceDescription.getServiceEndpoint(), serviceDescription.getServiceRegistryEndpoint());
-			}
-			
-			chosenServicesEntry = new ServiceCombination(chosenServicesMap, chosenServicesRegistryData, ratingType.NUMBER, scoreList.get(indexList.get(i)));
+			chosenServicesEntry = new ServiceCombination(chosenServicesMap, ratingType.NUMBER, scoreList.get(indexList.get(i)));
 			chosenServicesList.set(indexList.get(i), chosenServicesEntry);
 		}
 		
