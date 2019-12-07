@@ -8,6 +8,8 @@ import java.util.Map;
 
 import service.adaptation.effectors.WorkflowEffector;
 import service.composite.CompositeService;
+import tas.mape.planner.PlanComponent;
+import tas.mape.planner.PlanComponentType;
 
 /**
  * @author Jelle Van De Sijpe

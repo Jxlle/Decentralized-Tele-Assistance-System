@@ -1,4 +1,4 @@
-package tas.mape;
+package tas.mape.planner;
 
 /**
  * @author Jelle Van De Sijpe

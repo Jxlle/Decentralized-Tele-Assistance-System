@@ -1,4 +1,4 @@
-package tas.mape;
+package tas.mape.planner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import service.auxiliary.AbstractMessage;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
+import tas.mape.Executer;
 import tas.mape.communication.AbstractProtocol;
 import tas.mape.communication.CommunicationComponent;
 import tas.mape.knowledge.Knowledge;

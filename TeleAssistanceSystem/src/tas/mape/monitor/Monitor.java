@@ -1,4 +1,4 @@
-package tas.mape;
+package tas.mape.monitor;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,10 @@ import service.adaptation.probes.ServiceRegistryProbe;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.composite.CompositeService;
+import tas.mape.analyzer.Analyzer;
 import tas.mape.knowledge.Knowledge;
+import tas.mape.planner.PlanComponent;
+import tas.mape.planner.PlanComponentType;
 
 /**
  * @author Jelle Van De Sijpe

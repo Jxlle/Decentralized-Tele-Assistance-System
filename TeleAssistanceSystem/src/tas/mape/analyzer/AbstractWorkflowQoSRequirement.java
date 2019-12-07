@@ -1,4 +1,4 @@
-package tas.mape;
+package tas.mape.analyzer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,6 +8,7 @@ import java.util.Map;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
+import tas.mape.planner.ServiceCombination;
 
 /**
  * @author Jelle Van De Sijpe

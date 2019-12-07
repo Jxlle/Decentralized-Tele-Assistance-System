@@ -1,4 +1,4 @@
-package tas.mape;
+package tas.mape.monitor;
 
 import java.util.HashMap;
 import java.util.List;

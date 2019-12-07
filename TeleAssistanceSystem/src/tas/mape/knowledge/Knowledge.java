@@ -9,8 +9,8 @@ import java.util.TreeMap;
 import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
-import tas.mape.AbstractWorkflowQoSRequirement;
-import tas.mape.PlanComponent;
+import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
+import tas.mape.planner.PlanComponent;
 
 /**
  * @author Jelle Van De Sijpe

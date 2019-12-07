@@ -3,7 +3,7 @@ package tas.mape.communication;
 import java.util.List;
 
 import service.auxiliary.AbstractMessage;
-import tas.mape.Planner;
+import tas.mape.planner.Planner;
 
 public class PlannerProtocolTest extends AbstractProtocol {
 

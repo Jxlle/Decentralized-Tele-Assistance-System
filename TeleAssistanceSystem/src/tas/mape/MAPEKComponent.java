@@ -1,7 +1,10 @@
 package tas.mape;
 
 import service.composite.CompositeService;
+import tas.mape.analyzer.Analyzer;
 import tas.mape.knowledge.Knowledge;
+import tas.mape.monitor.Monitor;
+import tas.mape.planner.Planner;
 
 public class MAPEKComponent {
 	

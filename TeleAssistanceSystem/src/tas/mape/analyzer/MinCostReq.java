@@ -1,4 +1,4 @@
-package tas.mape;
+package tas.mape.analyzer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,8 @@ import java.util.Map;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
+import tas.mape.planner.ServiceCombination;
+import tas.mape.planner.ratingType;
 
 public class MinCostReq extends AbstractWorkflowQoSRequirement {
 	
