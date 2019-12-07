@@ -1,4 +1,4 @@
-package tas.mape;
+package tas.mape.communication;
 
 import java.util.HashMap;
 import java.util.Map;

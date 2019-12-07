@@ -12,6 +12,8 @@ import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import service.registry.ServiceRegistry;
+import tas.mape.communication.ComponentMessageHost;
+import tas.mape.communication.PlannerMessage;
 import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.services.alarm.AlarmService;
 import tas.services.assistance.AssistanceService;

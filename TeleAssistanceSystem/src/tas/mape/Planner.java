@@ -10,6 +10,8 @@ import service.auxiliary.AbstractMessage;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
+import tas.mape.communication.AbstractProtocol;
+import tas.mape.communication.CommunicationComponent;
 import tas.mape.knowledge.Knowledge;
 
 /**
@@ -20,23 +22,31 @@ import tas.mape.knowledge.Knowledge;
  */
 public class Planner extends CommunicationComponent {
 
-	Executer executer;
-	Knowledge knowledge;
+	private Executer executer;
+	private Knowledge knowledge;
 	private Boolean executed;
-	List<PlanComponent> plan;
-	List<ServiceCombination> chosenServicesList;
+	private AbstractProtocol protocol;
+	private List<PlanComponent> plan;
+	private List<ServiceCombination> chosenServicesList;
 	
 	public Planner(String endpoint, Executer executer) {
 		super(endpoint);
 		this.executer = executer;
 	}
 	
-	public void execute(List<ServiceCombination> chosenServicesList) {
-		this.chosenServicesList = chosenServicesList;
-		executed = true;
+	public AbstractProtocol getProtocol() {
+		return protocol;
 	}
 	
-	private void makePlan(Map<Description, WeightedCollection<String>> chosenServices, Map<String, Integer> serviceLoads) {
+	public void setProtocol(AbstractProtocol protocol) {
+		this.protocol = protocol;
+	}
+	
+	public void execute(List<ServiceCombination> chosenServicesList) {
+		this.chosenServicesList = chosenServicesList;
+	}
+	
+	public void makePlan(Map<Description, WeightedCollection<String>> chosenServices, Map<String, Integer> serviceLoads) {
 		
 		plan = new ArrayList<PlanComponent>();	
 		plan.add(new PlanComponent(PlanComponentType.SET_USED_SERVICES, chosenServices));
@@ -52,11 +62,13 @@ public class Planner extends CommunicationComponent {
 				plan.add(registryPlanComponent);
 			}
 			
+			knowledge.resetRegistryPlanComponents();
 		}
 		
+		executed = true;
 	}
 	
-	private Map<String, Integer> getServiceLoads(ServiceCombination chosenServices) {
+	public Map<String, Integer> getServiceLoads(ServiceCombination chosenServices) {
 		
 		Map<String, Integer> serviceLoads = new HashMap<String, Integer>();
 		
@@ -73,7 +85,7 @@ public class Planner extends CommunicationComponent {
 		return serviceLoads;
 	}
 	
-	private List<Pair<String, Double>> getPublicServiceChances(ServiceCombination chosenServices, List<String> registryEndpoints) {
+	public List<Pair<String, Double>> getPublicServiceChances(ServiceCombination chosenServices, List<String> registryEndpoints) {
 		
 		List<Pair<String, Double>> serviceChances = new ArrayList<>();
 		
@@ -107,8 +119,12 @@ public class Planner extends CommunicationComponent {
 	}
 
 	@Override
-	public void receiveMessage(AbstractMessage message) {
-		System.err.print("RECEIVED " + message + " " + getEndpoint());
-		// TODO transform message into planner message, use protocol
+	public void receiveMessage(AbstractMessage message) throws NullPointerException {
+		
+		if (protocol == null) {
+			throw new NullPointerException("Planner can't handle message receivement, no protocol selected.");
+		}
+		
+		protocol.receiveAndHandleMessage(message, this);
 	}
 }
