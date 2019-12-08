@@ -10,9 +10,9 @@ import service.auxiliary.AbstractMessage;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
-import tas.mape.Executer;
 import tas.mape.communication.AbstractProtocol;
 import tas.mape.communication.CommunicationComponent;
+import tas.mape.executer.Executer;
 import tas.mape.knowledge.Knowledge;
 
 /**

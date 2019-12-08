@@ -15,6 +15,7 @@ import service.registry.ServiceRegistry;
 import tas.mape.analyzer.MinCostReq;
 import tas.mape.communication.ComponentMessageHost;
 import tas.mape.communication.PlannerMessage;
+import tas.mape.executer.Executer;
 import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.mape.planner.PlanComponent;
 import tas.mape.planner.PlanComponentType;
@@ -252,7 +253,7 @@ public class TEST {
 
 		
 		System.err.print("------------------------------------------------------------ \n");
-		System.err.print("test: " + combination.getRate().getClass() + "\n");
+		System.err.print("test: " + combination.getRating().getClass() + "\n");
 		
 		
 		WorkflowAnalyzer wpi = new WorkflowAnalyzer();

@@ -505,19 +505,19 @@ public class CompositeService extends AbstractService {
     	    	resultVal = new TimeOutError();
     	    }
 
-    	    this.getWorkflowProbe().notifyServiceOperationInvoked(service, opName, params);	    
+    	    this.getWorkflowProbe().notifyServiceOperationInvoked((ServiceDescription) service.clone(), opName, params);	    
 
     	    int maxResponseTime = timeout != 0 ? timeout : service.getResponseTime() * 3;
     	    resultVal = this.sendRequest(service.getServiceType(), service.getServiceEndpoint(), true, maxResponseTime, opName, params);
 
     	    if (resultVal instanceof TimeOutError) {
-    	    	this.getWorkflowProbe().notifyServiceOperationTimeout(service, opName, params);
-    	    	registryProbe.notifyServiceFailed(service);
+    	    	this.getWorkflowProbe().notifyServiceOperationTimeout((ServiceDescription) service.clone(), opName, params);
+    	    	registryProbe.notifyServiceFailed((ServiceDescription) service.clone());
     	    } 
     	    else {  	
-    	    	this.getWorkflowProbe().notifyServiceOperationReturned(service, resultVal, opName, params);
-    	    	this.getCostProbe().notifyCostSubscribers(service, opName);
-    	    	registryProbe.notifyServiceSucceeded(service);
+    	    	this.getWorkflowProbe().notifyServiceOperationReturned((ServiceDescription) service.clone(), resultVal, opName, params);
+    	    	this.getCostProbe().notifyCostSubscribers((ServiceDescription) service.clone(), opName);
+    	    	registryProbe.notifyServiceSucceeded((ServiceDescription) service.clone());
     	    }
     	    
     	    if (stopRetrying.get() == true){

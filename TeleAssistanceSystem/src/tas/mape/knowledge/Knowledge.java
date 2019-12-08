@@ -26,15 +26,16 @@ public class Knowledge {
 	private Map<String, TreeMap<Integer, Double>> approximatedServiceFailureRates;
 	private Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses;
 	private List<PlanComponent> registryChangePlanComponents;
-	private int workflowCyclesMax, loadFailureDelta;
+	private int amountOfCycles, loadFailureDelta;
 	
-	// TODO ServiceDescriptions must be copy
+	// Service descriptions should actually be a copy of the real cache service descriptions, so the components can't change the load directly.
+	// This is skipped here because it slows down the execution of the workflow entity.
 	private Map<Description, List<ServiceDescription>> usableServices;
 	
 	// TODO
-	public Knowledge(int workflowCyclesMax, int loadFailureDelta, String currentQoSRequirement, Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+	public Knowledge(int amountOfCycles, int loadFailureDelta, String currentQoSRequirement, Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 		
-		this.workflowCyclesMax = workflowCyclesMax;
+		this.amountOfCycles = amountOfCycles;
 		this.loadFailureDelta = loadFailureDelta;
 		this.currentQoSRequirement = currentQoSRequirement;
 		this.QoSRequirementClasses = QoSRequirementClasses;
@@ -104,7 +105,7 @@ public class Knowledge {
 	}
 	
 	public int getServiceLoad(Description description, double usePercentage) {
-		return (int) (servicesUsageChance.get(description) * usePercentage * workflowCyclesMax);
+		return (int) (servicesUsageChance.get(description) * usePercentage * amountOfCycles);
 	}
 	
 	public List<PlanComponent> getRegistryPlanComponents() {
@@ -142,7 +143,7 @@ public class Knowledge {
 					}		
 					
 					// Fill failure rate map with the default service failure rate
-					for (int i = 0; i < workflowCyclesMax * loadFailureDelta; i++) {
+					for (int i = 0; i < amountOfCycles * loadFailureDelta; i++) {
 						failureRates.put(i * loadFailureDelta, serviceFailureRate);
 					}	
 				}
