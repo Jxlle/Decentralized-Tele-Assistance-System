@@ -36,12 +36,13 @@ public class Knowledge {
 	private Map<Description, List<ServiceDescription>> usableServices;
 	
 	// TODO
-	public Knowledge(int amountOfCycles, int loadFailureDelta, String currentQoSRequirement, Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+	public Knowledge(int amountOfCycles, int loadFailureDelta, String currentQoSRequirement, Map<String, Double> goals, Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 		
 		this.amountOfCycles = amountOfCycles;
 		this.loadFailureDelta = loadFailureDelta;
 		this.currentQoSRequirement = currentQoSRequirement;
 		this.QoSRequirementClasses = QoSRequirementClasses;
+		this.goals = goals;
 		
 		for (Description description : usableServicesAndChance.keySet()) {
 			servicesUsageChance.put(description, usableServicesAndChance.get(description).getValue());

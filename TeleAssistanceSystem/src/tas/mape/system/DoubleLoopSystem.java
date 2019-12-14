@@ -1,5 +1,6 @@
-package tas.mape.managingsystem;
+package tas.mape.system;
 
+// TODO
 public class DoubleLoopSystem {
 
 }
