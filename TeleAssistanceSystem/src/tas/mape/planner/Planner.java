@@ -57,9 +57,9 @@ public class Planner extends CommunicationComponent {
 		}
 		
 		// Extra: update cache with new registry info
-		if (knowledge.getRegistryPlanComponents().size() != 0) {
+		if (knowledge.getCachePlanComponents().size() != 0) {
 			
-			for (PlanComponent registryPlanComponent : knowledge.getRegistryPlanComponents()) {
+			for (PlanComponent registryPlanComponent : knowledge.getCachePlanComponents()) {
 				plan.add(registryPlanComponent);
 			}
 			

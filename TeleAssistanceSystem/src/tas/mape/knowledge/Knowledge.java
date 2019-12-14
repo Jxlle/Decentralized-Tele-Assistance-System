@@ -21,12 +21,15 @@ import tas.mape.planner.PlanComponent;
 public class Knowledge {
 	
 	private String currentQoSRequirement;
+	// TODO Goals
 	private Map<String, Double> goals;
 	private Map<Description, Double> servicesUsageChance;
-	private Map<String, TreeMap<Integer, Double>> approximatedServiceFailureRates;
+	private Map<String, HashMap<Integer, Double>> approximatedServiceFailureRates;
 	private Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses;
-	private List<PlanComponent> registryChangePlanComponents;
 	private int amountOfCycles, loadFailureDelta;
+	
+	// List of plan components containing information about needed changes to the cache as a result of changes in the service registries
+	private List<PlanComponent> cachePlanComponents;
 	
 	// Service descriptions should actually be a copy of the real cache service descriptions, so the components can't change the load directly.
 	// This is skipped here because it slows down the execution of the workflow entity.
@@ -45,109 +48,197 @@ public class Knowledge {
 			usableServices.put(description, usableServicesAndChance.get(description).getKey());
 		}
 		
-		initializeApproximatedServiceFailureRates();
-		registryChangePlanComponents = new ArrayList<>();
+		initializeApproximatedServicesFailureRates();
+		cachePlanComponents = new ArrayList<>();
 	}
 	
+	/**
+	 * Set the current system QoS requirement
+	 * @param currentQoSRequirement the new QoS requirement
+	 */
 	public void setCurrentQoSRequirement(String currentQoSRequirement) {
 		this.currentQoSRequirement = currentQoSRequirement;
 	}
 	
+	/**
+	 * Return the current system QoS requirement
+	 * @return the current system QoS requirement
+	 */
 	public String getCurrentQoSRequirement() {
 		return currentQoSRequirement;
 	}
-	
+
+	/**
+	 * Return the requirement class that represents the given requirement name
+	 * @param requirementName the given requirement name
+	 * @return the QoS requirement class
+	 */
 	public AbstractWorkflowQoSRequirement getQoSRequirementClass(String requirementName) {
 		return QoSRequirementClasses.get(requirementName);
 	}
 	
-	public void setQoSRequirementClass(String requirementName, AbstractWorkflowQoSRequirement requirementClass) {
+	/**
+	 * Add a new requirement class linked to a given requirement name
+	 * @param requirementName the given requirement name
+	 * @param requirementClass the new requirement class
+	 * @throws IllegalArgumentException throw when the given requirement name is already linked to a requirement class
+	 */
+	public void AddQoSRequirementClass(String requirementName, AbstractWorkflowQoSRequirement requirementClass) throws IllegalArgumentException {
+	
+		if (QoSRequirementClasses.get(requirementName) == null) {
+			throw new IllegalArgumentException("The given requirement name is already linked to a requirement class!");
+		}
+		
 		QoSRequirementClasses.put(requirementName, requirementClass);
 	}
 	
-	public void setApproximatedServiceFailureRate(String serviceEndpoint, int load, double failureRate) {
-		TreeMap<Integer, Double> approximatedFailureRate = approximatedServiceFailureRates.get(serviceEndpoint);
-		approximatedFailureRate.put(load, failureRate);
-		approximatedServiceFailureRates.put(serviceEndpoint, approximatedFailureRate);
-	}
-	
-	public Double getApproximatedServiceFailureRate(String serviceEndpoint, int load) throws IllegalArgumentException {
+	/**
+	 * Set the approximated service failure rate for a given service to the given failure rate at the given load
+	 * @param serviceEndpoint the given service endpoint
+	 * @param load the given load
+	 * @param failureRate the given failure rate
+	 * @throws IllegalArgumentException throw when the approximated service failure rate for the given serviceEndpoint was not found
+	 */
+	public void setApproximatedServiceFailureRate(String serviceEndpoint, int load, double failureRate) throws IllegalArgumentException {
 		
-		if (approximatedServiceFailureRates.get(serviceEndpoint) != null) {
-			
-			TreeMap<Integer, Double> serviceFailureTable = approximatedServiceFailureRates.get(serviceEndpoint);
-			Map.Entry<Integer, Double> entry = serviceFailureTable.ceilingEntry(load);
-			
-			if (entry == null) {
-				serviceFailureTable.floorEntry(load);
-			}
-						
-			return entry.getValue();
+		if (approximatedServiceFailureRates.get(serviceEndpoint) == null) {
+			throw new IllegalArgumentException("The approximated service failure rate for " + serviceEndpoint + " was not found! \n");
 		}
 		
-		throw new IllegalArgumentException("Something went wrong! Service endpoint " + serviceEndpoint + " was not found. \n");
+		int loadKeyHigh = (load / loadFailureDelta) + 1;
+		approximatedServiceFailureRates.get(serviceEndpoint).put(loadKeyHigh, failureRate);
 	}
 	
+	/**
+	 * Get the approximated service failure rate for a given service at the given load.
+	 * If the failure rate is not present in the table, then update the table.
+	 * @param serviceEndpoint the given service endpoint
+	 * @param load the given load
+	 * @throws IllegalArgumentException throw when the approximated service failure rate for the given serviceEndpoint was not found
+	 */
+	public Double getApproximatedServiceFailureRate(String serviceEndpoint, int load) throws IllegalArgumentException {
+		
+		if (approximatedServiceFailureRates.get(serviceEndpoint) == null) {
+			throw new IllegalArgumentException("The approximated service failure rate for " + serviceEndpoint + " was not found! \n");
+		}
+		
+		HashMap<Integer, Double> serviceFailureTable = approximatedServiceFailureRates.get(serviceEndpoint);
+		int loadKeyHigh = (load / loadFailureDelta) + 1;
+		
+		if (serviceFailureTable.get(loadKeyHigh) == null) {
+			serviceFailureTable.put(loadKeyHigh, serviceFailureTable.get(0));
+		}
+					
+		return serviceFailureTable.get(loadKeyHigh);
+	}
+	
+	/**
+	 * Returns the list of usable services
+	 * @return the list of usable services
+	 * @note Should actually return a deep copy of the list, but slows down execution
+	 */
 	public Map<Description, List<ServiceDescription>> getUsableServices() {
 		return usableServices;
 	}
 	
+	/**
+	 * Add a given service to the usable services map for a given service type and operation name.
+	 * Its approximated failure rate is also removed initialized.
+	 * @param description the given service type and operation name
+	 * @param serviceDescription the given service to be added
+	 */
 	public void addUsableService(Description description, ServiceDescription serviceDescription) {	
 		if (usableServices.get(description) != null) {
 			usableServices.get(description).add(serviceDescription);
+			InitializeApproximatedServiceFailureRates(serviceDescription);
 		}
 	}
 	
-	public void removeUsableService(Description description, ServiceDescription serviceDescription) {
+	/**
+	 * Remove a given service from the usable services map for a given service type and operation name.
+	 * Its approximated failure rate is also removed.
+	 * @param description the given service type and operation name
+	 * @param serviceDescription the given service to be deleted
+	 */
+	public void removeUsableService(Description description, ServiceDescription serviceDescription) throws IllegalArgumentException {
+		
 		if (usableServices.get(description) != null) {
 			usableServices.get(description).remove(serviceDescription);
+			approximatedServiceFailureRates.remove(serviceDescription.getServiceEndpoint());
 		}
 	}
 	
+	/**
+	 * Return the service load based of a given service description and use percentage (use chance)
+	 * @param description the given service description of the service whose load is calculated
+	 * @param usePercentage the given use percentage (use chance)
+	 * @return the service load
+	 */
 	public int getServiceLoad(Description description, double usePercentage) {
 		return (int) (servicesUsageChance.get(description) * usePercentage * amountOfCycles);
 	}
 	
-	public List<PlanComponent> getRegistryPlanComponents() {
-		return registryChangePlanComponents;
+	/**
+	 * Return the cache plan components 
+	 * @return the cache plan components 
+	 */
+	public List<PlanComponent> getCachePlanComponents() {
+		return cachePlanComponents;
 	}
 	
-	public void addregistryChangePlanComponents(PlanComponent registryPlanComponent) {
-		registryChangePlanComponents.add(registryPlanComponent);
+	/**
+	 * Add a given plan component to the cache plan components
+	 * @param cachePlanComponent the given plan component
+	 */
+	public void addCachePlanComponents(PlanComponent cachePlanComponent) {
+		cachePlanComponents.add(cachePlanComponent);
 	}
 	
+	/**
+	 * Reset the cache plan components
+	 */
 	public void resetRegistryPlanComponents() {
-		registryChangePlanComponents.clear();
+		cachePlanComponents.clear();
 	}
 	
-	private void initializeApproximatedServiceFailureRates() {
+	/**
+	 * Initialize the approximated failure rates for all currently usable services.
+	 */
+	private void initializeApproximatedServicesFailureRates() {
 		
 		// New HashMap
 		approximatedServiceFailureRates = new HashMap<>();
 		
 		// Loop over all service descriptions
 		for (List<ServiceDescription> serviceDescriptions : usableServices.values()) {
-			for (ServiceDescription serviceDescription : serviceDescriptions) {
-				
-				// If service description is new
-				if (approximatedServiceFailureRates.get(serviceDescription.getServiceEndpoint()) != null) {
-					
-					// New TreeMap
-					approximatedServiceFailureRates.put(serviceDescription.getServiceEndpoint(), new TreeMap<>());
-					
-					Map<Integer, Double> failureRates = new TreeMap<>();
-					double serviceFailureRate = 0;
-					
-					if (serviceDescription.getCustomProperties().containsKey("FailureRate")) {
-						serviceFailureRate = (double) serviceDescription.getCustomProperties().get("FailureRate");
-					}		
-					
-					// Fill failure rate map with the default service failure rate
-					for (int i = 0; i < amountOfCycles * loadFailureDelta; i++) {
-						failureRates.put(i * loadFailureDelta, serviceFailureRate);
-					}	
-				}
+			for (ServiceDescription serviceDescription : serviceDescriptions) {			
+				InitializeApproximatedServiceFailureRates(serviceDescription);
 			}
+		}
+	}
+	
+	/**
+	 * Initialize a table that contains the approximated failure rates for each currently usable service.
+	 * This table is initialized for each service with a map that represents the failure rate for a given load.
+	 * The default failure rate for the service is added as an initial value in the map.
+	 */
+	private void InitializeApproximatedServiceFailureRates(ServiceDescription serviceDescription) {
+		
+		// If service description is new
+		if (approximatedServiceFailureRates.get(serviceDescription.getServiceEndpoint()) != null) {
+			
+			// New TreeMap
+			approximatedServiceFailureRates.put(serviceDescription.getServiceEndpoint(), new HashMap<>());
+			
+			Map<Integer, Double> failureRates = new TreeMap<>();
+			double serviceFailureRate = 0;
+			
+			if (serviceDescription.getCustomProperties().containsKey("FailureRate")) {
+				serviceFailureRate = (double) serviceDescription.getCustomProperties().get("FailureRate");
+			}		
+			
+			// Fill first value in failure rate map with the default fail rate of the service
+			failureRates.put(0, serviceFailureRate);
 		}
 	}
 }

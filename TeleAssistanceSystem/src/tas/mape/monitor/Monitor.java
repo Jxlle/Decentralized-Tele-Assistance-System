@@ -119,7 +119,7 @@ public class Monitor {
 				throw new RuntimeException("Cache service change type is illegal!");
 			}	
 			
-			knowledge.addregistryChangePlanComponents(planComponent);
+			knowledge.addCachePlanComponents(planComponent);
 		}	
 	}
 	

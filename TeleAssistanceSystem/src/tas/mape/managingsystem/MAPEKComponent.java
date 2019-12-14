@@ -26,7 +26,7 @@ public class MAPEKComponent {
 	private Knowledge knowledge;
 	private CompositeService compositeService;
 	
-	// TODO Make builder class or remove some constructor paramters and add them as method.
+	// TODO Make builder class or remove some constructor parameters and add them as method.
 	
 	public MAPEKComponent(int loadFailureDelta, int combinationLimit, double minFailureDelta, double failureChange, String currentQoSRequirement, 
 			String plannerEndpoint, Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses, Map<String, Integer> QoSStrategies, 
