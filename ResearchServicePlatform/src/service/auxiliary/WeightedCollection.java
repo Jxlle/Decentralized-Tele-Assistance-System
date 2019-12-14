@@ -97,7 +97,7 @@ public class WeightedCollection<E> {
 	 * @param item the item that needs its weight to decrease
 	 * @param decreasement the weight decreasement
 	 * @throws IllegalArgumentException throw when weight decreasement is too big
-	 * 									throw when decreasement is actually an increasement
+	 * @throws IllegalArgumentException	throw when decreasement is actually an increasement
 	 */
 	public void decreaseWeight(E item, int decreasement) throws IllegalArgumentException {
 		int pairIndex = items.indexOf(items.stream().filter(p -> p.getKey().equals(item)).findFirst().orElse(null));	

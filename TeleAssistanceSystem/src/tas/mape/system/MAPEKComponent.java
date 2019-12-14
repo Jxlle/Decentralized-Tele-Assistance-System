@@ -25,6 +25,7 @@ public class MAPEKComponent {
 	
 	/**
 	 * Private class used as a builder to build MAPE-K component objects.
+	 * This class is used to avoid a big constructor for the MAPE-K component.
 	 */
 	public static class Builder {
 		
@@ -33,20 +34,12 @@ public class MAPEKComponent {
 		private Planner planner;
 		private Executer executer;
 		private Knowledge knowledge;
-		private CompositeService compositeService;
 		
 		/**
-		 * Create a new builder with a given composite service
-		 * @param compositeService the given composite service
-		 * @throws IllegalArgumentException throw when the given composite service is null
+		 * Create a new builder with an initialized executer
 		 */
-		public Builder(CompositeService compositeService) throws IllegalArgumentException {
-			
-			if (compositeService == null) {
-				throw new IllegalArgumentException("Composite service parameter can't be null!");
-			}
-			
-			this.compositeService = compositeService;
+		public Builder() {
+			executer = new Executer();
 		}
 		
 		/**
@@ -61,11 +54,6 @@ public class MAPEKComponent {
 		public Builder initializeKnowledge(int loadFailureDelta, String currentQoSRequirement, Map<String, Double> goals, Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 			
 			knowledge = new Knowledge(MAPEKComponent.amountOfCycles, loadFailureDelta, currentQoSRequirement, goals, QoSRequirementClasses, usableServicesAndChance);
-			return this;
-		}
-		
-		public Builder initializeExecuter(CompositeService compositeService) {
-			executer = new Executer(compositeService);
 			return this;
 		}
 		
@@ -125,7 +113,7 @@ public class MAPEKComponent {
 				throw new InstantiationException("Analyzer field is null!");
 			}
 			
-			monitor = new Monitor(compositeService, knowledge, analyzer, minFailureDelta, failureChange);
+			monitor = new Monitor(knowledge, analyzer, minFailureDelta, failureChange);
 			return this;
 		}
 		
@@ -145,6 +133,7 @@ public class MAPEKComponent {
 			component.monitor = monitor;
 			component.analyzer = analyzer;
 			component.planner = planner;
+			component.executer = executer;
 			
 			return component;
 		}	
@@ -156,6 +145,7 @@ public class MAPEKComponent {
 	private Monitor monitor;
 	private Analyzer analyzer;
 	private Planner planner;
+	private Executer executer;
 	
 	/**
 	 * Create a new MAPE-K component.
@@ -163,34 +153,50 @@ public class MAPEKComponent {
 	 */
 	private MAPEKComponent() {}
 	
+	/**
+	 * Initialize the executer components with the given composite service.
+	 * @param compositeService the given composite service
+	 */
+	public void initializeExecuterEffectors(CompositeService compositeService) {
+		executer.initializeEffectors(compositeService);
+	}
+	
+	/**
+	 * Connect all monitor probes with the probes of the given composite service
+	 * @param compositeService the given composite service
+	 */
+	public void connectMonitorProbes(CompositeService compositeService) {
+		monitor.connectProbes(compositeService);
+	}
+	
 	// The methods below are used to simulate the mape loop for multiple workflow entities 'concurrently'
 	// instead of using multiple threads. Using multiple threads is possible, but can introduce race conditions.
 	
 	/**
 	 * Execute the monitor component
 	 */
-	public void ExecuteMonitor() {
+	public void executeMonitor() {
 		monitor.execute();
 	}
 	
 	/**
 	 * Execute the analyzer component
 	 */
-	public void ExecuteAnalyzer() {
+	public void executeAnalyzer() {
 		monitor.triggerAnalyzer();
 	}
 	
 	/**
 	 * Execute the planner component
 	 */
-	public void ExecutePlanner() {
+	public void executePlanner() {
 		analyzer.triggerPlanner();
 	}
 	
 	/**
 	 * Execute the executer component
 	 */
-	public void ExecuteExecuter() {
+	public void executeExecuter() {
 		planner.triggerExecuter();
 	}
 }

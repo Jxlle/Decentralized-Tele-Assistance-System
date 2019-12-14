@@ -23,14 +23,19 @@ public class Executer {
 	Map<String, Object> effectors;
 	
 	/**
-	 * Create a new executer and initialize its effectors using a given composite service
-	 * @param compositeService the given composite service that the effectors will effect
+	 * Create a new executer and initialize its effectors list using a given composite service
 	 */
-	public Executer(CompositeService compositeService) {
-		
-		WorkflowEffector workflowEffector = new WorkflowEffector(compositeService);
-		
+	public Executer() {		
 		effectors = new HashMap<>();
+	}
+	
+	/**
+	 * Initialize executer effectors
+	 * @param compositeService the given composite service that the effectors will affect
+	 * @note Should be executed before using executer
+	 */
+	public void initializeEffectors(CompositeService compositeService) {
+		WorkflowEffector workflowEffector = new WorkflowEffector(compositeService);
 		effectors.put("workflowEffector", workflowEffector);
 	}
 	

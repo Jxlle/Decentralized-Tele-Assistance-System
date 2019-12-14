@@ -158,7 +158,8 @@ public class TEST {
 		PlanComponent planComp1 = new PlanComponent(planType1, "service.drug", 2);
 		plan.add(planComp1);
 		
-		Executer executer = new Executer(assistanceService);
+		Executer executer = new Executer();
+		executer.initializeEffectors(assistanceService);
 		executer.execute(plan);
 		
 		

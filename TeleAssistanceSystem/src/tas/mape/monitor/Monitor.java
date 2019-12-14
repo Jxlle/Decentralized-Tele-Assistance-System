@@ -27,12 +27,14 @@ public class Monitor {
 	private Boolean analyzerRequired, executed;
 	private double minFailureDelta, failureChange;
 	
-	public Monitor(CompositeService compositeService, Knowledge knowledge, Analyzer analyzer, double minFailureDelta, double failureChange) {
+	public Monitor(Knowledge knowledge, Analyzer analyzer, double minFailureDelta, double failureChange) {
 		
 		this.knowledge = knowledge;
-		this.analyzer = analyzer;
-		
+		this.analyzer = analyzer;	
 		workflowProbe = new MonitorWorkflowProbe();
+	}
+	
+	public void connectProbes(CompositeService compositeService) {
 		
 		// Subscribe to workflow probe
 		compositeService.getWorkflowProbe().register(workflowProbe);
