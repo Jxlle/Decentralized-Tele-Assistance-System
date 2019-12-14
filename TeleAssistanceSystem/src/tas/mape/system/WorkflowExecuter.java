@@ -5,7 +5,7 @@ import service.composite.CompositeService;
 // TODO
 public class WorkflowExecuter {
 
-	CompositeService compositeService;
+	private CompositeService compositeService;
 	
 	public void executeWorkflow() {
 		

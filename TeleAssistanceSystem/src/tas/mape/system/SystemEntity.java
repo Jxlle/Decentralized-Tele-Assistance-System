@@ -8,8 +8,8 @@ package tas.mape.system;
  */
 public class SystemEntity {
 	
-	WorkflowExecuter managedSystem;
-	MAPEKComponent managingSystem;
+	private WorkflowExecuter managedSystem;
+	private MAPEKComponent managingSystem;
 	
 	/**
 	 * Create a new system entity with a given managed and managing system and link them together
