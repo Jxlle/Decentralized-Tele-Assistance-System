@@ -17,6 +17,7 @@ import tas.mape.communication.ComponentMessageHost;
 import tas.mape.communication.PlannerMessage;
 import tas.mape.executer.Executer;
 import tas.mape.knowledge.WorkflowAnalyzer;
+import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.planner.PlanComponent;
 import tas.mape.planner.PlanComponentType;
 import tas.mape.planner.Planner;
@@ -202,6 +203,7 @@ public class TEST {
 		MinCostReq mcr = new MinCostReq();
 		
 		// ANALYZER TEST
+		// TODO CACHES PRIVATE
 		assistanceService.getCache().getServiceWithEndpoint("service.alarmService3");
 		List<ServiceCombination> services = mcr.applyStrategy(new Pair<Integer, Integer>(1, 1), 10, RatingType.NUMBER, null, assistanceService.getCache().caches);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);

@@ -5,6 +5,7 @@ package tas.mape.knowledge;
  * @email jelle.vandesijpe@student.kuleuven.be
  * 
  * Class representing a system goal
+ * @note An entity should never contain 2 goals with the same type
  */
 public class Goal {
 	
@@ -13,10 +14,47 @@ public class Goal {
 	private GoalRelation relation;
 	private double value;
 	
-	// Available goal types
+	// Goal type enum
 	public enum GoalType {
-		COST,
-		FAILURE_RATE;
+				
+		// Avalaible goal types
+		COST("Cost"),
+		FAILURE_RATE("FailureRate");
+		
+		// String representation of the goal type
+		private String requirementName;
+		
+		/**
+		 * Create a new goal type with a given requirement name
+		 * @param requirementName the given requirement name
+		 */
+		private GoalType(String requirementName) {
+			this.requirementName = requirementName;
+		}
+		
+		/**
+		 * Return the requirement name
+		 * @return the requirement name
+		 */
+		public String getRequirementName() {
+			return requirementName;
+		}
+		
+		/**
+		 * Return a goal type from a given requirement name
+		 * @param reqName the given requirement name
+		 * @return the found goal type
+		 * @throws IllegalArgumentException throw when no goal type with the given requirement name was found
+		 */
+	    public static GoalType fromString(String reqName) throws IllegalArgumentException {
+	        for (GoalType goalType : GoalType.values()) {
+	            if (goalType.requirementName.equalsIgnoreCase(reqName)) {
+	                return goalType;
+	            }
+	        }
+	        
+	        throw new IllegalArgumentException("No goal type with requirement name " + reqName + " was found!");
+	    }
 	}
 	
 	// Available goal relations
@@ -24,7 +62,7 @@ public class Goal {
 		HIGHER_THAN,
 		HIGHER_OR_EQUAL_TO,
 		LOWER_THAN,
-		LOWER_OR_EQUAL_TO
+		LOWER_OR_EQUAL_TO;
 	}
 	
 	/**

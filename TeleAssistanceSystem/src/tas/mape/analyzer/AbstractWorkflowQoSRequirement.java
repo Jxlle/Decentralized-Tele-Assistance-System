@@ -12,6 +12,7 @@ import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import tas.mape.knowledge.Goal;
+import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 
@@ -170,47 +171,36 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * Calculate the service combination rating for a given service combination, rating type, requirement and multiplier
 	 * @param combination the given service combination without rating or type
 	 * @param ratingType the given rating type
-	 * @param requirement the given requirement where the service combination rating is based on
+	 * @param requirement the given requirement where the service combination rating is based off
 	 * @param goals the given system goals
 	 * @return the calculated service combination rating
 	 * @throws IllegalArgumentException throw when rating generation for given rating type isn't implemented.
-	 * @throws IllegalArgumentException throw when NUMBER rating generation for given requirement isn't implemented.
-	 * @throws IllegalArgumentException throw when CLASS rating generation for given requirement isn't implemented.
+	 * @throws IllegalArgumentException throw when NUMBER rating generation for given requirement isn't implemented
+	 * @throws IllegalArgumentException throw when CLASS rating generation for given requirement isn't implemented
 	 */
 	protected Object getServiceCombinationRating(Map<Description, WeightedCollection<ServiceDescription>> combination, RatingType ratingType, String requirement, List<Goal> goals) throws IllegalArgumentException {
 		
 		switch (ratingType) {
 		
-			case NUMBER:
+		case NUMBER:
+			
+			switch (requirement) {
 				
-				switch (requirement) {
-					
-					case "Cost":
-						return calculateNumberRatingCost(combination);
-					
-					case "FailureRate":
-						return calculateNumberRatingFailureRate(combination);
-				
-					default:
-						throw new IllegalArgumentException("NUMBER rating generation for given requirement isn't implemented!");
-				}
-				
-			case CLASS:
-				
-				switch (requirement) {
-					
-					case "Cost":
-						return calculateClassRatingCost(combination, goals);
-					
-					case "FailureRate":
-						return calculateClassRatingFailureRate(combination, goals);
-				
-					default:
-						throw new IllegalArgumentException("CLASS rating generation for given requirement isn't implemented!");
-			}
-				
+			case "Cost":
+				return calculateNumberRatingCost(combination);
+			
+			case "FailureRate":
+				return calculateNumberRatingFailureRate(combination);
+		
 			default:
-				throw new IllegalArgumentException("Rating generation for given rating type isn't implemented!");
+				throw new IllegalArgumentException("NUMBER rating generation for given requirement isn't implemented!");
+			}
+			
+		case CLASS:	
+			return calculateClassRating(combination, goals, requirement);
+			
+		default:
+			throw new IllegalArgumentException("Rating generation for given rating type isn't implemented!");
 		}
 	}
 	
@@ -273,22 +263,78 @@ public abstract class AbstractWorkflowQoSRequirement {
 	}
 	
 	/**
-	 * Calculate the rating of a given service combination for the CLASS rating type and the "Cost" requirement
+	 * Calculate the rating of a given service combination for the CLASS rating type and a given requirement
 	 * @param combination the given service combination without rating or type
+	 * @param requirement the given requirement where the service combination rating is based off
+	 * @param goals the given system goals
 	 * @return the rating of the service combination
+	 * @throws IllegalStateException throw when class rating generation for given class relation isn't implemented
+	 * @throws IllegalStateException throw when list of goals doesn't include the right goal type
 	 */
-	protected String calculateClassRatingCost(Map<Description, WeightedCollection<ServiceDescription>> combination, List<Goal> goals) {
-		// TODO
-		return null;
-	}
-	
-	/**
-	 * Calculate the rating of a given service combination for the CLASS rating type and the "FailureRate" requirement
-	 * @param combination the given service combination without rating or type
-	 * @return the rating of the service combination
-	 */
-	protected String calculateClassRatingFailureRate(Map<Description, WeightedCollection<ServiceDescription>> combination, List<Goal> goals) {
-		// TODO
-		return null;
+	protected int calculateClassRating(Map<Description, WeightedCollection<ServiceDescription>> combination, List<Goal> goals, String requirement) throws IllegalStateException {
+		
+		double totalValue = 0;
+		
+		for (Description description : combination.keySet()) {
+			
+			for (ServiceDescription service : combination.get(description).getItems()) {
+				
+				if (service.getCustomProperties().containsKey(requirement)) {
+					totalValue += (double) service.getCustomProperties().get(requirement);
+				}
+			}
+		}
+		
+		for (Goal goal : goals) {
+			
+			if (goal.getType() == GoalType.valueOf(requirement)) {
+				
+				switch (goal.getRelation()) {
+				
+				case HIGHER_THAN:
+					
+						if (totalValue > goal.getValue()) {
+							return 0;
+						}
+						else {
+							return 1;
+						}
+						
+				case HIGHER_OR_EQUAL_TO:
+					
+					if (totalValue >= goal.getValue()) {
+						return 0;
+					}
+					else {
+						return 1;
+					}
+					
+				case LOWER_THAN:
+
+					if (totalValue < goal.getValue()) {
+						return 0;
+					}
+					else {
+						return 1;
+					}
+					
+				case LOWER_OR_EQUAL_TO:
+					
+					if (totalValue <= goal.getValue()) {
+						return 0;
+					}
+					else {
+						return 1;
+					}
+					
+				default:
+					
+					throw new IllegalStateException("Class rating generation for given class relation isn't implemented!");
+					
+				}
+			}
+		}
+		
+		throw new IllegalStateException("List of goals doesn't include the right goal type! Called wrong method?");
 	}
 }
