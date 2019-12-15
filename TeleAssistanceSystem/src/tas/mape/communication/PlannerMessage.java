@@ -14,6 +14,7 @@ import service.auxiliary.WeightedCollection;
  */
 public class PlannerMessage extends AbstractMessage {
 	
+	// Fields
 	private String senderEndpoint;
 	private Map<String, Integer> serviceLoads;
 	private Map<Description, WeightedCollection<String>> chosenServices;

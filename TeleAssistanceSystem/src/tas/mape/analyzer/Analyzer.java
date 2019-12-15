@@ -3,11 +3,13 @@ package tas.mape.analyzer;
 import java.util.List;
 import java.util.Map;
 
+import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
-import service.auxiliary.WeightedCollection;
+import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.Planner;
+import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 
 /**
@@ -16,46 +18,48 @@ import tas.mape.planner.ServiceCombination;
  *  
  * Class that represents the analyzer component in a MAPE-K component
  */
-// TODO "plannerrequired" and "executed" add needed
 public class Analyzer {
 	
-	// Properties
+	// Fields
 	private Knowledge knowledge;
 	private Planner planner;
-	private Boolean executed;
+	private Boolean plannerRequired, executed;
+	private RatingType ratingType;
 	private int combinationLimit;
-	private Map<String, Integer> QoSStrategies;
+	private Map<String, Pair<Integer, Integer>> QoSStrategies;
 	private List<ServiceCombination> chosenServicesList;
 	
 	/**
-	 * Create a new analyzer with a given knowledge and planner component, a combination limit and a map of QoS strategies.
-	 * @param knowledge the knowledge component
-	 * @param planner the planner component
-	 * @param combinationLimit the combination limit that will decide how much service combinations will be chosen in the execute step
-	 * @param QoSStrategies a map containing the strategy number for each QoS reuirement
+	 * Create a new analyzer with a given knowledge and planner component, a combination limit and the service combination rating type.
+	 * @param knowledge the given knowledge component
+	 * @param planner the given planner component
+	 * @param combinationLimit the given combination limit that will decide how much service combinations will be chosen in the execute step
+	 * @param ratingType the given type of the rating for service combinations 
+	 * @param QoSStrategies a map containing the strategy for each QoS requirement
 	 */
-	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, Map<String, Integer> QoSStrategies) {
+	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, RatingType ratingType, Map<String, Pair<Integer, Integer>> QoSStrategies) {
 		this.knowledge = knowledge;
 		this.planner = planner;
 		this.combinationLimit = combinationLimit;
+		this.ratingType = ratingType;
 		this.QoSStrategies = QoSStrategies;
 	}
 	
 	/**
-	 * Return the strategy number for a given QoS requirement name
-	 * @param requirementName the QoS requirement name
-	 * @return the QoS strategy number
+	 * Return the strategy for a given QoS requirement name
+	 * @param requirementName the given QoS requirement name
+	 * @return the strategy
 	 */
-	public int getQoSStrategy(String requirementName) {
+	public Pair<Integer, Integer> getQoSStrategy(String requirementName) {
 		return QoSStrategies.get(requirementName);
 	}
 	
 	/**
-	 * Update or add a certain QoS strategy using a given QoS requirement name and strategy number
-	 * @param requirementName the QoS requirement name
-	 * @param strategy the strategy number
+	 * Update or add a certain QoS strategy using a given QoS requirement name and strategy
+	 * @param requirementName the given QoS requirement name
+	 * @param strategy the given strategy
 	 */
-	public void setQoSStrategy(String requirementName, int strategy) {
+	public void setQoSStrategy(String requirementName, Pair<Integer, Integer> strategy) {
 		QoSStrategies.put(requirementName, strategy);
 	}
 
@@ -64,38 +68,41 @@ public class Analyzer {
 	 */
 	public void execute() {	
 		
-		// Get QoS requirement and chosen strategy
-		String requirementName = knowledge.getCurrentQoSRequirement();
+		// Choose service combinations
+		chosenServicesList = chooseServices();
 		
-		// Choose service options
-		Map<Description, List<ServiceDescription>> usableServices = knowledge.getUsableServices();
-		chosenServicesList = chooseServices(requirementName, usableServices);
+		// Check if planner is required
+		if (chosenServicesList.size() > 0) {
+			plannerRequired = true;
+		}
 		
 		executed = true;
 	}
 	
 	/**
-	 * Trigger the planner
+	 * Trigger the planner when the analyzer has been executed and when the planner is needed.
 	 */
 	public void triggerPlanner() {
-		if (executed) {
+		if (plannerRequired && executed) {
 			planner.execute(chosenServicesList);
 			executed = false;
+			plannerRequired = false;
 		}
 	}
 	
 	/**
-	 * Return the chosen services of the analyzer given a QoS requirement name and a map of usable services.
-	 * This method applies a strategy for a certain QoS requirement and returns the N (based on local property) best service combinations based on that.
-	 * @param requirementName the QoS requirement name
-	 * @param usableServices a map of services that can be used per description
+	 * Return the chosen services of the analyzer.
+	 * This method applies a strategy for a certain QoS requirement and returns the N (based on combination limit) best 
+	 * service combinations rated with the analyzer rating type.
 	 * @return The list of the best N chosen service combinations
 	 */
-	private List<ServiceCombination> chooseServices(String requirementName, Map<Description, List<ServiceDescription>> usableServices) {
+	private List<ServiceCombination> chooseServices() {
 		
+		String requirementName = knowledge.getCurrentQoSRequirement();
+		Map<Description, List<ServiceDescription>> usableServices = knowledge.getUsableServices();
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirementName);
-		int strategy = getQoSStrategy(requirementName);
+		List<Goal> goals = knowledge.getGoals();
 		
-		return requirementClass.applyStrategy(strategy, combinationLimit, usableServices);
+		return requirementClass.applyStrategy(getQoSStrategy(requirementName), combinationLimit, ratingType, goals, usableServices);
 	}
 }

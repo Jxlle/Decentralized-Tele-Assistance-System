@@ -21,6 +21,7 @@ import tas.mape.planner.PlanComponentType;
  */
 public class Monitor {
 	
+	// Fields
 	private Knowledge knowledge;
 	private Analyzer analyzer;
 	private MonitorWorkflowProbe workflowProbe;
@@ -92,9 +93,10 @@ public class Monitor {
 			
 			if (newServiceFailureRate != currentServiceFailureRate) {
 				
-				analyzerRequired = true;
+				if (!analyzerRequired && newServiceFailureRate == knowledge.getApproximatedServiceFailureRate(serviceEndpoint, serviceInvocations.get(serviceEndpoint))) {
+					analyzerRequired = true;
+				}
 				
-				// TODO function that checks whether a failure rate needs to be changed. Give service invocations or previous load? 
 				knowledge.setApproximatedServiceFailureRate(serviceEndpoint, serviceInvocations.get(serviceEndpoint), newServiceFailureRate);
 			}
 		}
@@ -161,6 +163,7 @@ public class Monitor {
 		if (analyzerRequired && executed) {
 			analyzer.execute();
 			executed = false;
+			analyzerRequired = false;
 		}
 	}
 	

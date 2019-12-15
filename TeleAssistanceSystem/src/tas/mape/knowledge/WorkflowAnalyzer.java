@@ -24,6 +24,7 @@ import service.utility.Time;
  */
 public class WorkflowAnalyzer {
 	
+	// Fields
 	private int currentSteps;
 	private boolean isStopped, hasBeenStopped;
 	private WorkflowAnalyzerProbe workflowAnalyzerProbe = new WorkflowAnalyzerProbe();

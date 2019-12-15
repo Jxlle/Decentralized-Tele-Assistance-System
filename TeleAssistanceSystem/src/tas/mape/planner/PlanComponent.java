@@ -8,6 +8,7 @@ package tas.mape.planner;
  */
 public class PlanComponent {
 	
+	// Fields
 	// Component type
 	private PlanComponentType planComponentType;
 	

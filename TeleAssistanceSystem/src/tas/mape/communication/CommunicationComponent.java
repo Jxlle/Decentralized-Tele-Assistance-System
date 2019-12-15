@@ -11,6 +11,7 @@ import service.auxiliary.AbstractMessage;
  */
 public abstract class CommunicationComponent {
 	
+	// Fields
 	private String endpoint;
 	private ComponentMessageHost messageHost;
 	

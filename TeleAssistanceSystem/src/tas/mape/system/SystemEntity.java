@@ -8,6 +8,7 @@ package tas.mape.system;
  */
 public class SystemEntity {
 	
+	// Fields
 	private WorkflowExecuter managedSystem;
 	private MAPEKComponent managingSystem;
 	

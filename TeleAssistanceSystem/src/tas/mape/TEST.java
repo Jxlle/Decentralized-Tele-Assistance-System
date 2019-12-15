@@ -21,7 +21,7 @@ import tas.mape.planner.PlanComponent;
 import tas.mape.planner.PlanComponentType;
 import tas.mape.planner.Planner;
 import tas.mape.planner.ServiceCombination;
-import tas.mape.planner.ratingType;
+import tas.mape.planner.RatingType;
 import tas.services.alarm.AlarmService;
 import tas.services.assistance.AssistanceService;
 import tas.services.assistance.AssistanceServiceCostProbe;
@@ -200,17 +200,10 @@ public class TEST {
 		
 		@SuppressWarnings("unused")
 		MinCostReq mcr = new MinCostReq();
-		//mcr.applyStrategy(1, 1, null);
 		
-		// TODO test fail rate
-		
-		Integer a = 1;
-		Integer b = 2;
-		System.err.print(a.compareTo(b));
-		
-		// TEST 
-		/*assistanceService.getCache().getServiceWithEndpoint("service.alarmService3");
-		List<ServiceCombination> services = mcr.applyStrategy(1, 10, assistanceService.getCache().caches);
+		// ANALYZER TEST
+		assistanceService.getCache().getServiceWithEndpoint("service.alarmService3");
+		List<ServiceCombination> services = mcr.applyStrategy(new Pair<Integer, Integer>(1, 1), 10, RatingType.NUMBER, null, assistanceService.getCache().caches);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);
 		
 		for (ServiceCombination comb : services) {
@@ -220,13 +213,13 @@ public class TEST {
 			
 			for (Description d : comb.getDescriptions()) {
 				
-				System.err.print("["+ d.toString() + "] : " + comb.getServices(d).getItems().get(0) + "\n");
+				System.err.print("["+ d.toString() + "] : " + comb.getAllServices(d).getItems().get(0).getServiceEndpoint() + "\n");
 				
 			}
 			
 			System.err.print("-------------------------------------------------------------------------------------------\n");
-			System.err.print("cost: " + comb.getRate() + " \n");
-		}*/
+			System.err.print("cost: " + comb.getRating() + " \n");
+		}
 		
 		/*for (Map<Description, ServiceDescription> map : services2) {
 			System.err.print("-----------------------------------------------------------------------------------------\n");
@@ -240,7 +233,7 @@ public class TEST {
 			System.err.print("-------------------------------------------------------------------------------------------\n");
 		}*/
 		
-		Planner p1 = new Planner("mape.planner1", executer);
+		/*Planner p1 = new Planner("mape.planner1", executer);
 		Planner p2 = new Planner("mape.planner2", executer);
 		ComponentMessageHost host = new ComponentMessageHost();
 		host.register(p1);
@@ -250,7 +243,7 @@ public class TEST {
 		p1.sendMessage(new PlannerMessage(1, p2.getEndpoint(), p1.getEndpoint(), "test", null, null));
 		
 		
-		ServiceCombination combination = new ServiceCombination(null, ratingType.NUMBER, 1.0);
+		ServiceCombination combination = new ServiceCombination(null, RatingType.NUMBER, 1.0);
 
 		
 		System.err.print("------------------------------------------------------------ \n");
@@ -270,6 +263,6 @@ public class TEST {
 			System.err.print("=== \n");
 			System.err.print("description usage chance :" + test.get(d).getValue() + " \n");
 			System.err.print("------------------------------------------------------------ \n");
-		}
+		}*/
 	}
 }

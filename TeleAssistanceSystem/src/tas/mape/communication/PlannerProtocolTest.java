@@ -7,6 +7,7 @@ import tas.mape.planner.Planner;
 
 public class PlannerProtocolTest extends AbstractProtocol {
 
+	// Fields
 	int maxTime;
 	
 	public PlannerProtocolTest(int maxTime) {

@@ -17,27 +17,28 @@ import service.auxiliary.WeightedCollection;
  */
 public class ServiceCombination {
 	
+	// Fields
 	// Map representing all the services in this service combination. The map depicts which services (endpoint + weight) can be used for which 
 	// description (method type + operation name) and each usable service has a use chance.
 	Map<Description, WeightedCollection<ServiceDescription>> allServices;
-	ratingType combinationRateType;
+	RatingType combinationRatingType;
 	Object rating;
 	
 	/**
 	 * Create a new service combination with a given services map, a rating type and a rating
 	 * @param allServices the given services map
-	 * @param combinationRateType the given rating type
+	 * @param combinationRatingType the given rating type
 	 * @param rating the given rating
 	 */
-	public ServiceCombination(Map<Description, WeightedCollection<ServiceDescription>> allServices, ratingType combinationRateType, Object rating) {
+	public ServiceCombination(Map<Description, WeightedCollection<ServiceDescription>> allServices, RatingType combinationRatingType, Object rating) {
 		
 		this.allServices = allServices;
-		this.combinationRateType = combinationRateType;
+		this.combinationRatingType = combinationRatingType;
 		
 		try {
-			this.rating = combinationRateType.getTypeClass().cast(rating);
+			this.rating = combinationRatingType.getTypeClass().cast(rating);
 		} catch(ClassCastException e) {
-			throw new ClassCastException("Given rate is in the wrong type! " + rating.getClass() + " <--> " + combinationRateType.getTypeClass());
+			throw new ClassCastException("Given rating is in the wrong type! " + rating.getClass() + " <--> " + combinationRatingType.getTypeClass());
 		}
 		
 	}
@@ -63,8 +64,8 @@ public class ServiceCombination {
 	 * Return the service combination type
 	 * @return the service combination type
 	 */
-	public ratingType getCombinationRateType() {
-		return combinationRateType;
+	public RatingType getCombinationRatingType() {
+		return combinationRatingType;
 	}
 	
 	/**

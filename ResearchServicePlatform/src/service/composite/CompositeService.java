@@ -256,6 +256,7 @@ public class CompositeService extends AbstractService {
     @ServiceOperation
     public Object invokeCompositeService(String qosRequirement, Object params[]) {
     	
+    	// Activate no fail in test mode
     	if (testMode) {
     		AtomicService.setNoFail(true);
     	}
@@ -268,10 +269,7 @@ public class CompositeService extends AbstractService {
 		workflowProbe.notifyWorkflowStarted(qosRequirement, params);
 		Object result = engine.executeWorkflow(workflow, qosRequirement, params);
 		workflowProbe.notifyWorkflowEnded(result, qosRequirement, params);
-		
-    	if (testMode) {
-    		AtomicService.setNoFail(false);
-    	}
+		AtomicService.setNoFail(false);
 		
 		return result;
     }

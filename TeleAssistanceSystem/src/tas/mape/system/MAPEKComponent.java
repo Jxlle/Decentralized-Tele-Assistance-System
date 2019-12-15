@@ -7,12 +7,13 @@ import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.composite.CompositeService;
-import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.Analyzer;
 import tas.mape.executer.Executer;
+import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.monitor.Monitor;
 import tas.mape.planner.Planner;
+import tas.mape.planner.RatingType;
 
 /**
  * @author Jelle Van De Sijpe
@@ -46,14 +47,13 @@ public class MAPEKComponent {
 		 * Creates a new builder where the knowledge component with its given parameters has been initialized
 		 * @param loadFailureDelta the given load failure delta 
 		 * @param currentQoSRequirement the given current QoS requirement
-		 * @param goals the given goals map
-		 * @param QoSRequirementClasses the given QoS requirement classes map
+		 * @param goals the given system goals
 		 * @param usableServicesAndChance the given usable services with usage chance map
-		 * @return
+		 * @return the new Builder object with initialized knowledge
 		 */
-		public Builder initializeKnowledge(int loadFailureDelta, String currentQoSRequirement, Map<String, Double> goals, Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+		public Builder initializeKnowledge(int loadFailureDelta, String currentQoSRequirement, List<Goal> goals, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 			
-			knowledge = new Knowledge(MAPEKComponent.amountOfCycles, loadFailureDelta, currentQoSRequirement, goals, QoSRequirementClasses, usableServicesAndChance);
+			knowledge = new Knowledge(MAPEKComponent.amountOfCycles, loadFailureDelta, currentQoSRequirement, goals, usableServicesAndChance);
 			return this;
 		}
 		
@@ -75,13 +75,14 @@ public class MAPEKComponent {
 		
 		/**
 		 * Creates a new builder where the analyzer component with its given parameters has been initialized.
-		 * @param combinationLimit the given combination limit
-		 * @param QoSStrategies the given QoS strategies map
+		 * @param combinationLimit the given combination limit that will decide how much service combinations will be chosen in the execute step
+		 * @param ratingType the given type of the rating for service combinations 
+		 * @param QoSStrategies a map containing the strategy for each QoS requirement
 		 * @return the new Builder object with initialized analyzer
 		 * @throws InstantiationException throw when the knowledge field is null
 		 * @throws InstantiationException throw when the planner field is null
 		 */
-		public Builder initializeAnalyzer(int combinationLimit, Map<String, Integer> QoSStrategies) throws InstantiationException {
+		public Builder initializeAnalyzer(int combinationLimit, RatingType ratingType, Map<String, Pair<Integer, Integer>> QoSStrategies) throws InstantiationException {
 			
 			if (knowledge == null) {
 				throw new InstantiationException("Knowledge field is null!");
@@ -91,7 +92,7 @@ public class MAPEKComponent {
 				throw new InstantiationException("Planner field is null!");
 			}
 			
-			analyzer = new Analyzer(knowledge, planner, combinationLimit, QoSStrategies);
+			analyzer = new Analyzer(knowledge, planner, combinationLimit, ratingType, QoSStrategies);
 			return this;
 		}
 		
@@ -139,9 +140,9 @@ public class MAPEKComponent {
 		}	
 	}
 	
+	// Fields
 	// The amount of workflow execution cycles that are executed before the possibility of analyzer execution
 	private static int amountOfCycles = 100;
-	
 	private Monitor monitor;
 	private Analyzer analyzer;
 	private Planner planner;

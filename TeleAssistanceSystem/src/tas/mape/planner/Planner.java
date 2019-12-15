@@ -23,6 +23,7 @@ import tas.mape.knowledge.Knowledge;
  */
 public class Planner extends CommunicationComponent {
 
+	// Fields
 	private Executer executer;
 	private Knowledge knowledge;
 	private Boolean executed;

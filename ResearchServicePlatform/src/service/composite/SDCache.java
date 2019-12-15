@@ -26,7 +26,7 @@ import service.auxiliary.ServiceDescription;
  */
 public class SDCache {
 	
-    private Map<Description, List<ServiceDescription>> caches = new ConcurrentHashMap<Description, List<ServiceDescription>>();
+    public Map<Description, List<ServiceDescription>> caches = new ConcurrentHashMap<Description, List<ServiceDescription>>();
     private int maxCacheSize;
     //private int refreshPeriod=10*Time.scale;   
     private int refreshPeriod = 10;         

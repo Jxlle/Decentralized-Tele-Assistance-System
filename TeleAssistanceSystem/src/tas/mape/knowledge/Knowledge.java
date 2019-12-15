@@ -10,6 +10,7 @@ import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
+import tas.mape.analyzer.MinCostReq;
 import tas.mape.planner.PlanComponent;
 
 /**
@@ -20,12 +21,12 @@ import tas.mape.planner.PlanComponent;
  */
 public class Knowledge {
 	
+	// Fields
 	private String currentQoSRequirement;
 	// TODO Goals
-	private Map<String, Double> goals;
+	private List<Goal> goals;
 	private Map<Description, Double> servicesUsageChance;
 	private Map<String, HashMap<Integer, Double>> approximatedServiceFailureRates;
-	private Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses;
 	private int amountOfCycles, loadFailureDelta;
 	
 	// List of plan components containing information about needed changes to the cache as a result of changes in the service registries
@@ -35,13 +36,29 @@ public class Knowledge {
 	// This is skipped here because it slows down the execution of the workflow entity.
 	private Map<Description, List<ServiceDescription>> usableServices;
 	
-	// TODO
-	public Knowledge(int amountOfCycles, int loadFailureDelta, String currentQoSRequirement, Map<String, Double> goals, Map<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+	
+	private static HashMap<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses = new HashMap<String, AbstractWorkflowQoSRequirement>() {
+		private static final long serialVersionUID = 1L;
+	{
+        put("Cost", new MinCostReq());
+        //put("FailureRate", "d");
+        //put("CostAndFailureRate", "d");
+    }};;
+	
+	/**
+	 * Create a new knowledge with given starting information
+	 * @param amountOfCycles the given amount of cycles that the workflow entity runs before executing the MAPE-K loop
+	 * @param loadFailureDelta the given delta between two load values in the approximated failure table
+	 * @param currentQoSRequirement the given current system QoS requirement
+	 * @param goals the given system goals
+	 * @param QoSRequirementClasses the 
+	 * @param usableServicesAndChance
+	 */
+	public Knowledge(int amountOfCycles, int loadFailureDelta, String currentQoSRequirement, List<Goal> goals, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 		
 		this.amountOfCycles = amountOfCycles;
 		this.loadFailureDelta = loadFailureDelta;
 		this.currentQoSRequirement = currentQoSRequirement;
-		this.QoSRequirementClasses = QoSRequirementClasses;
 		this.goals = goals;
 		
 		for (Description description : usableServicesAndChance.keySet()) {
@@ -177,6 +194,14 @@ public class Knowledge {
 	 */
 	public int getServiceLoad(Description description, double usePercentage) {
 		return (int) (servicesUsageChance.get(description) * usePercentage * amountOfCycles);
+	}
+	
+	/**
+	 * Return the system goals
+	 * @return the system goals
+	 */
+	public List<Goal> getGoals() {
+		return goals;
 	}
 	
 	/**

@@ -17,6 +17,7 @@ import service.auxiliary.ServiceDescription;
  */
 public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegistryProbeInterface, CacheProbeInterface {
 
+	// Fields
 	private Map<String, Integer> serviceInvocations, serviceFailures;
 	private List<Pair<Pair<Description, ServiceDescription>, String>> servicesChangedInCache;
 	private List<Pair<ServiceDescription, String>> servicesChangedInRegistry;

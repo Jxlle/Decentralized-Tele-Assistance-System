@@ -19,6 +19,7 @@ public enum PlanComponentType {
 	ADD_TO_CACHE("workflowEffector", "addService", new Class<?>[] { ServiceDescription.class }),
 	REMOVE_FROM_CACHE("workflowEffector", "removeService", new Class<?>[] { ServiceDescription.class });
 	
+	// Fields
 	private final String effectorIdentifier;
 	private final String methodName;
 	private final Class<?>[] methodParameterTypes;

@@ -52,16 +52,18 @@ public class WorkflowAnalyzerProbe implements WorkflowProbeInterface {
 	 * Not used
 	 */
 	@Override
-	public void serviceNotFound(String serviceType, String opName) {
-		// Should never happen when in test mode
+	public void serviceNotFound(String serviceType, String opName) throws IllegalStateException {
+		// Should never be triggered here
+		throw new IllegalStateException("Something went wrong! This probe function should never trigger!");
 	}
 
 	/**
 	 * Not used
 	 */
 	@Override
-	public void serviceOperationTimeout(ServiceDescription description, String opName, Object[] params) {
-		// Should never happen when in test mode
+	public void serviceOperationTimeout(ServiceDescription description, String opName, Object[] params) throws IllegalStateException {
+		// Should never be triggered here
+		throw new IllegalStateException("Something went wrong! This probe function should never trigger!");
 	}
 	
 	/**
