@@ -3,7 +3,6 @@ package tas.mape.analyzer;
 import java.util.List;
 import java.util.Map;
 
-import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import tas.mape.knowledge.Goal;
@@ -26,7 +25,7 @@ public class Analyzer {
 	private Boolean plannerRequired, executed;
 	private RatingType ratingType;
 	private int combinationLimit;
-	private Map<String, Pair<Integer, Integer>> QoSStrategies;
+	private Map<String, Integer> QoSStrategies;
 	private List<ServiceCombination> chosenServicesList;
 	
 	/**
@@ -35,9 +34,9 @@ public class Analyzer {
 	 * @param planner the given planner component
 	 * @param combinationLimit the given combination limit that will decide how much service combinations will be chosen in the execute step
 	 * @param ratingType the given type of the rating for service combinations 
-	 * @param QoSStrategies a map containing the strategy for each QoS requirement
+	 * @param QoSStrategies a map containing the strategy number for each QoS requirement
 	 */
-	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, RatingType ratingType, Map<String, Pair<Integer, Integer>> QoSStrategies) {
+	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, RatingType ratingType, Map<String, Integer> QoSStrategies) {
 		this.knowledge = knowledge;
 		this.planner = planner;
 		this.combinationLimit = combinationLimit;
@@ -46,20 +45,20 @@ public class Analyzer {
 	}
 	
 	/**
-	 * Return the strategy for a given QoS requirement name
+	 * Return the strategy number for a given QoS requirement name
 	 * @param requirementName the given QoS requirement name
-	 * @return the strategy
+	 * @return the strategy number
 	 */
-	public Pair<Integer, Integer> getQoSStrategy(String requirementName) {
+	public Integer getQoSStrategy(String requirementName) {
 		return QoSStrategies.get(requirementName);
 	}
 	
 	/**
-	 * Update or add a certain QoS strategy using a given QoS requirement name and strategy
+	 * Update or add a certain QoS strategy number using a given QoS requirement name and strategy number
 	 * @param requirementName the given QoS requirement name
-	 * @param strategy the given strategy
+	 * @param strategy the given strategy number
 	 */
-	public void setQoSStrategy(String requirementName, Pair<Integer, Integer> strategy) {
+	public void setQoSStrategy(String requirementName, Integer strategy) {
 		QoSStrategies.put(requirementName, strategy);
 	}
 
@@ -103,6 +102,6 @@ public class Analyzer {
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirementName);
 		List<Goal> goals = knowledge.getGoals();
 		
-		return requirementClass.applyStrategy(getQoSStrategy(requirementName), combinationLimit, ratingType, goals, usableServices);
+		return requirementClass.chooseServices(getQoSStrategy(requirementName), combinationLimit, ratingType, goals, usableServices);
 	}
 }

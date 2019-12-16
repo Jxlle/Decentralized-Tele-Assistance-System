@@ -10,7 +10,7 @@ public enum RatingType {
 	
 	// Available ratings
 	NUMBER(Double.class),
-	CLASS(int.class);
+	CLASS(Integer.class);
 	
 	// Fields
 	private final Class<?> typeClass;

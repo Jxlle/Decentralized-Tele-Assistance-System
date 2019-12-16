@@ -17,7 +17,7 @@ public class Goal {
 	// Goal type enum
 	public enum GoalType {
 				
-		// Avalaible goal types
+		// Available goal types
 		COST("Cost"),
 		FAILURE_RATE("FailureRate");
 		

@@ -12,11 +12,15 @@ import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import service.registry.ServiceRegistry;
-import tas.mape.analyzer.MinCostReq;
+import tas.mape.analyzer.CostAndReliabilityReq;
+import tas.mape.analyzer.CostReq;
+import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.communication.ComponentMessageHost;
 import tas.mape.communication.PlannerMessage;
 import tas.mape.executer.Executer;
 import tas.mape.knowledge.WorkflowAnalyzer;
+import tas.mape.knowledge.Goal;
+import tas.mape.knowledge.Goal.GoalRelation;
 import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.planner.PlanComponent;
 import tas.mape.planner.PlanComponentType;
@@ -200,12 +204,19 @@ public class TEST {
 		
 		
 		@SuppressWarnings("unused")
-		MinCostReq mcr = new MinCostReq();
+		CostReq cr = new CostReq();
+		ReliabilityReq rr = new ReliabilityReq();
+		CostAndReliabilityReq carr = new CostAndReliabilityReq();
 		
 		// ANALYZER TEST
 		// TODO CACHES PRIVATE
 		assistanceService.getCache().getServiceWithEndpoint("service.alarmService3");
-		List<ServiceCombination> services = mcr.applyStrategy(new Pair<Integer, Integer>(1, 1), 10, RatingType.NUMBER, null, assistanceService.getCache().caches);
+		List<Goal> goals = new ArrayList<>();
+		Goal costGoal = new Goal(GoalType.COST, GoalRelation.LOWER_OR_EQUAL_TO, 20);
+		Goal reliabilityGoal = new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_OR_EQUAL_TO, 0.2);
+		goals.add(costGoal);
+		goals.add(reliabilityGoal);
+		List<ServiceCombination> services = carr.chooseServices(1, 10, RatingType.CLASS, goals, assistanceService.getCache().caches);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);
 		
 		for (ServiceCombination comb : services) {
@@ -220,8 +231,11 @@ public class TEST {
 			}
 			
 			System.err.print("-------------------------------------------------------------------------------------------\n");
-			System.err.print("cost: " + comb.getRating() + " \n");
+			System.err.print("score: " + comb.getRating() + " \n");
 		}
+		
+		System.err.print(RatingType.NUMBER);
+		
 		
 		/*for (Map<Description, ServiceDescription> map : services2) {
 			System.err.print("-----------------------------------------------------------------------------------------\n");

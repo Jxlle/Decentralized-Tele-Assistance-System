@@ -10,7 +10,9 @@ import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
-import tas.mape.analyzer.MinCostReq;
+import tas.mape.analyzer.CostAndReliabilityReq;
+import tas.mape.analyzer.CostReq;
+import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.planner.PlanComponent;
 
 /**
@@ -40,9 +42,9 @@ public class Knowledge {
 	private static HashMap<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses = new HashMap<String, AbstractWorkflowQoSRequirement>() {
 		private static final long serialVersionUID = 1L;
 	{
-        put("Cost", new MinCostReq());
-        //put("FailureRate", "d");
-        //put("CostAndFailureRate", "d");
+        put("Cost", new CostReq());
+        put("Reliability", new ReliabilityReq());
+        put("CostAndReliability", new CostAndReliabilityReq());
     }};;
 	
 	/**

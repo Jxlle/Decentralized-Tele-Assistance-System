@@ -3,8 +3,6 @@ package tas.mape.planner;
 import java.util.Map;
 import java.util.Set;
 
-import org.stringtemplate.v4.compiler.STParser.namedArg_return;
-
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
@@ -74,5 +72,14 @@ public class ServiceCombination {
 	 */
 	public Object getRating() {
 		return rating;
+	}
+	
+	/**
+	 * Return whether the given service combination has the same collection 
+	 * @param other the given service combination 
+	 * @return whether the given service combination has the same collection 
+	 */
+	public boolean hasSameCollection(ServiceCombination other) {
+		return allServices.equals(other.allServices);
 	}
 }

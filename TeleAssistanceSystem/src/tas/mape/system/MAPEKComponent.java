@@ -77,12 +77,12 @@ public class MAPEKComponent {
 		 * Creates a new builder where the analyzer component with its given parameters has been initialized.
 		 * @param combinationLimit the given combination limit that will decide how much service combinations will be chosen in the execute step
 		 * @param ratingType the given type of the rating for service combinations 
-		 * @param QoSStrategies a map containing the strategy for each QoS requirement
+		 * @param QoSStrategies a map containing the strategy number for each QoS requirement
 		 * @return the new Builder object with initialized analyzer
 		 * @throws InstantiationException throw when the knowledge field is null
 		 * @throws InstantiationException throw when the planner field is null
 		 */
-		public Builder initializeAnalyzer(int combinationLimit, RatingType ratingType, Map<String, Pair<Integer, Integer>> QoSStrategies) throws InstantiationException {
+		public Builder initializeAnalyzer(int combinationLimit, RatingType ratingType, Map<String, Integer> QoSStrategies) throws InstantiationException {
 			
 			if (knowledge == null) {
 				throw new InstantiationException("Knowledge field is null!");
