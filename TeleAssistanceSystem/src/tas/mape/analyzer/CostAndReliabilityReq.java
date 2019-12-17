@@ -1,6 +1,7 @@
 package tas.mape.analyzer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -34,39 +35,75 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 		List<Object> scoreListCost = new ArrayList<>();
 		List<Object> scoreListFailureRate = new ArrayList<>();
 		List<ServiceCombination> sortedServiceCombinations = new ArrayList<>();
-		List<ServiceCombination> sortedServiceCombinationsCost, sortedServiceCombinationsFailureRate;
 		
 		switch (ratingType) {
 		
 		case NUMBER:
+			
 			// Calculate requirement scores
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
 				scoreListCost.add((double) calculateNumberRatingCost(allServiceCombinations.get(i)));
 				scoreListFailureRate.add((double) calculateNumberRatingFailureRate(allServiceCombinations.get(i)));
 			}
 			
-			// TODO
-			sortedServiceCombinationsCost = getSortedServiceCombinations(combinationLimit, ratingType, scoreListCost, allServiceCombinations);
-			sortedServiceCombinationsFailureRate = getSortedServiceCombinations(combinationLimit, ratingType, scoreListCost, allServiceCombinations);
+			// Initialize lists
+			List<Integer> indexListCost = new ArrayList<>();
+			List<Double> sortedScoreListCost = new ArrayList<>();
+			List<Integer> indexListFailureRate = new ArrayList<>();
+			List<Double> sortedScoreListFailureRate = new ArrayList<>();
 			
-			// Pre-fill final service combinations list
-			for (int i = 0; i < sortedServiceCombinationsCost.size(); i++) {
-				sortedServiceCombinations.add(null);
-			}
-			
-			for (int i = 0; i < sortedServiceCombinationsCost.size(); i++) {		
-				for (int j = 0; j < sortedServiceCombinationsFailureRate.size(); j++) {
-					if (sortedServiceCombinationsCost.get(i).hasSameCollection(sortedServiceCombinationsFailureRate.get(j))) {
-						
+			// Sort on cost and failure rate from lowest to highest score
+			for (int i = 0; i < allServiceCombinations.size(); i++) {
+				
+				double combinationScoreCost = (double) scoreListCost.get(i);
+				double combinationScoreFailureRate = (double) scoreListFailureRate.get(i);
+				
+				int indexCost = Collections.binarySearch(sortedScoreListCost, combinationScoreCost);
+				int indexFailureRate = Collections.binarySearch(sortedScoreListFailureRate, combinationScoreFailureRate);
+				
+				if (indexCost < 0) {
+					indexCost = -1 * (Collections.binarySearch(sortedScoreListCost, combinationScoreCost) + 1);
+				}
+				
+				if (indexFailureRate < 0) {
+					indexFailureRate = -1 * (Collections.binarySearch(sortedScoreListFailureRate, combinationScoreFailureRate) + 1);
+				}
+				
+				sortedScoreListCost.add(indexCost, combinationScoreCost);
+				indexListCost.add(i, indexCost);
+				sortedScoreListFailureRate.add(indexFailureRate, combinationScoreFailureRate);
+				indexListFailureRate.add(i, indexFailureRate);
+				
+				for (int i2 = 0; i2 < i; i2++) {
+					if (indexListCost.get(i2) >= indexCost) {
+						indexListCost.set(i2, indexListCost.get(i2) + 1);
+					}
+					
+					if (indexListFailureRate.get(i2) >= indexFailureRate) {
+						indexListFailureRate.set(i2, indexListFailureRate.get(i2) + 1);
 					}
 				}
 			}
+			
+			List<Object> unsortedFinalScoreList = new ArrayList<>();
+			
+			// Final score can be calculated as follows:
+			// The above code sorts the service combinations from lowest score to highest for cost and failure rate.
+			// That means that the indices sum for cost and requirement together is a valid score.
+			// A higher score would mean that you have a high index count for cost + requirement, but because the lists are sorted from lowest to highest,
+			// a higher score is a better combination.
+			for (int i = 0; i < allServiceCombinations.size(); i++) {
+				unsortedFinalScoreList.add(indexListCost.get(i).doubleValue() + indexListFailureRate.get(i).doubleValue());
+			}	
+			
+			// Get sorted service combinations
+			sortedServiceCombinations = getSortedServiceCombinations(combinationLimit, ratingType, unsortedFinalScoreList, allServiceCombinations);
 			
 			break;
 			
 		case CLASS:	
 			
-			List<Object> totalClassList = new ArrayList<>();
+			List<Object> unsortedClassList = new ArrayList<>();
 			
 			// Calculate requirement scores
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
@@ -76,11 +113,11 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 			// Calculate total class for each service combination
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				totalClassList.add((int) scoreListCost.get(i) + (int) scoreListFailureRate.get(i));
+				unsortedClassList.add((int) scoreListCost.get(i) + (int) scoreListFailureRate.get(i));
 			}
 			
 			// Get sorted service combinations
-			sortedServiceCombinations = getSortedServiceCombinations(combinationLimit, ratingType, totalClassList, allServiceCombinations);
+			sortedServiceCombinations = getSortedServiceCombinations(combinationLimit, ratingType, unsortedClassList, allServiceCombinations);
 			
 			break;
 			

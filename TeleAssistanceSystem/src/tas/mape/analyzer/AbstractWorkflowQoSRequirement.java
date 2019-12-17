@@ -326,19 +326,19 @@ public abstract class AbstractWorkflowQoSRequirement {
 		List<ServiceCombination> chosenServicesList = new ArrayList<>();
 		
 		List<Integer> indexList = new ArrayList<>();
-		List<Double> scoreList = new ArrayList<>();
+		List<Double> sortedScoreList = new ArrayList<>();
 		
 		for (int i = 0; i < allServiceCombinations.size(); i++) {
 			
 			double combinationScore = (double) combinationScores.get(i);	
 			
-			int index = Collections.binarySearch(scoreList, combinationScore);
+			int index = Collections.binarySearch(sortedScoreList, combinationScore);
 			
 			if (index < 0) {
-				index = -1 * (Collections.binarySearch(scoreList, combinationScore) + 1);
+				index = -1 * (Collections.binarySearch(sortedScoreList, combinationScore) + 1);
 			}
 			
-			scoreList.add(index, combinationScore);
+			sortedScoreList.add(index, combinationScore);
 			indexList.add(i, index);
 			
 			for (int i2 = 0; i2 < i; i2++) {
@@ -358,10 +358,12 @@ public abstract class AbstractWorkflowQoSRequirement {
 		for (int i = 0; i < Math.min(combinationLimit, allServiceCombinations.size()); i++) {
 			
 			chosenServicesCombination = allServiceCombinations.get(i);
-			chosenServicesEntry = new ServiceCombination(chosenServicesCombination, ratingType, scoreList.get(indexList.get(i)));
+			chosenServicesEntry = new ServiceCombination(chosenServicesCombination, ratingType, sortedScoreList.get(indexList.get(i)));
 			chosenServicesList.set(chosenServicesList.size() - indexList.get(i) - 1, chosenServicesEntry);
 		}
 		
+		System.err.print(sortedScoreList + "\n");
+		System.err.print(indexList + "\n");
 		return chosenServicesList;
 	}
 	
