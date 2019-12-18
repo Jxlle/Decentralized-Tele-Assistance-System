@@ -216,7 +216,7 @@ public class TEST {
 		Goal reliabilityGoal = new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_OR_EQUAL_TO, 0.2);
 		goals.add(costGoal);
 		goals.add(reliabilityGoal);
-		List<ServiceCombination> services = carr.chooseServices(1, 10, RatingType.NUMBER, goals, assistanceService.getCache().caches);
+		List<ServiceCombination> services = carr.chooseServices(1, 10, RatingType.CLASS, goals, assistanceService.getCache().caches);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);
 		
 		for (ServiceCombination comb : services) {
@@ -263,7 +263,7 @@ public class TEST {
 
 		
 		System.err.print("------------------------------------------------------------ \n");
-		System.err.print("test: " + combination.getRating().getClass() + "\n");
+		System.err.print("test: " + combination.getRating().getClass() + "\n");*/
 		
 		
 		WorkflowAnalyzer wpi = new WorkflowAnalyzer();
@@ -279,6 +279,6 @@ public class TEST {
 			System.err.print("=== \n");
 			System.err.print("description usage chance :" + test.get(d).getValue() + " \n");
 			System.err.print("------------------------------------------------------------ \n");
-		}*/
+		}
 	}
 }

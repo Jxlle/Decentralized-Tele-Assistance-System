@@ -347,24 +347,20 @@ public abstract class AbstractWorkflowQoSRequirement {
 				}
 			}
 			
-			if (i < combinationLimit) {
-				chosenServicesList.add(null);
-			}	
+			chosenServicesList.add(null);
 		}
 		
 		ServiceCombination chosenServicesEntry;
 		Map<Description, WeightedCollection<ServiceDescription>> chosenServicesCombination;
 		
-		for (int i = 0; i < Math.min(combinationLimit, allServiceCombinations.size()); i++) {
+		for (int i = 0; i < allServiceCombinations.size(); i++) {
 			
 			chosenServicesCombination = allServiceCombinations.get(i);
 			chosenServicesEntry = new ServiceCombination(chosenServicesCombination, ratingType, sortedScoreList.get(indexList.get(i)));
 			chosenServicesList.set(chosenServicesList.size() - indexList.get(i) - 1, chosenServicesEntry);
 		}
 		
-		System.err.print(sortedScoreList + "\n");
-		System.err.print(indexList + "\n");
-		return chosenServicesList;
+		return chosenServicesList.subList(0, Math.min(combinationLimit, allServiceCombinations.size()));
 	}
 	
 	/**
@@ -403,21 +399,19 @@ public abstract class AbstractWorkflowQoSRequirement {
 				}
 			}
 			
-			if (i < combinationLimit) {
-				chosenServicesList.add(null);
-			}	
+			chosenServicesList.add(null);
 		}
 		
 		ServiceCombination chosenServicesEntry;
 		Map<Description, WeightedCollection<ServiceDescription>> chosenServicesCombination;
 		
-		for (int i = 0; i < Math.min(combinationLimit, allServiceCombinations.size()); i++) {
+		for (int i = 0; i < allServiceCombinations.size(); i++) {
 			
 			chosenServicesCombination = allServiceCombinations.get(i);
 			chosenServicesEntry = new ServiceCombination(chosenServicesCombination, ratingType, scoreList.get(indexList.get(i)).intValue());
 			chosenServicesList.set(chosenServicesList.size() - indexList.get(i) - 1, chosenServicesEntry);
 		}
 		
-		return chosenServicesList;
+		return chosenServicesList.subList(0, Math.min(combinationLimit, allServiceCombinations.size()));
 	}
 }
