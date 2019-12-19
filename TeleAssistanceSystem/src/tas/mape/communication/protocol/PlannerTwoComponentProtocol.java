@@ -9,18 +9,15 @@ import tas.mape.communication.PlannerMessage;
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
  *
- * Class representing a planner protocol that does nothing. 
- * @note This class is purely used to compare results with other protocols.
+ * Abstract class representing the structure of a two-component planner protocol.
  */
-public class PlannerProtocolDoNothing extends PlannerTwoComponentProtocol {
+public abstract class PlannerTwoComponentProtocol extends AbstractTwoComponentProtocol<PlannerMessage> {
 
 	@Override
 	protected void sendFirstMessage(List<CommunicationComponent> components, int startIndex, int... receiverIndices) {
-		// Do nothing		
-	}
-
-	@Override
-	public void receiveAndHandleMessage(PlannerMessage message, CommunicationComponent receiver) {
-		// Messages are never handled
+		
+		// TODO generate first planner message and send it to the receiver 
+		//PlannerMessage firstMessage = new PlannerMessage(messageID, );
+		//messageID++;
 	}
 }

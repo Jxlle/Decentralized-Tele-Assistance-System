@@ -11,8 +11,10 @@ import service.auxiliary.AbstractMessage;
  */
 public abstract class CommunicationComponent {
 	
-	// Fields
+	// Unique endpoint for identification
 	private String endpoint;
+	
+	// Message host of this communication component
 	private ComponentMessageHost messageHost;
 	
 	/**

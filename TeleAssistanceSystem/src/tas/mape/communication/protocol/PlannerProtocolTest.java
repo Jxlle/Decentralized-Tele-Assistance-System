@@ -7,9 +7,12 @@ import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.PlannerMessage;
 import tas.mape.planner.Planner;
 
-public class PlannerProtocolTest extends AbstractTwoComponentProtocol {
+/**
+ * Test class, to be deleted....
+ */
+public class PlannerProtocolTest extends PlannerTwoComponentProtocol {
 
-	// Fields
+	// Max response time
 	int maxTime;
 	
 	public PlannerProtocolTest(int maxTime) {
@@ -17,38 +20,23 @@ public class PlannerProtocolTest extends AbstractTwoComponentProtocol {
 	}
 
 	@Override
-	public void executeProtocol(List<CommunicationComponent> components) throws IllegalArgumentException {
+	public void receiveAndHandleMessage(PlannerMessage message, CommunicationComponent receiver) {
 		
-		if (components.size() != 2) {
-			throw new IllegalArgumentException("The used protocol doesn't support this amount of components!");
-		}
-		
-		int senderIndex = (int) (Math.random() * (2 + 1));		
-		int receiverIndex = Math.abs(senderIndex - 1);
-		
-		// TODO generate and send starting message
-		//PlannerMessage startMessage = new PlannerMessage(messageID, components.get(receiverIndex).getEndpoint(), components.get(senderIndex).getEndpoint(), );
-		//startComponent.sendMessage(startMessage);
-	}
-
-	@Override
-	public void receiveAndHandleMessage(AbstractMessage message, CommunicationComponent receiver) {
-		
-		increaseMessageID();
-		PlannerMessage plannerMessage = (PlannerMessage) message;
+		/*PlannerMessage plannerMessage = (PlannerMessage) message;
 		Planner planner = (Planner) receiver;
 		
 		String messageType = plannerMessage.getType();
 		
 		switch (messageType) {
 			// TODO make test protocol, handle message and reply here.
-		}
+		}*/
 	}
 
 	@Override
 	protected void sendFirstMessage(List<CommunicationComponent> components, int startIndex, int... receiverIndices) {
+		
+		
 		// TODO Auto-generated method stub
 		
 	}
-
 }

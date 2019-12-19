@@ -11,8 +11,9 @@ import tas.mape.communication.CommunicationComponent;
  * @email jelle.vandesijpe@student.kuleuven.be
  *
  * Abstract class representing the structure of a protocol.
+ * @param <T> the message type
  */
-public abstract class AbstractProtocol {
+public abstract class AbstractProtocol<T extends AbstractMessage> {
 	
 	// Message ID of the last sent message
 	protected int messageID;
@@ -34,6 +35,14 @@ public abstract class AbstractProtocol {
 		startProtocol(components);
 	}
 	
+	
+	/**
+	 * Handle a given message that was received by the given communication component
+	 * @param message the given message
+	 * @param receiver the given communication component (receiver)
+	 */
+	public abstract void receiveAndHandleMessage(T message, CommunicationComponent receiver);
+	
 	/**
 	 * Return the index of a randomly chosen component
 	 * @return the index of the chosen component
@@ -43,16 +52,9 @@ public abstract class AbstractProtocol {
 	}
 	
 	/**
-	 * Increase the message ID
+	 * Reset protocol data
 	 */
-	protected void increaseMessageID() {
-		messageID++;
-	}
-	
-	/**
-	 * Reset the message ID
-	 */
-	protected void resetMessageID() {
+	protected void resetProtocol() {
 		messageID = 0;
 	}
 	
@@ -77,11 +79,4 @@ public abstract class AbstractProtocol {
 	 * @param receiverIndices the given indices of the receivers of the first message
 	 */
 	protected abstract void sendFirstMessage(List<CommunicationComponent> components, int startIndex, int... receiverIndices);
-	
-	/**
-	 * Handle a given message that was received by the given communication component
-	 * @param message the given message
-	 * @param receiver the given communication component (receiver)
-	 */
-	protected abstract void receiveAndHandleMessage(AbstractMessage message, CommunicationComponent receiver);
 }
