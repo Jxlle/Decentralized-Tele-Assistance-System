@@ -2,7 +2,7 @@ package tas.mape.communication.protocol;
 
 import java.util.List;
 
-import tas.mape.communication.PlannerMessage;
+import tas.mape.communication.message.PlannerMessage;
 import tas.mape.planner.Planner;
 
 /**

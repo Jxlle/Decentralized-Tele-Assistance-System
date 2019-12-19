@@ -1,6 +1,7 @@
 package tas.mape.communication;
 
 import service.auxiliary.AbstractMessage;
+import tas.mape.communication.message.ComponentMessageHost;
 
 /**
  * @author Jelle Van De Sijpe

@@ -1,4 +1,4 @@
-package tas.mape.communication;
+package tas.mape.communication.message;
 
 /**
  * @author Jelle Van De Sijpe

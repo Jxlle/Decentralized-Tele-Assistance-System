@@ -1,4 +1,4 @@
-package tas.mape.communication;
+package tas.mape.communication.message;
 import service.auxiliary.AbstractMessage;
 
 public abstract class ComponentMessage<T extends ComponentMessageContent> extends AbstractMessage {

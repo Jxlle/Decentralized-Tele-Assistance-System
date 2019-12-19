@@ -1,9 +1,10 @@
-package tas.mape.communication;
+package tas.mape.communication.message;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import service.auxiliary.AbstractMessage;
+import tas.mape.communication.CommunicationComponent;
 
 /**
  * @author Jelle Van De Sijpe

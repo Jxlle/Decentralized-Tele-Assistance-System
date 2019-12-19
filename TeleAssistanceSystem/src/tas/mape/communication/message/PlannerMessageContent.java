@@ -1,4 +1,4 @@
-package tas.mape.communication;
+package tas.mape.communication.message;
 
 import java.util.Map;
 
