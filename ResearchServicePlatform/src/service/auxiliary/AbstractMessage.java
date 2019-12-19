@@ -4,7 +4,7 @@ package service.auxiliary;
  * Definition of formated message
  * @author Yifan Ruan (ry222ad@student.lnu.se)
  */
-public class AbstractMessage {
+public abstract class AbstractMessage {
 	
 	private final int id;
 	private final String receiverEndpoint;
@@ -16,7 +16,7 @@ public class AbstractMessage {
 	 * @param endpoint the source endpoint
 	 * @param msgType the message type, request or response
 	 */
-	public AbstractMessage(int id, String receiverEndpoint, String msgType){
+	protected AbstractMessage(int id, String receiverEndpoint, String msgType){
 		this.id = id;
 		this.receiverEndpoint = receiverEndpoint;
 		this.msgType = msgType;
