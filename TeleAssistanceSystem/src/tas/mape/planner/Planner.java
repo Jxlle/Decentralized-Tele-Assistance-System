@@ -10,8 +10,8 @@ import service.auxiliary.AbstractMessage;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
-import tas.mape.communication.AbstractProtocol;
 import tas.mape.communication.CommunicationComponent;
+import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.executer.Executer;
 import tas.mape.knowledge.Knowledge;
 
@@ -127,6 +127,6 @@ public class Planner extends CommunicationComponent {
 			throw new NullPointerException("Planner can't handle message receivement, no protocol selected.");
 		}
 		
-		protocol.receiveAndHandleMessage(message, this);
+		//protocol.receiveAndHandleMessage(message, this);
 	}
 }

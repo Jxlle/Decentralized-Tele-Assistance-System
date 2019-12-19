@@ -1,11 +1,13 @@
-package tas.mape.communication;
+package tas.mape.communication.protocol;
 
 import java.util.List;
 
 import service.auxiliary.AbstractMessage;
+import tas.mape.communication.CommunicationComponent;
+import tas.mape.communication.PlannerMessage;
 import tas.mape.planner.Planner;
 
-public class PlannerProtocolTest extends AbstractProtocol {
+public class PlannerProtocolTest extends AbstractTwoComponentProtocol {
 
 	// Fields
 	int maxTime;
@@ -41,6 +43,12 @@ public class PlannerProtocolTest extends AbstractProtocol {
 		switch (messageType) {
 			// TODO make test protocol, handle message and reply here.
 		}
+	}
+
+	@Override
+	protected void sendFirstMessage(List<CommunicationComponent> components, int startIndex, int... receiverIndices) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

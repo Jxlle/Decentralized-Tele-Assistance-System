@@ -17,6 +17,7 @@ import tas.mape.analyzer.CostReq;
 import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.communication.ComponentMessageHost;
 import tas.mape.communication.PlannerMessage;
+import tas.mape.communication.protocol.PlannerProtocolTest;
 import tas.mape.executer.Executer;
 import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.mape.knowledge.Goal;
@@ -266,7 +267,7 @@ public class TEST {
 		System.err.print("test: " + combination.getRating().getClass() + "\n");*/
 		
 		
-		WorkflowAnalyzer wpi = new WorkflowAnalyzer();
+		/*WorkflowAnalyzer wpi = new WorkflowAnalyzer();
 		Map<Description, Pair<List<ServiceDescription>, Double>> test = wpi.analyzeWorkflow(5000, "resources/TeleAssistanceWorkflow.txt", "resources/files/PreferredQoS.xml", assistanceService);
 		
 		for (Description d : test.keySet()) {
@@ -279,6 +280,9 @@ public class TEST {
 			System.err.print("=== \n");
 			System.err.print("description usage chance :" + test.get(d).getValue() + " \n");
 			System.err.print("------------------------------------------------------------ \n");
-		}
+		}*/
+		
+		PlannerProtocolTest test = new PlannerProtocolTest(0);
+		System.err.print(test.getNeededAmountOfComponents());
 	}
 }
