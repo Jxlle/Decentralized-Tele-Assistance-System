@@ -11,15 +11,18 @@ import service.auxiliary.WeightedCollection;
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
  * 
- * Class that represents a combination of service descriptions (unique for a service) chosen by the analyzer component
+ * Class representing a combination of service descriptions (unique for a service) chosen by the analyzer component
  */
 public class ServiceCombination {
 	
-	// Fields
 	// Map representing all the services in this service combination. The map depicts which services (endpoint + weight) can be used for which 
 	// description (method type + operation name) and each usable service has a use chance.
 	Map<Description, WeightedCollection<ServiceDescription>> allServices;
+	
+	// Type of the service combination rating 
 	RatingType combinationRatingType;
+	
+	// Service combination rating 
 	Object rating;
 	
 	/**
@@ -38,7 +41,6 @@ public class ServiceCombination {
 		} catch(ClassCastException e) {
 			throw new ClassCastException("Given rating is in the wrong type! " + rating.getClass() + " <--> " + combinationRatingType.getTypeClass());
 		}
-		
 	}
 	
 	/**
@@ -72,14 +74,5 @@ public class ServiceCombination {
 	 */
 	public Object getRating() {
 		return rating;
-	}
-	
-	/**
-	 * Return whether the given service combination has the same collection 
-	 * @param other the given service combination 
-	 * @return whether the given service combination has the same collection 
-	 */
-	public boolean hasSameCollection(ServiceCombination other) {
-		return allServices.equals(other.allServices);
 	}
 }

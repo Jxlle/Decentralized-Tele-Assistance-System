@@ -12,9 +12,9 @@ public abstract class AbstractMessage {
 	
 	/**
 	 * Constructor
-	 * @param id  the message id
-	 * @param endpoint the source endpoint
-	 * @param msgType the message type, request or response
+	 * @param id the id of the message (identifier)
+	 * @param receiverEndpoint the given receiver endpoint
+	 * @param msgType the given message type
 	 */
 	protected AbstractMessage(int id, String receiverEndpoint, String msgType){
 		this.id = id;

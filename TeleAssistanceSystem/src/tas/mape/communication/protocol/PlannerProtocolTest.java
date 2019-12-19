@@ -2,8 +2,6 @@ package tas.mape.communication.protocol;
 
 import java.util.List;
 
-import service.auxiliary.AbstractMessage;
-import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.PlannerMessage;
 import tas.mape.planner.Planner;
 
@@ -20,7 +18,7 @@ public class PlannerProtocolTest extends PlannerTwoComponentProtocol {
 	}
 
 	@Override
-	public void receiveAndHandleMessage(PlannerMessage message, CommunicationComponent receiver) {
+	public void receiveAndHandleMessage(PlannerMessage message, Planner receiver) {
 		
 		/*PlannerMessage plannerMessage = (PlannerMessage) message;
 		Planner planner = (Planner) receiver;
@@ -33,7 +31,7 @@ public class PlannerProtocolTest extends PlannerTwoComponentProtocol {
 	}
 
 	@Override
-	protected void sendFirstMessage(List<CommunicationComponent> components, int startIndex, int... receiverIndices) {
+	protected void InitializeAndSendFirstMessage(List<Planner> components, int startIndex, int... receiverIndices) {
 		
 		
 		// TODO Auto-generated method stub

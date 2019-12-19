@@ -2,8 +2,8 @@ package tas.mape.communication.protocol;
 
 import java.util.List;
 
-import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.PlannerMessage;
+import tas.mape.planner.Planner;
 
 /**
  * @author Jelle Van De Sijpe
@@ -11,10 +11,14 @@ import tas.mape.communication.PlannerMessage;
  *
  * Abstract class representing the structure of a two-component planner protocol.
  */
-public abstract class PlannerTwoComponentProtocol extends AbstractTwoComponentProtocol<PlannerMessage> {
+public abstract class PlannerTwoComponentProtocol extends AbstractTwoComponentProtocol<PlannerMessage, Planner> {
 
+	
+	
 	@Override
-	protected void sendFirstMessage(List<CommunicationComponent> components, int startIndex, int... receiverIndices) {
+	protected void InitializeAndSendFirstMessage(List<Planner> components, int startIndex, int... receiverIndices) {
+		
+		// TODO store service registry information
 		
 		// TODO generate first planner message and send it to the receiver 
 		//PlannerMessage firstMessage = new PlannerMessage(messageID, );

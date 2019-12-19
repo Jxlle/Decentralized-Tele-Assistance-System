@@ -37,6 +37,7 @@ import tas.services.qos.MinCostQoS;
 import tas.services.qos.PreferencesQoS;
 import tas.services.qos.ReliabilityQoS;
 
+@SuppressWarnings("unused")
 public class TEST {
 	
     protected static ServiceRegistry serviceRegistry, serviceRegistry2;
@@ -60,6 +61,7 @@ public class TEST {
 		init();
 	}
 	
+	@SuppressWarnings("unused")
 	public static void init() {
 		serviceRegistry = new ServiceRegistry("ServiceRegistry", "se.lnu.service.registry");
 		serviceRegistry.startService();

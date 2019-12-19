@@ -11,8 +11,9 @@ import tas.mape.communication.CommunicationComponent;
  *
  * Abstract class representing the structure of a two-component protocol.
  * @param <T> the message type
+ * @param <E> the communication component type
  */
-public abstract class AbstractTwoComponentProtocol<T extends AbstractMessage> extends AbstractProtocol<T> {
+public abstract class AbstractTwoComponentProtocol<T extends AbstractMessage, E extends CommunicationComponent> extends AbstractProtocol<T, E> {
 	
 	/**
 	 * Create a new two-component protocol
@@ -26,11 +27,11 @@ public abstract class AbstractTwoComponentProtocol<T extends AbstractMessage> ex
 	 * @param components the given list of communication components
 	 */
 	@Override
-	protected void startProtocol(List<CommunicationComponent> components) {
+	protected void startProtocol(List<E> components) {
 		
 		int senderIndex = getRandomComponentIndex();	
 		int receiverIndex = Math.abs(senderIndex - 1);
 		
-		sendFirstMessage(components, senderIndex, receiverIndex);
+		InitializeAndSendFirstMessage(components, senderIndex, receiverIndex);
 	}
 }

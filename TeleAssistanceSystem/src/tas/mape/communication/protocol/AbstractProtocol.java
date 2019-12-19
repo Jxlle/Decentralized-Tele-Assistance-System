@@ -12,8 +12,10 @@ import tas.mape.communication.CommunicationComponent;
  *
  * Abstract class representing the structure of a protocol.
  * @param <T> the message type
+ * @param <E> the communication component type
+ * @note Currently only supports communication between components of the same type, sending the same type of messages
  */
-public abstract class AbstractProtocol<T extends AbstractMessage> {
+public abstract class AbstractProtocol<T extends AbstractMessage, E extends CommunicationComponent> {
 	
 	// Message ID of the last sent message
 	protected int messageID;
@@ -26,7 +28,7 @@ public abstract class AbstractProtocol<T extends AbstractMessage> {
 	 * @param components the given list of communication components
 	 * @throws IllegalArgumentException throw when the used protocol doesn't support the given amount of components
 	 */
-	public void executeProtocol(List<CommunicationComponent> components) throws IllegalArgumentException {
+	public void executeProtocol(List<E> components) throws IllegalArgumentException {
 		
 		if (components.size() != getNeededAmountOfComponents()) {
 			throw new IllegalArgumentException("The used protocol doesn't support the given amount of components: " + components.size());
@@ -35,13 +37,12 @@ public abstract class AbstractProtocol<T extends AbstractMessage> {
 		startProtocol(components);
 	}
 	
-	
 	/**
 	 * Handle a given message that was received by the given communication component
 	 * @param message the given message
 	 * @param receiver the given communication component (receiver)
 	 */
-	public abstract void receiveAndHandleMessage(T message, CommunicationComponent receiver);
+	public abstract void receiveAndHandleMessage(T message, E receiver);
 	
 	/**
 	 * Return the index of a randomly chosen component
@@ -70,13 +71,14 @@ public abstract class AbstractProtocol<T extends AbstractMessage> {
 	 * Start the protocol, choose starting and receiving components to begin communication
 	 * @param components the given list of communication components
 	 */
-	protected abstract void startProtocol(List<CommunicationComponent> components);
+	protected abstract void startProtocol(List<E> components);
 	
 	/**
-	 * Let a starting communication component send its first message to given receiver(s) to start the protocol 
+	 * Initialize local protocol properties and let a starting communication component send 
+	 * its first message to given receiver(s) to start the protocol.
 	 * @param components the given list of communication components
 	 * @param startIndex the given index of the starting component
 	 * @param receiverIndices the given indices of the receivers of the first message
 	 */
-	protected abstract void sendFirstMessage(List<CommunicationComponent> components, int startIndex, int... receiverIndices);
+	protected abstract void InitializeAndSendFirstMessage(List<E> components, int startIndex, int... receiverIndices);
 }
