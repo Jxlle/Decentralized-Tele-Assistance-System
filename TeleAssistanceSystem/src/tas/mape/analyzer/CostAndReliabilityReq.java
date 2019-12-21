@@ -32,11 +32,13 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 	 * @throws IllegalArgumentException throw when the given rating type has no implementation for the requirement
 	 */
 	@Override
-	public List<ServiceCombination> getServiceCombinations(int combinationLimit, RatingType ratingType, List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) throws IllegalArgumentException {
+	public List<ServiceCombination> getServiceCombinations(int combinationLimit, 
+			RatingType ratingType, List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations)
+			throws IllegalArgumentException {
 			
-		List<Object> scoreListCost = new ArrayList<>();
-		List<Object> scoreListFailureRate = new ArrayList<>();
-		List<ServiceCombination> sortedServiceCombinations = new ArrayList<>();
+		List<Comparable<?>> scoreListCost = new ArrayList<>();
+		List<Comparable<?>> scoreListFailureRate = new ArrayList<>();
+		List<Comparable<?>> scoreList = new ArrayList<>();
 		
 		switch (ratingType) {
 		
@@ -87,25 +89,18 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 				}
 			}
 			
-			List<Object> unsortedFinalScoreList = new ArrayList<>();
-			
 			// Final score can be calculated as follows:
 			// The above code sorts the service combinations from lowest score to highest for cost and failure rate.
 			// That means that the indices sum for cost and requirement together is a valid score.
 			// A higher score would mean that you have a high index count for cost + requirement, but because the lists are sorted from lowest to highest,
 			// a higher score is a better combination.
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				unsortedFinalScoreList.add(indexListCost.get(i).doubleValue() + indexListFailureRate.get(i).doubleValue());
+				scoreList.add(indexListCost.get(i).doubleValue() + indexListFailureRate.get(i).doubleValue());
 			}	
-			
-			// Get sorted service combinations
-			sortedServiceCombinations = getSortedServiceCombinations(combinationLimit, ratingType, unsortedFinalScoreList, allServiceCombinations);
 			
 			break;
 			
 		case CLASS:	
-			
-			List<Object> unsortedClassList = new ArrayList<>();
 			
 			// Calculate requirement scores
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
@@ -115,31 +110,32 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 			// Calculate total class for each service combination
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				unsortedClassList.add((int) scoreListCost.get(i) + (int) scoreListFailureRate.get(i));
+				scoreList.add((int) scoreListCost.get(i) + (int) scoreListFailureRate.get(i));
 			}
-			
-			// Get sorted service combinations
-			sortedServiceCombinations = getSortedServiceCombinations(combinationLimit, ratingType, unsortedClassList, allServiceCombinations);
 			
 			break;
 			
 		default:
 			throw new IllegalArgumentException("The given rating type " + ratingType + " has no implementation for the requirement!");
-		
 		}
 		
-		return sortedServiceCombinations;
+		// Return sorted service combinations
+		return getSortedServiceCombinations(combinationLimit, ratingType, scoreList, allServiceCombinations);
 	}
 
 	/**
-	 * Re-rank the given service combinations with a given map of service failure rates
+	 * Re-rank the given service combinations with a given map of service failure rates and given system goals
 	 * @param serviceCombinations the given service combinations
 	 * @param serviceFailureRates the given map of service failure rates
+	 * @param goals the given system goals
 	 * @return the new service combinations
+	 * @throws IllegalArgumentException the given service combination rating type has no implementation 
+	 *         for the requirement
 	 */
 	@Override
-	public List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
-			Map<String, Double> serviceFailureRates) {
+	public List<ServiceCombination> getNewServiceCombinations(
+			List<ServiceCombination> serviceCombinations, Map<String, Double> serviceFailureRates, List<Goal> goals) 
+			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
 	}

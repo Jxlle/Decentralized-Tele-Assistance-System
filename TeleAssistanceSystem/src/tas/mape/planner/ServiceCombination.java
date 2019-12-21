@@ -13,17 +13,17 @@ import service.auxiliary.WeightedCollection;
  * 
  * Class representing a combination of service descriptions (unique for a service) chosen by the analyzer component
  */
-public class ServiceCombination {
+public class ServiceCombination implements Comparable<ServiceCombination> { 
 	
 	// Map representing all the services in this service combination. The map depicts which services (endpoint + weight) can be used for which 
 	// description (method type + operation name) and each usable service has a use chance.
-	Map<Description, WeightedCollection<ServiceDescription>> allServices;
+	private Map<Description, WeightedCollection<ServiceDescription>> allServices;
 	
 	// Type of the service combination rating 
-	RatingType ratingType;
+	private RatingType ratingType;
 	
 	// Service combination rating 
-	Object rating;
+	private Comparable<?> rating;
 	
 	/**
 	 * Create a new service combination with a given services map, a rating type and a rating
@@ -31,16 +31,16 @@ public class ServiceCombination {
 	 * @param combinationRatingType the given rating type
 	 * @param rating the given rating
 	 */
-	public ServiceCombination(Map<Description, WeightedCollection<ServiceDescription>> allServices, RatingType ratingType, Object rating) {
+	public ServiceCombination(Map<Description, WeightedCollection<ServiceDescription>> allServices, RatingType ratingType, Comparable<?> rating) {
 		
 		this.allServices = allServices;
 		this.ratingType = ratingType;
 		
-		try {
-			this.rating = ratingType.getTypeClass().cast(rating);
-		} catch(ClassCastException e) {
+		if (rating.getClass() != ratingType.getTypeClass()) {
 			throw new ClassCastException("Given rating is in the wrong type! " + rating.getClass() + " <--> " + ratingType.getTypeClass());
 		}
+		
+		this.rating = rating;
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class ServiceCombination {
 	 * @param rating the rating of the clone
 	 * @return the cloned service combination
 	 */
-	public ServiceCombination GetCloneNewRating(Object rating) {
+	public ServiceCombination GetCloneNewRating(Comparable<?> rating) {
 		return new ServiceCombination(allServices, ratingType, rating);
 	}
 	
@@ -79,9 +79,19 @@ public class ServiceCombination {
 	
 	/**
 	 * Return the service combination rating
+	 * @param <T>
 	 * @return the service combination rating
 	 */
-	public Object getRating() {
-		return rating;
+	@SuppressWarnings("unchecked")
+	public <T> Comparable<T> getRating() {
+		return (Comparable<T>) rating;
+	}
+
+	/**
+	 * Compare two service combinations
+	 */
+	@Override
+	public int compareTo(ServiceCombination o) {
+		return this.getRating().compareTo(o.getRating());
 	}
 }

@@ -7,7 +7,6 @@ import java.util.Map;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
-import tas.mape.communication.message.PlannerMessageContent;
 import tas.mape.knowledge.Goal;
 import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
@@ -25,22 +24,21 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 	static final String usedProperty = "FailureRate";
 	
 	/**
-	 * Chooses the service combinations for the reliability requirement with a given combination limit, 
+	 * Chooses the service combinations for the cost an reliability requirements with a given combination limit, 
 	 * rating type and service combinations without rating or type
 	 * @param combinationLimit the given limit of returned service combinations
 	 * @param ratingType the given rating type
 	 * @param goals the given system goals
 	 * @param allServiceCombinations the given generated service combinations without rating or type
 	 * @return a list of the chosen service combinations
-	 * @throws IllegalArgumentException throw when the given rating type has no implementation 
-	 *         for the requirement
+	 * @throws IllegalArgumentException throw when the given rating type has no implementation for the requirement
 	 */
 	@Override
-	public List<ServiceCombination> getServiceCombinations(int combinationLimit, RatingType ratingType, 
-			List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) 
-					throws IllegalArgumentException {
+	public List<ServiceCombination> getServiceCombinations(int combinationLimit, 
+			RatingType ratingType, List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations)
+			throws IllegalArgumentException {
 			
-		List<Object> scoreList = new ArrayList<>();
+		List<Comparable<?>> scoreList = new ArrayList<>();
 		
 		switch (ratingType) {
 		
@@ -64,49 +62,47 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 		
 		}
 		
+		// Return sorted service combinations
 		return getSortedServiceCombinations(combinationLimit, ratingType, scoreList, allServiceCombinations);
 	}
 
 	/**
-	 * Re-rank the given service combinations with a given map of service failure rates
+	 * Re-rank the given service combinations with a given map of service failure rates and given system goals
 	 * @param serviceCombinations the given service combinations
 	 * @param serviceFailureRates the given map of service failure rates
+	 * @param goals the given system goals
 	 * @return the new service combinations
 	 * @throws IllegalArgumentException the given service combination rating type has no implementation 
-	 *         for the reliability requirement
+	 *         for the requirement
 	 */
 	@Override
 	public List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
-			Map<String, Double> serviceFailureRates) {
+			Map<String, Double> serviceFailureRates, List<Goal> goals) {
 		
-		// TODO
-		return null;
-		/*List<Object> scoreList = new ArrayList<>();
+		List<Comparable<?>> scoreList = new ArrayList<>();
 		
 		switch (serviceCombinations.get(0).getRatingType()) {
 		
 		case NUMBER:	
 			for (int i = 0; i < serviceCombinations.size(); i++) {
-				scoreList.add(GetNumberRatingDouble(serviceCombinations.get(i), serviceFailureRates, "FailureRate"));	
+				scoreList.add(GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), serviceFailureRates, usedProperty)));
 			}
 			
 			break;
 			
 		case CLASS:	
-			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreList.add(calculateClassRating(allServiceCombinations.get(i), goals, "FailureRate"));	
+			for (int i = 0; i < serviceCombinations.size(); i++) {
+				scoreList.add(getClassRating(goals, getTotalValue(serviceCombinations.get(i), serviceFailureRates, usedProperty), usedProperty));	
 			}
 			
 			break;
 			
 		default:
-			throw new IllegalArgumentException("The given service combination rating type " + serviceCombinations.get(0).getRatingType() + " has no implementation for the reliability requirement!");
+			throw new IllegalArgumentException("The given service combination rating type " + serviceCombinations.get(0).getRatingType() + " has no implementation for the requirement!");
 		
 		}
 		
-		double totalValue = 0;
-		
-		// Return score. +1 excludes special cases where the failure rate is between 0 and 1
-		return 1 / (totalValue + 1) * 100;*/
+		// Return sorted service combinations based on given values
+		return getSortedServiceCombinations(serviceCombinations, scoreList);
 	}
 }

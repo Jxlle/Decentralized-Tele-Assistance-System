@@ -219,7 +219,7 @@ public class TEST {
 		Goal reliabilityGoal = new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_OR_EQUAL_TO, 0.2);
 		goals.add(costGoal);
 		goals.add(reliabilityGoal);
-		List<ServiceCombination> services = carr.getServiceCombinations(1, 10, RatingType.CLASS, goals, assistanceService.getCache().caches);
+		List<ServiceCombination> services = cr.getServiceCombinations(1, 10, RatingType.NUMBER, goals, assistanceService.getCache().caches);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);
 		
 		for (ServiceCombination comb : services) {

@@ -13,13 +13,13 @@ public enum RatingType {
 	CLASS(Integer.class);
 	
 	// Fields
-	private final Class<?> typeClass;
+	private final Class<? extends Comparable<?>> typeClass;
 	
 	/**
 	 * Create a new rating type with a given class representing the type of the rating
 	 * @param typeClass class representing the given type of the rating
 	 */
-	private RatingType(Class<?> typeClass) {
+	private RatingType(Class<? extends Comparable<?>> typeClass) {
 		this.typeClass = typeClass;
 	}
 	
@@ -27,7 +27,7 @@ public enum RatingType {
 	 * Return the type class of this rating type
 	 * @return the type class
 	 */
-	public Class<?> getTypeClass() {
+	public Class<? extends Comparable<?>> getTypeClass() {
 		return typeClass;
 	}
 	

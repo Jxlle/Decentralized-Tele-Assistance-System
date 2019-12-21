@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
@@ -69,15 +70,14 @@ public abstract class AbstractWorkflowQoSRequirement {
 	}
 	
 	/**
-	 * Re-rank the given service combinations with a given map of service failure rates
+	 * Re-rank the given service combinations with a given map of service failure rates and given system goals
 	 * @param serviceCombinations the given service combinations
 	 * @param serviceFailureRates the given map of service failure rates
+	 * @param goals the given system goals
 	 * @return the new service combinations
-	 * @throws IllegalArgumentException the given service combination rating type has no implementation 
-	 *         for the reliability requirement
 	 */
 	public abstract List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
-			Map<String, Double> serviceFailureRates) throws IllegalArgumentException;
+			Map<String, Double> serviceFailureRates, List<Goal> goals);
 	
 	// TODO OTHER STRATEGIES
 	/**
@@ -227,11 +227,9 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param goals the given system goals
 	 * @param allServiceCombinations the given generated service combinations without rating or type
 	 * @return a list of the chosen service combinations
-	 * @throws IllegalArgumentException throw when the given rating type has no implementation for the cost requirement
 	 */
 	protected abstract List<ServiceCombination> getServiceCombinations(int combinationLimit, RatingType ratingType, 
-			List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) 
-					throws IllegalArgumentException;
+			List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations);
 	
 	/**
 	 * Calculate the number rating of a service combination with a given value.
@@ -280,130 +278,43 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param combinationLimit the given maximum amount of service combinations
 	 * @param ratingType the given rating type
 	 * @param combinationScores the given list of combination scores
-	 * @param allServiceCombinations the given list of all service combinations
+	 * @param serviceCombinations the given list of all service combinations
 	 * @return a list of sorted service combinations
-	 * @throws IllegalArgumentException throw when the given rating type class has no sorting implementation
 	 */
 	protected List<ServiceCombination> getSortedServiceCombinations(int combinationLimit, RatingType ratingType, 
-			List<Object> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) 
-					throws IllegalArgumentException {
-		
-		switch (ratingType.getTypeClass().getSimpleName()) {
-		
-		case "Double":
-			return getSortedServiceCombinationsDouble(combinationLimit, ratingType, combinationScores, allServiceCombinations);
-			
-		case "Integer":
-			return getSortedServiceCombinationsInt(combinationLimit, ratingType, combinationScores, allServiceCombinations);
-			
-		default:
-			throw new IllegalArgumentException("The given rating type class " + ratingType.getTypeClass().getSimpleName() + " has no sorting implementation!");
-		}
-	}
-	
-	/**
-	 * Return a sorted service combination list with a maximum amount of service combinations and a given rating type 
-	 * based on a list of combination scores represented as Double values and a list of all service combinations
-	 * @param combinationLimit the given maximum amount of service combinations
-	 * @param ratingType the given rating type
-	 * @param combinationScores the given list of combination scores
-	 * @param allServiceCombinations the given list of all service combinations
-	 * @return a list of sorted service combinations
-	 * @throws IllegalArgumentException throw when the given rating type class has no sorting implementation
-	 */
-	private List<ServiceCombination> getSortedServiceCombinationsDouble(int combinationLimit, RatingType ratingType, 
-			List<Object> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) {
+			List<Comparable<?>> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> serviceCombinations) {
 		
 		List<ServiceCombination> chosenServicesList = new ArrayList<>();
-		
-		List<Integer> indexList = new ArrayList<>();
-		List<Double> sortedScoreList = new ArrayList<>();
-		
-		for (int i = 0; i < allServiceCombinations.size(); i++) {
-			
-			double combinationScore = (double) combinationScores.get(i);	
-			
-			int index = Collections.binarySearch(sortedScoreList, combinationScore);
-			
-			if (index < 0) {
-				index = -1 * (Collections.binarySearch(sortedScoreList, combinationScore) + 1);
-			}
-			
-			sortedScoreList.add(index, combinationScore);
-			indexList.add(i, index);
-			
-			for (int i2 = 0; i2 < i; i2++) {
-				if (indexList.get(i2) >= index) {
-					indexList.set(i2, indexList.get(i2) + 1);
-				}
-			}
-			
-			chosenServicesList.add(null);
-		}
-		
 		ServiceCombination chosenServicesEntry;
 		Map<Description, WeightedCollection<ServiceDescription>> chosenServicesCombination;
 		
-		for (int i = 0; i < allServiceCombinations.size(); i++) {
-			
-			chosenServicesCombination = allServiceCombinations.get(i);
-			chosenServicesEntry = new ServiceCombination(chosenServicesCombination, ratingType, sortedScoreList.get(indexList.get(i)));
-			chosenServicesList.set(chosenServicesList.size() - indexList.get(i) - 1, chosenServicesEntry);
+		for (int i = 0; i < serviceCombinations.size(); i++) {
+			chosenServicesCombination = serviceCombinations.get(i);
+			chosenServicesEntry = new ServiceCombination(chosenServicesCombination, ratingType, combinationScores.get(i));
+			chosenServicesList.add(chosenServicesEntry);
 		}
 		
-		return chosenServicesList.subList(0, Math.min(combinationLimit, allServiceCombinations.size()));
+		Collections.sort(chosenServicesList, Collections.reverseOrder());
+		return chosenServicesList.subList(0, Math.min(combinationLimit, serviceCombinations.size()));
 	}
 	
 	/**
-	 * Return a sorted service combination list with a maximum amount of service combinations and a given rating type 
-	 * based on a list of combination scores represented as Integer values and a list of all service combinations
-	 * @param combinationLimit the given maximum amount of service combinations
-	 * @param ratingType the given rating type
+	 * Return a sorted service combination list by generating a new list of service combinations and
+	 * rating them using the given new combination scores. 
+	 * @param serviceCombinations the given service combinations
 	 * @param combinationScores the given list of combination scores
-	 * @param allServiceCombinations the given list of all service combinations
 	 * @return a list of sorted service combinations
-	 * @throws IllegalArgumentException throw when the given rating type class has no sorting implementation
 	 */
-	private List<ServiceCombination> getSortedServiceCombinationsInt(int combinationLimit, RatingType ratingType, 
-			List<Object> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) {
+	protected List<ServiceCombination> getSortedServiceCombinations(List<ServiceCombination> serviceCombinations, 
+			List<Comparable<?>> combinationScores) {
 		
 		List<ServiceCombination> chosenServicesList = new ArrayList<>();
 		
-		List<Integer> indexList = new ArrayList<>();
-		List<Double> scoreList = new ArrayList<>();
-		
-		for (int i = 0; i < allServiceCombinations.size(); i++) {
-			
-			double combinationScore = Double.valueOf((int) combinationScores.get(i));	
-			
-			int index = Collections.binarySearch(scoreList, combinationScore);
-			
-			if (index < 0) {
-				index = -1 * (Collections.binarySearch(scoreList, combinationScore) + 1);
-			}
-			
-			scoreList.add(index, combinationScore);
-			indexList.add(i, index);
-			
-			for (int i2 = 0; i2 < i; i2++) {
-				if (indexList.get(i2) >= index) {
-					indexList.set(i2, indexList.get(i2) + 1);
-				}
-			}
-			
-			chosenServicesList.add(null);
+		for (int i = 0; i < serviceCombinations.size(); i++) {
+			chosenServicesList.add(serviceCombinations.get(i).GetCloneNewRating(combinationScores.get(i)));
 		}
 		
-		ServiceCombination chosenServicesEntry;
-		Map<Description, WeightedCollection<ServiceDescription>> chosenServicesCombination;
-		
-		for (int i = 0; i < allServiceCombinations.size(); i++) {
-			
-			chosenServicesCombination = allServiceCombinations.get(i);
-			chosenServicesEntry = new ServiceCombination(chosenServicesCombination, ratingType, scoreList.get(indexList.get(i)).intValue());
-			chosenServicesList.set(chosenServicesList.size() - indexList.get(i) - 1, chosenServicesEntry);
-		}
-		
-		return chosenServicesList.subList(0, Math.min(combinationLimit, allServiceCombinations.size()));
+		Collections.sort(serviceCombinations, Collections.reverseOrder());
+		return serviceCombinations;
 	}
 }
