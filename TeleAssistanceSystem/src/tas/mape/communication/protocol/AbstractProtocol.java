@@ -3,8 +3,8 @@ package tas.mape.communication.protocol;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import service.auxiliary.AbstractMessage;
 import tas.mape.communication.CommunicationComponent;
+import tas.mape.communication.message.ComponentMessage;
 
 /**
  * @author Jelle Van De Sijpe
@@ -15,7 +15,7 @@ import tas.mape.communication.CommunicationComponent;
  * @param <E> the communication component type
  * @note Currently only supports communication between components of the same type, sending the same type of messages
  */
-public abstract class AbstractProtocol<T extends AbstractMessage, E extends CommunicationComponent> {
+public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends CommunicationComponent<T>> {
 	
 	// Message ID of the last sent message
 	protected int messageID;

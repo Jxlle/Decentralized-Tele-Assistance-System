@@ -11,7 +11,10 @@ import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import tas.mape.communication.CommunicationComponent;
+import tas.mape.communication.message.PlannerMessage;
+import tas.mape.communication.message.PlannerMessageContent;
 import tas.mape.communication.protocol.AbstractProtocol;
+import tas.mape.communication.protocol.PlannerTwoComponentProtocol;
 import tas.mape.executer.Executer;
 import tas.mape.knowledge.Knowledge;
 
@@ -21,13 +24,13 @@ import tas.mape.knowledge.Knowledge;
  * 
  * Class that represents the planner component in a MAPE-K component
  */
-public class Planner extends CommunicationComponent {
+public class Planner extends CommunicationComponent<PlannerMessage> {
 
 	// Fields
 	private Executer executer;
 	private Knowledge knowledge;
 	private Boolean executed;
-	private AbstractProtocol protocol;
+	private PlannerTwoComponentProtocol protocol;
 	private List<PlanComponent> plan;
 	private List<ServiceCombination> chosenServicesList;
 	
@@ -36,11 +39,11 @@ public class Planner extends CommunicationComponent {
 		this.executer = executer;
 	}
 	
-	public AbstractProtocol getProtocol() {
+	public PlannerTwoComponentProtocol getProtocol() {
 		return protocol;
 	}
 	
-	public void setProtocol(AbstractProtocol protocol) {
+	public void setProtocol(PlannerTwoComponentProtocol protocol) {
 		this.protocol = protocol;
 	}
 	
@@ -121,12 +124,21 @@ public class Planner extends CommunicationComponent {
 	}
 
 	@Override
-	public void receiveMessage(AbstractMessage message) throws NullPointerException {
+	public void receiveMessage(PlannerMessage message) throws NullPointerException {
 		
 		if (protocol == null) {
 			throw new NullPointerException("Planner can't handle message receivement, no protocol selected.");
 		}
 		
 		protocol.receiveAndHandleMessage(message, this);
+	}
+	
+	public static Map<String, Double> unPackPlannerContent(PlannerMessageContent content) {
+		
+		// TODO
+		return null;
+		/*for (Map.Entry<String, Integer> : content.getPublicServiceUsage()) {
+			
+		}*/
 	}
 }

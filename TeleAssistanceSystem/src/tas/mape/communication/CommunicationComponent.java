@@ -1,6 +1,6 @@
 package tas.mape.communication;
 
-import service.auxiliary.AbstractMessage;
+import tas.mape.communication.message.ComponentMessage;
 import tas.mape.communication.message.ComponentMessageHost;
 
 /**
@@ -8,15 +8,16 @@ import tas.mape.communication.message.ComponentMessageHost;
  * @email jelle.vandesijpe@student.kuleuven.be
  *
  * Abstract class representing a component that has the ability to communicate with other components of this type.
- * @note Connection between multiple hosts currently not supported
+ * @param <T> the message type
+  @note Connection between multiple hosts currently not supported
  */
-public abstract class CommunicationComponent {
+public abstract class CommunicationComponent<T extends ComponentMessage<?>> {
 	
 	// Unique endpoint for identification
 	private String endpoint;
 	
 	// Message host of this communication component
-	private ComponentMessageHost messageHost;
+	private ComponentMessageHost<T> messageHost;
 	
 	/**
 	 * Create a new communication component with a given endpoint
@@ -52,7 +53,7 @@ public abstract class CommunicationComponent {
 	 * Return the message host
 	 * @return the message host
 	 */
-	public ComponentMessageHost getMessageHost() {
+	public ComponentMessageHost<T> getMessageHost() {
 		return messageHost;
 	}
 	
@@ -61,7 +62,7 @@ public abstract class CommunicationComponent {
 	 * @param messageHost the component message host
 	 * @throws IllegalArgumentException throw when calling this method directly. This method should only be called from the message host
 	 */
-	public void setMessageHost(ComponentMessageHost messageHost) throws IllegalArgumentException {
+	public void setMessageHost(ComponentMessageHost<T> messageHost) throws IllegalArgumentException {
 		
 		if (this.messageHost != null && this.messageHost.getListeners().get(endpoint) != null) {
 			throw new IllegalArgumentException("Can't change message host directly!");
@@ -74,7 +75,7 @@ public abstract class CommunicationComponent {
 	 * Send a given message to another communication component
 	 * @param message the message to be sent
 	 */
-	public void sendMessage(AbstractMessage message) {
+	public void sendMessage(T message) {
 		messageHost.sendMessage(message);
 	}
 	
@@ -82,5 +83,5 @@ public abstract class CommunicationComponent {
 	 * This method is called from the message host when receiving a message
 	 * @param message the received message
 	 */
-	public abstract void receiveMessage(AbstractMessage message);
+	public abstract void receiveMessage(T message);
 }
