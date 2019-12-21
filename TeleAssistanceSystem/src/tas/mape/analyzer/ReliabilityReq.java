@@ -102,6 +102,8 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 		
 		}
 		
+		System.out.print(scoreList);
+		
 		// Return sorted service combinations based on given values
 		return getSortedServiceCombinations(serviceCombinations, scoreList);
 	}

@@ -147,7 +147,7 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 			// Calculate requirement scores
 			for (int i = 0; i < serviceCombinations.size(); i++) {
-				scoreListCost.add((double) GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), serviceFailureRates, "Cost")));
+				scoreListCost.add((double) GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), "Cost")));
 				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), serviceFailureRates, "FailureRate")));
 			}
 			
@@ -205,7 +205,7 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 			// Calculate requirement scores
 			for (int i = 0; i < serviceCombinations.size(); i++) {
-				scoreListCost.add(getClassRating(goals, getTotalValue(serviceCombinations.get(i), serviceFailureRates, "Cost"), "Cost"));
+				scoreListCost.add(getClassRating(goals, getTotalValue(serviceCombinations.get(i), "Cost"), "Cost"));
 				scoreListFailureRate.add(getClassRating(goals, getTotalValue(serviceCombinations.get(i), serviceFailureRates, "FailureRate"), "FailureRate"));
 			}
 			

@@ -170,7 +170,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 	
 	/**
 	 * Calculate the accumulated value of a given property for a given service combination.
-	 * @param combination the given service combination
+	 * @param combination the given service combination without the rating and rating type
 	 * @param property the given property
 	 * @return the total value
 	 */
@@ -181,6 +181,29 @@ public abstract class AbstractWorkflowQoSRequirement {
 		for (Description description : combination.keySet()) {
 			
 			for (ServiceDescription service : combination.get(description).getItems()) {
+				
+				if (service.getCustomProperties().containsKey(property)) {
+					totalValue += (double) service.getCustomProperties().get(property);
+				}
+			}
+		}
+		
+		return totalValue;
+	}
+	
+	/**
+	 * Calculate the accumulated value of a given property for a given service combination.
+	 * @param combination the given service combination
+	 * @param property the given property
+	 * @return the total value
+	 */
+	public double getTotalValue(ServiceCombination combination, String property) {
+		
+		double totalValue = 0;
+		
+		for (Description description : combination.getDescriptions()) {
+			
+			for (ServiceDescription service : combination.getAllServices(description).getItems()) {
 				
 				if (service.getCustomProperties().containsKey(property)) {
 					totalValue += (double) service.getCustomProperties().get(property);
@@ -314,7 +337,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 			chosenServicesList.add(serviceCombinations.get(i).GetCloneNewRating(combinationScores.get(i)));
 		}
 		
-		Collections.sort(serviceCombinations, Collections.reverseOrder());
-		return serviceCombinations;
+		Collections.sort(chosenServicesList, Collections.reverseOrder());
+		return chosenServicesList;
 	}
 }

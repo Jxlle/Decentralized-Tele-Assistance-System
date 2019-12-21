@@ -219,10 +219,13 @@ public class TEST {
 		Goal reliabilityGoal = new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_OR_EQUAL_TO, 0.2);
 		goals.add(costGoal);
 		goals.add(reliabilityGoal);
-		List<ServiceCombination> services = cr.getServiceCombinations(1, 10, RatingType.NUMBER, goals, assistanceService.getCache().caches);
+		List<ServiceCombination> services1 = carr.getServiceCombinations(1, 10, RatingType.NUMBER, goals, assistanceService.getCache().caches);
+		Map<String, Double> serviceFailureRates = new HashMap<>();
+		serviceFailureRates.put("service.medical2", 1.0);
+		List<ServiceCombination> services = carr.getNewServiceCombinations(services1, serviceFailureRates, goals);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);
 		
-		for (ServiceCombination comb : services) {
+		for (ServiceCombination comb : services1) {
 			System.err.print("-----------------------------------------------------------------------------------------\n");
 			
 			comb.getDescriptions();
