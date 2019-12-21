@@ -102,6 +102,6 @@ public class Analyzer {
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirementName);
 		List<Goal> goals = knowledge.getGoals();
 		
-		return requirementClass.chooseServices(getQoSStrategy(requirementName), combinationLimit, ratingType, goals, usableServices);
+		return requirementClass.getServiceCombinations(getQoSStrategy(requirementName), combinationLimit, ratingType, goals, usableServices);
 	}
 }

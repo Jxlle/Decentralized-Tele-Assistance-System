@@ -20,13 +20,15 @@ import tas.mape.planner.ServiceCombination;
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
  * 
- * An abstract class for choosing service combinations in the analyzer step of the MAPE-K loop based on a QoS requirement and strategy.
+ * An abstract class for choosing service combinations in the analyzer step of the MAPE-K loop 
+ * based on a QoS requirement and strategy.
  */
 public abstract class AbstractWorkflowQoSRequirement {
 	
 	/**
-	 * Apply a QoS requirement strategy with a given strategy, combination limit, rating type, list of goals and a map of usable services.
-	 * @param strategy a pair where the first element represents the service combination strategy and the second number the general requirement strategy
+	 * Apply a QoS requirement strategy with a given strategy, combination limit, rating type, list of goals 
+	 * and a map of usable services.
+	 * @param strategy the given strategy number
 	 * @param combinationLimit the given limit of returned service combinations
 	 * @param ratingType the given rating type 
 	 * @param goals the given system goals
@@ -36,7 +38,9 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @throws IllegalArgumentException throw when the combination limit is illegal
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ServiceCombination> chooseServices(Integer strategy, int combinationLimit, RatingType ratingType, List<Goal> goals, Map<Description, List<ServiceDescription>> usableServices) throws IllegalArgumentException {
+	public List<ServiceCombination> getServiceCombinations(Integer strategy, int combinationLimit, 
+			RatingType ratingType, List<Goal> goals, Map<Description, List<ServiceDescription>> usableServices) 
+					throws IllegalArgumentException {
 		
 		// Check if given combination limit is legal
 		if (combinationLimit < 1) {
@@ -55,24 +59,25 @@ public abstract class AbstractWorkflowQoSRequirement {
 		
 		// Invoke method
 		try {
-			allServiceCombinations = (List<Map<Description, WeightedCollection<ServiceDescription>>>) method.invoke(this, usableServices);
+			allServiceCombinations = (List<Map<Description, WeightedCollection<ServiceDescription>>>) 
+					method.invoke(this, usableServices);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}	
 
-		return chooseServices(combinationLimit, ratingType, goals, allServiceCombinations);
+		return getServiceCombinations(combinationLimit, ratingType, goals, allServiceCombinations);
 	}
 	
 	/**
-	 * Chooses the service combinations for a requirement with a given combination limit, rating type and service combinations without rating or type
-	 * @param combinationLimit the given limit of returned service combinations
-	 * @param ratingType the given rating type
-	 * @param goals the given system goals
-	 * @param allServiceCombinations the given generated service combinations without rating or type
-	 * @return a list of the chosen service combinations
-	 * @throws IllegalArgumentException throw when the given rating type has no implementation for the cost requirement
+	 * Re-rank the given service combinations with a given map of service failure rates
+	 * @param serviceCombinations the given service combinations
+	 * @param serviceFailureRates the given map of service failure rates
+	 * @return the new service combinations
+	 * @throws IllegalArgumentException the given service combination rating type has no implementation 
+	 *         for the reliability requirement
 	 */
-	protected abstract List<ServiceCombination> chooseServices(int combinationLimit, RatingType ratingType, List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations);
+	public abstract List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
+			Map<String, Double> serviceFailureRates) throws IllegalArgumentException;
 	
 	// TODO OTHER STRATEGIES
 	/**
@@ -81,8 +86,8 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 *        and the value is a list of the usable services for that description 
 	 * @return the generated service combinations without rating or type
 	 */
-	@SuppressWarnings("unused")
-	public List<Map<Description, WeightedCollection<ServiceDescription>>> getAllServiceCombinations1(Map<Description, List<ServiceDescription>> usableServices) {
+	public List<Map<Description, WeightedCollection<ServiceDescription>>> getAllServiceCombinations1(Map<Description, 
+			List<ServiceDescription>> usableServices) {
 		
 		//--------------------------------------------
 		// Create a List<List<.>> from the given Map
@@ -164,62 +169,12 @@ public abstract class AbstractWorkflowQoSRequirement {
 	}
 	
 	/**
-	 * Calculate the rating of a given service combination for the NUMBER rating type and the "Cost" requirement
-	 * @param combination the given service combination without rating or type
-	 * @return the rating of the service combination
+	 * Calculate the accumulated value of a given property for a given service combination.
+	 * @param combination the given service combination
+	 * @param property the given property
+	 * @return the total value
 	 */
-	protected double calculateNumberRatingCost(Map<Description, WeightedCollection<ServiceDescription>> combination) {
-		
-		double totalCost = 0;
-		
-		for (Description description : combination.keySet()) {	
-			
-			for (ServiceDescription service : combination.get(description).getItems()) {
-				
-				if (service.getCustomProperties().containsKey("Cost")) {
-					totalCost += (double) service.getCustomProperties().get("Cost") * combination.get(description).getChance(service);
-				}
-			}
-		}
-		
-		// Return score. +1 excludes special cases where the cost is between 0 and 1
-		return 1 / (totalCost + 1) * 100;
-	}
-	
-	/**
-	 * Calculate the rating of a given service combination for the NUMBER rating type and the "FailureRate" requirement
-	 * @param combination the given service combination without rating or type
-	 * @return the rating of the service combination
-	 */
-	protected double calculateNumberRatingFailureRate(Map<Description, WeightedCollection<ServiceDescription>> combination) {
-		
-		double totalFailureRate = 0;
-		
-		for (Description description : combination.keySet()) {
-			
-			for (ServiceDescription service : combination.get(description).getItems()) {
-				
-				if (service.getCustomProperties().containsKey("FailureRate")) {
-					totalFailureRate += (double) service.getCustomProperties().get("FailureRate") * combination.get(description).getChance(service);
-				}
-			}
-		}
-		
-		// Return score. +1 excludes special cases where the failure rate is between 0 and 1
-		return 1 / (totalFailureRate + 1) * 100;
-	}
-	
-	/**
-	 * Calculate the rating of a given service combination for the CLASS rating type and a given requirement.
-	 * The rating is a number representing the class the combination is in. The number represents the amount of met goals.
-	 * @param combination the given service combination without rating or type
-	 * @param requirement the given requirement where the service combination rating is based off
-	 * @param goals the given system goals
-	 * @return the rating of the service combination.
-	 * @throws IllegalStateException throw when class rating generation for given class relation isn't implemented
-	 * @throws IllegalStateException throw when list of goals doesn't include the right goal type
-	 */
-	protected int calculateClassRating(Map<Description, WeightedCollection<ServiceDescription>> combination, List<Goal> goals, String requirement) throws IllegalStateException {
+	public double getTotalValue(Map<Description, WeightedCollection<ServiceDescription>> combination, String property) {
 		
 		double totalValue = 0;
 		
@@ -227,59 +182,89 @@ public abstract class AbstractWorkflowQoSRequirement {
 			
 			for (ServiceDescription service : combination.get(description).getItems()) {
 				
-				if (service.getCustomProperties().containsKey(requirement)) {
-					totalValue += (double) service.getCustomProperties().get(requirement);
+				if (service.getCustomProperties().containsKey(property)) {
+					totalValue += (double) service.getCustomProperties().get(property);
 				}
 			}
 		}
 		
+		return totalValue;
+	}
+	
+	/**
+	 * Calculate the accumulated value of a given property for a given service combination based on a given value map. 
+	 * The service combination is searched when a certain value isn't present in the given map.
+	 * @param combination the given service combination
+	 * @param values the given values map
+	 * @param property the given property
+	 * @return the total value
+	 */
+	public double getTotalValue(ServiceCombination combination, Map<String, Double> values, String property) {
+		
+		double totalValue = 0;
+		
+		for (Description description : combination.getDescriptions()) {
+			
+			for (ServiceDescription service : combination.getAllServices(description).getItems()) {
+				
+				if (values.get(service.getServiceEndpoint()) != null) {
+					totalValue += values.get(service.getServiceEndpoint()) * combination.getAllServices(description).getChance(service);
+				}
+				else if (service.getCustomProperties().containsKey(property)) {
+					totalValue += (double) service.getCustomProperties().get(property) * combination.getAllServices(description).getChance(service);
+				}
+			}
+		}
+		
+		return totalValue;
+	}
+	
+	/**
+	 * Chooses the service combinations for a requirement with a given combination limit, rating type 
+	 * and service combinations without rating or type
+	 * @param combinationLimit the given limit of returned service combinations
+	 * @param ratingType the given rating type
+	 * @param goals the given system goals
+	 * @param allServiceCombinations the given generated service combinations without rating or type
+	 * @return a list of the chosen service combinations
+	 * @throws IllegalArgumentException throw when the given rating type has no implementation for the cost requirement
+	 */
+	protected abstract List<ServiceCombination> getServiceCombinations(int combinationLimit, RatingType ratingType, 
+			List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) 
+					throws IllegalArgumentException;
+	
+	/**
+	 * Calculate the number rating of a service combination with a given value.
+	 * The given value is an accumulation of property values where lower means better score.
+	 * @param totalValue the given accumulated property value
+	 * @return the service combination rating
+	 */
+	protected double GetNumberRatingDouble(double totalValue) {
+		
+		// Return score. +1 excludes special cases where the total value is between 0 and 1
+		return 1 / (totalValue + 1) * 100;
+	}
+	
+	/**
+	 * Calculate the class rating of a service combination with a given list of goals, property and a value.
+	 * The given value is an accumulation of property values where lower means better score.
+	 * The rating is a number representing the class the service combination is in. The number represents the amount of met goals.
+	 * This class rating is calculated by checking all goals, finding the relevant goal and checking that goal with the given value.
+	 * @param totalValue the given accumulated property value
+	 * @param goals the given system goals
+	 * @param property the given name of the custom service property
+	 * @return the service combination rating
+	 * @throws IllegalStateException throw when list of goals doesn't include the right goal type
+	 */
+	protected int getClassRating(List<Goal> goals, double totalValue, String property) throws IllegalStateException {
+		
 		for (Goal goal : goals) {
 			
-			if (goal.getType() == GoalType.fromString(requirement)) {
-				
-				switch (goal.getRelation()) {
-				
-				case HIGHER_THAN:
-					
-					if (totalValue > goal.getValue()) {
-						return 1;
-					}
-					else {
-						return 0;
-					}
-						
-				case HIGHER_OR_EQUAL_TO:
-					
-					if (totalValue >= goal.getValue()) {
-						return 1;
-					}
-					else {
-						return 0;
-					}
-					
-				case LOWER_THAN:
-
-					if (totalValue < goal.getValue()) {
-						return 1;
-					}
-					else {
-						return 0;
-					}
-					
-				case LOWER_OR_EQUAL_TO:
-					
-					if (totalValue <= goal.getValue()) {
-						return 1;
-					}
-					else {
-						return 0;
-					}
-					
-				default:
-					
-					throw new IllegalStateException("Class rating generation for given class relation isn't implemented!");
-					
-				}
+			if (goal.getType() == GoalType.fromString(property) && goal.validValue(totalValue)) {
+				return 1;
+			}
+			else {
+				return 0;
 			}
 		}
 		
@@ -296,7 +281,9 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @return a list of sorted service combinations
 	 * @throws IllegalArgumentException throw when the given rating type class has no sorting implementation
 	 */
-	protected List<ServiceCombination> getSortedServiceCombinations(int combinationLimit, RatingType ratingType, List<Object> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) throws IllegalArgumentException {
+	protected List<ServiceCombination> getSortedServiceCombinations(int combinationLimit, RatingType ratingType, 
+			List<Object> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) 
+					throws IllegalArgumentException {
 		
 		switch (ratingType.getTypeClass().getSimpleName()) {
 		
@@ -321,7 +308,8 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @return a list of sorted service combinations
 	 * @throws IllegalArgumentException throw when the given rating type class has no sorting implementation
 	 */
-	private List<ServiceCombination> getSortedServiceCombinationsDouble(int combinationLimit, RatingType ratingType, List<Object> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) {
+	private List<ServiceCombination> getSortedServiceCombinationsDouble(int combinationLimit, RatingType ratingType, 
+			List<Object> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) {
 		
 		List<ServiceCombination> chosenServicesList = new ArrayList<>();
 		
@@ -373,7 +361,8 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @return a list of sorted service combinations
 	 * @throws IllegalArgumentException throw when the given rating type class has no sorting implementation
 	 */
-	private List<ServiceCombination> getSortedServiceCombinationsInt(int combinationLimit, RatingType ratingType, List<Object> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) {
+	private List<ServiceCombination> getSortedServiceCombinationsInt(int combinationLimit, RatingType ratingType, 
+			List<Object> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) {
 		
 		List<ServiceCombination> chosenServicesList = new ArrayList<>();
 		

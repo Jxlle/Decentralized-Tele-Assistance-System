@@ -30,7 +30,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private Executer executer;
 	private Knowledge knowledge;
 	private Boolean executed;
-	private PlannerTwoComponentProtocol protocol;
+	private AbstractProtocol<PlannerMessage, Planner> protocol;
 	private List<PlanComponent> plan;
 	private List<ServiceCombination> chosenServicesList;
 	
@@ -39,11 +39,11 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		this.executer = executer;
 	}
 	
-	public PlannerTwoComponentProtocol getProtocol() {
+	public AbstractProtocol<?, Planner> getProtocol() {
 		return protocol;
 	}
 	
-	public void setProtocol(PlannerTwoComponentProtocol protocol) {
+	public void setProtocol(AbstractProtocol<PlannerMessage, Planner> protocol) {
 		this.protocol = protocol;
 	}
 	
@@ -133,12 +133,14 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		protocol.receiveAndHandleMessage(message, this);
 	}
 	
-	public static Map<String, Double> unPackPlannerContent(PlannerMessageContent content) {
+	public Map<String, Double> getFailureRates(PlannerMessageContent content) {
 		
-		// TODO
-		return null;
-		/*for (Map.Entry<String, Integer> : content.getPublicServiceUsage()) {
-			
-		}*/
+		Map<String, Double> failureRates = new HashMap<String, Double>();
+		
+		for (Map.Entry<String, Integer> entry : content.getPublicServiceUsage().entrySet()) {
+			failureRates.put(entry.getKey(), knowledge.getApproximatedServiceFailureRate(entry.getKey(), entry.getValue()));
+		}
+		
+		return failureRates;
 	}
 }

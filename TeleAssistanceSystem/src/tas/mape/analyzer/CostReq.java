@@ -15,21 +15,29 @@ import tas.mape.planner.ServiceCombination;
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
  * 
- * A class for choosing service combinations in the analyzer step of the MAPE-K loop based on the cost QoS requirement.
+ * A class for choosing service combinations in the analyzer step of the MAPE-K loop 
+ * based on the cost QoS requirement.
  */
 public class CostReq extends AbstractWorkflowQoSRequirement {
 	
+	// Used property for all methods
+	static final String usedProperty = "Cost";
+	
 	/**
-	 * Chooses the service combinations for the cost requirement with a given combination limit, rating type and service combinations without rating or type
+	 * Chooses the service combinations for the cost requirement with a given combination limit, 
+	 * rating type and service combinations without rating or type
 	 * @param combinationLimit the given limit of returned service combinations
 	 * @param ratingType the given rating type
 	 * @param goals the given system goals
 	 * @param allServiceCombinations the given generated service combinations without rating or type
 	 * @return a list of the chosen service combinations
-	 * @throws IllegalArgumentException throw when the given rating type has no implementation for the cost requirement
+	 * @throws IllegalArgumentException throw when the given rating type has no implementation 
+	 *         for the requirement
 	 */
 	@Override
-	public List<ServiceCombination> chooseServices(int combinationLimit, RatingType ratingType, List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) throws IllegalArgumentException {
+	public List<ServiceCombination> getServiceCombinations(int combinationLimit, RatingType ratingType, 
+			List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) 
+					throws IllegalArgumentException {
 			
 		List<Object> scoreList = new ArrayList<>();
 		
@@ -37,23 +45,38 @@ public class CostReq extends AbstractWorkflowQoSRequirement {
 		
 		case NUMBER:	
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreList.add((double) calculateNumberRatingCost(allServiceCombinations.get(i)));	
+				scoreList.add(GetNumberRatingDouble(getTotalValue(allServiceCombinations.get(i), usedProperty)));	
 			}
 			
 			break;
 			
 		case CLASS:	
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreList.add(calculateClassRating(allServiceCombinations.get(i), goals, "Cost"));	
+				scoreList.add(getClassRating(goals, getTotalValue(allServiceCombinations.get(i), usedProperty), usedProperty));	
 			}
 			
 			break;
 			
 		default:
-			throw new IllegalArgumentException("The given rating type " + ratingType + " has no implementation for the cost requirement!");
+			throw new IllegalArgumentException("The given rating type " + ratingType + 
+					" has no implementation for the requirement!");
 		
 		}
 		
 		return getSortedServiceCombinations(combinationLimit, ratingType, scoreList, allServiceCombinations);
+	}
+
+	/**
+	 * Re-rank the given service combinations with a given map of service failure rates
+	 * @param serviceCombinations the given service combinations
+	 * @param serviceFailureRates the given map of service failure rates
+	 * @return the new service combinations
+	 * @throws IllegalArgumentException the given service combination rating type has no implementation 
+	 *         for the reliability requirement
+	 */
+	@Override
+	public List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
+			Map<String, Double> serviceFailureRates) {
+		return serviceCombinations;
 	}
 }

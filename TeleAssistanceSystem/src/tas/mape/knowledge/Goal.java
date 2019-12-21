@@ -124,4 +124,57 @@ public class Goal {
 	public void setValue(double value) {
 		this.value = value;
 	}
+	
+	/**
+	 * Check if a given value is valid for the goal
+	 * @param givenValue the given value
+	 * @return whether the given value is valid
+	 * @throws throw when the goal relation check isn't implemented
+	 */
+	public boolean validValue(double givenValue) throws IllegalStateException {
+		
+		switch (relation) {
+		
+		case HIGHER_THAN:
+			
+			if (givenValue > value) {
+				return true;
+			}
+			else {
+				return false;
+			}
+				
+		case HIGHER_OR_EQUAL_TO:
+			
+			if (givenValue >= value) {
+				return true;
+			}
+			else {
+				return false;
+			}
+			
+		case LOWER_THAN:
+
+			if (givenValue < value) {
+				return true;
+			}
+			else {
+				return false;
+			}
+			
+		case LOWER_OR_EQUAL_TO:
+			
+			if (givenValue <= value) {
+				return true;
+			}
+			else {
+				return false;
+			}
+			
+		default:
+			
+			throw new IllegalStateException("Goal relation check isn't implemented!");
+			
+		}
+	}
 }

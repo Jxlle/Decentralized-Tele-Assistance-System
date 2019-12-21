@@ -20,7 +20,7 @@ public class ServiceCombination {
 	Map<Description, WeightedCollection<ServiceDescription>> allServices;
 	
 	// Type of the service combination rating 
-	RatingType combinationRatingType;
+	RatingType ratingType;
 	
 	// Service combination rating 
 	Object rating;
@@ -31,16 +31,25 @@ public class ServiceCombination {
 	 * @param combinationRatingType the given rating type
 	 * @param rating the given rating
 	 */
-	public ServiceCombination(Map<Description, WeightedCollection<ServiceDescription>> allServices, RatingType combinationRatingType, Object rating) {
+	public ServiceCombination(Map<Description, WeightedCollection<ServiceDescription>> allServices, RatingType ratingType, Object rating) {
 		
 		this.allServices = allServices;
-		this.combinationRatingType = combinationRatingType;
+		this.ratingType = ratingType;
 		
 		try {
-			this.rating = combinationRatingType.getTypeClass().cast(rating);
+			this.rating = ratingType.getTypeClass().cast(rating);
 		} catch(ClassCastException e) {
-			throw new ClassCastException("Given rating is in the wrong type! " + rating.getClass() + " <--> " + combinationRatingType.getTypeClass());
+			throw new ClassCastException("Given rating is in the wrong type! " + rating.getClass() + " <--> " + ratingType.getTypeClass());
 		}
+	}
+	
+	/**
+	 * Create a clone of this service combination with a new given rating
+	 * @param rating the rating of the clone
+	 * @return the cloned service combination
+	 */
+	public ServiceCombination GetCloneNewRating(Object rating) {
+		return new ServiceCombination(allServices, ratingType, rating);
 	}
 	
 	/**
@@ -64,8 +73,8 @@ public class ServiceCombination {
 	 * Return the service combination type
 	 * @return the service combination type
 	 */
-	public RatingType getCombinationRatingType() {
-		return combinationRatingType;
+	public RatingType getRatingType() {
+		return ratingType;
 	}
 	
 	/**

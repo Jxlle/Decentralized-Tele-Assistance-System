@@ -16,21 +16,23 @@ import tas.mape.planner.ServiceCombination;
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
  * 
- * A class for choosing service combinations in the analyzer step of the MAPE-K loop based on the cost and reliability QoS requirements.
+ * A class for choosing service combinations in the analyzer step of the MAPE-K loop 
+ * based on the cost and reliability QoS requirements.
  */
 public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 	
 	/**
-	 * Chooses the service combinations for the cost an reliability requirements with a given combination limit, rating type and service combinations without rating or type
+	 * Chooses the service combinations for the cost an reliability requirements with a given combination limit, 
+	 * rating type and service combinations without rating or type
 	 * @param combinationLimit the given limit of returned service combinations
 	 * @param ratingType the given rating type
 	 * @param goals the given system goals
 	 * @param allServiceCombinations the given generated service combinations without rating or type
 	 * @return a list of the chosen service combinations
-	 * @throws IllegalArgumentException throw when the given rating type has no implementation for the cost requirement
+	 * @throws IllegalArgumentException throw when the given rating type has no implementation for the requirement
 	 */
 	@Override
-	public List<ServiceCombination> chooseServices(int combinationLimit, RatingType ratingType, List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) throws IllegalArgumentException {
+	public List<ServiceCombination> getServiceCombinations(int combinationLimit, RatingType ratingType, List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations) throws IllegalArgumentException {
 			
 		List<Object> scoreListCost = new ArrayList<>();
 		List<Object> scoreListFailureRate = new ArrayList<>();
@@ -42,8 +44,8 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 			// Calculate requirement scores
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreListCost.add((double) calculateNumberRatingCost(allServiceCombinations.get(i)));
-				scoreListFailureRate.add((double) calculateNumberRatingFailureRate(allServiceCombinations.get(i)));
+				scoreListCost.add((double) GetNumberRatingDouble(getTotalValue(allServiceCombinations.get(i), "Cost")));
+				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalValue(allServiceCombinations.get(i), "FailureRate")));
 			}
 			
 			// Initialize lists
@@ -107,8 +109,8 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 			// Calculate requirement scores
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreListCost.add(calculateClassRating(allServiceCombinations.get(i), goals, "Cost"));
-				scoreListFailureRate.add(calculateClassRating(allServiceCombinations.get(i), goals, "FailureRate"));
+				scoreListCost.add(getClassRating(goals, getTotalValue(allServiceCombinations.get(i), "Cost"), "Cost"));
+				scoreListFailureRate.add(getClassRating(goals, getTotalValue(allServiceCombinations.get(i), "FailureRate"), "FailureRate"));
 			}
 			
 			// Calculate total class for each service combination
@@ -122,11 +124,24 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			break;
 			
 		default:
-			throw new IllegalArgumentException("The given rating type " + ratingType + " has no implementation for the cost requirement!");
+			throw new IllegalArgumentException("The given rating type " + ratingType + " has no implementation for the requirement!");
 		
 		}
 		
 		return sortedServiceCombinations;
+	}
+
+	/**
+	 * Re-rank the given service combinations with a given map of service failure rates
+	 * @param serviceCombinations the given service combinations
+	 * @param serviceFailureRates the given map of service failure rates
+	 * @return the new service combinations
+	 */
+	@Override
+	public List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
+			Map<String, Double> serviceFailureRates) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
