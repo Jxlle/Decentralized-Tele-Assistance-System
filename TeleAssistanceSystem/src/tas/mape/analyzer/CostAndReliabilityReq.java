@@ -136,8 +136,92 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 	public List<ServiceCombination> getNewServiceCombinations(
 			List<ServiceCombination> serviceCombinations, Map<String, Double> serviceFailureRates, List<Goal> goals) 
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<Comparable<?>> scoreListCost = new ArrayList<>();
+		List<Comparable<?>> scoreListFailureRate = new ArrayList<>();
+		List<Comparable<?>> scoreList = new ArrayList<>();
+		
+		switch (serviceCombinations.get(0).getRatingType()) {
+		
+		case NUMBER:
+			
+			// Calculate requirement scores
+			for (int i = 0; i < serviceCombinations.size(); i++) {
+				scoreListCost.add((double) GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), serviceFailureRates, "Cost")));
+				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), serviceFailureRates, "FailureRate")));
+			}
+			
+			// Initialize lists
+			List<Integer> indexListCost = new ArrayList<>();
+			List<Double> sortedScoreListCost = new ArrayList<>();
+			List<Integer> indexListFailureRate = new ArrayList<>();
+			List<Double> sortedScoreListFailureRate = new ArrayList<>();
+			
+			// Sort on cost and failure rate from lowest to highest score
+			for (int i = 0; i < serviceCombinations.size(); i++) {
+				
+				double combinationScoreCost = (double) scoreListCost.get(i);
+				double combinationScoreFailureRate = (double) scoreListFailureRate.get(i);
+				
+				int indexCost = Collections.binarySearch(sortedScoreListCost, combinationScoreCost);
+				int indexFailureRate = Collections.binarySearch(sortedScoreListFailureRate, combinationScoreFailureRate);
+				
+				if (indexCost < 0) {
+					indexCost = -1 * (Collections.binarySearch(sortedScoreListCost, combinationScoreCost) + 1);
+				}
+				
+				if (indexFailureRate < 0) {
+					indexFailureRate = -1 * (Collections.binarySearch(sortedScoreListFailureRate, combinationScoreFailureRate) + 1);
+				}
+				
+				sortedScoreListCost.add(indexCost, combinationScoreCost);
+				indexListCost.add(i, indexCost);
+				sortedScoreListFailureRate.add(indexFailureRate, combinationScoreFailureRate);
+				indexListFailureRate.add(i, indexFailureRate);
+				
+				for (int i2 = 0; i2 < i; i2++) {
+					if (indexListCost.get(i2) >= indexCost) {
+						indexListCost.set(i2, indexListCost.get(i2) + 1);
+					}
+					
+					if (indexListFailureRate.get(i2) >= indexFailureRate) {
+						indexListFailureRate.set(i2, indexListFailureRate.get(i2) + 1);
+					}
+				}
+			}
+			
+			// Final score can be calculated as follows:
+			// The above code sorts the service combinations from lowest score to highest for cost and failure rate.
+			// That means that the indices sum for cost and requirement together is a valid score.
+			// A higher score would mean that you have a high index count for cost + requirement, but because the lists are sorted from lowest to highest,
+			// a higher score is a better combination.
+			for (int i = 0; i < serviceCombinations.size(); i++) {
+				scoreList.add(indexListCost.get(i).doubleValue() + indexListFailureRate.get(i).doubleValue());
+			}	
+			
+			break;
+			
+		case CLASS:	
+			
+			// Calculate requirement scores
+			for (int i = 0; i < serviceCombinations.size(); i++) {
+				scoreListCost.add(getClassRating(goals, getTotalValue(serviceCombinations.get(i), serviceFailureRates, "Cost"), "Cost"));
+				scoreListFailureRate.add(getClassRating(goals, getTotalValue(serviceCombinations.get(i), serviceFailureRates, "FailureRate"), "FailureRate"));
+			}
+			
+			// Calculate total class for each service combination
+			for (int i = 0; i < serviceCombinations.size(); i++) {
+				scoreList.add((int) scoreListCost.get(i) + (int) scoreListFailureRate.get(i));
+			}
+			
+			break;
+			
+		default:
+			throw new IllegalArgumentException("The given service combination rating type " + serviceCombinations.get(0).getRatingType() + " has no implementation for the requirement!");
+		}
+		
+		// Return sorted service combinations based on given values
+		return getSortedServiceCombinations(serviceCombinations, scoreList);
 	}
 	
 }
