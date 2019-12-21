@@ -22,7 +22,7 @@ import tas.mape.planner.ServiceCombination;
 public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 	
 	// Used property for all methods
-	static final String usedProperty = "Reliability";
+	static final String usedProperty = "FailureRate";
 	
 	/**
 	 * Chooses the service combinations for the reliability requirement with a given combination limit, 

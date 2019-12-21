@@ -260,11 +260,14 @@ public abstract class AbstractWorkflowQoSRequirement {
 		
 		for (Goal goal : goals) {
 			
-			if (goal.getType() == GoalType.fromString(property) && goal.validValue(totalValue)) {
-				return 1;
-			}
-			else {
-				return 0;
+			if (goal.getType() == GoalType.fromString(property)) {
+				
+				if (goal.validValue(totalValue)) {
+					return 1;
+				}
+				else {
+					return 0;
+				}
 			}
 		}
 		
