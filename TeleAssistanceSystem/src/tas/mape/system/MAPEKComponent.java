@@ -9,7 +9,6 @@ import service.auxiliary.ServiceDescription;
 import service.composite.CompositeService;
 import tas.mape.analyzer.Analyzer;
 import tas.mape.executer.Executer;
-import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.monitor.Monitor;
 import tas.mape.planner.Planner;
@@ -47,13 +46,13 @@ public class MAPEKComponent {
 		 * Creates a new builder where the knowledge component with its given parameters has been initialized
 		 * @param loadFailureDelta the given load failure delta 
 		 * @param currentQoSRequirement the given current QoS requirement
-		 * @param goals the given system goals
 		 * @param usableServicesAndChance the given usable services with usage chance map
 		 * @return the new Builder object with initialized knowledge
 		 */
-		public Builder initializeKnowledge(int loadFailureDelta, String currentQoSRequirement, List<Goal> goals, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+		public Builder initializeKnowledge(int loadFailureDelta, String currentQoSRequirement, Map<Description, 
+				Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 			
-			knowledge = new Knowledge(MAPEKComponent.amountOfCycles, loadFailureDelta, currentQoSRequirement, goals, usableServicesAndChance);
+			knowledge = new Knowledge(MAPEKComponent.amountOfCycles, loadFailureDelta, currentQoSRequirement, usableServicesAndChance);
 			return this;
 		}
 		
@@ -75,14 +74,16 @@ public class MAPEKComponent {
 		
 		/**
 		 * Creates a new builder where the analyzer component with its given parameters has been initialized.
-		 * @param combinationLimit the given combination limit that will decide how much service combinations will be chosen in the execute step
+		 * @param combinationLimit the given combination limit that will decide how much service combinations 
+		 *        will be chosen in the execute step
 		 * @param ratingType the given type of the rating for service combinations 
 		 * @param QoSStrategies a map containing the strategy number for each QoS requirement
 		 * @return the new Builder object with initialized analyzer
 		 * @throws InstantiationException throw when the knowledge field is null
 		 * @throws InstantiationException throw when the planner field is null
 		 */
-		public Builder initializeAnalyzer(int combinationLimit, RatingType ratingType, Map<String, Integer> QoSStrategies) throws InstantiationException {
+		public Builder initializeAnalyzer(int combinationLimit, RatingType ratingType, Map<String, Integer> QoSStrategies) 
+				throws InstantiationException {
 			
 			if (knowledge == null) {
 				throw new InstantiationException("Knowledge field is null!");

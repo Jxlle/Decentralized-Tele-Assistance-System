@@ -52,16 +52,14 @@ public class Knowledge {
 	 * @param amountOfCycles the given amount of cycles that the workflow entity runs before executing the MAPE-K loop
 	 * @param loadFailureDelta the given delta between two load values in the approximated failure table
 	 * @param currentQoSRequirement the given current system QoS requirement
-	 * @param goals the given system goals
 	 * @param QoSRequirementClasses the 
 	 * @param usableServicesAndChance
 	 */
-	public Knowledge(int amountOfCycles, int loadFailureDelta, String currentQoSRequirement, List<Goal> goals, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+	public Knowledge(int amountOfCycles, int loadFailureDelta, String currentQoSRequirement, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 		
 		this.amountOfCycles = amountOfCycles;
 		this.loadFailureDelta = loadFailureDelta;
 		this.currentQoSRequirement = currentQoSRequirement;
-		this.goals = goals;
 		
 		for (Description description : usableServicesAndChance.keySet()) {
 			servicesUsageChance.put(description, usableServicesAndChance.get(description).getValue());
@@ -204,6 +202,37 @@ public class Knowledge {
 	 */
 	public List<Goal> getGoals() {
 		return goals;
+	}
+	
+	/**
+	 * Add a given goal to the list of goals
+	 * @param goal the given goal
+	 */
+	public void addGoal(Goal goal) {
+		goals.add(goal);
+	}
+	
+	/**
+	 * Remove a given goal from the list of goals
+	 * @param goal the given goal
+	 */
+	public void removeGoal(Goal goal) {
+		goals.remove(goal);
+	}
+	
+	/**
+	 * Change the list of goals to a given list of goals
+	 * @param goals the given list of goals
+	 */
+	public void changeGoals(List<Goal> goals) {
+		this.goals = goals;
+	}
+	
+	/**
+	 * Reset the goals
+	 */
+	public void resetGoals() {
+		goals.clear();
 	}
 	
 	/**
