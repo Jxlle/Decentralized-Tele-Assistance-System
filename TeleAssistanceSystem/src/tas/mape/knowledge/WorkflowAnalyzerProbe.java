@@ -32,7 +32,7 @@ public class WorkflowAnalyzerProbe implements WorkflowProbeInterface {
 	}
 
 	/**
-	 * Is started when a workflow service is invoked.
+	 * Gets called when a workflow service is invoked.
 	 * The description collection is changed accordingly.
 	 */
 	@Override

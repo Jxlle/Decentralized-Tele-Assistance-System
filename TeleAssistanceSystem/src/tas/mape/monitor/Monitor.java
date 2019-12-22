@@ -153,7 +153,7 @@ public class Monitor {
 	 */
 	private void collectAndProcessRegistryData() {
 		
-		List<Pair<ServiceDescription, String>> servicesChangedInRegistry = workflowProbe.getServicesChangedInRegistry();
+		List<Pair<ServiceDescription, String>> servicesChangedInRegistry = workflowProbe.getServicesChangedInRegistries();
 		
 		// Loop over each pair in the probe data
 		for (Pair<ServiceDescription, String> serviceChange : servicesChangedInRegistry) {
