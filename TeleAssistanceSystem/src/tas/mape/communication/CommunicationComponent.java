@@ -21,7 +21,7 @@ public abstract class CommunicationComponent<T extends ComponentMessage<?>> {
 	
 	/**
 	 * Create a new communication component with a given endpoint
-	 * @param endpoint the endpoint (identifier)
+	 * @param endpoint the given endpoint (identifier)
 	 */
 	protected CommunicationComponent(String endpoint) {
 		this.endpoint = endpoint;

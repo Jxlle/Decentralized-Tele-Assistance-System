@@ -62,6 +62,15 @@ public class ServiceCombination implements Comparable<ServiceCombination> {
 	}
 	
 	/**
+	 * Return the 'all services' map
+	 * @return the services map
+	 * @note Should probably return a deep clone
+	 */
+	public Map<Description, WeightedCollection<ServiceDescription>> getAllServices() {
+		return allServices;
+	}
+	
+	/**
 	 * Return all service type and operation name keys of this service combination
 	 * @return the service type and operation name keys
 	 */

@@ -31,30 +31,61 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private Knowledge knowledge;
 	private Boolean executed;
 	private AbstractProtocol<PlannerMessage, Planner> protocol;
+	private List<ServiceCombination> availableServiceCombinations;
 	private List<PlanComponent> plan;
-	private List<ServiceCombination> chosenServicesList;
 	
+	/**
+	 * Create a planner with a given endpoint and executer
+	 * @param endpoint the given endpoint (identifier)
+	 * @param executer the given executer
+	 */
 	public Planner(String endpoint, Executer executer) {
 		super(endpoint);
 		this.executer = executer;
 	}
 	
-	public AbstractProtocol<?, Planner> getProtocol() {
-		return protocol;
-	}
-	
+	/**
+	 * Set the currently used protocol to a given protocol
+	 * @param protocol the given protocol
+	 */
 	public void setProtocol(AbstractProtocol<PlannerMessage, Planner> protocol) {
 		this.protocol = protocol;
 	}
 	
-	public void execute(List<ServiceCombination> chosenServicesList) {
-		this.chosenServicesList = chosenServicesList;
+	/**
+	 * Return the currently used protocol
+	 * @return the currently used protocol
+	 */
+	public AbstractProtocol<PlannerMessage, Planner> getProtocol() {
+		return protocol;
 	}
 	
-	public void makePlan(Map<Description, WeightedCollection<String>> chosenServices, Map<String, Integer> serviceLoads) {
+	/**
+	 * Execute the planner, set the available service combinations to a given list
+	 * @param availableServiceCombinations the given list of service combinations
+	 */
+	public void execute(List<ServiceCombination> availableServiceCombinations) {
+		this.availableServiceCombinations = availableServiceCombinations;
+	}
+	
+	/**
+	 * Return the available service combinations
+	 * @return the available service combinations
+	 */
+	public List<ServiceCombination> getAvailableServiceCombinations() {
+		return availableServiceCombinations;
+	}
+	
+	/**
+	 * Make a plan for the executer to execute based on a given service combination
+	 * and data in the knowledge component.
+	 * @param serviceCombination the given service combination
+	 */
+	public void makePlan(ServiceCombination serviceCombination) {
 		
 		plan = new ArrayList<PlanComponent>();	
-		plan.add(new PlanComponent(PlanComponentType.SET_USED_SERVICES, chosenServices));
+		plan.add(new PlanComponent(PlanComponentType.SET_USED_SERVICES, serviceCombination.getAllServices()));
+		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination);
 		
 		for (String loadEndpoint : serviceLoads.keySet()) {
 			plan.add(new PlanComponent(PlanComponentType.INCREASE_LOAD, loadEndpoint, serviceLoads.get(loadEndpoint)));
@@ -73,48 +104,8 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		executed = true;
 	}
 	
-	public Map<String, Integer> getServiceLoads(ServiceCombination chosenServices) {
-		
-		Map<String, Integer> serviceLoads = new HashMap<String, Integer>();
-		
-		for (Description description : chosenServices.getDescriptions()) {
-			
-			WeightedCollection<ServiceDescription> serviceUsage = chosenServices.getAllServices(description);
-			
-			for (ServiceDescription service : serviceUsage.getItems()) {		
-				int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(service));
-				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? 1 : v + serviceLoad);		
-			}
-		}
-		
-		return serviceLoads;
-	}
-	
-	public List<Pair<String, Double>> getPublicServiceChances(ServiceCombination chosenServices, List<String> registryEndpoints) {
-		
-		List<Pair<String, Double>> serviceChances = new ArrayList<>();
-		
-		for (String registryEndpoint : registryEndpoints) {
-			
-			for (Description description : chosenServices.getDescriptions()) {		
-				
-				for (ServiceDescription service : chosenServices.getAllServices(description).getItems()) {
-					
-					if (service.getServiceRegistryEndpoint().equals(registryEndpoint)) {
-						serviceChances.add(new Pair<String, Double>(service.getServiceEndpoint(), chosenServices.getAllServices(description).getChance(service)));
-					}
-					
-				}
-				
-			}
-			
-		}
-		
-		return serviceChances;
-	}
-	
 	/**
-	 * Trigger the executer
+	 * Trigger the executer when the planner has been executed
 	 */
 	public void triggerExecuter() {
 		if (executed) {
@@ -123,16 +114,37 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		}
 	}
 
+	/**
+	 * Receive a given message and handle the response with the currently used protocol 
+	 * @param message the received message
+	 */
 	@Override
 	public void receiveMessage(PlannerMessage message) throws NullPointerException {
 		
 		if (protocol == null) {
-			throw new NullPointerException("Planner can't handle message receivement, no protocol selected.");
+			throw new NullPointerException("Planner can't handle message message receivement, no protocol selected.");
 		}
 		
 		protocol.receiveAndHandleMessage(message, this);
 	}
 	
+	/**
+	 * Generate planner message content that includes a map of service loads for each service inside 
+	 * the given service combination that has a registry endpoint in the given list of registry endpoints
+	 * @param serviceCombination the given service combination
+	 * @param registryEndpoints the given registry endpoints
+	 * @return the planner message content
+	 */
+	public PlannerMessageContent generateMessageContent(ServiceCombination serviceCombination, List<String> registryEndpoints) {
+		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination, registryEndpoints);
+		return new PlannerMessageContent(serviceLoads);
+	}
+	
+	/**
+	 * Unpack the given content of a planner message and return the calculated failure rates
+	 * @param content the given planner message content
+	 * @return the calculated failure rates map
+	 */
 	public Map<String, Double> getFailureRates(PlannerMessageContent content) {
 		
 		Map<String, Double> failureRates = new HashMap<String, Double>();
@@ -142,5 +154,54 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		}
 		
 		return failureRates;
+	}
+	
+	/**
+	 * Calculate the service loads for each service in a given service combination that have a 
+	 * registry endpoint present in a given list of registry endpoints
+	 * @param serviceCombination the given service combination 
+	 * @param registryEndpoints the given registry endpoints
+	 * @return the calculated service loads map
+	 */
+	private Map<String, Integer> getServiceLoads(ServiceCombination serviceCombination, List<String> registryEndpoints) {
+		
+		Map<String, Integer> serviceLoads = new HashMap<String, Integer>();
+		
+		for (Description description : serviceCombination.getDescriptions()) {
+			
+			WeightedCollection<ServiceDescription> serviceUsage = serviceCombination.getAllServices(description);
+			
+			for (ServiceDescription service : serviceUsage.getItems()) {	
+				
+				if (registryEndpoints.contains(service.getServiceRegistryEndpoint())) {
+					int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(service));
+					serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? 1 : v + serviceLoad);
+				}		
+			}
+		}
+		
+		return serviceLoads;
+	}
+	
+	/**
+	 * Calculate the service loads for each service in a given service combination
+	 * @param serviceCombination the given service combination 
+	 * @return the calculated service loads map
+	 */
+	private Map<String, Integer> getServiceLoads(ServiceCombination serviceCombination) {
+		
+		Map<String, Integer> serviceLoads = new HashMap<String, Integer>();
+		
+		for (Description description : serviceCombination.getDescriptions()) {
+			
+			WeightedCollection<ServiceDescription> serviceUsage = serviceCombination.getAllServices(description);
+			
+			for (ServiceDescription service : serviceUsage.getItems()) {		
+				int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(service));
+				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? 1 : v + serviceLoad);		
+			}
+		}
+		
+		return serviceLoads;
 	}
 }
