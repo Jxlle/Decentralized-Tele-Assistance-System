@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.util.Pair;
-import service.auxiliary.AbstractMessage;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
@@ -14,7 +12,6 @@ import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.message.PlannerMessageContent;
 import tas.mape.communication.protocol.AbstractProtocol;
-import tas.mape.communication.protocol.PlannerTwoComponentProtocol;
 import tas.mape.executer.Executer;
 import tas.mape.knowledge.Knowledge;
 
@@ -23,13 +20,14 @@ import tas.mape.knowledge.Knowledge;
  * @email jelle.vandesijpe@student.kuleuven.be
  * 
  * Class that represents the planner component in a MAPE-K component
+ * @note Planners that communicate should use the same protocol
  */
 public class Planner extends CommunicationComponent<PlannerMessage> {
 
 	// Fields
 	private Executer executer;
 	private Knowledge knowledge;
-	private Boolean executed;
+	private boolean executed, protocolFinished;
 	private AbstractProtocol<PlannerMessage, Planner> protocol;
 	private List<ServiceCombination> availableServiceCombinations;
 	private List<PlanComponent> plan;
@@ -66,6 +64,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public void execute(List<ServiceCombination> availableServiceCombinations) {
 		this.availableServiceCombinations = availableServiceCombinations;
+		protocolFinished = false;
 	}
 	
 	/**
@@ -105,12 +104,14 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
-	 * Trigger the executer when the planner has been executed
+	 * Trigger the executer when the planner has been executed and
+	 * when the protocol is finished when there is one
 	 */
 	public void triggerExecuter() {
-		if (executed) {
+		if (executed && (protocolFinished || protocol == null)) {
 			executer.execute(plan);
 			executed = false;
+			protocolFinished = false;
 		}
 	}
 
@@ -126,6 +127,14 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		}
 		
 		protocol.receiveAndHandleMessage(message, this);
+	}
+	
+	/**
+	 * Method that is called when the protocol is finished.
+	 * This method indicates that the protocol is finished.
+	 */
+	public void finishedProtocol() {
+		protocolFinished = true;
 	}
 	
 	/**

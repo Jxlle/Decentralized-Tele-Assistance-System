@@ -1,4 +1,4 @@
-package tas.mape.system;
+package tas.mape.system.entity;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,7 @@ public class MAPEKComponent {
 	 */
 	public static class Builder {
 		
+		// Components
 		private Monitor monitor;
 		private Analyzer analyzer;
 		private Planner planner;
@@ -52,7 +53,7 @@ public class MAPEKComponent {
 		public Builder initializeKnowledge(int loadFailureDelta, String currentQoSRequirement, Map<Description, 
 				Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 			
-			knowledge = new Knowledge(MAPEKComponent.amountOfCycles, loadFailureDelta, currentQoSRequirement, usableServicesAndChance);
+			knowledge = new Knowledge(MAPEKComponent.workflowCycles, loadFailureDelta, currentQoSRequirement, usableServicesAndChance);
 			return this;
 		}
 		
@@ -143,7 +144,7 @@ public class MAPEKComponent {
 	
 	// Fields
 	// The amount of workflow execution cycles that are executed before the possibility of analyzer execution
-	private static int amountOfCycles = 100;
+	public static int workflowCycles = 100;
 	private Monitor monitor;
 	private Analyzer analyzer;
 	private Planner planner;
@@ -169,6 +170,41 @@ public class MAPEKComponent {
 	 */
 	public void connectMonitorProbes(CompositeService compositeService) {
 		monitor.connectProbes(compositeService);
+	}
+	
+	// TODO Change all getters to methods that activate getters/setters inside the component.
+	// Just getting the component can be dangerous if misused.
+	
+	/**
+	 * Return the monitor
+	 * @return the monitor
+	 */
+	public Monitor getMonitor() {
+		return monitor;
+	}
+	
+	/**
+	 * Return the analyzer
+	 * @return the analyzer
+	 */
+	public Analyzer getAnalyzer() {
+		return analyzer;
+	}
+	
+	/**
+	 * Return the planner
+	 * @return the planner
+	 */
+	public Planner getPlanner() {
+		return planner;
+	}
+	
+	/**
+	 * Return the executer
+	 * @return the executer
+	 */
+	public Executer getExecuter() {
+		return executer;
 	}
 	
 	// The methods below are used to simulate the mape loop for multiple workflow entities 'concurrently'

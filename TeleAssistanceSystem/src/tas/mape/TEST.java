@@ -27,6 +27,8 @@ import tas.mape.planner.PlanComponent;
 import tas.mape.planner.PlanComponentType;
 import tas.mape.planner.Planner;
 import tas.mape.planner.ServiceCombination;
+import tas.mape.system.SoloLoopSystem;
+import tas.mape.system.entity.SystemEntity;
 import tas.mape.planner.RatingType;
 import tas.services.alarm.AlarmService;
 import tas.services.assistance.AssistanceService;
@@ -289,5 +291,10 @@ public class TEST {
 		
 		PlannerProtocolTest test = new PlannerProtocolTest(0);
 		System.err.print(test.getNeededAmountOfComponents());
+		
+		
+		SystemEntity e = new SystemEntity(null, null);
+		SoloLoopSystem s = new SoloLoopSystem(e);
+		// TODO system testing
 	}
 }

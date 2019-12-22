@@ -1,4 +1,4 @@
-package tas.mape.system;
+package tas.mape.system.entity;
 
 import service.composite.CompositeService;
 

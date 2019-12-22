@@ -25,7 +25,7 @@ public class Monitor {
 	private Knowledge knowledge;
 	private Analyzer analyzer;
 	private MonitorWorkflowProbe workflowProbe;
-	private Boolean analyzerRequired, executed;
+	private boolean analyzerRequired, executed;
 	private double minFailureDelta, failureChange;
 	
 	/**

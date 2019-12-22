@@ -22,9 +22,9 @@ public class Analyzer {
 	// Fields
 	private Knowledge knowledge;
 	private Planner planner;
-	private Boolean plannerRequired, executed;
-	private RatingType ratingType;
+	private boolean plannerRequired, executed;
 	private int combinationLimit;
+	private RatingType ratingType;
 	private Map<String, Integer> QoSStrategies;
 	private List<ServiceCombination> chosenServicesList;
 	
