@@ -215,8 +215,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 	}
 	
 	/**
-	 * Calculate the accumulated value of a given property for a given service combination based on a given value map. 
-	 * The service combination is searched when a certain value isn't present in the given map.
+	 * Calculate the accumulated value of a given property for a given service combination and extra property values
 	 * @param combination the given service combination
 	 * @param values the given values map
 	 * @param property the given property
@@ -233,7 +232,8 @@ public abstract class AbstractWorkflowQoSRequirement {
 				if (values.get(service.getServiceEndpoint()) != null) {
 					totalValue += values.get(service.getServiceEndpoint()) * combination.getAllServices(description).getChance(service);
 				}
-				else if (service.getCustomProperties().containsKey(property)) {
+				
+				if (service.getCustomProperties().containsKey(property)) {
 					totalValue += (double) service.getCustomProperties().get(property) * combination.getAllServices(description).getChance(service);
 				}
 			}

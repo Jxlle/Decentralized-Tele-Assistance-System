@@ -133,9 +133,8 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 	 *         for the requirement
 	 */
 	@Override
-	public List<ServiceCombination> getNewServiceCombinations(
-			List<ServiceCombination> serviceCombinations, Map<String, Double> serviceFailureRates, List<Goal> goals) 
-			throws IllegalArgumentException {
+	public List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
+			Map<String, Double> serviceFailureRates, List<Goal> goals) throws IllegalArgumentException {
 		
 		List<Comparable<?>> scoreListCost = new ArrayList<>();
 		List<Comparable<?>> scoreListFailureRate = new ArrayList<>();

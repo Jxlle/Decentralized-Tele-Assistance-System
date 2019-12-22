@@ -74,9 +74,8 @@ public class CostReq extends AbstractWorkflowQoSRequirement {
 	 * @return the new service combinations
 	 */
 	@Override
-	public List<ServiceCombination> getNewServiceCombinations(
-			List<ServiceCombination> serviceCombinations, Map<String, Double> serviceFailureRates,
-			List<Goal> goals) {
+	public List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
+			Map<String, Double> serviceFailureRates, List<Goal> goals) {
 		
 		return serviceCombinations;
 	}
