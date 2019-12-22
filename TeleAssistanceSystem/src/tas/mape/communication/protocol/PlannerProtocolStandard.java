@@ -21,8 +21,15 @@ import tas.mape.planner.ServiceCombination;
  *    only the score and the order of each service combination may have changed. It then responds with a message with type "NEW_OFFER"
  *    and with data from his new best service combination.
  *    
- * 3) The other planner gets "NEW_OFFER". It adjusts its service combination list based on the response it got. It then checks if his best
- *    service combination is still the same service combination as before. 
+ * 3) The other planner gets "NEW_OFFER". It adjusts its service combination list based on the response it got. 
+ *    It then does a check depending on the rating type of the service combinations:
+ * 
+ * 	  NUMBER:
+ *    It checks if his best service combination is still the same service combination as before. 
+ *    
+ *    CLASS:
+ *    It checks if his best service combination is still in the same class as before. 
+ *    
  *    If this is true, the planner will end the protocol and send its response with type "CONFIRMED_OFFER".
  *    If this is not true, the planner will send his response message as above, with type "NEW_OFFER". The other planner will reason the 
  *    same way. It's possible that the planners keep communicating and don't converge to a solution. An iteration limit will force a
@@ -34,6 +41,8 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 	 * Handle a given message that was received by the given communication component
 	 * @param message the given message
 	 * @param receiver the given communication component (receiver)
+	 * @throws IllegalStateException throw when the protocol doesn't support a service combination rating type
+	 * @throws IllegalStateException throw when the received message has a type that cannot be processed
 	 */
 	@Override
 	public void receiveAndHandleMessage(PlannerMessage message, Planner receiver) throws IllegalStateException {
@@ -57,11 +66,31 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 			List<ServiceCombination> newServiceCombinations = receiver.calculateNewServiceCombinations(message.getContent());
 			String responseType;
 			
-			if (newServiceCombinations.get(0).hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == maxIterations) {
-				responseType = "ACCEPTED_OFFER";
-			}
-			else {
-				responseType = "NEW_OFFER";
+			switch (newServiceCombinations.get(0).getRatingType()) {
+			
+			case NUMBER:
+				
+				if (newServiceCombinations.get(0).hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == maxIterations) {
+					responseType = "ACCEPTED_OFFER";
+				}
+				else {
+					responseType = "NEW_OFFER";
+				}
+				break;
+				
+			case CLASS:
+				
+				if (newServiceCombinations.get(0).getRating().equals(receiver.getAvailableServiceCombinations().get(0).getRating()) || messageID == maxIterations) {
+					responseType = "ACCEPTED_OFFER";
+				}
+				else {
+					responseType = "NEW_OFFER";
+				}
+				break;
+				
+			default:
+				throw new IllegalStateException("The protocol doesn't support this rating type. Type: " + newServiceCombinations.get(0).getRatingType());
+			
 			}
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);	
