@@ -47,13 +47,14 @@ public class MAPEKComponent {
 		 * Creates a new builder where the knowledge component with its given parameters has been initialized
 		 * @param loadFailureDelta the given load failure delta 
 		 * @param currentQoSRequirement the given current QoS requirement
-		 * @param usableServicesAndChance the given usable services with usage chance map
+		 * @param serviceRegistryEndpoints the given registry endpoints used by the workflow
+		 * @param usableServicesAndChance map containing usable service information with additional usage chance
 		 * @return the new Builder object with initialized knowledge
 		 */
-		public Builder initializeKnowledge(int loadFailureDelta, String currentQoSRequirement, Map<Description, 
+		public Builder initializeKnowledge(int loadFailureDelta, String currentQoSRequirement, List<String> serviceRegistryEndpoints, Map<Description, 
 				Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 			
-			knowledge = new Knowledge(MAPEKComponent.workflowCycles, loadFailureDelta, currentQoSRequirement, usableServicesAndChance);
+			knowledge = new Knowledge(MAPEKComponent.workflowCycles, loadFailureDelta, currentQoSRequirement, serviceRegistryEndpoints, usableServicesAndChance);
 			return this;
 		}
 		

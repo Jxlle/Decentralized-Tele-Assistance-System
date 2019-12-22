@@ -170,6 +170,14 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
+	 * Return the currently stored registry endpoints in the knowledge component
+	 * @return the currently stored registry endpoints in the knowledge component
+	 */
+	public List<String> getRegistryEndpoints() {
+		return knowledge.getRegistryEndpoints();
+	}
+	
+	/**
 	 * Make a plan for the executer to execute based on a given service combination
 	 * and data in the knowledge component.
 	 * @param serviceCombination the given service combination

@@ -23,13 +23,26 @@ import tas.mape.planner.PlanComponent;
  */
 public class Knowledge {
 	
-	// Fields
+	// Current QoS requirement
 	private String currentQoSRequirement;
-	// TODO Goals
+	
+	// List of used registry endpoints by the workflow
+	private List<String> registryEndpoints;
+	
+	// Currently active goals
 	private List<Goal> goals;
+	
+	// Map containing service usage chance from analyzing the workflow
 	private Map<Description, Double> servicesUsageChance;
+	
+	// Map containing information about the approximated service failure rates
 	private Map<String, HashMap<Integer, Double>> approximatedServiceFailureRates;
-	private int amountOfCycles, loadFailureDelta;
+	
+	// Amount of workflow cycles before the MAPE-K loop is activated
+	private int amountOfCycles;
+	
+	// Delta value used for updating the service failure rate map
+	private int loadFailureDelta;
 	
 	// List of plan components containing information about needed changes to the cache as a result of changes in the service registries
 	private List<PlanComponent> cachePlanComponents;
@@ -38,7 +51,7 @@ public class Knowledge {
 	// This is skipped here because it slows down the execution of the workflow entity.
 	private Map<Description, List<ServiceDescription>> usableServices;
 	
-	
+	// map containing all possible requirement and abstract workflow requirement classes pairs
 	private static HashMap<String, AbstractWorkflowQoSRequirement> QoSRequirementClasses = new HashMap<String, AbstractWorkflowQoSRequirement>() {
 		private static final long serialVersionUID = 1L;
 	{
@@ -52,10 +65,10 @@ public class Knowledge {
 	 * @param amountOfCycles the given amount of cycles that the workflow entity runs before executing the MAPE-K loop
 	 * @param loadFailureDelta the given delta between two load values in the approximated failure table
 	 * @param currentQoSRequirement the given current system QoS requirement
-	 * @param QoSRequirementClasses the 
-	 * @param usableServicesAndChance
+	 * @param serviceRegistryEndpoints the given registry endpoints used by the workflow
+	 * @param usableServicesAndChance map containing usable service information with additional usage chance
 	 */
-	public Knowledge(int amountOfCycles, int loadFailureDelta, String currentQoSRequirement, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+	public Knowledge(int amountOfCycles, int loadFailureDelta, String currentQoSRequirement, List<String> serviceRegistryEndpoints, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 		
 		this.amountOfCycles = amountOfCycles;
 		this.loadFailureDelta = loadFailureDelta;
@@ -68,6 +81,10 @@ public class Knowledge {
 		
 		initializeApproximatedServicesFailureRates();
 		cachePlanComponents = new ArrayList<>();
+	}
+	
+	public List<String> getRegistryEndpoints() {
+		return registryEndpoints;
 	}
 	
 	/**
