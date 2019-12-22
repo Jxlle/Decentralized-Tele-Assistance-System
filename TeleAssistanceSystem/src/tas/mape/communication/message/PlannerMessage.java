@@ -16,7 +16,7 @@ public class PlannerMessage extends ComponentMessage<PlannerMessageContent> {
 	 * @param msgType the given message type
 	 * @param content the given message content
 	 */
-	protected PlannerMessage(int id, String receiverEndpoint, String senderEndpoint, String msgType, PlannerMessageContent content) {
+	public PlannerMessage(int id, String receiverEndpoint, String senderEndpoint, String msgType, PlannerMessageContent content) {
 		super(id, receiverEndpoint, senderEndpoint, msgType, content);
 	}
 }

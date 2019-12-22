@@ -17,7 +17,6 @@ import tas.mape.analyzer.CostReq;
 import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.communication.message.ComponentMessageHost;
 import tas.mape.communication.message.PlannerMessage;
-import tas.mape.communication.protocol.PlannerProtocolTest;
 import tas.mape.executer.Executer;
 import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.mape.knowledge.Goal;
@@ -288,10 +287,6 @@ public class TEST {
 			System.err.print("description usage chance :" + test.get(d).getValue() + " \n");
 			System.err.print("------------------------------------------------------------ \n");
 		}*/
-		
-		PlannerProtocolTest test = new PlannerProtocolTest(0);
-		System.err.print(test.getNeededAmountOfComponents());
-		
 		
 		SystemEntity e = new SystemEntity(null, null);
 		SoloLoopSystem s = new SoloLoopSystem(e);

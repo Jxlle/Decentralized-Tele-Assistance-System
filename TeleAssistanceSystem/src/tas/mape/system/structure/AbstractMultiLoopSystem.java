@@ -31,7 +31,8 @@ public abstract class AbstractMultiLoopSystem<T extends AbstractSystemEntity<?, 
 	 * Execute the system with a given amount of execution cycles following a certain protocol
 	 * @param executionCycles the given amount of execution cycles
 	 * @param protocol the given protocol
+	 * @param maxIterations the given maximum amount of iterations
 	 */
-	public abstract void executeSystem(int executionCycles, AbstractProtocol<P1, P2> protocol);
+	public abstract void executeSystem(int executionCycles, AbstractProtocol<P1, P2> protocol, int maxIterations);
 
 }

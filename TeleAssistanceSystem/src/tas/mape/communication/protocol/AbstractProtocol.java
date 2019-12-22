@@ -23,17 +23,23 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	// Needed amount of components to start the protocol
 	protected int neededAmountOfComponents;
 	
+	// Maximum amount of iterations before the protocol stops
+	protected int maxIterations;
+	
 	/**
-	 * Execute the protocol with a given list of communication components that will communicate
+	 * Execute the protocol with a given list of communication components that will communicate and a 
+	 * given maximum amount of iterations
 	 * @param components the given list of communication components
+	 * @param maxIterations the given maximum amount of iterations
 	 * @throws IllegalArgumentException throw when the used protocol doesn't support the given amount of components
 	 */
-	public void executeProtocol(List<E> components) throws IllegalArgumentException {
+	public void executeProtocol(List<E> components, int maxIterations) throws IllegalArgumentException {
 		
 		if (components.size() != getNeededAmountOfComponents()) {
 			throw new IllegalArgumentException("The used protocol doesn't support the given amount of components: " + components.size());
 		}
 		
+		this.maxIterations = maxIterations;
 		startProtocol(components);
 	}
 	

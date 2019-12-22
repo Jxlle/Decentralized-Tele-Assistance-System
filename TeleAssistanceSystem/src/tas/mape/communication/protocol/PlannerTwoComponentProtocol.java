@@ -13,8 +13,16 @@ import tas.mape.planner.Planner;
  */
 public abstract class PlannerTwoComponentProtocol extends AbstractTwoComponentProtocol<PlannerMessage, Planner> {
 
+	// Shared registry endpoints between both planners
+	protected List<String> sharedRegistryEndpoints;
 	
-	
+	/**
+	 * Initialize local protocol properties and let a starting communication component send 
+	 * its first message to given receiver(s) to start the protocol.
+	 * @param components the given list of communication components
+	 * @param startIndex the given index of the starting component
+	 * @param receiverIndices the given indices of the receivers of the first message
+	 */
 	@Override
 	protected void InitializeAndSendFirstMessage(List<Planner> components, int startIndex, int... receiverIndices) {
 		

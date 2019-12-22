@@ -87,6 +87,15 @@ public class ServiceCombination implements Comparable<ServiceCombination> {
 	}
 	
 	/**
+	 * Return whether the given service combination has the same collection 
+	 * @param other the given service combination
+	 * @return whether the given service combination has the same collection 
+	 */
+	public boolean hasSameCollection(ServiceCombination other) {
+		return allServices.equals(other.allServices);
+	}
+	
+	/**
 	 * Return the service combination rating
 	 * @param <T>
 	 * @return the service combination rating
@@ -100,7 +109,7 @@ public class ServiceCombination implements Comparable<ServiceCombination> {
 	 * Compare two service combinations
 	 */
 	@Override
-	public int compareTo(ServiceCombination o) {
-		return this.getRating().compareTo(o.getRating());
+	public int compareTo(ServiceCombination other) {
+		return this.getRating().compareTo(other.getRating());
 	}
 }

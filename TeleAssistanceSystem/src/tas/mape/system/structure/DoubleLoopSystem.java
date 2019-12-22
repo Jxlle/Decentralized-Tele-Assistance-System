@@ -35,16 +35,17 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 	 */
 	@Override
 	public void executeSystem(int executionCycles) {
-		executeSystem(executionCycles, new PlannerProtocolDoNothing());
+		executeSystem(executionCycles, new PlannerProtocolDoNothing(), 0);
 	}
 	
 	/**
 	 * Execute the double-loop system with a given amount of execution cycles following a certain protocol
 	 * @param executionCycles the given amount of execution cycles
 	 * @param protocol the given protocol
+	 * @param maxIterations the given maximum amount of iterations
 	 */
 	@Override
-	public void executeSystem(int executionCycles, AbstractProtocol<PlannerMessage, Planner> protocol) {
+	public void executeSystem(int executionCycles, AbstractProtocol<PlannerMessage, Planner> protocol, int maxIterations) {
 		
 		// System entities
 		SystemEntity entity1 = getSystemEntity(0);
@@ -76,7 +77,7 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 			entity2.getManagingSystem().executePlanner();
 			
 			// Execute protocol, planners communicate in this step
-			protocol.executeProtocol(planners);
+			protocol.executeProtocol(planners, maxIterations);
 			
 			// Execute executers
 			entity1.getManagingSystem().executeExecuter();

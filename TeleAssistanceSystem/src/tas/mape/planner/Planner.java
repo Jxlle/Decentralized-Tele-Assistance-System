@@ -8,6 +8,7 @@ import java.util.Map;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
+import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.message.PlannerMessageContent;
@@ -30,6 +31,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private boolean executed, protocolFinished;
 	private AbstractProtocol<PlannerMessage, Planner> protocol;
 	private List<ServiceCombination> availableServiceCombinations;
+	private ServiceCombination currentServiceCombination;
 	private List<PlanComponent> plan;
 	
 	/**
@@ -76,31 +78,41 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
-	 * Make a plan for the executer to execute based on a given service combination
-	 * and data in the knowledge component.
+	 * Set the available service combinations to a given list of service combinations
+	 * @param availableServiceCombinations the given list of service combinations
+	 */
+	public void setAvailableServiceCombinations(List<ServiceCombination> availableServiceCombinations) {
+		this.availableServiceCombinations = availableServiceCombinations;
+	}
+	
+	/**
+	 * Set the currently used service combination for the plan to the given service combination
 	 * @param serviceCombination the given service combination
 	 */
-	public void makePlan(ServiceCombination serviceCombination) {
-		
-		plan = new ArrayList<PlanComponent>();	
-		plan.add(new PlanComponent(PlanComponentType.SET_USED_SERVICES, serviceCombination.getAllServices()));
-		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination);
-		
-		for (String loadEndpoint : serviceLoads.keySet()) {
-			plan.add(new PlanComponent(PlanComponentType.INCREASE_LOAD, loadEndpoint, serviceLoads.get(loadEndpoint)));
-		}
-		
-		// Extra: update cache with new registry info
-		if (knowledge.getCachePlanComponents().size() != 0) {
-			
-			for (PlanComponent registryPlanComponent : knowledge.getCachePlanComponents()) {
-				plan.add(registryPlanComponent);
-			}
-			
-			knowledge.resetRegistryPlanComponents();
-		}
-		
-		executed = true;
+	public void setCurrentServiceCombination(ServiceCombination serviceCombination) {
+		currentServiceCombination = serviceCombination;
+	}
+	
+	/**
+	 * Calculate the new service combinations list based on a given planner message content object.
+	 * This is calculated by re-rating the service combinations based on failure rates calculated 
+	 * from the message content.
+	 * @param content the given planner message content object
+	 * @return the newly calculated service combinations
+	 */
+	public List<ServiceCombination> calculateNewServiceCombinations(PlannerMessageContent content) {
+		String requirementName = knowledge.getCurrentQoSRequirement();
+		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirementName);
+		return requirementClass.getNewServiceCombinations(availableServiceCombinations, getFailureRates(content), knowledge.getGoals());
+	}
+	
+	/**
+	 * Method that is called when the protocol is finished.
+	 * This method indicates that the protocol is finished.
+	 */
+	public void finishedProtocol() {
+		protocolFinished = true;
+		makePlan(currentServiceCombination);
 	}
 	
 	/**
@@ -130,14 +142,6 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
-	 * Method that is called when the protocol is finished.
-	 * This method indicates that the protocol is finished.
-	 */
-	public void finishedProtocol() {
-		protocolFinished = true;
-	}
-	
-	/**
 	 * Generate planner message content that includes a map of service loads for each service inside 
 	 * the given service combination that has a registry endpoint in the given list of registry endpoints
 	 * @param serviceCombination the given service combination
@@ -163,6 +167,34 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		}
 		
 		return failureRates;
+	}
+	
+	/**
+	 * Make a plan for the executer to execute based on a given service combination
+	 * and data in the knowledge component.
+	 * @param serviceCombination the given service combination
+	 */
+	private void makePlan(ServiceCombination serviceCombination) {
+		
+		plan = new ArrayList<PlanComponent>();	
+		plan.add(new PlanComponent(PlanComponentType.SET_USED_SERVICES, serviceCombination.getAllServices()));
+		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination);
+		
+		for (String loadEndpoint : serviceLoads.keySet()) {
+			plan.add(new PlanComponent(PlanComponentType.INCREASE_LOAD, loadEndpoint, serviceLoads.get(loadEndpoint)));
+		}
+		
+		// Extra: update cache with new registry info
+		if (knowledge.getCachePlanComponents().size() != 0) {
+			
+			for (PlanComponent registryPlanComponent : knowledge.getCachePlanComponents()) {
+				plan.add(registryPlanComponent);
+			}
+			
+			knowledge.resetRegistryPlanComponents();
+		}
+		
+		executed = true;
 	}
 	
 	/**

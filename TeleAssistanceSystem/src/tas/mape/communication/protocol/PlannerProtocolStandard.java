@@ -1,6 +1,93 @@
 package tas.mape.communication.protocol;
 
-// TODO Standard two-component planner protocol
-public class PlannerProtocolStandard {
+import java.util.List;
 
+import tas.mape.communication.message.PlannerMessage;
+import tas.mape.communication.message.PlannerMessageContent;
+import tas.mape.planner.Planner;
+import tas.mape.planner.ServiceCombination;
+
+/**
+ * @author Jelle Van De Sijpe
+ * @email jelle.vandesijpe@student.kuleuven.be
+ *
+ * Class representing a standard two-component planner protocol.
+ * This protocol works as follows:
+ * 
+ * 1) A planner gets chosen to send the first message, it sends its message to the other planner with the message type "FIRST_OFFER".
+ * 
+ * 2) The other planner responds by adjusting his service combinations list that it got from the analyzer. 
+ *    It doesn't matter if this list is overwritten because the service combinations will still hold the same service data,
+ *    only the score and the order of each service combination may have changed. It then responds with a message with type "NEW_OFFER"
+ *    and with data from his new best service combination.
+ *    
+ * 3) The other planner gets "NEW_OFFER". It adjusts its service combination list based on the response it got. It then checks if his best
+ *    service combination is still the same service combination as before. 
+ *    If this is true, the planner will end the protocol and send its response with type "CONFIRMED_OFFER".
+ *    If this is not true, the planner will send his response message as above, with type "NEW_OFFER". The other planner will reason the 
+ *    same way. It's possible that the planners keep communicating and don't converge to a solution. An iteration limit will force a
+ *    planner to respond with the "CONFIRMED_OFFER" type if the time is up.
+ */
+public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
+
+	/**
+	 * Handle a given message that was received by the given communication component
+	 * @param message the given message
+	 * @param receiver the given communication component (receiver)
+	 */
+	@Override
+	public void receiveAndHandleMessage(PlannerMessage message, Planner receiver) throws IllegalStateException {
+		
+		String messageType = message.getType();
+		PlannerMessageContent content = null;
+		PlannerMessage response = null;
+		
+		switch(messageType) {
+		
+		// First offer has been received
+		case "FIRST_OFFER":
+			receiver.setAvailableServiceCombinations(receiver.calculateNewServiceCombinations(message.getContent()));
+			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints);
+			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "NEW_OFFER", content);
+			receiver.sendMessage(response);
+			break;
+		
+		// New offer has been received
+		case "NEW_OFFER":
+			List<ServiceCombination> newServiceCombinations = receiver.calculateNewServiceCombinations(message.getContent());
+			String responseType;
+			
+			if (newServiceCombinations.get(0).hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == maxIterations) {
+				responseType = "ACCEPTED_OFFER";
+			}
+			else {
+				responseType = "NEW_OFFER";
+			}
+			
+			receiver.setAvailableServiceCombinations(newServiceCombinations);	
+			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints);
+			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), responseType, content);
+			receiver.sendMessage(response);
+			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
+			
+			if (responseType == "ACCEPTED_OFFER") {
+				receiver.finishedProtocol();
+			}
+			
+			break;
+		
+		// Protocol responds
+		case "ACCEPTED_OFFER":
+			receiver.finishedProtocol();
+			resetProtocol();
+			break;
+		
+		// Exception state
+		default:
+			throw new IllegalStateException("The received message has a type that cannot be processed! Type: " + messageType);
+		}
+		
+		// Increase message ID
+		messageID++;
+	}
 }
