@@ -1,4 +1,4 @@
-package tas.mape.system;
+package tas.mape.system.structure;
 
 import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.ComponentMessage;

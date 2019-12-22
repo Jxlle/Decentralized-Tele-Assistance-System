@@ -1,4 +1,4 @@
-package tas.mape.system;
+package tas.mape.system.structure;
 
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.SystemEntity;

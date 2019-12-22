@@ -1,4 +1,4 @@
-package tas.mape.system;
+package tas.mape.system.structure;
 
 import java.util.ArrayList;
 import java.util.List;
