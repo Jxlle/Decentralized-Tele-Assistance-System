@@ -1,7 +1,5 @@
 package tas.mape.communication.protocol;
 
-import java.util.List;
-
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.planner.Planner;
 
@@ -15,7 +13,7 @@ import tas.mape.planner.Planner;
 public class PlannerProtocolDoNothing extends PlannerTwoComponentProtocol {
 
 	@Override
-	protected void InitializeAndSendFirstMessage(List<Planner> components, int startIndex, int... receiverIndices) {
+	protected void InitializeAndSendFirstMessage(int startIndex, int... receiverIndices) {
 		// Do nothing		
 	}
 

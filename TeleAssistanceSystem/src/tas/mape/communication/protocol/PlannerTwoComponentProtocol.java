@@ -20,12 +20,11 @@ public abstract class PlannerTwoComponentProtocol extends AbstractTwoComponentPr
 	/**
 	 * Initialize local protocol properties and let a starting communication component send 
 	 * its first message to given receiver(s) to start the protocol.
-	 * @param components the given list of communication components
 	 * @param startIndex the given index of the starting component
 	 * @param receiverIndices the given index of the receiver of the first message
 	 */
 	@Override
-	protected void InitializeAndSendFirstMessage(List<Planner> components, int startIndex, int... receiverIndices) {
+	protected void InitializeAndSendFirstMessage(int startIndex, int... receiverIndices) {
 		
 		List<String> sharedRegistryEndpoints = components.get(0).getRegistryEndpoints();
 		List<String> registryEndpointsOther = components.get(0).getRegistryEndpoints();

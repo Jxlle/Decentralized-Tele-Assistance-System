@@ -45,10 +45,18 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
-	 * Set the currently used protocol to a given protocol
+	 * Set the currently used protocol to a given protocol and add this planner
+	 * to the protocol components
 	 * @param protocol the given protocol
 	 */
 	public void setProtocol(AbstractProtocol<PlannerMessage, Planner> protocol) {
+		
+		// Remove the planner from the old protocol
+		if (this.protocol != null) {
+			this.protocol.removeComponent(this);
+		}
+		
+		protocol.addComponent(this);
 		this.protocol = protocol;
 	}
 	

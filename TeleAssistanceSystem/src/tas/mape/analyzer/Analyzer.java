@@ -61,6 +61,21 @@ public class Analyzer {
 	public void setQoSStrategy(String requirementName, Integer strategy) {
 		QoSStrategies.put(requirementName, strategy);
 	}
+	
+	/**
+	 * Remove the QoS strategy with the given QoS requirement name key
+	 * @param requirementName the given QoS requirement
+	 */
+	public void removeQoSStrategy(String requirementName) {
+		QoSStrategies.remove(requirementName);
+	}
+	
+	/**
+	 * Clear the QoS strategies map
+	 */
+	public void clearQoSStrategies() {
+		QoSStrategies.clear();
+	}
 
 	/**
 	 * Execute the analyzer

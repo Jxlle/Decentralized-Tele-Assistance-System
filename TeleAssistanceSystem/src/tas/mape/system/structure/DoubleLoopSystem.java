@@ -1,14 +1,11 @@
 package tas.mape.system.structure;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.communication.protocol.PlannerProtocolDoNothing;
 import tas.mape.planner.Planner;
-import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.SystemEntity;
+import tas.mape.system.entity.WorkflowExecuter;
 
 /**
  * @author Jelle Van De Sijpe
@@ -52,18 +49,13 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 		SystemEntity entity2 = getSystemEntity(1);
 		
 		// Set chosen protocol
-		entity1.getManagingSystem().getPlanner().setProtocol(protocol);
-		entity2.getManagingSystem().getPlanner().setProtocol(protocol);
-		
-		// List of planners
-		List<Planner> planners = new ArrayList<>();
-		planners.add(entity1.getManagingSystem().getPlanner());
-		planners.add(entity2.getManagingSystem().getPlanner());
+		entity1.getManagingSystem().setProtocol(protocol);
+		entity2.getManagingSystem().setProtocol(protocol);
 		
 		for (int i = 0; i < executionCycles; i++) {
 			
 			// Execute workflow
-			for (int j = 0; j < MAPEKComponent.workflowCycles; j++) {
+			for (int j = 0; j < WorkflowExecuter.workflowCycles; j++) {
 				entity1.getManagedSystem().executeWorkflow();
 				entity2.getManagedSystem().executeWorkflow();
 			}
@@ -77,7 +69,7 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 			entity2.getManagingSystem().executePlanner();
 			
 			// Execute protocol, planners communicate in this step
-			protocol.executeProtocol(planners, maxIterations);
+			protocol.executeProtocol(maxIterations);
 			
 			// Execute executers
 			entity1.getManagingSystem().executeExecuter();

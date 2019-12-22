@@ -1,7 +1,5 @@
 package tas.mape.communication.protocol;
 
-import java.util.List;
-
 import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.ComponentMessage;
 
@@ -27,11 +25,11 @@ public abstract class AbstractTwoComponentProtocol<T extends ComponentMessage<?>
 	 * @param components the given list of communication components
 	 */
 	@Override
-	protected void startProtocol(List<E> components) {
+	protected void startProtocol() {
 		
 		int senderIndex = getRandomComponentIndex();
 		int receiverIndex = Math.abs(senderIndex - 1);
 		
-		InitializeAndSendFirstMessage(components, senderIndex, receiverIndex);
+		InitializeAndSendFirstMessage(senderIndex, receiverIndex);
 	}
 }

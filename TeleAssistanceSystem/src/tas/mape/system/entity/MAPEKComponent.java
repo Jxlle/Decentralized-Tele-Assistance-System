@@ -8,7 +8,10 @@ import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.composite.CompositeService;
 import tas.mape.analyzer.Analyzer;
+import tas.mape.communication.message.PlannerMessage;
+import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.executer.Executer;
+import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.monitor.Monitor;
 import tas.mape.planner.Planner;
@@ -54,7 +57,7 @@ public class MAPEKComponent {
 		public Builder initializeKnowledge(int loadFailureDelta, String currentQoSRequirement, List<String> serviceRegistryEndpoints, Map<Description, 
 				Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 			
-			knowledge = new Knowledge(MAPEKComponent.workflowCycles, loadFailureDelta, currentQoSRequirement, serviceRegistryEndpoints, usableServicesAndChance);
+			knowledge = new Knowledge(loadFailureDelta, currentQoSRequirement, serviceRegistryEndpoints, usableServicesAndChance);
 			return this;
 		}
 		
@@ -130,7 +133,7 @@ public class MAPEKComponent {
 			
 			MAPEKComponent component = new MAPEKComponent();
 			
-			if (monitor == null || analyzer == null || planner == null) {
+			if (monitor == null) {
 				throw new IllegalStateException("The build process can't be started, some components haven't been initialized!");
 			}
 			
@@ -138,24 +141,27 @@ public class MAPEKComponent {
 			component.analyzer = analyzer;
 			component.planner = planner;
 			component.executer = executer;
+			component.knowledge = knowledge;
 			
 			return component;
 		}	
 	}
 	
-	// Fields
-	// The amount of workflow execution cycles that are executed before the possibility of analyzer execution
-	public static int workflowCycles = 100;
+	// MAPE-K components
 	private Monitor monitor;
 	private Analyzer analyzer;
 	private Planner planner;
 	private Executer executer;
+	private Knowledge knowledge;
 	
 	/**
 	 * Create a new MAPE-K component.
 	 * @note The constructor is private because the only way to create this component is through the builder class.
 	 */
 	private MAPEKComponent() {}
+	
+	// The methods below are exact same methods found in the components. These are
+	// implemented so the user can change component parameters without misusing the components.
 	
 	/**
 	 * Initialize the executer components with the given composite service.
@@ -173,39 +179,125 @@ public class MAPEKComponent {
 		monitor.connectProbes(compositeService);
 	}
 	
-	// TODO Change all getters to methods that activate getters/setters inside the component.
-	// Just getting the component can be dangerous if misused.
-	
 	/**
-	 * Return the monitor
-	 * @return the monitor
+	 * Set minimum failure delta to the given value
+	 * @param minFailureDelta the new minimum failure delta
 	 */
-	public Monitor getMonitor() {
-		return monitor;
+	public void setMinFailureDelta(double minFailureDelta) {
+		monitor.setMinFailureDelta(minFailureDelta);
 	}
 	
 	/**
-	 * Return the analyzer
-	 * @return the analyzer
+	 * Return the minimum failure delta
+	 * @return the minimum failure delta
 	 */
-	public Analyzer getAnalyzer() {
-		return analyzer;
+	public double getMinFailureDelta() {
+		return monitor.getMinFailureDelta();
 	}
 	
 	/**
-	 * Return the planner
-	 * @return the planner
+	 * Set failure change to the given value
+	 * @param failureChange the new failure change
 	 */
-	public Planner getPlanner() {
-		return planner;
+	public void setFailureChange(double failureChange) {
+		monitor.setFailureChange(failureChange);
 	}
 	
 	/**
-	 * Return the executer
-	 * @return the executer
+	 * Return the failure change
+	 * @return the failure change
 	 */
-	public Executer getExecuter() {
-		return executer;
+	public double getFailureChange() {
+		return monitor.getFailureChange();
+	}
+	
+	/**
+	 * Return the strategy number for a given QoS requirement name
+	 * @param requirementName the given QoS requirement name
+	 * @return the strategy number
+	 */
+	public Integer getQoSStrategy(String requirementName) {
+		return analyzer.getQoSStrategy(requirementName);
+	}
+	
+	/**
+	 * Update or add a certain QoS strategy number using a given QoS requirement name and strategy number
+	 * @param requirementName the given QoS requirement name
+	 * @param strategy the given strategy number
+	 */
+	public void setQoSStrategy(String requirementName, Integer strategy) {
+		analyzer.setQoSStrategy(requirementName, strategy);
+	}
+	
+	/**
+	 * Remove the QoS strategy with the given QoS requirement name key
+	 * @param requirementName the given QoS requirement
+	 */
+	public void removeQoSStrategy(String requirementName) {
+		analyzer.removeQoSStrategy(requirementName);
+	}
+	
+	/**
+	 * Clear the QoS strategies map
+	 */
+	public void clearQoSStrategies() {
+		analyzer.clearQoSStrategies();
+	}
+	
+	/**
+	 * Set the currently used protocol to a given protocol and add this planner
+	 * to the protocol components
+	 * @param protocol the given protocol
+	 */
+	public void setProtocol(AbstractProtocol<PlannerMessage, Planner> protocol) {
+		planner.setProtocol(protocol);
+	}
+	
+	/**
+	 * Return the currently used protocol
+	 * @return the currently used protocol
+	 */
+	public AbstractProtocol<PlannerMessage, Planner> getProtocol() {
+		return planner.getProtocol();
+	}
+	
+	/**
+	 * Return the system goals
+	 * @return the system goals
+	 */
+	public List<Goal> getGoals() {
+		return knowledge.getGoals();
+	}
+	
+	/**
+	 * Add a given goal to the list of goals
+	 * @param goal the given goal
+	 */
+	public void addGoal(Goal goal) {
+		knowledge.addGoal(goal);
+	}
+	
+	/**
+	 * Remove a given goal from the list of goals
+	 * @param goal the given goal
+	 */
+	public void removeGoal(Goal goal) {
+		knowledge.removeGoal(goal);
+	}
+	
+	/**
+	 * Change the list of goals to a given list of goals
+	 * @param goals the given list of goals
+	 */
+	public void changeGoals(List<Goal> goals) {
+		knowledge.changeGoals(goals);
+	}
+	
+	/**
+	 * Reset the goals
+	 */
+	public void resetGoals() {
+		knowledge.resetGoals();
 	}
 	
 	// The methods below are used to simulate the mape loop for multiple workflow entities 'concurrently'

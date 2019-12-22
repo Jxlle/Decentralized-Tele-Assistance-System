@@ -1,5 +1,6 @@
 package tas.mape.communication.protocol;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -26,21 +27,23 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	// Maximum amount of iterations before the protocol stops
 	protected int maxIterations;
 	
+	// The list of components that are using this protocol
+	protected List<E> components = new ArrayList<>();
+	
 	/**
-	 * Execute the protocol with a given list of communication components that will communicate and a 
+	 * Execute the protocol with the currently used communication components that will communicate and a 
 	 * given maximum amount of iterations
-	 * @param components the given list of communication components
 	 * @param maxIterations the given maximum amount of iterations
 	 * @throws IllegalArgumentException throw when the used protocol doesn't support the given amount of components
 	 */
-	public void executeProtocol(List<E> components, int maxIterations) throws IllegalArgumentException {
+	public void executeProtocol(int maxIterations) throws IllegalArgumentException {
 		
 		if (components.size() != getNeededAmountOfComponents()) {
-			throw new IllegalArgumentException("The used protocol doesn't support the given amount of components: " + components.size());
+			throw new IllegalArgumentException("The used protocol doesn't support the current amount of components: " + components.size());
 		}
 		
 		this.maxIterations = maxIterations;
-		startProtocol(components);
+		startProtocol();
 	}
 	
 	/**
@@ -66,6 +69,29 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	}
 	
 	/**
+	 * Add a given component to the components list
+	 * @param component the given component
+	 */
+	public void addComponent(E component) {
+		components.add(component);
+	}
+	
+	/**
+	 * Remove a given component from the components list
+	 * @param component the given component to be removed
+	 */
+	public void removeComponent(E component) {
+		components.remove(component);
+	}
+	
+	/**
+	 * Clear protocol components
+	 */
+	public void resetComponents() {
+		components.clear();
+	}
+	
+	/**
 	 * Return the exact amount of components needed before the protocol can start
 	 * @return the exact amount of components needed
 	 */
@@ -75,16 +101,14 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	
 	/**
 	 * Start the protocol, choose starting and receiving components to begin communication
-	 * @param components the given list of communication components
 	 */
-	protected abstract void startProtocol(List<E> components);
+	protected abstract void startProtocol();
 	
 	/**
 	 * Initialize local protocol properties and let a starting communication component send 
 	 * its first message to given receiver(s) to start the protocol.
-	 * @param components the given list of communication components
 	 * @param startIndex the given index of the starting component
 	 * @param receiverIndices the given indices of the receivers of the first message
 	 */
-	protected abstract void InitializeAndSendFirstMessage(List<E> components, int startIndex, int... receiverIndices);
+	protected abstract void InitializeAndSendFirstMessage(int startIndex, int... receiverIndices);
 }

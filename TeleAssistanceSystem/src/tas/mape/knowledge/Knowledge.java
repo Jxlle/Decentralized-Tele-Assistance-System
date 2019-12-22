@@ -14,6 +14,7 @@ import tas.mape.analyzer.CostAndReliabilityReq;
 import tas.mape.analyzer.CostReq;
 import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.planner.PlanComponent;
+import tas.mape.system.entity.WorkflowExecuter;
 
 /**
  * @author Jelle Van De Sijpe
@@ -38,9 +39,6 @@ public class Knowledge {
 	// Map containing information about the approximated service failure rates
 	private Map<String, HashMap<Integer, Double>> approximatedServiceFailureRates;
 	
-	// Amount of workflow cycles before the MAPE-K loop is activated
-	private int amountOfCycles;
-	
 	// Delta value used for updating the service failure rate map
 	private int loadFailureDelta;
 	
@@ -62,15 +60,13 @@ public class Knowledge {
 	
 	/**
 	 * Create a new knowledge with given starting information
-	 * @param amountOfCycles the given amount of cycles that the workflow entity runs before executing the MAPE-K loop
 	 * @param loadFailureDelta the given delta between two load values in the approximated failure table
 	 * @param currentQoSRequirement the given current system QoS requirement
 	 * @param serviceRegistryEndpoints the given registry endpoints used by the workflow
 	 * @param usableServicesAndChance map containing usable service information with additional usage chance
 	 */
-	public Knowledge(int amountOfCycles, int loadFailureDelta, String currentQoSRequirement, List<String> serviceRegistryEndpoints, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+	public Knowledge(int loadFailureDelta, String currentQoSRequirement, List<String> serviceRegistryEndpoints, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 		
-		this.amountOfCycles = amountOfCycles;
 		this.loadFailureDelta = loadFailureDelta;
 		this.currentQoSRequirement = currentQoSRequirement;
 		
@@ -210,7 +206,7 @@ public class Knowledge {
 	 * @return the service load
 	 */
 	public int getServiceLoad(Description description, double usePercentage) {
-		return (int) (servicesUsageChance.get(description) * usePercentage * amountOfCycles);
+		return (int) (servicesUsageChance.get(description) * usePercentage * WorkflowExecuter.workflowCycles);
 	}
 	
 	/**
