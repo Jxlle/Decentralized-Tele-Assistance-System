@@ -74,8 +74,14 @@ public abstract class CommunicationComponent<T extends ComponentMessage<?>> {
 	/**
 	 * Send a given message to another communication component
 	 * @param message the message to be sent
+	 * @throws IllegalStateException throw when the message host has not been set
 	 */
-	public void sendMessage(T message) {
+	public void sendMessage(T message) throws IllegalStateException {
+		
+		if (messageHost == null) {
+			throw new IllegalStateException("Message host has not been set!");
+		}
+		
 		messageHost.sendMessage(message);
 	}
 	
