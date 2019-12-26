@@ -47,7 +47,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	/**
 	 * Set the currently used protocol to a given protocol and add this planner
 	 * to the protocol components
-	 * @param protocol the given protocol
+	 * @param protocol the new protocol
 	 */
 	public void setProtocol(AbstractProtocol<PlannerMessage, Planner> protocol) {
 		

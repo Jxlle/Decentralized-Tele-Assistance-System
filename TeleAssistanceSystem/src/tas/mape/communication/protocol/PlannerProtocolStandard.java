@@ -15,6 +15,7 @@ import tas.mape.planner.ServiceCombination;
  * This protocol works as follows:
  * 
  * 1) A planner gets chosen to send the first message, it sends its message to the other planner with the message type "FIRST_OFFER".
+ *    This first message holds data about the public service failure rates from the current best service combination of this planner.
  * 
  * 2) The other planner responds by adjusting his service combinations list that it got from the analyzer. 
  *    It doesn't matter if this list is overwritten because the service combinations will still hold the same service data,
@@ -22,7 +23,7 @@ import tas.mape.planner.ServiceCombination;
  *    and with data from his new best service combination.
  *    
  * 3) The other planner gets "NEW_OFFER". It adjusts its service combination list based on the response it got. 
- *    It then does a check depending on the rating type of the service combinations:
+ *    It does a check depending on the rating type of the service combinations:
  * 
  * 	  NUMBER:
  *    It checks if his best service combination is still the same service combination as before. 

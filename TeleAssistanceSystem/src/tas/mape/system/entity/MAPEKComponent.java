@@ -8,6 +8,7 @@ import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.composite.CompositeService;
 import tas.mape.analyzer.Analyzer;
+import tas.mape.communication.message.ComponentMessageHost;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.executer.Executer;
@@ -180,7 +181,7 @@ public class MAPEKComponent {
 	}
 	
 	/**
-	 * Set minimum failure delta to the given value
+	 * Set minimum failure delta in the monitor to the given value
 	 * @param minFailureDelta the new minimum failure delta
 	 */
 	public void setMinFailureDelta(double minFailureDelta) {
@@ -188,40 +189,40 @@ public class MAPEKComponent {
 	}
 	
 	/**
-	 * Return the minimum failure delta
-	 * @return the minimum failure delta
+	 * Return the minimum failure delta of the monitor
+	 * @return the minimum failure delta of the monitor
 	 */
 	public double getMinFailureDelta() {
 		return monitor.getMinFailureDelta();
 	}
 	
 	/**
-	 * Set failure change to the given value
-	 * @param failureChange the new failure change
+	 * Set monitor failure change to the given value
+	 * @param failureChange the new monitor failure change
 	 */
 	public void setFailureChange(double failureChange) {
 		monitor.setFailureChange(failureChange);
 	}
 	
 	/**
-	 * Return the failure change
-	 * @return the failure change
+	 * Return the monitor failure change
+	 * @return the monitor failure change
 	 */
 	public double getFailureChange() {
 		return monitor.getFailureChange();
 	}
 	
 	/**
-	 * Return the strategy number for a given QoS requirement name
+	 * Return the analyzer strategy number for a given QoS requirement name
 	 * @param requirementName the given QoS requirement name
-	 * @return the strategy number
+	 * @return the analyzer strategy number
 	 */
 	public Integer getQoSStrategy(String requirementName) {
 		return analyzer.getQoSStrategy(requirementName);
 	}
 	
 	/**
-	 * Update or add a certain QoS strategy number using a given QoS requirement name and strategy number
+	 * Update or add a certain analyzer QoS strategy number using a given QoS requirement name and strategy number
 	 * @param requirementName the given QoS requirement name
 	 * @param strategy the given strategy number
 	 */
@@ -230,7 +231,7 @@ public class MAPEKComponent {
 	}
 	
 	/**
-	 * Remove the QoS strategy with the given QoS requirement name key
+	 * Remove the analyzer QoS strategy with the given QoS requirement name key
 	 * @param requirementName the given QoS requirement
 	 */
 	public void removeQoSStrategy(String requirementName) {
@@ -238,24 +239,48 @@ public class MAPEKComponent {
 	}
 	
 	/**
-	 * Clear the QoS strategies map
+	 * Clear the analyzer QoS strategies map
 	 */
 	public void clearQoSStrategies() {
 		analyzer.clearQoSStrategies();
 	}
 	
 	/**
-	 * Set the currently used protocol to a given protocol and add this planner
+	 * Set the planner endpoint to a new given endpoint
+	 * @param endpoint the new planner endpoint
+	 * */
+	public void setEndpoint(String endpoint) {
+		planner.setEndpoint(endpoint);
+	}
+	
+	/**
+	 * Return the planner message host
+	 * @return the planner message host
+	 */
+	public ComponentMessageHost<PlannerMessage> getMessageHost() {
+		return planner.getMessageHost();
+	}
+	
+	/**
+	 * Set the planner message host to a new given message host
+	 * @param messageHost the new planner message host
+	 */
+	public void setMessageHost(ComponentMessageHost<PlannerMessage> messageHost) {
+		planner.setMessageHost(messageHost);
+	}
+	
+	/**
+	 * Set the currently used planner protocol to a given protocol and add this planner
 	 * to the protocol components
-	 * @param protocol the given protocol
+	 * @param protocol the new planner protocol
 	 */
 	public void setProtocol(AbstractProtocol<PlannerMessage, Planner> protocol) {
 		planner.setProtocol(protocol);
 	}
 	
 	/**
-	 * Return the currently used protocol
-	 * @return the currently used protocol
+	 * Return the currently used planner protocol
+	 * @return the currently used planner protocol
 	 */
 	public AbstractProtocol<PlannerMessage, Planner> getProtocol() {
 		return planner.getProtocol();

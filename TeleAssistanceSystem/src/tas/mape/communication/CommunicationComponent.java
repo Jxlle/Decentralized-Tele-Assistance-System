@@ -59,7 +59,7 @@ public abstract class CommunicationComponent<T extends ComponentMessage<?>> {
 	
 	/**
 	 * Set the message host to a new given message host
-	 * @param messageHost the component message host
+	 * @param messageHost the new component message host
 	 * @throws IllegalArgumentException throw when calling this method directly. This method should only be called from the message host
 	 */
 	public void setMessageHost(ComponentMessageHost<T> messageHost) throws IllegalArgumentException {
