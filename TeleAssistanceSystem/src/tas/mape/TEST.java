@@ -220,10 +220,10 @@ public class TEST {
 		Goal reliabilityGoal = new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_OR_EQUAL_TO, 0.2);
 		goals.add(costGoal);
 		goals.add(reliabilityGoal);
-		List<ServiceCombination> services1 = carr.getServiceCombinations(1, 10, RatingType.NUMBER, goals, assistanceService.getCache().caches);
+		List<ServiceCombination> services1 = cr.getServiceCombinations(2, 100, RatingType.NUMBER, goals, assistanceService.getCache().caches);
 		Map<String, Double> serviceFailureRates = new HashMap<>();
 		serviceFailureRates.put("service.medical2", 1.0);
-		List<ServiceCombination> services = carr.getNewServiceCombinations(services1, serviceFailureRates, goals);
+		//List<ServiceCombination> services = carr.getNewServiceCombinations(services1, serviceFailureRates, goals);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);
 		
 		for (ServiceCombination comb : services1) {
@@ -233,15 +233,20 @@ public class TEST {
 			
 			for (Description d : comb.getDescriptions()) {
 				
-				System.err.print("["+ d.toString() + "] : " + comb.getAllServices(d).getItems().get(0).getServiceEndpoint() + "\n");
+				System.err.print("["+ d.toString() + "] \n");
 				
+				for (ServiceDescription service : comb.getAllServices(d).getItems()) {
+					System.err.print(" -> [name] " + service.getServiceEndpoint() + ", [usage chance] " + comb.getAllServices(d).getChance(service) + "\n");
+				}
+				
+				System.err.print(" \n");
 			}
 			
 			System.err.print("-------------------------------------------------------------------------------------------\n");
 			System.err.print("score: " + comb.getRating() + " \n");
 		}
 		
-		System.err.print(RatingType.NUMBER);
+		System.err.print("\n total combinations: " + services1.size());
 		
 		
 		/*for (Map<Description, ServiceDescription> map : services2) {
@@ -288,8 +293,8 @@ public class TEST {
 			System.err.print("------------------------------------------------------------ \n");
 		}*/
 		
-		SystemEntity e = new SystemEntity(null, null);
-		SoloLoopSystem s = new SoloLoopSystem(e);
+		//SystemEntity e = new SystemEntity(null, null);
+		//SoloLoopSystem s = new SoloLoopSystem(e);
 		// TODO system testing
 	}
 }

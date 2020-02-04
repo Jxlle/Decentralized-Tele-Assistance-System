@@ -95,6 +95,7 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			// A higher score would mean that you have a high index count for cost + requirement, but because the lists are sorted from lowest to highest,
 			// a higher score is a better combination.
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
+				System.err.print(indexListCost.get(i).doubleValue() + " + " + indexListFailureRate.get(i).doubleValue() + " =  " + (indexListCost.get(i).doubleValue() + indexListFailureRate.get(i).doubleValue()) + " \n");
 				scoreList.add(indexListCost.get(i).doubleValue() + indexListFailureRate.get(i).doubleValue());
 			}	
 			

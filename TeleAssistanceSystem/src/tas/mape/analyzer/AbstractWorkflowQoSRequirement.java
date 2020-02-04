@@ -26,6 +26,7 @@ import tas.mape.planner.ServiceCombination;
  */
 public abstract class AbstractWorkflowQoSRequirement {
 	
+	
 	/**
 	 * Apply a QoS requirement strategy with a given strategy, combination limit, rating type, list of goals 
 	 * and a map of usable services.
@@ -39,14 +40,13 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @throws IllegalArgumentException throw when the combination limit is illegal
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ServiceCombination> getServiceCombinations(Integer strategy, int combinationLimit, 
+	public List<ServiceCombination> getServiceCombinations(int strategy, int combinationLimit, 
 			RatingType ratingType, List<Goal> goals, Map<Description, List<ServiceDescription>> usableServices) 
 					throws IllegalArgumentException {
 		
 		// Check if given combination limit is legal
-		if (combinationLimit < 1) {
+		if (combinationLimit < 1)
 			throw new IllegalArgumentException("Combination limit must be at least 1.");
-		}
 		
 		Method method = null;
 		List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations = null;
@@ -79,8 +79,8 @@ public abstract class AbstractWorkflowQoSRequirement {
 	public abstract List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
 			Map<String, Double> serviceFailureRates, List<Goal> goals);
 	
-	// TODO OTHER STRATEGIES
 	/**
+	 * STRATEGY 1: Only a single service per service description
 	 * Generate and return all possible service combinations without rating or type
 	 * @param usableServices a map of usable services where each key is a service type & operation name combination (description) 
 	 *        and the value is a list of the usable services for that description 
@@ -89,83 +89,79 @@ public abstract class AbstractWorkflowQoSRequirement {
 	public List<Map<Description, WeightedCollection<ServiceDescription>>> getAllServiceCombinations1(Map<Description, 
 			List<ServiceDescription>> usableServices) {
 		
-		//--------------------------------------------
-		// Create a List<List<.>> from the given Map
-		//--------------------------------------------
+		// Return the service combinations
+		return getAllServiceCombinationsGeneral(usableServices, 1);
+	}
+	
+	/**
+	 * STRATEGY 2: One or two services per service description, equal (50/50) usage chance
+	 * Generate and return all possible service combinations without rating or type
+	 * @param usableServices a map of usable services where each key is a service type & operation name combination (description) 
+	 *        and the value is a list of the usable services for that description 
+	 * @return the generated service combinations without rating or type
+	 */
+	public List<Map<Description, WeightedCollection<ServiceDescription>>> getAllServiceCombinations2(Map<Description, 
+			List<ServiceDescription>> usableServices) {
 		
-		List<List<ServiceDescription>> usableServicesList = new ArrayList<>();
+		// Return the service combinations
+		return getAllServiceCombinationsGeneral(usableServices, 2);
+	}
+	
+	/**
+	 * STRATEGY 3: One or three services per service description, equal (33/33/33) usage chance
+	 * Generate and return all possible service combinations without rating or type
+	 * @param usableServices a map of usable services where each key is a service type & operation name combination (description) 
+	 *        and the value is a list of the usable services for that description 
+	 * @return the generated service combinations without rating or type
+	 */
+	public List<Map<Description, WeightedCollection<ServiceDescription>>> getAllServiceCombinations3(Map<Description, 
+			List<ServiceDescription>> usableServices) {
+		
+		// Return the service combinations
+		return getAllServiceCombinationsGeneral(usableServices, 3);
+	}
+
+	/**
+	 * A method used to generate return all possible service combinations without rating or type.
+	 * It generates all one-service-per-description combinations plus all n-services-per-description 
+	 * combinations with equal usage chances.
+	 * @param usableServices a map of usable services where each key is a service type & operation name combination (description) 
+	 *        and the value is a list of the usable services for that description 
+	 * @param combinationSize the given amount of used services per description for additional service combinations
+	 * @return the generated service combinations without rating or type
+	 */
+	private List<Map<Description, WeightedCollection<ServiceDescription>>> getAllServiceCombinationsGeneral(Map<Description, 
+			List<ServiceDescription>> usableServices, int combinationSize) {
+		
+		List<List<WeightedCollection<ServiceDescription>>> usableServicesCollection = new ArrayList<>();
+		List<WeightedCollection<ServiceDescription>> serviceCollectionList;
+		WeightedCollection<ServiceDescription> serviceCollection;
 		List<Description> descriptionList = new ArrayList<>();
 		
+		// Transform the given map into a suitable list
 		for (Description description : usableServices.keySet()) {
 			descriptionList.add(description);
-			usableServicesList.add(usableServices.get(description));
-		}
-		
-		
-		//--------------------------------------------
-		// Begin the combination process
-		//--------------------------------------------
-		
-		List<ServiceDescription[]> combinations = new ArrayList<>();
-		int listSize = usableServicesList.size();
-		int[] indices = new int[listSize];
-		
-		while (true) {
+			serviceCollectionList = new ArrayList<>();
 			
-	        // Add current combination 
-			ServiceDescription[] currentCombination = new ServiceDescription[listSize];
-			
-	        for (int i = 0; i < listSize; i++) {
-	        	currentCombination[i] = usableServicesList.get(i).get(indices[i]);
-	        }
-	        
-	        combinations.add(currentCombination);
-	  
-	        // find the rightmost array that has more 
-	        // elements left after the current element  
-	        // in that array 
-	        int next = listSize - 1; 
-	        
-	        while (next >= 0 && (indices[next] + 1 >= usableServicesList.get(next).size())) {
-	            next--; 
-	        }
-	  
-	        // No more combinations are left
-	        if (next < 0) 
-	            break; 
-	  
-	        // Move to next element in that array 
-	        indices[next]++; 
-	  
-	        // Reset other arrays to the right of current array
-	        for (int i = next + 1; i < listSize; i++) 
-	            indices[i] = 0;
-		}
-		
-		
-		//--------------------------------------------
-		// Get result
-		//--------------------------------------------
-		
-		// Transform the combinations list to the suitable result type
-		List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations = new ArrayList<>();
-		Map<Description, WeightedCollection<ServiceDescription>> serviceCombination;
-		WeightedCollection<ServiceDescription> serviceCollection;
-		
-		for (int i = 0; i < combinations.size(); i++) {
-			
-			serviceCombination = new HashMap<>();
-			
-			for (int i2 = 0; i2 < listSize; i2++) {
-				serviceCollection = new WeightedCollection<ServiceDescription>();
-				serviceCollection.add(combinations.get(i)[i2], 100);
-				serviceCombination.put(descriptionList.get(i2), serviceCollection);
+			// Add every service for this service description
+			for (ServiceDescription service : usableServices.get(description)) {
+	        	serviceCollection = new WeightedCollection<ServiceDescription>();
+	        	serviceCollection.add(service, 100);
+	        	serviceCollectionList.add(serviceCollection);
 			}
 			
-			allServiceCombinations.add(serviceCombination);
+			// Add every other service collection
+			if (combinationSize > 1) {
+				for (WeightedCollection<ServiceDescription> collection : getAllMultiCollectionCombinationsEqualChances(usableServices.get(description), 
+						combinationSize))
+					serviceCollectionList.add(collection);
+			}
+		
+			usableServicesCollection.add(serviceCollectionList);
 		}
 		
-		return allServiceCombinations;
+		// Return all possible collection combinations
+		return getAllCollectionCombinations(usableServicesCollection, descriptionList);
 	}
 	
 	/**
@@ -183,7 +179,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 			for (ServiceDescription service : combination.get(description).getItems()) {
 				
 				if (service.getCustomProperties().containsKey(property)) {
-					totalValue += (double) service.getCustomProperties().get(property);
+					totalValue += (double) service.getCustomProperties().get(property) * combination.get(description).getChance(service);
 				}
 			}
 		}
@@ -206,7 +202,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 			for (ServiceDescription service : combination.getAllServices(description).getItems()) {
 				
 				if (service.getCustomProperties().containsKey(property)) {
-					totalValue += (double) service.getCustomProperties().get(property);
+					totalValue += (double) service.getCustomProperties().get(property) * combination.getAllServices(description).getChance(service);
 				}
 			}
 		}
@@ -339,5 +335,105 @@ public abstract class AbstractWorkflowQoSRequirement {
 		
 		Collections.sort(chosenServicesList, Collections.reverseOrder());
 		return chosenServicesList;
+	}
+	
+	/**
+	 * Return all possible service collection combinations from a given list of usable services and service descriptions.
+	 * @param usableServicesCollection the given list of usable services
+	 * @param descriptionList the given list of usable service descriptions
+	 * @return a list of maps consisting of every possible service collection combination for each service description 
+	 */
+	private List<Map<Description, WeightedCollection<ServiceDescription>>> getAllCollectionCombinations(
+			List<List<WeightedCollection<ServiceDescription>>> usableServicesCollection, List<Description> descriptionList) {
+		
+		List<Map<Description, WeightedCollection<ServiceDescription>>> combinations = new ArrayList<>();
+		int listSize = usableServicesCollection.size();
+		int[] indices = new int[listSize];
+		
+		while (true) {
+			
+	        // Add current combination 
+			Map<Description, WeightedCollection<ServiceDescription>> currentCombination = new HashMap<>();
+			
+	        for (int i = 0; i < listSize; i++)
+	        	currentCombination.put(descriptionList.get(i), usableServicesCollection.get(i).get(indices[i]));
+	        
+	        combinations.add(currentCombination);
+	  
+	        // find the rightmost array that has more 
+	        // elements left after the current element  
+	        // in that array 
+	        int next = listSize - 1; 
+	        
+	        while (next >= 0 && (indices[next] + 1 >= usableServicesCollection.get(next).size()))
+	            next--; 
+	  
+	        // No more combinations are left
+	        if (next < 0) 
+	            break; 
+	  
+	        // Move to next element in that array 
+	        indices[next]++;
+	  
+	        // Reset other arrays to the right of current array
+	        for (int i = next + 1; i < listSize; i++) 
+	            indices[i] = 0;
+		}
+		
+		return combinations;
+	}
+	
+	/**
+	 * Recursively generate and return a list of service description arrays representing all possible n-services-per-description 
+	 * service combinations with equal usage chances.
+	 * @param serviceDescriptions the given list of service descriptions
+	 * @param combinationSize the given amount of used services per description
+	 * @param startPos parameter used to hold the current starting position in the array
+	 * @param currentCombination parameter used to hold the current combination
+	 * @param result parameter used to hold the result
+	 * @return the generated list of arrays representing the service combinations without usage chance
+	 */
+	private List<ServiceDescription[]> getAllMultiListCombinations(List<ServiceDescription> serviceDescriptions, int combinationSize, 
+			int startPos, ServiceDescription[] currentCombination, List<ServiceDescription[]> result) {
+		
+		if (combinationSize == 0) {
+			result.add(currentCombination.clone());
+	        return null;
+		}
+		
+        for (int i = startPos; i <= serviceDescriptions.size() - combinationSize; i++) {
+            currentCombination[currentCombination.length - combinationSize] = serviceDescriptions.get(i);
+            getAllMultiListCombinations(serviceDescriptions, combinationSize - 1, i + 1, currentCombination, result);
+        }
+        
+        return result;
+	} 
+	
+	/**
+	 * Generate and return a list of weighted collections representing all possible n-services-per-description 
+	 * service combinations with equal usage chances.
+	 * @param serviceDescriptions the given list of service descriptions
+	 * @param combinationSize the given amount of used services per description
+	 * @return the generated weighted collections representing the service combinations with usage chance
+	 */
+	private List<WeightedCollection<ServiceDescription>> getAllMultiCollectionCombinationsEqualChances(List<ServiceDescription> serviceDescriptions,
+			int combinationSize) {
+		
+		List<WeightedCollection<ServiceDescription>> collections = new ArrayList<>();
+		WeightedCollection<ServiceDescription> collection;
+		List<ServiceDescription[]> multiListCombinations = 
+				getAllMultiListCombinations(serviceDescriptions, combinationSize, 0, new ServiceDescription[combinationSize], new ArrayList<>());
+		
+		
+		for (ServiceDescription[] multiList : multiListCombinations) {
+			collection = new WeightedCollection<ServiceDescription>();
+			
+			for (ServiceDescription service : multiList)
+				collection.add(service, 100);
+			
+			collections.add(collection);
+		}
+		
+		return collections;
 	}
 }
