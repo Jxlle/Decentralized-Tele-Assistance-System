@@ -1176,7 +1176,7 @@ public class ApplicationController implements Initializable {
 						}
 					}
 					
-					if (profile.defaultEnabled) {
+					if (profile.getDefaultEnabled()) {
 						service.addServiceProfile(profile);
 					}	
 				

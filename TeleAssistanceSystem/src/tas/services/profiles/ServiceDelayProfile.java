@@ -3,6 +3,7 @@ package tas.services.profiles;
 import java.util.Iterator;
 import java.util.TreeMap;
 
+import javafx.util.Pair;
 import service.atomic.ServiceProfile;
 import service.atomic.ServiceProfileAttribute;
 import service.auxiliary.ServiceDescription;
@@ -11,13 +12,12 @@ import service.utility.Time;
 	
 public class ServiceDelayProfile extends ServiceProfile{
 	
-	//String type = "Delay";
-	
 	@ServiceProfileAttribute()
 	public TreeMap<Integer,Double> delay=new TreeMap<>();
 	
 	public ServiceDelayProfile(double value){
 		delay.put(0,value);
+		treeMapText = new Pair<String, String>("Invocations", "Delay");
 		type = "Delay";
 	}
 

@@ -1,5 +1,6 @@
 package service.atomic;
 
+import javafx.util.Pair;
 import service.auxiliary.ServiceDescription;
 
 /**
@@ -9,11 +10,14 @@ import service.auxiliary.ServiceDescription;
  */
 public abstract class ServiceProfile {
 	
-	// If this is true, the service profile will be enabled at start
-	public boolean defaultEnabled;
+	// If this is true, the service profile will be enabled at by default
+	protected boolean defaultEnabled;
 	
 	// Type of the service profile
-	public String type;
+	protected String type;
+	
+	// Text representation of the TreeMap data, if present
+	protected Pair<String, String> treeMapText;
 	
 	/**
 	 * This method is called before invoking service operations. Argument operationName have the value of the operation which is going to invoke. 
@@ -41,5 +45,29 @@ public abstract class ServiceProfile {
 	public Object postInvokeOperation(String operationName, Object result, Object...args){
 		return result;
 	}
+	
+	/**
+	 * return if the service profile is enabled by default
+	 * @return if the service profile is enabled by default
+	 */
+	public boolean getDefaultEnabled() {
+		return defaultEnabled;
+	}
 
+	/**
+	 * Return the service type
+	 * @return the service type
+	 */
+	public String getServiceType() {
+		return type;
+	}
+	
+	/**
+	 * Return the text representation of the TreeMap data
+	 * @return the text representation of the TreeMap data
+	 */
+	public Pair<String, String> getServiceTreeMapText() {
+		return treeMapText;
+	}
+	
 }

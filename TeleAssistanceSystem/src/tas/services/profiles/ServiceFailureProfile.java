@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.TreeMap;
 
+import javafx.util.Pair;
 import service.atomic.ServiceProfile;
 import service.atomic.ServiceProfileAttribute;
 import service.auxiliary.ServiceDescription;
@@ -25,12 +26,13 @@ public class ServiceFailureProfile extends ServiceProfile {
 	public ServiceFailureProfile(ServiceDescription description){
 		
 		if (description.getCustomProperties().containsKey("FailureRate")) {
-			failureRate.put(0, (double) description.getCustomProperties().get("FailureRate"));
+			failureRate.put(0, (double) description.getCustomProperties().get("successRate"));
 		}
 		else {
 			failureRate.put(0, 0.0);
 		}
 		
+		treeMapText = new Pair<String, String>("Invocations", "FailureRate");
 		type = "Failure";
 	}
 	

@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
-import java.util.stream.IntStream;
 
 import application.MainGui;
 import service.atomic.AtomicService;
@@ -96,6 +94,7 @@ public class ServiceProfileController implements Initializable {
     @FXML
     TitledPane profileTitledPane;
     
+    private TableColumn<AttributeEntry,String> profileKeyColumn, profileValueColumn, profileNameColumn, profileTypeColumn;
 	private Stage stage;
 	private ServiceDescription description;
 	private AtomicService service;
@@ -225,8 +224,6 @@ public class ServiceProfileController implements Initializable {
 	private void addServiceProfile(ServiceProfile profile, boolean enabled){
 		
 		AnchorPane itemPane = new AnchorPane();
-		//itemPane.setPrefHeight(40);
-		//itemPane.setMinHeight(40);
 		
 		Button profileButton=new Button();
 		profileButton.setId("profileButton");
@@ -235,9 +232,18 @@ public class ServiceProfileController implements Initializable {
 		profileButton.setOnAction(event->{
 			attributeData.clear();
 			currentProfile=profile;
+			
+			if (profile.getServiceTreeMapText() == null) {
+				profileKeyColumn.textProperty().set("Key");
+				profileValueColumn.textProperty().set("Value");
+			}
+			else {
+				profileKeyColumn.textProperty().set(profile.getServiceTreeMapText().getKey());
+				profileValueColumn.textProperty().set(profile.getServiceTreeMapText().getValue());
+			}
 						
-			for(Field field: profile.getClass().getFields()){			
-				if(field.getAnnotation(ServiceProfileAttribute.class)!=null){
+			for(Field field: profile.getClass().getFields()) {			
+				if(field.getAnnotation(ServiceProfileAttribute.class) != null) {
 					//System.out.println(field.getType());
 					//System.out.println(field.getName());
 					try {						
@@ -264,9 +270,6 @@ public class ServiceProfileController implements Initializable {
 								currentProfileName=field.getName();
 								currentProfileType=type;
 							}
-							
-						}
-						else{
 							
 						}
 						
@@ -303,19 +306,17 @@ public class ServiceProfileController implements Initializable {
 		if(!enabled)
 			profileButton.setDisable(true);
 		
-		checkBox.selectedProperty().addListener(listener->{
-			//System.out.println(index);
-			//System.out.println(checkBox.selectedProperty().get());
+		checkBox.selectedProperty().addListener(listener -> {
 			boolean selected=checkBox.selectedProperty().get();
 			
-			if(selected){
+			if(selected) {
 				
 				// Deselect profiles with the same type
 				List<ServiceProfile> profiles = service.getServiceProfiles();
 				
 				for (ServiceProfile currentProfile : profiles) {
 					
-					if (currentProfile.type.equals(profile.type)) {
+					if (currentProfile.getServiceType().equals(profile.getServiceType())) {
 						service.removeServiceProfile(currentProfile);
 						
 						Button button;
@@ -384,12 +385,12 @@ public class ServiceProfileController implements Initializable {
                    }
        };
        
-		TableColumn<AttributeEntry,String> invocationsColumn = new TableColumn<AttributeEntry,String>("Invocations");
-		invocationsColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("invocations"));
-		invocationsColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
-		invocationsColumn.setCellFactory(cellFactory);	
-		invocationsColumn.setSortable(false);
-		invocationsColumn.setOnEditCommit(
+		profileKeyColumn = new TableColumn<AttributeEntry,String>("Key");
+		profileKeyColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("key"));
+		profileKeyColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
+		profileKeyColumn.setCellFactory(cellFactory);	
+		profileKeyColumn.setSortable(false);
+		profileKeyColumn.setOnEditCommit(
                 new EventHandler<CellEditEvent<AttributeEntry, String>>() {
                     @Override
                     public void handle(CellEditEvent<AttributeEntry, String> t) {
@@ -415,7 +416,7 @@ public class ServiceProfileController implements Initializable {
                 		if (invocations >= 0) {
                         	
                 			String oldInvValue = t.getOldValue();
-							attribute.setInvocations(t.getNewValue());
+							attribute.setKey(t.getNewValue());
                 			
                 	    	for(Field field: currentProfile.getClass().getFields()){			
                 				if(field.getAnnotation(ServiceProfileAttribute.class)!=null){                    					
@@ -443,7 +444,7 @@ public class ServiceProfileController implements Initializable {
             							}
             							
             							for (AttributeEntry entry : attributeData) {
-            								if (entry.getInvocations().equals(attribute.getInvocations()) && !entry.equals(attribute)) {
+            								if (entry.getKey().equals(attribute.getKey()) && !entry.equals(attribute)) {
             									attributeData.remove(entry);
             									break;
             								}
@@ -462,23 +463,23 @@ public class ServiceProfileController implements Initializable {
                 }
         );
 		
-		TableColumn<AttributeEntry,String> nameColumn = new TableColumn<AttributeEntry,String>("Name");
-		nameColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("name"));
-		nameColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
-		nameColumn.setSortable(false);
+		profileNameColumn = new TableColumn<AttributeEntry,String>("Name");
+		profileNameColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("name"));
+		profileNameColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
+		profileNameColumn.setSortable(false);
 		
-		TableColumn<AttributeEntry,String> typeColumn = new TableColumn<AttributeEntry,String>("Type");
-		typeColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("type"));
-		typeColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
-		typeColumn.setSortable(false);
+		profileTypeColumn = new TableColumn<AttributeEntry,String>("Type");
+		profileTypeColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("type"));
+		profileTypeColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
+		profileTypeColumn.setSortable(false);
         
-		TableColumn<AttributeEntry,String> valueColumn = new TableColumn<AttributeEntry,String>("Value");
-		valueColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("value"));
-		valueColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
-		valueColumn.setCellFactory(cellFactory);	
-		valueColumn.setSortable(false);
+		profileValueColumn = new TableColumn<AttributeEntry,String>("Value");
+		profileValueColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("value"));
+		profileValueColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
+		profileValueColumn.setCellFactory(cellFactory);	
+		profileValueColumn.setSortable(false);
             
-		valueColumn.setOnEditCommit(
+		profileValueColumn.setOnEditCommit(
                 new EventHandler<CellEditEvent<AttributeEntry, String>>() {
                     @Override
                     public void handle(CellEditEvent<AttributeEntry, String> t) {
@@ -492,13 +493,13 @@ public class ServiceProfileController implements Initializable {
                     			
 	                	    	for(Field field: currentProfile.getClass().getFields()){			
 	                				if(field.getAnnotation(ServiceProfileAttribute.class)!=null){                    					
-	                					if(field.getName().equals(attribute.getName()) && !attribute.getInvocations().equals(attributeEditText)){
+	                					if(field.getName().equals(attribute.getName()) && !attribute.getKey().equals(attributeEditText)){
 	                						
 	                						if (oldValue.equals(attributeEditText)) {        							
 	                							addEditDataAttribute(field, attribute.getType());
 	                							
 	                							for (AttributeEntry entry : attributeData) {
-	                								if (entry.getInvocations().equals(attribute.getInvocations()) && !entry.equals(attribute)) {
+	                								if (entry.getKey().equals(attribute.getKey()) && !entry.equals(attribute)) {
 	                									attributeData.remove(entry);
 	                									break;
 	                								}
@@ -506,7 +507,7 @@ public class ServiceProfileController implements Initializable {
 	                						}
 	                						
                 							try {
-    											((TreeMap<Integer,Object>)field.get(currentProfile)).put(Integer.parseInt(attribute.getInvocations()),realValue);
+    											((TreeMap<Integer,Object>)field.get(currentProfile)).put(Integer.parseInt(attribute.getKey()),realValue);
                 							} catch (Exception e2) {
     											e2.printStackTrace();
     										}
@@ -528,7 +529,7 @@ public class ServiceProfileController implements Initializable {
         );
 		
 		serviceProfileTable.setItems(attributeData);
-		serviceProfileTable.getColumns().addAll(invocationsColumn,nameColumn,typeColumn,valueColumn);
+		serviceProfileTable.getColumns().addAll(profileKeyColumn, profileNameColumn, profileTypeColumn, profileValueColumn);
 		
 			
 		ContextMenu contextMenu = new ContextMenu();
@@ -701,8 +702,8 @@ public class ServiceProfileController implements Initializable {
 	}
 	
 	
-	public class AttributeEntry{
-		private  SimpleStringProperty invocations;
+	public class AttributeEntry {
+		private  SimpleStringProperty key;
 	    private  SimpleStringProperty name;
 	    private  SimpleStringProperty type;
 	    private  SimpleStringProperty value;
@@ -713,19 +714,19 @@ public class ServiceProfileController implements Initializable {
 	    	this.value=new SimpleStringProperty(value);
 	    }
 	    	
-	    public AttributeEntry(String invocations,String name,String type,String value){
-	    	this.invocations=new SimpleStringProperty(invocations);
+	    public AttributeEntry(String key,String name,String type,String value){
+	    	this.key=new SimpleStringProperty(key);
 	    	this.name=new SimpleStringProperty(name);
 	    	this.type=new SimpleStringProperty(type);
 	    	this.value=new SimpleStringProperty(value);
 	    }
 	    
-	    public void setInvocations(String invocations){
-	    	this.invocations=new SimpleStringProperty(invocations);
+	    public void setKey(String invocations){
+	    	this.key=new SimpleStringProperty(invocations);
 	    }
 	    
-	    public String getInvocations(){
-	    	return this.invocations.get();
+	    public String getKey(){
+	    	return this.key.get();
 	    }
 	    
 	    public void setName(String name){

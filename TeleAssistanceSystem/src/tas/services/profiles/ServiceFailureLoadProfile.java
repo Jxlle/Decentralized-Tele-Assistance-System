@@ -3,15 +3,19 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
+import javafx.util.Pair;
 import service.atomic.ServiceProfile;
+import service.atomic.ServiceProfileAttribute;
 import service.auxiliary.ServiceDescription;
 
 
 public class ServiceFailureLoadProfile extends ServiceProfile {
 	
+	@ServiceProfileAttribute()
 	public TreeMap<Integer, Double> failureRate;
 	
 	public ServiceFailureLoadProfile() {
+		treeMapText = new Pair<String, String>("Load", "Additional successRate");
 		type = "Failure";
 		constructFailRates();
 	}
