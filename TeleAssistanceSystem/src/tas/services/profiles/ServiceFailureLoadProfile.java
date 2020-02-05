@@ -20,10 +20,8 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		constructFailRates();
 	}
 	
-	// TODO User defined in future? (XML)
-	// TODO Different fail rates per service?
+	// Construct default fail rate table
 	private void constructFailRates() {
-		// Test fail rate
 		failureRate = new TreeMap<>();
 		failureRate.put(0, 1.0);
 		failureRate.put(50, 1.0);
@@ -50,7 +48,7 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		
 		rate = rate * entry.getValue();
 		
-		Random rand=new Random();
+		Random rand = new Random();
 		
 		if(rand.nextDouble() < rate){
 			return false;

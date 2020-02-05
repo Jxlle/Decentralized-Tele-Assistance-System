@@ -2,7 +2,6 @@ package tas.services.profiles;
 
 import java.util.Random;
 
-import javafx.util.Pair;
 import service.atomic.ServiceProfile;
 import service.atomic.ServiceProfileAttribute;
 import service.auxiliary.ServiceDescription;
