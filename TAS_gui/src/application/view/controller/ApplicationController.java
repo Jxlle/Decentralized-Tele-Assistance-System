@@ -60,6 +60,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -70,6 +71,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -118,10 +120,8 @@ public class ApplicationController implements Initializable {
     Set<Button> profileRuns = new HashSet<>();
     int maxSteps;
     Map<String, AdaptationEngine> adaptationEngines;
-    Map<String,AnchorPane> servicePanes=new ConcurrentHashMap<>();
-
-    @FXML
-    ListView<AnchorPane> serviceListView;
+    Map<String,AnchorPane> servicePanes = new ConcurrentHashMap<>();
+    Map<String, ListView<AnchorPane>> serviceRegistryPanes = new ConcurrentHashMap<>();
     
     @FXML
     ListView<AnchorPane> profileListView;
@@ -182,6 +182,9 @@ public class ApplicationController implements Initializable {
     
     @FXML
     AnchorPane invRateChartPane;
+    
+    @FXML
+    Accordion serviceRegistryAcc;
 
     @FXML
     ScrollPane serviceScrollPane;
@@ -428,6 +431,7 @@ public class ApplicationController implements Initializable {
         	    List<String> services = new ArrayList<String>();	
     	    	
         	    for (ServiceRegistry registry : serviceRegistries) {
+        	    	serviceRegistryPanes.put(registry.getServiceDescription().getServiceEndpoint(), addServiceRegistry(registry));
         	    	services.addAll(registry.getAllServices());
         	    }
         	    
@@ -1085,6 +1089,25 @@ public class ApplicationController implements Initializable {
     	profileListView.getItems().add(itemPane);
         
     }
+    
+    private ListView<AnchorPane> addServiceRegistry(ServiceRegistry registry) {
+    	
+    	TitledPane registryPane = new TitledPane();
+    	registryPane.setText(registry.getServiceDescription().getServiceName());
+    	
+    	AnchorPane registryAnchorPane = new AnchorPane(); 	
+    	ListView<AnchorPane> registryListView = new ListView<AnchorPane>();	
+    	
+    	registryPane.setContent(registryAnchorPane);
+    	registryAnchorPane.getChildren().add(registryListView);
+    	AnchorPane.setTopAnchor(registryListView, -10.0);
+    	AnchorPane.setBottomAnchor(registryListView, -10.0);
+    	AnchorPane.setLeftAnchor(registryListView, -10.0);
+    	AnchorPane.setRightAnchor(registryListView, -10.0);
+    	serviceRegistryAcc.getPanes().add(registryPane);
+    	
+    	return registryListView;
+    }
 
     private AnchorPane addService(String serviceName, boolean state) {
 	
@@ -1132,12 +1155,14 @@ public class ApplicationController implements Initializable {
     	label.setText(serviceName);
 
     	ServiceDescription Idescription = null;
+    	ServiceRegistry Iregistry = null;
     	
     	for (ServiceRegistry registry : serviceRegistries) {
     		
     		Idescription = registry.getService(serviceName);
     		
     		if (Idescription != null) {
+    			Iregistry = registry;
     			break;
     		}
     		
@@ -1194,6 +1219,8 @@ public class ApplicationController implements Initializable {
     			compositeService.getCache().addService(description);
     			
     			// TODO
+    			// Service panes list with endpoints instead of names
+    			// TODO 2
     			//serviceRegistry.addService(description);
     			servicePanes.put(serviceName, itemPane);
     		    circle.setFill(Color.GREEN);
@@ -1220,7 +1247,8 @@ public class ApplicationController implements Initializable {
     	AnchorPane.setRightAnchor(inspectButton, 10.0);
     	itemPane.getChildren().setAll(circle, label, inspectButton);
     	
-    	serviceListView.getItems().add(itemPane);
+    	serviceRegistryPanes.get(Iregistry.getServiceDescription().getServiceEndpoint()).getItems().add(itemPane);
+    	//serviceListView.getItems().add(itemPane);
     	return itemPane;
     	//servicePanes.put(serviceName, itemPane);
     }
