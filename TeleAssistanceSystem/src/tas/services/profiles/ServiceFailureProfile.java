@@ -32,7 +32,7 @@ public class ServiceFailureProfile extends ServiceProfile {
 			failureRate.put(0, 0.0);
 		}
 		
-		treeMapText = new Pair<String, String>("Invocations", "FailureRate");
+		treeMapText = new Pair<String, String>("Invocations", "Succes rate (%)");
 		type = "Failure";
 	}
 	

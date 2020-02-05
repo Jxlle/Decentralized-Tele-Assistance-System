@@ -15,7 +15,7 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 	public TreeMap<Integer, Double> failureRate;
 	
 	public ServiceFailureLoadProfile() {
-		treeMapText = new Pair<String, String>("Load", "Additional successRate");
+		treeMapText = new Pair<String, String>("Load", "Additional success rate (%)");
 		type = "Failure";
 		constructFailRates();
 	}

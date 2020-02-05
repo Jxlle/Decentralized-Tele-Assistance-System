@@ -28,6 +28,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -227,9 +228,8 @@ public class ServiceProfileController implements Initializable {
 		
 		Button profileButton=new Button();
 		profileButton.setId("profileButton");
-		//profileButton.setLayoutY(5);
 		profileButton.setText(profile.getClass().getSimpleName());
-		profileButton.setOnAction(event->{
+		profileButton.setOnAction(event-> {
 			attributeData.clear();
 			currentProfile=profile;
 			
@@ -244,14 +244,8 @@ public class ServiceProfileController implements Initializable {
 						
 			for(Field field: profile.getClass().getFields()) {			
 				if(field.getAnnotation(ServiceProfileAttribute.class) != null) {
-					//System.out.println(field.getType());
-					//System.out.println(field.getName());
 					try {						
-						//System.out.println(field.getType().getSimpleName());
 						if(field.getType().getSimpleName().equals("TreeMap")){
-							//field.getDeclaringClass()
-							//HashMap<Integer,Object> value=(HashMap<Integer,Object>)field.get(profile);
-							
 							
 							ParameterizedType pt = (ParameterizedType)profile.getClass().getDeclaredField(field.getName()).getGenericType();
 							String type=((Class<?>)pt.getActualTypeArguments()[1]).getSimpleName();
@@ -261,37 +255,15 @@ public class ServiceProfileController implements Initializable {
 							
 							addEditDataAttribute(field, type);
 							
-							for(Integer key:value.keySet()){
-								//System.out.println(key);
+							for(Integer key : value.keySet()) {
 								AttributeEntry attribute = new AttributeEntry(String.valueOf(key),field.getName(),type,String.valueOf(value.get(key)));		
 								
 								attributeData.add(attribute);
-								
-								currentProfileName=field.getName();
-								currentProfileType=type;
+								currentProfileName = field.getName();
+								currentProfileType = type;
 							}
 							
-						}
-						
-						
-						//System.out.println(field.getType().getName());
-						
-						
-						/*
-						if(field.getType().getSimpleName().equals("Attribute")){
-							//field.getDeclaringClass()
-						}
-						else{
-							AttributeEntry attribute=new AttributeEntry("null",field.getName(),field.getType().getName(),field.get(profile).toString());			
-							attributeData.add(attribute);
-						}*/
-						
-						/*
-						AttributeEntry attribute=new AttributeEntry("10",field.getName(),field.getType().getName(),field.get(profile).toString());
-						attributeData.add(attribute);					
-						attribute=new AttributeEntry("20",field.getName(),field.getType().getName(),field.get(profile).toString());
-						attributeData.add(attribute);*/
-						
+						}		
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -387,7 +359,7 @@ public class ServiceProfileController implements Initializable {
        
 		profileKeyColumn = new TableColumn<AttributeEntry,String>("Key");
 		profileKeyColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("key"));
-		profileKeyColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
+		profileKeyColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
 		profileKeyColumn.setCellFactory(cellFactory);	
 		profileKeyColumn.setSortable(false);
 		profileKeyColumn.setOnEditCommit(
@@ -465,17 +437,17 @@ public class ServiceProfileController implements Initializable {
 		
 		profileNameColumn = new TableColumn<AttributeEntry,String>("Name");
 		profileNameColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("name"));
-		profileNameColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
+		profileNameColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
 		profileNameColumn.setSortable(false);
 		
 		profileTypeColumn = new TableColumn<AttributeEntry,String>("Type");
 		profileTypeColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("type"));
-		profileTypeColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
+		profileTypeColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
 		profileTypeColumn.setSortable(false);
         
 		profileValueColumn = new TableColumn<AttributeEntry,String>("Value");
 		profileValueColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("value"));
-		profileValueColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(4));
+		profileValueColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
 		profileValueColumn.setCellFactory(cellFactory);	
 		profileValueColumn.setSortable(false);
             
@@ -528,8 +500,61 @@ public class ServiceProfileController implements Initializable {
                 }
         );
 		
+		TableColumn<AttributeEntry, String> deleteColumn = new TableColumn<>("");
+		deleteColumn.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
+		deleteColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
+		
+		Callback<TableColumn<AttributeEntry, String>, TableCell<AttributeEntry, String>> cellFactoryDelete
+        =
+        new Callback<TableColumn<AttributeEntry, String>, TableCell<AttributeEntry, String>>() {
+		    @Override
+		    public TableCell<AttributeEntry, String> call(final TableColumn<AttributeEntry, String> param) {
+		        final TableCell<AttributeEntry, String> cell = new TableCell<AttributeEntry, String>() {
+		
+		            final Button btn = new Button("Delete");
+		
+		            @Override
+		            public void updateItem(String item, boolean empty) {
+		            	
+		            	AttributeEntry attribute = (AttributeEntry) this.getTableRow().getItem();
+		            	
+		                super.updateItem(item, empty);
+		                
+		                if (empty || (attribute != null && (attribute.getKey().equals(attributeEditText) || attribute.getValue().equals(attributeEditText)))) {
+		                    setGraphic(null);
+		                    setText(null);
+		                } else {
+		                    btn.setOnAction(event -> {
+		                    	
+		                    	for (Field field : currentProfile.getClass().getFields()) {			
+	                				if (field.getAnnotation(ServiceProfileAttribute.class) != null) {                    					
+	                					if (field.getName().equals(attribute.getName()) && !attribute.getValue().equals(attributeEditText)) {
+                							try {
+    											((TreeMap<Integer, Object>) field.get(currentProfile)).remove(Integer.parseInt(attribute.getKey()));
+    										} catch (Exception e2) {
+    											e2.printStackTrace();
+    										}	
+	                					}
+	                				}
+		                    	}
+		                    	
+		                    	attributeData.remove(getTableRow().getItem());
+		                    });
+		                    setGraphic(btn);
+		                    setText(null);
+		                }
+		            }
+		        };
+		        
+		        cell.setAlignment(Pos.CENTER);
+		        return cell;
+		    }
+		};
+		
+		deleteColumn.setCellFactory(cellFactoryDelete);
+		
 		serviceProfileTable.setItems(attributeData);
-		serviceProfileTable.getColumns().addAll(profileKeyColumn, profileNameColumn, profileTypeColumn, profileValueColumn);
+		serviceProfileTable.getColumns().addAll(profileKeyColumn, profileNameColumn, profileTypeColumn, profileValueColumn, deleteColumn);
 		
 			
 		ContextMenu contextMenu = new ContextMenu();
