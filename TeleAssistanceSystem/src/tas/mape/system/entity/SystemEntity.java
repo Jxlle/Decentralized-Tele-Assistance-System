@@ -11,11 +11,12 @@ public class SystemEntity extends AbstractSystemEntity<WorkflowExecuter, MAPEKCo
 	
 	/**
 	 * Create a new system entity with a given managed and managing system and link them together
+	 * @param entityName the given system entity name
 	 * @param managedSystem the given workflow executer
 	 * @param managingSystem the given MAPE-K component
 	 */
-	public SystemEntity(WorkflowExecuter managedSystem, MAPEKComponent managingSystem) {
-		super(managedSystem, managingSystem);
+	public SystemEntity(String entityName, WorkflowExecuter managedSystem, MAPEKComponent managingSystem) {
+		super(entityName, managedSystem, managingSystem);
 	}
 
 	/**

@@ -11,22 +11,43 @@ package tas.mape.system.entity;
  */
 public abstract class AbstractSystemEntity<T, E> {
 
+	// The unique system entity name
+	private String entityName;
+	
 	// The managed system
-	private T managedSystem;
+	private final T managedSystem;
 	
 	// The managing system
-	private E managingSystem;
+	private final E managingSystem;
 	
 	/**
-	 * Create a new abstract system entity
-	 * @param managedSystem
-	 * @param managingSystem
+	 * Create a new abstract system entity with a given name, managed system and managing system
+	 * @param entityName the given system entity name
+	 * @param managedSystem the given managed system
+	 * @param managingSystem the given managing system
 	 */
-	protected AbstractSystemEntity(T managedSystem, E managingSystem) {
+	protected AbstractSystemEntity(String entityName, T managedSystem, E managingSystem) {
 		
+		this.entityName = entityName;
 		this.managedSystem = managedSystem;
 		this.managingSystem = managingSystem;
 		LinkSystems();
+	}
+	
+	/**
+	 * Return the system entity name
+	 * @return te system entity name
+	 */
+	public String getEntityName() {
+		return entityName;
+	}
+	
+	/**
+	 * Set the system entity name to the given name
+	 * @param entityName the given name
+	 */
+	public void setEntityName(String entityName) {
+		this.entityName = entityName;
 	}
 	
 	/**
