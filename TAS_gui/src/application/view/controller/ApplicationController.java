@@ -201,6 +201,9 @@ public class ApplicationController implements Initializable {
     Button aboutButton;
     
     @FXML
+    Button addSystemEntityBtn;
+    
+    @FXML
     MenuItem saveReliabilityGraphMenuItem;
 
     @FXML
@@ -810,6 +813,35 @@ public class ApplicationController implements Initializable {
     		} catch (Exception e) {
     		    e.printStackTrace();
     		}
+    	    }
+    	});
+    	
+    	addSystemEntityBtn.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override
+    	    public void handle(ActionEvent event) {
+	    		try {
+	    			
+	    		    FXMLLoader loader = new FXMLLoader();
+	    		    loader.setLocation(MainGui.class.getResource("view/systemEntity.fxml"));
+	    		    AnchorPane systemEntityPane = (AnchorPane) loader.load();
+	
+	    		    Stage dialogStage = new Stage();
+	    		    dialogStage.setTitle("Add System Entity");
+	    		    dialogStage.setResizable(false);
+	    		    
+	    		    SystemEntityController controller = (SystemEntityController) loader.getController();
+	    		    controller.setStage(dialogStage);
+	
+	    		    Scene dialogScene = new Scene(systemEntityPane);
+	        	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
+	    		    dialogStage.initOwner(primaryStage);
+	    		    dialogStage.setScene(dialogScene);
+	        	    dialogStage.setResizable(false);
+	    		    dialogStage.show();
+	        	    
+	    		} catch (Exception e) {
+	    		    e.printStackTrace();
+	    		}
     	    }
     	});
 
