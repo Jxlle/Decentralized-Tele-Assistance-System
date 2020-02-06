@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import profile.ProfileExecutor;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
@@ -109,8 +110,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * @return the newly calculated service combinations
 	 */
 	public List<ServiceCombination> calculateNewServiceCombinations(PlannerMessageContent content) {
-		String requirementName = knowledge.getCurrentQoSRequirement();
-		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirementName);
+		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(ProfileExecutor.profile.getQosRequirement());
 		return requirementClass.getNewServiceCombinations(availableServiceCombinations, getFailureRates(content), knowledge.getGoals());
 	}
 	

@@ -3,6 +3,7 @@ package tas.mape.analyzer;
 import java.util.List;
 import java.util.Map;
 
+import profile.ProfileExecutor;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import tas.mape.knowledge.Goal;
@@ -112,7 +113,7 @@ public class Analyzer {
 	 */
 	private List<ServiceCombination> chooseServices() {
 		
-		String requirementName = knowledge.getCurrentQoSRequirement();
+		String requirementName = ProfileExecutor.profile.getQosRequirement();
 		Map<Description, List<ServiceDescription>> usableServices = knowledge.getUsableServices();
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirementName);
 		List<Goal> goals = knowledge.getGoals();

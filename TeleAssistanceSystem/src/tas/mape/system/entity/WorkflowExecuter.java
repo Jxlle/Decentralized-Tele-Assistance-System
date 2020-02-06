@@ -92,6 +92,7 @@ public class WorkflowExecuter {
     
     public void setWorkflowPath(String workflowPath) {
     	this.workflowPath = workflowPath;
+		assistanceService.setWorkflow(workflowPath);
     }
     
     public String getWorkflowPath() {
@@ -100,6 +101,7 @@ public class WorkflowExecuter {
     
     public void setProfilePath(String profilePath) {
     	this.profilePath = profilePath;
+		ProfileExecutor.readFromXml(profilePath);
     }
     
     public String getProfilePath() {
@@ -247,11 +249,9 @@ public class WorkflowExecuter {
     public void executeWorkflow() {
 
 		CompositeServiceClient client = new CompositeServiceClient("service.assistance");
-		assistanceService.setWorkflow(workflowPath);
 		workflowEffector.refreshAllServices();
 		Time.steps.set(0);
 	
-		ProfileExecutor.readFromXml(profilePath);
 		if (ProfileExecutor.profile != null) {
 			
 		    int maxSteps = (int) ProfileExecutor.profile.getMaxSteps();

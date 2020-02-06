@@ -24,9 +24,6 @@ import tas.mape.system.entity.WorkflowExecuter;
  */
 public class Knowledge {
 	
-	// Current QoS requirement
-	private String currentQoSRequirement;
-	
 	// List of used registry endpoints by the workflow
 	private List<String> registryEndpoints;
 	
@@ -61,14 +58,12 @@ public class Knowledge {
 	/**
 	 * Create a new knowledge with given starting information
 	 * @param loadFailureDelta the given delta between two load values in the approximated failure table
-	 * @param currentQoSRequirement the given current system QoS requirement
 	 * @param serviceRegistryEndpoints the given registry endpoints used by the workflow
 	 * @param usableServicesAndChance map containing usable service information with additional usage chance
 	 */
-	public Knowledge(int loadFailureDelta, String currentQoSRequirement, List<String> serviceRegistryEndpoints, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+	public Knowledge(int loadFailureDelta, List<String> serviceRegistryEndpoints, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 		
 		this.loadFailureDelta = loadFailureDelta;
-		this.currentQoSRequirement = currentQoSRequirement;
 		
 		for (Description description : usableServicesAndChance.keySet()) {
 			servicesUsageChance.put(description, usableServicesAndChance.get(description).getValue());
@@ -81,22 +76,6 @@ public class Knowledge {
 	
 	public List<String> getRegistryEndpoints() {
 		return registryEndpoints;
-	}
-	
-	/**
-	 * Set the current system QoS requirement
-	 * @param currentQoSRequirement the new QoS requirement
-	 */
-	public void setCurrentQoSRequirement(String currentQoSRequirement) {
-		this.currentQoSRequirement = currentQoSRequirement;
-	}
-	
-	/**
-	 * Return the current system QoS requirement
-	 * @return the current system QoS requirement
-	 */
-	public String getCurrentQoSRequirement() {
-		return currentQoSRequirement;
 	}
 
 	/**
