@@ -86,6 +86,8 @@ import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+//TODO
+// Service panes list with endpoints instead of names, names are not unique, endpoints are usually
 public class ApplicationController implements Initializable {
 
     Stage primaryStage;
@@ -120,7 +122,7 @@ public class ApplicationController implements Initializable {
     Set<Button> profileRuns = new HashSet<>();
     int maxSteps;
     Map<String, AdaptationEngine> adaptationEngines;
-    Map<String,AnchorPane> servicePanes = new ConcurrentHashMap<>();
+    Map<String, AnchorPane> servicePanes = new ConcurrentHashMap<>();
     Map<String, ListView<AnchorPane>> serviceRegistryPanes = new ConcurrentHashMap<>();
     
     @FXML
@@ -257,7 +259,7 @@ public class ApplicationController implements Initializable {
     		public void run() {
     	    	
     			Set<String> services = compositeService.getCache().getServices();
-    			Set<String> registeredServices=servicePanes.keySet();
+    			Set<String> registeredServices = servicePanes.keySet();
 
     			for (String service : registeredServices) {
     			    
@@ -267,7 +269,7 @@ public class ApplicationController implements Initializable {
     					
     					Circle circle=(Circle)servicePanes.get(service).getChildren().get(0);
     					
-    				    if(services!=null && services.contains(service))
+    				    if(services != null && services.contains(service))
     					    circle.setFill(Color.GREEN);
     				    else
     					    circle.setFill(Color.DARKRED);
@@ -436,10 +438,9 @@ public class ApplicationController implements Initializable {
         	    }
         	    
         		for (String service : services) {
-        			// Check not needed
+        			// Check might not be needed, this service is usually not added to the service list
         		    if (!service.equals("TeleAssistanceService"))
-        		    	servicePanes.put(service, addService(service,false));
-        		    	//registeredServices.add(service);
+        		    	servicePanes.put(service, addService(service, true));
         		}
     	    }
     	});
@@ -1212,26 +1213,16 @@ public class ApplicationController implements Initializable {
 			}
 		}
     	
-    	
+    	// TODO Check if this works with new system
     	Circle circle = new Circle();
-    	circle.setOnMouseClicked(event->{
-    		if(circle.getFill().equals(Color.BLACK)){
+    	circle.setOnMouseClicked(event -> {
+    		if(circle.getFill().equals(Color.DARKRED)) {
     			compositeService.getCache().addService(description);
-    			
-    			// TODO
-    			// Service panes list with endpoints instead of names
-    			// TODO 2
-    			//serviceRegistry.addService(description);
-    			servicePanes.put(serviceName, itemPane);
     		    circle.setFill(Color.GREEN);
     		}
-    		else{    		    
+    		else {    		    
     			compositeService.getCache().remove(description);
-    			
-    			// TODO
-    			//serviceRegistry.removeService(description);
-    			servicePanes.remove(serviceName);
-    		    circle.setFill(Color.BLACK);
+    		    circle.setFill(Color.DARKRED);
     		}
     	});
     	
@@ -1246,11 +1237,9 @@ public class ApplicationController implements Initializable {
     	AnchorPane.setLeftAnchor(label, 40.0);
     	AnchorPane.setRightAnchor(inspectButton, 10.0);
     	itemPane.getChildren().setAll(circle, label, inspectButton);
-    	
     	serviceRegistryPanes.get(Iregistry.getServiceDescription().getServiceEndpoint()).getItems().add(itemPane);
-    	//serviceListView.getItems().add(itemPane);
+
     	return itemPane;
-    	//servicePanes.put(serviceName, itemPane);
     }
 
 }

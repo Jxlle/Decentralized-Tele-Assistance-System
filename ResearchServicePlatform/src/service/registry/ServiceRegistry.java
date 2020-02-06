@@ -41,11 +41,14 @@ public class ServiceRegistry extends AtomicService implements ServiceRegistryInt
      * Return list of service names
      * @return list of service names
      */
-    public List<String> getAllServices(){
+    public List<String> getAllServices() {
+    	
     	List<String> allServices=new ArrayList<>();
+    	
     	for (ServiceDescription service : serviceList.values()) {
     		allServices.add(service.getServiceName());
     	}
+    	
     	return allServices;
     }
     
