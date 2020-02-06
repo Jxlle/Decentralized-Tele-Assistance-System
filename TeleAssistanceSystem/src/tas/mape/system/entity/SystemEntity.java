@@ -24,7 +24,7 @@ public class SystemEntity extends AbstractSystemEntity<WorkflowExecuter, MAPEKCo
 	 */
 	@Override
 	protected void LinkSystems() {
-		getManagingSystem().initializeExecuterEffectors(getManagedSystem().getCompositeService());
-		getManagingSystem().connectMonitorProbes(getManagedSystem().getCompositeService());
+		getManagingSystem().initializeExecuterEffectors(getManagedSystem().getAssistanceService());
+		getManagingSystem().connectMonitorProbes(getManagedSystem().getAssistanceService());
 	}
 }
