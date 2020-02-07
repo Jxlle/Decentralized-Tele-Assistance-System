@@ -332,8 +332,7 @@ public class CompositeService extends AbstractService {
 		}
 		
 		return serviceDescriptions;
-    }
-    
+    }  
     
     @SuppressWarnings("unchecked")
 	public void updateCache() {
@@ -342,13 +341,11 @@ public class CompositeService extends AbstractService {
     	
     	List<ServiceDescription> serviceDescriptions = new ArrayList<ServiceDescription>();
     	
-    	for (RegistryData data : serviceRegistriesData) {
-    		
+    	for (RegistryData data : serviceRegistriesData) {	
 			serviceDescriptions.addAll((List<ServiceDescription>) this.sendRequest(
 					data.registryName, data.registryEndpoint, true,
 					"getAllServiceDescriptions"));
     	}
-    	
     	
     	for (ServiceDescription description : serviceDescriptions) {
         	cache.addService(description);
