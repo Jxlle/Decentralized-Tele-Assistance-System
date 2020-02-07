@@ -12,13 +12,13 @@ package tas.mape.system.entity;
 public abstract class AbstractSystemEntity<T, E> {
 
 	// The unique system entity name
-	private String entityName;
+	protected String entityName;
 	
 	// The managed system
-	private final T managedSystem;
+	protected final T managedSystem;
 	
 	// The managing system
-	private final E managingSystem;
+	protected final E managingSystem;
 	
 	/**
 	 * Create a new abstract system entity with a given name, managed system and managing system

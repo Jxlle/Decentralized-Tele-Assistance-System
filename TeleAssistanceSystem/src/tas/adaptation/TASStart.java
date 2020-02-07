@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import profile.InputProfile;
 import profile.InputProfileValue;
 import profile.InputProfileVariable;
 import profile.ProfileExecutor;
@@ -16,18 +17,12 @@ import service.atomic.AtomicService;
 import service.composite.CompositeServiceClient;
 import service.registry.ServiceRegistry;
 import service.utility.Time;
-import tas.mape.analyzer.Analyzer;
-import tas.mape.executer.Executer;
-import tas.mape.knowledge.Knowledge;
-import tas.mape.monitor.Monitor;
-import tas.mape.planner.Planner;
 import tas.services.alarm.AlarmService;
 import tas.services.assistance.AssistanceService;
 import tas.services.assistance.AssistanceServiceCostProbe;
 import tas.services.drug.DrugService;
 import tas.services.medical.MedicalAnalysisService;
 import tas.services.profiles.ServiceDelayProfile;
-import tas.services.profiles.ServiceFailureProfile;
 import tas.services.profiles.ServiceFailureLoadProfile;
 import tas.services.profiles.SimpleServiceFailureProfile;
 import tas.services.qos.MinCostQoS;
@@ -264,13 +259,14 @@ public class TASStart {
 	workflowEffector.refreshAllServices();
 	Time.steps.set(0);
 
-	ProfileExecutor.readFromXml(profilePath);
-	if (ProfileExecutor.profile != null) {
-	    int maxSteps = (int) ProfileExecutor.profile.getMaxSteps();
-	    InputProfileVariable variable = ProfileExecutor.profile.getVariable("pick");
+	ProfileExecutor.readFromXml(profilePath, "test");
+	InputProfile profile = ProfileExecutor.profiles.get("test");
+	if (profile != null) {
+	    int maxSteps = (int) profile.getMaxSteps();
+	    InputProfileVariable variable = profile.getVariable("pick");
 	    List<InputProfileValue> values = variable.getValues();
 
-	    int patientId = (int) ProfileExecutor.profile.getVariable("patientId").getValues().get(0).getData();
+	    int patientId = (int) profile.getVariable("patientId").getValues().get(0).getData();
 	    int pick;
 	    // System.out.println("start executing workflow !!!");
 
@@ -298,7 +294,7 @@ public class TASStart {
 		for (int j = 0; j < values.size(); j++) {
 		    if ((values.get(j).getRatio() + valueProbability) > probability) {
 			pick = (int) values.get(j).getData();
-			client.invokeCompositeService(ProfileExecutor.profile.getQosRequirement(), patientId, pick);
+			client.invokeCompositeService(profile.getQosRequirement(), patientId, pick);
 			break;
 		    } else
 			valueProbability = valueProbability + values.get(j).getRatio();

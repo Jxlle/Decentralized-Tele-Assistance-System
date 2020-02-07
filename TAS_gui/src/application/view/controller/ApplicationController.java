@@ -222,6 +222,9 @@ public class ApplicationController implements Initializable {
     MenuItem exampleScenariosMenuItem;
     
     @FXML
+    MenuItem changeServiceCollectionMenuItem;
+    
+    @FXML
     ToolBar toolBar;
     
     @FXML
@@ -721,10 +724,9 @@ public class ApplicationController implements Initializable {
     				LinkedHashMap<Integer,Map<String,Double>> invocationRates=chartController.invocationRates;
     				
     				StringBuilder build;
+    				InputProfile profile = ProfileExecutor.profiles.get("test");
     				
-    				if (ProfileExecutor.profile != null) {
-    					
-    					InputProfile profile=ProfileExecutor.profile;
+    				if (profile != null) {
     					
     					Requirement reliabilityReq=profile.getRequirement("reliability");
     					Requirement performanceReq=profile.getRequirement("performance");
@@ -1054,8 +1056,8 @@ public class ApplicationController implements Initializable {
     			//thread.start();
 
     			System.out.println("Start task!!");
-    			ProfileExecutor.readFromXml(path);
-    			maxSteps = ProfileExecutor.profile.getMaxSteps();
+    			ProfileExecutor.readFromXml(path, "test");
+    			maxSteps = ProfileExecutor.profiles.get("test").getMaxSteps();
     			Task<Void> progressTask = new Task<Void>() {
     			    @Override
     			    protected Void call() throws Exception {

@@ -113,7 +113,7 @@ public class Analyzer {
 	 */
 	private List<ServiceCombination> chooseServices() {
 		
-		String requirementName = ProfileExecutor.profile.getQosRequirement();
+		String requirementName = ProfileExecutor.profiles.get(knowledge.getSystemEntity().getEntityName()).getQosRequirement();
 		Map<Description, List<ServiceDescription>> usableServices = knowledge.getUsableServices();
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirementName);
 		List<Goal> goals = knowledge.getGoals();

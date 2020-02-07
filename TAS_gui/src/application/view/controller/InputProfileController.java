@@ -289,9 +289,9 @@ public class InputProfileController implements Initializable {
 				}
 			});
 			
-			ProfileExecutor.readFromXml(filePath);
+			ProfileExecutor.readFromXml(filePath, "test");
 			
-			InputProfile profile=ProfileExecutor.profile;
+			InputProfile profile= ProfileExecutor.profiles.get("test");
 			maxStepsTextField.setText(profile.getMaxSteps()+"");
 			maxStepsTextField.textProperty().addListener(new ChangeListener<String>() {
 			    @Override
@@ -370,7 +370,7 @@ public class InputProfileController implements Initializable {
 			
 			
 			saveButton2.setOnAction(event->{
-				ProfileExecutor.writeToXml(filePath);
+				ProfileExecutor.writeToXml(filePath, "test");
 				stage.close();
 			});
 			

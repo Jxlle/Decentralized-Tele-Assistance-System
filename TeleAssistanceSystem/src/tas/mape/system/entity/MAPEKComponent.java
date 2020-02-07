@@ -291,6 +291,22 @@ public class MAPEKComponent {
 	}
 	
 	/**
+	 * Set the system entity name to the given name
+	 * @param entityName the given name
+	 */
+	public void setEntityName(String entityName) {
+		setEntityName(entityName);
+	}
+	
+	/**
+	 * Return the system entity name
+	 * @return the system entity name
+	 */
+	public String getEntityName() {
+		return getEntityName();
+	}
+	
+	/**
 	 * Return the system goals
 	 * @return the system goals
 	 */

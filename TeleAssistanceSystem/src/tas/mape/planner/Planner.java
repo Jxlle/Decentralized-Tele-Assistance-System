@@ -110,7 +110,8 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * @return the newly calculated service combinations
 	 */
 	public List<ServiceCombination> calculateNewServiceCombinations(PlannerMessageContent content) {
-		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(ProfileExecutor.profile.getQosRequirement());
+		AbstractWorkflowQoSRequirement requirementClass = 
+				knowledge.getQoSRequirementClass(ProfileExecutor.profiles.get(knowledge.getSystemEntity().getEntityName()).getQosRequirement());
 		return requirementClass.getNewServiceCombinations(availableServiceCombinations, getFailureRates(content), knowledge.getGoals());
 	}
 	

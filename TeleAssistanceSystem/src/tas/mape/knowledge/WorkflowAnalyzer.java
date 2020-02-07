@@ -93,7 +93,7 @@ public class WorkflowAnalyzer {
      */
 	private void executeWorkflow(int workflowCycles, String workflowPath, String profilePath, CompositeService compositeService) {
 
-		CompositeServiceClient client = new CompositeServiceClient("service.assistance");
+		/*CompositeServiceClient client = new CompositeServiceClient("service.assistance");
 		compositeService.updateCache();
 		compositeService.setWorkflow(workflowPath);
 		Time.steps.set(0);
@@ -137,6 +137,6 @@ public class WorkflowAnalyzer {
 	    	System.err.print("count: " + index);
 		    
 		    stop();
-		}
+		}*/
 	}
 }

@@ -17,6 +17,16 @@ public class SystemEntity extends AbstractSystemEntity<WorkflowExecuter, MAPEKCo
 	 */
 	public SystemEntity(String entityName, WorkflowExecuter managedSystem, MAPEKComponent managingSystem) {
 		super(entityName, managedSystem, managingSystem);
+		getManagingSystem().setEntityName(entityName);
+	}
+	
+	/**
+	 * Set the system entity name to the given name
+	 * @param entityName the given name
+	 */
+	@Override
+	public void setEntityName(String entityName) {
+		this.entityName = entityName;
 	}
 
 	/**

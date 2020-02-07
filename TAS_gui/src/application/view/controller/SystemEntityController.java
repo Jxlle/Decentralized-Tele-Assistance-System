@@ -27,7 +27,7 @@ public class SystemEntityController implements Initializable {
 	
 	private Stage stage;
 	private String baseDir = "";
-	private String workflowPath, profilePath;
+	private String workflowPath;
 	private String resourceDirPath = baseDir + "resources" + File.separator;
 	
 	@Override

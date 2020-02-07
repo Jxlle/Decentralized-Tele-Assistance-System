@@ -14,6 +14,7 @@ import tas.mape.analyzer.CostAndReliabilityReq;
 import tas.mape.analyzer.CostReq;
 import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.planner.PlanComponent;
+import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.entity.WorkflowExecuter;
 
 /**
@@ -23,6 +24,9 @@ import tas.mape.system.entity.WorkflowExecuter;
  * Class that represents the knowledge component in a MAPE-K component
  */
 public class Knowledge {
+	
+	// Parent system entity this component belongs to
+	private SystemEntity systemEntity;
 	
 	// List of used registry endpoints by the workflow
 	private List<String> registryEndpoints;
@@ -74,6 +78,31 @@ public class Knowledge {
 		cachePlanComponents = new ArrayList<>();
 	}
 	
+	/**
+	 * Set the parent system entity to the given entity
+	 * @param entityName the given entity
+	 */
+	public void setSystemEntity(SystemEntity systemEntity) throws IllegalStateException {
+		
+		if (systemEntity != null) {
+			throw new IllegalStateException("A system entity can only be assigned once!");
+		}
+		
+		this.systemEntity = systemEntity;
+	}
+	
+	/**
+	 * Return the parent system entity
+	 * @return the parent system entity
+	 */
+	public SystemEntity getSystemEntity() {
+		return systemEntity;
+	}
+	
+	/**
+	 * Return the used registry endpoints
+	 * @return the used registry endpoints
+	 */
 	public List<String> getRegistryEndpoints() {
 		return registryEndpoints;
 	}

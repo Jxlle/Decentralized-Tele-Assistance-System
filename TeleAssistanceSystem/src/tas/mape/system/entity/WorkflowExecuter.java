@@ -3,6 +3,7 @@ package tas.mape.system.entity;
 import java.util.List;
 import java.util.Random;
 
+import profile.InputProfile;
 import profile.InputProfileValue;
 import profile.InputProfileVariable;
 import profile.ProfileExecutor;
@@ -26,6 +27,7 @@ public class WorkflowExecuter {
     private boolean isPaused = false;
     private int currentSteps;
     
+    private SystemEntity systemEntity;
     private AssistanceService assistanceService;
     private AssistanceServiceCostProbe monitor;
     private WorkflowEffector workflowEffector;
@@ -33,6 +35,27 @@ public class WorkflowExecuter {
     
 	public WorkflowExecuter(List<ServiceRegistry> serviceRegistries) {
 		initializeWorkFlowExecuter(serviceRegistries);
+	}
+	
+	/**
+	 * Set the parent system entity to the given entity
+	 * @param entityName the given entity
+	 */
+	public void setSystemEntity(SystemEntity systemEntity) throws IllegalStateException {
+		
+		if (systemEntity != null) {
+			throw new IllegalStateException("A system entity can only be assigned once!");
+		}
+		
+		this.systemEntity = systemEntity;
+	}
+	
+	/**
+	 * Return the parent system entity
+	 * @return the parent system entity
+	 */
+	public SystemEntity getSystemEntity() {
+		return systemEntity;
 	}
     
     public synchronized void stop(){
@@ -75,7 +98,7 @@ public class WorkflowExecuter {
     
     public void setProfilePath(String profilePath) {
     	this.profilePath = profilePath;
-		ProfileExecutor.readFromXml(profilePath);
+		ProfileExecutor.readFromXml(profilePath, systemEntity.getEntityName());
     }
     
     public String getProfilePath() {
@@ -110,30 +133,32 @@ public class WorkflowExecuter {
 	
     public void executeWorkflow() {
 
+    	InputProfile profile = ProfileExecutor.profiles.get(systemEntity.getEntityName());
 		CompositeServiceClient client = new CompositeServiceClient("service.assistance");
 		workflowEffector.refreshAllServices();
 		Time.steps.set(0);
 	
-		if (ProfileExecutor.profile != null) {
+		if (profile != null) {
 			
-		    int maxSteps = (int) ProfileExecutor.profile.getMaxSteps();
-		    InputProfileVariable variable = ProfileExecutor.profile.getVariable("pick");
+		    int maxSteps = (int) profile.getMaxSteps();
+		    InputProfileVariable variable = profile.getVariable("pick");
 		    List<InputProfileValue> values = variable.getValues();
 	
-		    int patientId = (int) ProfileExecutor.profile.getVariable("patientId").getValues().get(0).getData();
+		    int patientId = (int) profile.getVariable("patientId").getValues().get(0).getData();
 		    int pick;
 	
 		    start();
 		    Random rand = new Random();
-		    for (currentSteps = 0; currentSteps < maxSteps; currentSteps++) {  	
-		    	Time.steps.incrementAndGet();
-		    	    	
+		    for (currentSteps = 0; currentSteps < maxSteps; currentSteps++) {  
+		    	
+		    	Time.steps.incrementAndGet();	    	    	
 				double probability = rand.nextDouble();
 				double valueProbability = 0;
+				
 				for (int j = 0; j < values.size(); j++) {
 				    if ((values.get(j).getRatio() + valueProbability) > probability) {
 						pick = (int) values.get(j).getData();
-						client.invokeCompositeService(ProfileExecutor.profile.getQosRequirement(), patientId, pick);
+						client.invokeCompositeService(profile.getQosRequirement(), patientId, pick);
 						break;
 				    } 
 				    else {
@@ -148,7 +173,7 @@ public class WorkflowExecuter {
 		    }
 		    
 		    stop();
-		    System.out.println("finish executing workflow !!!");
+		    System.out.println("Finished executing the workflow.");
 		}
     }
 }
