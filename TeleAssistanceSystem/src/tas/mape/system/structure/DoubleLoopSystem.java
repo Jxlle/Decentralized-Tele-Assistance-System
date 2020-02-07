@@ -5,7 +5,7 @@ import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.communication.protocol.PlannerProtocolDoNothing;
 import tas.mape.planner.Planner;
 import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.entity.WorkflowExecuter;
+import tas.mape.system.entity.WorkflowExecutor;
 
 /**
  * @author Jelle Van De Sijpe
@@ -55,7 +55,7 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 		for (int i = 0; i < executionCycles; i++) {
 			
 			// Execute workflow
-			for (int j = 0; j < WorkflowExecuter.workflowCycles; j++) {
+			for (int j = 0; j < WorkflowExecutor.workflowCycles; j++) {
 				entity1.getManagedSystem().executeWorkflow();
 				entity2.getManagedSystem().executeWorkflow();
 			}

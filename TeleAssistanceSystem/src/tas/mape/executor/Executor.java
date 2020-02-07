@@ -1,4 +1,4 @@
-package tas.mape.executer;
+package tas.mape.executor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,24 +15,24 @@ import tas.mape.planner.PlanComponentType;
  * @author Jelle Van De Sijpe
  * @email jelle.vandesijpe@student.kuleuven.be
  * 
- * Class that represents the executer component in a MAPE-K component
+ * Class that represents the executor component in a MAPE-K component
  */
-public class Executer {
+public class Executor {
 	
-	// Effectors used by the executer
+	// Effectors used by the executor
 	Map<String, Object> effectors;
 	
 	/**
-	 * Create a new executer and initialize its effectors list using a given composite service
+	 * Create a new executor and initialize its effectors list using a given composite service
 	 */
-	public Executer() {		
+	public Executor() {		
 		effectors = new HashMap<>();
 	}
 	
 	/**
-	 * Initialize executer effectors
+	 * Initialize executor effectors
 	 * @param compositeService the given composite service that the effectors will affect
-	 * @note Should be executed before using executer
+	 * @note Should be executed before using executor
 	 */
 	public void initializeEffectors(CompositeService compositeService) {
 		WorkflowEffector workflowEffector = new WorkflowEffector(compositeService);

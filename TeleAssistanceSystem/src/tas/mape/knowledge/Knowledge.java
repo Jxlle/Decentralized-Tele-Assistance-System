@@ -15,7 +15,7 @@ import tas.mape.analyzer.CostReq;
 import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.planner.PlanComponent;
 import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.entity.WorkflowExecuter;
+import tas.mape.system.entity.WorkflowExecutor;
 
 /**
  * @author Jelle Van De Sijpe
@@ -214,7 +214,7 @@ public class Knowledge {
 	 * @return the service load
 	 */
 	public int getServiceLoad(Description description, double usePercentage) {
-		return (int) (servicesUsageChance.get(description) * usePercentage * WorkflowExecuter.workflowCycles);
+		return (int) (servicesUsageChance.get(description) * usePercentage * WorkflowExecutor.workflowCycles);
 	}
 	
 	/**

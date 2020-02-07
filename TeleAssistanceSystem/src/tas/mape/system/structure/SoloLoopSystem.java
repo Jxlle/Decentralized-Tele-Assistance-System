@@ -1,7 +1,7 @@
 package tas.mape.system.structure;
 
 import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.entity.WorkflowExecuter;
+import tas.mape.system.entity.WorkflowExecutor;
 
 /**
  * @author Jelle Van De Sijpe
@@ -34,7 +34,7 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 		for (int i = 0; i < executionCycles; i++) {
 			
 			// Execute workflow
-			for (int j = 0; j < WorkflowExecuter.workflowCycles; j++) {
+			for (int j = 0; j < WorkflowExecutor.workflowCycles; j++) {
 				entity.getManagedSystem().executeWorkflow();
 			}
 			

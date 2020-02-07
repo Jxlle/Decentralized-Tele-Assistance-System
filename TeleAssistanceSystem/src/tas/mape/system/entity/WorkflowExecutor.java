@@ -17,7 +17,7 @@ import tas.services.qos.MinCostQoS;
 import tas.services.qos.PreferencesQoS;
 import tas.services.qos.ReliabilityQoS;
 
-public class WorkflowExecuter {
+public class WorkflowExecutor {
 
 	// Fields	
 	// The amount of workflow execution cycles that are executed before the possibility of analyzer execution
@@ -33,7 +33,7 @@ public class WorkflowExecuter {
     private WorkflowEffector workflowEffector;
     private String workflowPath, profilePath;
     
-	public WorkflowExecuter(List<ServiceRegistry> serviceRegistries) {
+	public WorkflowExecutor(List<ServiceRegistry> serviceRegistries) {
 		initializeWorkFlowExecuter(serviceRegistries);
 	}
 	

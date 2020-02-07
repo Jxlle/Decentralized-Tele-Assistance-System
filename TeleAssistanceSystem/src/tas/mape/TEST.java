@@ -17,7 +17,7 @@ import tas.mape.analyzer.CostReq;
 import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.communication.message.ComponentMessageHost;
 import tas.mape.communication.message.PlannerMessage;
-import tas.mape.executer.Executer;
+import tas.mape.executor.Executor;
 import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalRelation;
@@ -167,7 +167,7 @@ public class TEST {
 		PlanComponent planComp1 = new PlanComponent(planType1, "service.drug", 2);
 		plan.add(planComp1);
 		
-		Executer executer = new Executer();
+		Executor executer = new Executor();
 		executer.initializeEffectors(assistanceService);
 		executer.execute(plan);
 		

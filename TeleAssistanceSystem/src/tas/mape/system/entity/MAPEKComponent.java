@@ -11,7 +11,7 @@ import tas.mape.analyzer.Analyzer;
 import tas.mape.communication.message.ComponentMessageHost;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractProtocol;
-import tas.mape.executer.Executer;
+import tas.mape.executor.Executor;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.monitor.Monitor;
@@ -37,14 +37,14 @@ public class MAPEKComponent {
 		private Monitor monitor;
 		private Analyzer analyzer;
 		private Planner planner;
-		private Executer executer;
+		private Executor executer;
 		private Knowledge knowledge;
 		
 		/**
 		 * Create a new builder with an initialized executer
 		 */
 		public Builder() {
-			executer = new Executer();
+			executer = new Executor();
 		}
 		
 		/**
@@ -156,7 +156,7 @@ public class MAPEKComponent {
 	private Monitor monitor;
 	private Analyzer analyzer;
 	private Planner planner;
-	private Executer executer;
+	private Executor executer;
 	private Knowledge knowledge;
 	
 	/**

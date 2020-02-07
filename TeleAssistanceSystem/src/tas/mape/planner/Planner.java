@@ -14,7 +14,7 @@ import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.message.PlannerMessageContent;
 import tas.mape.communication.protocol.AbstractProtocol;
-import tas.mape.executer.Executer;
+import tas.mape.executor.Executor;
 import tas.mape.knowledge.Knowledge;
 
 /**
@@ -27,7 +27,7 @@ import tas.mape.knowledge.Knowledge;
 public class Planner extends CommunicationComponent<PlannerMessage> {
 
 	// Fields
-	private Executer executer;
+	private Executor executer;
 	private Knowledge knowledge;
 	private boolean executed, protocolFinished;
 	private AbstractProtocol<PlannerMessage, Planner> protocol;
@@ -40,7 +40,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * @param endpoint the given endpoint (identifier)
 	 * @param executer the given executer
 	 */
-	public Planner(String endpoint, Executer executer) {
+	public Planner(String endpoint, Executor executer) {
 		super(endpoint);
 		this.executer = executer;
 	}
