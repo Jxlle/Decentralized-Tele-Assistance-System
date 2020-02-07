@@ -37,6 +37,7 @@
                         <MenuButton mnemonicParsing="false" text="Open">
                           <items>
                             <MenuItem fx:id="openWorkflowMenuItem" mnemonicParsing="false" text="Open Workflow" />
+                              <MenuItem fx:id="changeServiceCollectionMenuItem" mnemonicParsing="false" text="Change Service Collection" />
                             <MenuItem fx:id="openServicesMenuItem" mnemonicParsing="false" text="Open Available Services" visible="false" />
                               <MenuItem fx:id="configureMenuItem" mnemonicParsing="false" text="Open Configuration" visible="false" />
                           </items>
@@ -55,7 +56,7 @@
                   </ToolBar>
                </top>
                <center>
-                  <SplitPane dividerPositions="0.05321285140562249, 0.15963855421686746" BorderPane.alignment="CENTER">
+                  <SplitPane dividerPositions="0.05321285140562249, 0.17670682730923695" BorderPane.alignment="CENTER">
                     <items>
                       <AnchorPane minWidth="50.0" prefWidth="50.0">
                            <children>
@@ -115,6 +116,11 @@
                                           </AnchorPane>
                                     </content>
                                   </Tab>
+                                    <Tab text="Properties">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                      </content>
+                                    </Tab>
                                 </tabs>
                               </TabPane>
                            </children>

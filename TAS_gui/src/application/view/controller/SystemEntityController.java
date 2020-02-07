@@ -9,6 +9,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -18,7 +20,10 @@ public class SystemEntityController implements Initializable {
 	Button workflowBtn;
 	
 	@FXML
-	Button profileBtn;
+	TableView propertyTable;
+	
+	@FXML
+	ListView registryList;
 	
 	private Stage stage;
 	private String baseDir = "";
@@ -50,23 +55,6 @@ public class SystemEntityController implements Initializable {
 				if (file != null) {
 					workflowPath = file.getPath();
 					workflowBtn.setText(workflowPath);
-				}
-		    }
-		});
-		
-		profileBtn.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override
-			public void handle(ActionEvent event) {
-				FileChooser fileChooser = new FileChooser();
-				fileChooser.setInitialDirectory(new File(resourceDirPath));
-				fileChooser.setTitle("Select profile");
-				FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Add Files(*.txt)", "*.txt");
-				fileChooser.getExtensionFilters().add(extension);
-				File file = fileChooser.showOpenDialog(stage);
-				
-				if (file != null) {
-					profilePath = file.getPath();
-					profileBtn.setText(profilePath);
 				}
 		    }
 		});
