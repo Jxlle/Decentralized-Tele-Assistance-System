@@ -47,8 +47,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -349,18 +348,11 @@ public class ServiceProfileController implements Initializable {
 	private void setServiceProfileTable(){
 	
 	   serviceProfileTable.setEditable(true);
-	     
-       Callback<TableColumn<AttributeEntry, String>, TableCell<AttributeEntry, String>> cellFactory =
-               new Callback<TableColumn<AttributeEntry, String>, TableCell<AttributeEntry, String>>() {
-                   public TableCell<AttributeEntry, String> call(TableColumn<AttributeEntry, String> p) {
-                      return new EditingCell();
-                   }
-       };
        
 		profileKeyColumn = new TableColumn<AttributeEntry,String>("Key");
 		profileKeyColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("key"));
 		profileKeyColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
-		profileKeyColumn.setCellFactory(cellFactory);	
+		profileKeyColumn.setCellFactory(TextFieldTableCell.<AttributeEntry>forTableColumn());	
 		profileKeyColumn.setSortable(false);
 		profileKeyColumn.setOnEditCommit(
                 new EventHandler<CellEditEvent<AttributeEntry, String>>() {
@@ -438,17 +430,19 @@ public class ServiceProfileController implements Initializable {
 		profileNameColumn = new TableColumn<AttributeEntry,String>("Name");
 		profileNameColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("name"));
 		profileNameColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
+		profileNameColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 		profileNameColumn.setSortable(false);
 		
 		profileTypeColumn = new TableColumn<AttributeEntry,String>("Type");
 		profileTypeColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("type"));
 		profileTypeColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
+		profileTypeColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 		profileTypeColumn.setSortable(false);
         
 		profileValueColumn = new TableColumn<AttributeEntry,String>("Value");
 		profileValueColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("value"));
 		profileValueColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
-		profileValueColumn.setCellFactory(cellFactory);	
+		profileValueColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 		profileValueColumn.setSortable(false);
             
 		profileValueColumn.setOnEditCommit(
@@ -503,6 +497,7 @@ public class ServiceProfileController implements Initializable {
 		TableColumn<AttributeEntry, String> deleteColumn = new TableColumn<>("");
 		deleteColumn.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
 		deleteColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
+		deleteColumn.setSortable(false);
 		
 		Callback<TableColumn<AttributeEntry, String>, TableCell<AttributeEntry, String>> cellFactoryDelete
         =
@@ -523,7 +518,8 @@ public class ServiceProfileController implements Initializable {
 		                if (empty || (attribute != null && (attribute.getKey().equals(attributeEditText) || attribute.getValue().equals(attributeEditText)))) {
 		                    setGraphic(null);
 		                    setText(null);
-		                } else {
+		                } 
+		                else {
 		                    btn.setOnAction(event -> {
 		                    	
 		                    	for (Field field : currentProfile.getClass().getFields()) {			
@@ -540,6 +536,7 @@ public class ServiceProfileController implements Initializable {
 		                    	
 		                    	attributeData.remove(getTableRow().getItem());
 		                    });
+		                    
 		                    setGraphic(btn);
 		                    setText(null);
 		                }
@@ -644,18 +641,11 @@ public class ServiceProfileController implements Initializable {
 		TableColumn<AttributeEntry,String> typeColumn = new TableColumn<AttributeEntry,String>("Type");
 		typeColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("type"));
 		typeColumn.prefWidthProperty().bind(propertyTable.widthProperty().divide(3));
-
-	    Callback<TableColumn<AttributeEntry, String>, TableCell<AttributeEntry, String>> cellFactory =
-	    		new Callback<TableColumn<AttributeEntry, String>, TableCell<AttributeEntry, String>>() {
-	            	public TableCell<AttributeEntry, String> call(TableColumn<AttributeEntry, String> p) {
-	            		return new EditingCell();
-	                }
-	    };
-	        
+		
 		TableColumn<AttributeEntry,String> valueColumn = new TableColumn<AttributeEntry,String>("Value");
 		valueColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("value"));
 		valueColumn.prefWidthProperty().bind(propertyTable.widthProperty().divide(3));
-		valueColumn.setCellFactory(cellFactory);	
+		valueColumn.setCellFactory(TextFieldTableCell.<AttributeEntry>forTableColumn());	
 					            
 		valueColumn.setOnEditCommit(
 				new EventHandler<CellEditEvent<AttributeEntry, String>>() {
@@ -832,96 +822,5 @@ public class ServiceProfileController implements Initializable {
 	    }
 
 	}
-	
-	
-	  class EditingCell extends TableCell<AttributeEntry, String> {
-		  
-	        private TextField textField;
-	 
-	        public EditingCell() {
-	        }
-	 
-	        @Override
-	        public void startEdit() {
-	            if (!isEmpty()) {
-	                super.startEdit();
-	                createTextField();
-	                setText(null);
-	                setGraphic(textField);
-	                textField.selectAll();
-	            }
-	        }
-	 
-	        @Override
-	        public void cancelEdit() {
-	            super.cancelEdit();
-	 
-	            setText((String) getItem());
-	            setGraphic(null);
-	        }
-	 
-	        @Override
-	        public void updateItem(String item, boolean empty) {
-	            super.updateItem(item, empty);
-	 
-	            if (empty) {
-	                setText(null);
-	                setGraphic(null);
-	            } else {
-	                if (isEditing()) {
-	                    if (textField != null) {
-	                        textField.setText(getString());
-	                    }
-	                    setText(null);
-	                    setGraphic(textField);
-	                } else {
-	                    setText(getString());
-	                    setGraphic(null);
-	                }
-	            }
-	        }
-	 
-	        /*
-	        private void createTextField() {
-	            textField = new TextField(getString());
-	            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()* 2);
-
-	            textField.focusedProperty().addListener(new ChangeListener<Boolean>(){
-	                @Override
-	                public void changed(ObservableValue<? extends Boolean> arg0, 
-	                    Boolean arg1, Boolean arg2) {
-	                        if (!arg2) {
-	                            commitEdit(textField.getText());
-	                        }
-	                }
-	            });
-	            
-	        }*/
-	        
-	        private void createTextField() {
-	            textField = new TextField(getItem());
-	            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
-
-	            textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-	                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-	                    if(!newValue.booleanValue())
-	                        commitEdit(textField.getText());
-	                }
-	            } );
-	            textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
-	                @Override public void handle(KeyEvent t) {
-	                    if (t.getCode() == KeyCode.ENTER) {
-	                        commitEdit(textField.getText());
-	                    } else if (t.getCode() == KeyCode.ESCAPE) {
-	                        cancelEdit();
-	                    }
-	                }
-	            });
-	        }
-	 
-	        private String getString() {
-	            return getItem() == null ? "" : getItem().toString();
-	        }
-	    }
 }
 
