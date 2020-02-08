@@ -63,19 +63,28 @@ public class Knowledge {
 	 * Create a new knowledge with given starting information
 	 * @param loadFailureDelta the given delta between two load values in the approximated failure table
 	 * @param serviceRegistryEndpoints the given registry endpoints used by the workflow
+	 */
+	public Knowledge(int loadFailureDelta, List<String> serviceRegistryEndpoints) {
+		
+		this.loadFailureDelta = loadFailureDelta;	
+		this.registryEndpoints = serviceRegistryEndpoints;
+		cachePlanComponents = new ArrayList<>();
+		initializeApproximatedServicesFailureRates();
+	}
+	
+	/**
+	 * Initialize usable services and their usage changes
 	 * @param usableServicesAndChance map containing usable service information with additional usage chance
 	 */
-	public Knowledge(int loadFailureDelta, List<String> serviceRegistryEndpoints, Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+	public void setUsableServicesAndChances(Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
 		
-		this.loadFailureDelta = loadFailureDelta;
+		servicesUsageChance = new HashMap<>();
+		usableServices = new HashMap<>();
 		
 		for (Description description : usableServicesAndChance.keySet()) {
 			servicesUsageChance.put(description, usableServicesAndChance.get(description).getValue());
 			usableServices.put(description, usableServicesAndChance.get(description).getKey());
 		}
-		
-		initializeApproximatedServicesFailureRates();
-		cachePlanComponents = new ArrayList<>();
 	}
 	
 	/**
