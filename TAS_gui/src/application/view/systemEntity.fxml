@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TableColumn?>
@@ -13,9 +14,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.SystemEntityController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.SystemEntityController">
    <children>
-      <TitledPane animated="false" collapsible="false" layoutX="184.0" layoutY="94.0" text="New System Entity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TitledPane animated="false" collapsible="false" layoutX="184.0" layoutY="94.0" text="New System Entity (hover mouse over the labels for help)" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
@@ -28,17 +29,19 @@
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="50.0" minHeight="0.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="197.0" minHeight="10.0" prefHeight="169.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="327.0" minHeight="0.0" prefHeight="213.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="50.0" minHeight="0.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="206.0" minHeight="10.0" prefHeight="135.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="197.0" minHeight="10.0" prefHeight="182.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="350.0" minHeight="0.0" prefHeight="273.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Workflow" />
-                              <Label text="Other Properties" GridPane.rowIndex="2" />
-                              <TableView fx:id="propertyTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <Label fx:id="workflowLabel" text="Workflow" />
+                              <Label fx:id="propertiesLabel" text="Other Properties" GridPane.rowIndex="4" />
+                              <TableView fx:id="propertyTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                 <columns>
-                                  <TableColumn editable="false" prefWidth="168.0" text="Name" />
-                                  <TableColumn editable="false" prefWidth="126.00003051757812" text="Type" />
-                                    <TableColumn prefWidth="100.0" text="Value" />
+                                  <TableColumn fx:id="nameColumn" editable="false" prefWidth="168.0" sortable="false" text="Name" />
+                                  <TableColumn fx:id="typeColumn" editable="false" prefWidth="126.00003051757812" sortable="false" text="Type" />
+                                    <TableColumn fx:id="valueColumn" prefWidth="100.0" sortable="false" text="Value" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -49,15 +52,44 @@
                                     <Button fx:id="workflowBtn" layoutX="358.0" layoutY="2.0" mnemonicParsing="false" text="Choose workflow" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
-                              <Label text="Used Service Registries" GridPane.rowIndex="1" />
-                              <ListView fx:id="registryList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="usedServiceRegistriesLabel" text="Used Service Registries" GridPane.rowIndex="2" />
+                              <ListView fx:id="registryList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label fx:id="goalsLabel" text="Optional Goals" GridPane.rowIndex="3" />
+                              <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <top>
+                                    <AnchorPane BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Button fx:id="goalBtn" mnemonicParsing="false" text="Add Goal" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </top>
+                                 <center>
+                                    <TableView fx:id="goalList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                      <columns>
+                                        <TableColumn fx:id="goalTypeColumn" prefWidth="75.0" sortable="false" text="Type" />
+                                        <TableColumn fx:id="goalRelationColumn" prefWidth="75.0" sortable="false" text="Relation" />
+                                          <TableColumn fx:id="goalValueColumn" prefWidth="75.0" sortable="false" text="Value" />
+                                          <TableColumn fx:id="deleteColumn" prefWidth="75.0" sortable="false" />
+                                      </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                    </TableView>
+                                 </center>
+                              </BorderPane>
+                              <Label fx:id="ratingTypeLabel" text="Rating Type" GridPane.rowIndex="1" />
+                              <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <children>
+                                    <ComboBox fx:id="ratingTypeBox" prefWidth="150.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
                            </children>
                         </GridPane>
                      </center>
                      <bottom>
-                        <AnchorPane prefHeight="73.0" prefWidth="1179.0" BorderPane.alignment="CENTER">
+                        <AnchorPane prefHeight="73.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button mnemonicParsing="false" text="Create System Entity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <Button fx:id="addBtn" mnemonicParsing="false" prefWidth="1179.0" text="Create System Entity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>

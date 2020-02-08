@@ -26,7 +26,7 @@ public class SystemServiceInfo {
     
     private Map<String, AtomicService> atomicServices = new HashMap<>();
     private List<Class<?>> serviceProfileClasses = new ArrayList<>();
-    private List<ServiceRegistry> serviceRegistries;
+    private List<ServiceRegistry> serviceRegistries = new ArrayList<>();
     private LinkedHashMap<String, String> serviceTypes = new LinkedHashMap<>();
 	
     public SystemServiceInfo() {
@@ -40,6 +40,10 @@ public class SystemServiceInfo {
     				service.getServiceDescription().getServiceType());
     	}
     	
+    }
+    
+    public List<ServiceRegistry> getRegistries() {
+    	return serviceRegistries;
     }
     
     public LinkedHashMap<String,String> getServiceTypes(){
@@ -62,7 +66,6 @@ public class SystemServiceInfo {
 		serviceRegistry2 = new ServiceRegistry("ServiceRegistry2", "se.lnu.service.registry2");
 		serviceRegistry2.startService();
 		
-		serviceRegistries = new ArrayList<ServiceRegistry>();
 		serviceRegistries.add(serviceRegistry);
 		serviceRegistries.add(serviceRegistry2);
 	

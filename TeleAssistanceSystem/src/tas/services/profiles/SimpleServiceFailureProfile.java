@@ -8,11 +8,6 @@ import java.util.Random;
 import service.atomic.ServiceProfile;
 import service.auxiliary.ServiceDescription;
 
-/**
- * @author yfruan
- * @email  ry222ad@student.lnu.se
- *
- */
 
 public class SimpleServiceFailureProfile extends ServiceProfile {
 	
@@ -24,6 +19,7 @@ public class SimpleServiceFailureProfile extends ServiceProfile {
 	@Override
 	public boolean preInvokeOperation(ServiceDescription description, String operationName, Object... args) {
 		
+		System.err.print("fail\n");
 		Random rand = new Random();
 		double failrate = 0;
 		
@@ -31,7 +27,7 @@ public class SimpleServiceFailureProfile extends ServiceProfile {
 			failrate = (double) description.getCustomProperties().get("FailureRate");
 		}
 		
-		if(rand.nextDouble() <= failrate){
+		if (rand.nextDouble() <= failrate) {
 			return false;
 		}
 		

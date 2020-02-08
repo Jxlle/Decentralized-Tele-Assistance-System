@@ -254,6 +254,7 @@ public class TASStart {
 
     public void executeWorkflow(String workflowPath, String profilePath) {
 
+    System.err.print(alarm3.getServiceProfiles().size());
 	CompositeServiceClient client = new CompositeServiceClient("service.assistance");
 	assistanceService.setWorkflow(workflowPath);
 	workflowEffector.refreshAllServices();

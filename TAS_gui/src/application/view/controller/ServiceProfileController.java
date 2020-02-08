@@ -588,8 +588,6 @@ public class ServiceProfileController implements Initializable {
 				grid.add(invocationsField, 1, 0);
 				grid.add(new Label("Value: "), 0, 1);
 				grid.add(valueField, 1, 1);
-				
-
 
 				dialog.getDialogPane().setContent(grid);
 

@@ -20,7 +20,7 @@ import service.auxiliary.ServiceOperation;
  * 
  */
 public abstract class AtomicService extends AbstractService {		
-	private List<ServiceProfile> serviceProfiles=new ArrayList<>();
+	private List<ServiceProfile> serviceProfiles = new ArrayList<>();
 	private static boolean noFail;
 	
 	/**
@@ -54,7 +54,8 @@ public abstract class AtomicService extends AbstractService {
      * Remove a service profile from the list 
      * @param serviceProfile the service profile
      */
-    public void removeServiceProfile(ServiceProfile serviceProfile){
+    public void removeServiceProfile(ServiceProfile serviceProfile) {
+    	System.err.print("removed + " + serviceProfile.getClass() + "\n");
     	serviceProfiles.remove(serviceProfile);
     }
     
@@ -62,15 +63,17 @@ public abstract class AtomicService extends AbstractService {
      * Add a service profile to the list
      * @param serviceProfile the service profile
      */
-    public void addServiceProfile(ServiceProfile serviceProfile){
+    public void addServiceProfile(ServiceProfile serviceProfile) {
+    	System.err.print("added + " + serviceProfile.getClass() + "\n");
     	this.serviceProfiles.add(serviceProfile);
+    	System.err.print(this +  "\n");
     }
     
     /**
      * Get the list of service profiles
      * @return  list of service profiles
      */
-    public List<ServiceProfile> getServiceProfiles(){
+    public List<ServiceProfile> getServiceProfiles() {
     	return this.serviceProfiles;
     }
     
@@ -102,6 +105,7 @@ public abstract class AtomicService extends AbstractService {
 							// if the current result is false, stop executing the next one
 							boolean flag = true;
 							
+							System.err.print(this + "\n");
 							if (!noFail) {
 								for (int i = 0; i < serviceProfileNum; i++) {
 									if (!(flag = serviceProfiles.get(i).preInvokeOperation(getServiceDescription(), opName, args))){

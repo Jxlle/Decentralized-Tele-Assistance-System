@@ -30,7 +30,6 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -38,11 +37,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.BufferedWriter;
 
@@ -131,17 +128,10 @@ public class InputProfileController implements Initializable {
 	private void initializeReqTable(){
 		reqTableView.setEditable(true);
 		
-	    Callback<TableColumn<ValueEntry, String>, TableCell<ValueEntry, String>> cellFactory =
-	    		new Callback<TableColumn<ValueEntry, String>, TableCell<ValueEntry, String>>() {
-	    			public TableCell<ValueEntry, String> call(TableColumn<ValueEntry, String> p) {
-	    					return new EditingCell();
-	                }
-	        };
-		
 		TableColumn<ValueEntry,String> invocationsColumn = new TableColumn<ValueEntry,String>("Invocations");
 		invocationsColumn.setCellValueFactory(new PropertyValueFactory<ValueEntry, String>("invocations"));
 		invocationsColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(4));
-		invocationsColumn.setCellFactory(cellFactory);		
+		invocationsColumn.setCellFactory(TextFieldTableCell.<ValueEntry>forTableColumn());		
 		invocationsColumn.setOnEditCommit(
 				new EventHandler<CellEditEvent<ValueEntry, String>>() {
 	                    @Override
@@ -172,7 +162,7 @@ public class InputProfileController implements Initializable {
 		TableColumn<ValueEntry,String> dataColumn = new TableColumn<ValueEntry,String>("Data");
 		dataColumn.setCellValueFactory(new PropertyValueFactory<ValueEntry, String>("data"));
 		dataColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(4));
-		dataColumn.setCellFactory(cellFactory);		
+		dataColumn.setCellFactory(TextFieldTableCell.<ValueEntry>forTableColumn());		
 
 		
 		dataColumn.setOnEditCommit(
@@ -207,18 +197,11 @@ public class InputProfileController implements Initializable {
 		TableColumn<ValueEntry,String> typeColumn = new TableColumn<ValueEntry,String>("Type");
 		typeColumn.setCellValueFactory(new PropertyValueFactory<ValueEntry, String>("type"));
 		typeColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(4));
-
-	    Callback<TableColumn<ValueEntry, String>, TableCell<ValueEntry, String>> cellFactory =
-	    		new Callback<TableColumn<ValueEntry, String>, TableCell<ValueEntry, String>>() {
-	    			public TableCell<ValueEntry, String> call(TableColumn<ValueEntry, String> p) {
-	    					return new EditingCell();
-	                }
-	        };
 	        
 		TableColumn<ValueEntry,String> valueColumn = new TableColumn<ValueEntry,String>("Data");
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ValueEntry, String>("data"));
 		valueColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(4));
-		valueColumn.setCellFactory(cellFactory);		
+		valueColumn.setCellFactory(TextFieldTableCell.<ValueEntry>forTableColumn());		
 
 		
 		valueColumn.setOnEditCommit(
@@ -240,7 +223,7 @@ public class InputProfileController implements Initializable {
 		TableColumn<ValueEntry,String> ratioColumn = new TableColumn<ValueEntry,String>("Ratio");
 		ratioColumn.setCellValueFactory(new PropertyValueFactory<ValueEntry, String>("ratio"));
 		ratioColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(4));
-		ratioColumn.setCellFactory(cellFactory);
+		ratioColumn.setCellFactory(TextFieldTableCell.<ValueEntry>forTableColumn());
 		
 		ratioColumn.setOnEditCommit(
 				new EventHandler<CellEditEvent<ValueEntry, String>>() {
@@ -556,95 +539,4 @@ public class InputProfileController implements Initializable {
 	    	return this.ratio.get();
 	    }
 	}
-	
-	
-	  class EditingCell extends TableCell<ValueEntry, String> {
-		  
-	        private TextField textField;
-	 
-	        public EditingCell() {
-	        }
-	 
-	        @Override
-	        public void startEdit() {
-	            if (!isEmpty()) {
-	                super.startEdit();
-	                createTextField();
-	                setText(null);
-	                setGraphic(textField);
-	                textField.selectAll();
-	            }
-	        }
-	 
-	        @Override
-	        public void cancelEdit() {
-	            super.cancelEdit();
-	 
-	            setText((String) getItem());
-	            setGraphic(null);
-	        }
-	 
-	        @Override
-	        public void updateItem(String item, boolean empty) {
-	            super.updateItem(item, empty);
-	 
-	            if (empty) {
-	                setText(null);
-	                setGraphic(null);
-	            } else {
-	                if (isEditing()) {
-	                    if (textField != null) {
-	                        textField.setText(getString());
-	                    }
-	                    setText(null);
-	                    setGraphic(textField);
-	                } else {
-	                    setText(getString());
-	                    setGraphic(null);
-	                }
-	            }
-	        }
-	        
-	        private void createTextField() {
-	            textField = new TextField(getItem());
-	            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
-
-	            textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-	                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-	                    if(!newValue.booleanValue())
-	                        commitEdit(textField.getText());
-	                }
-	            } );
-	            textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
-	                @Override public void handle(KeyEvent t) {
-	                    if (t.getCode() == KeyCode.ENTER) {
-	                        commitEdit(textField.getText());
-	                    } else if (t.getCode() == KeyCode.ESCAPE) {
-	                        cancelEdit();
-	                    }
-	                }
-	            });
-	        }
-	        
-	        /*
-	        private void createTextField() {
-	            textField = new TextField(getString());
-	            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()* 2);
-
-	            textField.focusedProperty().addListener(new ChangeListener<Boolean>(){
-	                @Override
-	                public void changed(ObservableValue<? extends Boolean> arg0, 
-	                    Boolean arg1, Boolean arg2) {
-	                        if (!arg2) {
-	                            commitEdit(textField.getText());
-	                        }
-	                }
-	            }); 
-	        }*/
-	 
-	        private String getString() {
-	            return getItem() == null ? "" : getItem().toString();
-	        }
-	    }
-	
 }

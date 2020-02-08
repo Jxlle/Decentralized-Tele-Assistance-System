@@ -34,6 +34,8 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 	@Override
 	public boolean preInvokeOperation(ServiceDescription description, String operationName, Object... args) {
 		
+		System.err.print("test2 \n");
+		
 		if (!description.getCustomProperties().containsKey("FailureRate")) {
 			return true;
 		}

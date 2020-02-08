@@ -41,6 +41,7 @@ import service.workflow.ast.rspLexer;
 import service.workflow.ast.rspParser;
 import tas.adaptation.AdaptationEngine;
 import tas.adaptation.TASStart;
+import tas.mape.system.entity.SystemServiceInfo;
 import tas.services.assistance.AssistanceServiceCostProbe;
 import application.MainGui;
 import application.model.CostEntry;
@@ -118,6 +119,7 @@ public class ApplicationController implements Initializable {
     CompositeService compositeService;
     AssistanceServiceCostProbe probe;
     TASStart tasStart;
+    SystemServiceInfo serviceInfo = new SystemServiceInfo();
 
     Set<Button> profileRuns = new HashSet<>();
     int maxSteps;
@@ -833,6 +835,7 @@ public class ApplicationController implements Initializable {
 	    		    
 	    		    SystemEntityController controller = (SystemEntityController) loader.getController();
 	    		    controller.setStage(dialogStage);
+	    		    controller.addRegistryChoices(serviceInfo);
 	
 	    		    Scene dialogScene = new Scene(systemEntityPane);
 	        	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
@@ -1181,8 +1184,6 @@ public class ApplicationController implements Initializable {
     		catch(Exception e){
     			e.printStackTrace();
     		}
-    		
-    		
     	});
 
     	Label label = new Label();
