@@ -353,6 +353,7 @@ public class ServiceProfileController implements Initializable {
 		profileKeyColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("key"));
 		profileKeyColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
 		profileKeyColumn.setCellFactory(TextFieldTableCell.<AttributeEntry>forTableColumn());	
+		profileKeyColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 		profileKeyColumn.setSortable(false);
 		profileKeyColumn.setOnEditCommit(
                 new EventHandler<CellEditEvent<AttributeEntry, String>>() {
@@ -442,9 +443,10 @@ public class ServiceProfileController implements Initializable {
 		profileValueColumn = new TableColumn<AttributeEntry,String>("Value");
 		profileValueColumn.setCellValueFactory(new PropertyValueFactory<AttributeEntry, String>("value"));
 		profileValueColumn.prefWidthProperty().bind(serviceProfileTable.widthProperty().divide(5));
+		profileValueColumn.setCellFactory(TextFieldTableCell.<AttributeEntry>forTableColumn());	
 		profileValueColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 		profileValueColumn.setSortable(false);
-            
+		profileValueColumn.setEditable(true);
 		profileValueColumn.setOnEditCommit(
                 new EventHandler<CellEditEvent<AttributeEntry, String>>() {
                     @Override

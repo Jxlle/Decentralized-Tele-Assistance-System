@@ -46,7 +46,7 @@ public abstract class AtomicService extends AbstractService {
      * Remove a service profile from the list with the unique index
      * @param index the profile index
      */
-    public void removeServiceProfile(int index){
+    public void removeServiceProfile(int index) {
     	serviceProfiles.remove(index);
     }
     
@@ -55,7 +55,6 @@ public abstract class AtomicService extends AbstractService {
      * @param serviceProfile the service profile
      */
     public void removeServiceProfile(ServiceProfile serviceProfile) {
-    	System.err.print("removed + " + serviceProfile.getClass() + "\n");
     	serviceProfiles.remove(serviceProfile);
     }
     
@@ -64,9 +63,7 @@ public abstract class AtomicService extends AbstractService {
      * @param serviceProfile the service profile
      */
     public void addServiceProfile(ServiceProfile serviceProfile) {
-    	System.err.print("added + " + serviceProfile.getClass() + "\n");
     	this.serviceProfiles.add(serviceProfile);
-    	System.err.print(this +  "\n");
     }
     
     /**
@@ -105,7 +102,6 @@ public abstract class AtomicService extends AbstractService {
 							// if the current result is false, stop executing the next one
 							boolean flag = true;
 							
-							System.err.print(this + "\n");
 							if (!noFail) {
 								for (int i = 0; i < serviceProfileNum; i++) {
 									if (!(flag = serviceProfiles.get(i).preInvokeOperation(getServiceDescription(), opName, args))){

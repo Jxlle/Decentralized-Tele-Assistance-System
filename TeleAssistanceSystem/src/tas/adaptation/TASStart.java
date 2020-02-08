@@ -133,8 +133,8 @@ public class TASStart {
     	return adaptationEngines;
     }
 
-    public void initializeTAS() {
-
+    public void initializeTAS() {	
+    	
 	serviceRegistry = new ServiceRegistry("ServiceRegistry", "se.lnu.service.registry");
 	serviceRegistry.startService();
 	
@@ -166,7 +166,6 @@ public class TASStart {
 	alarm3.getServiceDescription().getCustomProperties().put("Cost", 2.0);
 	alarm3.getServiceDescription().setOperationCost("triggerAlarm", 2.0);
 	alarm3.getServiceDescription().getCustomProperties().put("FailureRate", 0.18);
-	//alarm3.addServiceProfile(new ServiceFailureProfile(0.18));
 	alarm3.startService();
 	alarm3.register(serviceRegistry);
 
@@ -176,8 +175,6 @@ public class TASStart {
 	medicalAnalysis1.getServiceDescription().getCustomProperties().put("Cost", 4.0);
 	medicalAnalysis1.getServiceDescription().setOperationCost("analyzeData", 4.0);
 	medicalAnalysis1.getServiceDescription().getCustomProperties().put("FailureRate", 0.12);
-	//medicalAnalysis1.addServiceProfile(new ServiceFailureProfile(0.12));
-	//medicalAnalysis1.addServiceProfile(new ServiceFailureProfile(0.12));
 	medicalAnalysis1.startService();
 	medicalAnalysis1.register(serviceRegistry);
 
@@ -203,7 +200,6 @@ public class TASStart {
 	drugService.getServiceDescription().getCustomProperties().put("Cost", 2.0);
 	drugService.getServiceDescription().setOperationCost("changeDoses", 5.0);
 	drugService.getServiceDescription().setOperationCost("changeDrug", 5.0);
-	//drugService.getServiceDescription().getCustomProperties().put("FailureRate", 0.01);
 	drugService.startService();
 	drugService.register(serviceRegistry);
 
