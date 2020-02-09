@@ -5,10 +5,9 @@ import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 
 /**
- * @author Jelle van de sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
- * Monitor changes in the cache
+ * Class that monitors changes in the cache
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class CacheProbe extends AbstractProbe<CacheProbeInterface> {
 

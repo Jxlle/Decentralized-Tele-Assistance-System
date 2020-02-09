@@ -3,10 +3,10 @@ package tas.mape.system.structure;
 import tas.mape.system.entity.AbstractSystemEntity;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Abstract class representing a system containing system entities.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ *
  * @param <T> the system entity type
  */
 public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {

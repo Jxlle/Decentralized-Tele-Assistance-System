@@ -8,10 +8,9 @@ import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.entity.WorkflowExecutor;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Class representing a double-loop system containing two system entities.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, PlannerMessage, Planner> {
 

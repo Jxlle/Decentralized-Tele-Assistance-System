@@ -61,6 +61,9 @@ public class SystemEntityController implements Initializable {
 	private ListView<AnchorPane> registryList;
 	
 	@FXML
+	private ListView<AnchorPane> requirementStrategyList;
+	
+	@FXML
 	private TableView<GoalEntry> goalList;
 	
 	@FXML

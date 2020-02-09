@@ -4,10 +4,9 @@ import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.entity.WorkflowExecutor;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Class representing a solo-loop system containing one system entity.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 

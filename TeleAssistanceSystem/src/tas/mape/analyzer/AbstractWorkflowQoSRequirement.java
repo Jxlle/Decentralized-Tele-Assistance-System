@@ -18,11 +18,10 @@ import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * An abstract class for choosing service combinations in the analyzer step of the MAPE-K loop 
  * based on a QoS requirement and strategy.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public abstract class AbstractWorkflowQoSRequirement {
 	
@@ -86,6 +85,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 *        and the value is a list of the usable services for that description 
 	 * @return the generated service combinations without rating or type
 	 */
+	@CombinationStrategy()
 	public List<Map<Description, WeightedCollection<ServiceDescription>>> getAllServiceCombinations1(Map<Description, 
 			List<ServiceDescription>> usableServices) {
 		

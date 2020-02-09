@@ -4,10 +4,9 @@ import service.adaptation.probes.interfaces.ServiceRegistryProbeInterface;
 import service.auxiliary.ServiceDescription;
 
 /**
- * @author Jelle van de sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
+ * Class that monitors changes in the service registry
  * 
- * Monitor changes in the service registry
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class ServiceRegistryProbe extends AbstractProbe<ServiceRegistryProbeInterface> {
     

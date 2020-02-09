@@ -7,10 +7,9 @@ import tas.mape.communication.message.PlannerMessageContent;
 import tas.mape.planner.Planner;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Abstract class representing the structure of a two-component planner protocol.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public abstract class PlannerTwoComponentProtocol extends AbstractTwoComponentProtocol<PlannerMessage, Planner> {
 

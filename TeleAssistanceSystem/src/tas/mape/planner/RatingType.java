@@ -1,10 +1,9 @@
 package tas.mape.planner;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Enum that represents the type of the rating for a service combination chosen by the analyzer component
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public enum RatingType {
 	

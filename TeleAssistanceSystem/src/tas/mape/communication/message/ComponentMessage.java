@@ -1,6 +1,11 @@
 package tas.mape.communication.message;
 import service.auxiliary.AbstractMessage;
 
+/**
+ * Abstract class representing the message of a component
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ * @param <T> the message type
+ */
 public abstract class ComponentMessage<T extends ComponentMessageContent> extends AbstractMessage {
 	
 	// The sender endpoint

@@ -1,10 +1,9 @@
 package profile;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Enum that represents the type of system requirement
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public enum SystemRequirement {
 	COST,

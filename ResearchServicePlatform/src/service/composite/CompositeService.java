@@ -29,11 +29,10 @@ import service.workflow.AbstractQoSRequirement;
 import service.workflow.WorkflowEngine;
 
 /**
- * @author Jelle van de sijpe (jelle.vandesijpe@student.kuleuven.be)
- * @author Unknown other person(s)
- * 
  * Providing an abstraction to create composite services
- *
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ * @author Unknown other person(s)
  */
 public class CompositeService extends AbstractService {
 

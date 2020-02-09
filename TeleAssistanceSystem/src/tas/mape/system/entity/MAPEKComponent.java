@@ -20,11 +20,10 @@ import tas.mape.planner.Planner;
 import tas.mape.planner.RatingType;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Class representing a component that can execute a MAPEK-loop.
  * This is a managing system for the managed system, the workflow executer.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class MAPEKComponent {
 	

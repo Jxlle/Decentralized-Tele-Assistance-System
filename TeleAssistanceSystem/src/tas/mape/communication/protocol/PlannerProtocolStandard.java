@@ -8,9 +8,6 @@ import tas.mape.planner.Planner;
 import tas.mape.planner.ServiceCombination;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Class representing a standard two-component planner protocol.
  * This protocol works as follows:
  * 
@@ -35,6 +32,8 @@ import tas.mape.planner.ServiceCombination;
  *    If this is not true, the planner will send his response message as above, with type "NEW_OFFER". The other planner will reason the 
  *    same way. It's possible that the planners keep communicating and don't converge to a solution. An iteration limit will force a
  *    planner to respond with the "CONFIRMED_OFFER" type if the time is up.
+ *    
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 

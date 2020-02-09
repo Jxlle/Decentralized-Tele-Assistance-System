@@ -8,10 +8,9 @@ import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Class representing a combination of service descriptions (unique for a service) chosen by the analyzer component
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class ServiceCombination implements Comparable<ServiceCombination> { 
 	

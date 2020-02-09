@@ -4,12 +4,12 @@ import tas.mape.communication.message.ComponentMessage;
 import tas.mape.communication.message.ComponentMessageHost;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Abstract class representing a component that has the ability to communicate with other components of this type.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ * 
  * @param <T> the message type
-  @note Connection between multiple hosts currently not supported
+ * @note Connection between multiple hosts currently not supported
  */
 public abstract class CommunicationComponent<T extends ComponentMessage<?>> {
 	

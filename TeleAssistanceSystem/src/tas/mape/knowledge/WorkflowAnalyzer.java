@@ -18,10 +18,9 @@ import service.composite.CompositeServiceClient;
 import service.utility.Time;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Class used to analyze workflows and gather information for the knowledge component
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class WorkflowAnalyzer {
 	

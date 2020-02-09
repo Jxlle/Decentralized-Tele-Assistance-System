@@ -1,11 +1,11 @@
 package tas.mape.system.entity;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Abstract class representing a system entity consisting of a managed system and a managing system.
  * The managed system manages the managing system.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ *
  * @param <T> the managed system type
  * @param <E> the managing system type
  */

@@ -12,10 +12,9 @@ import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Class representing the monitor workflow probe for the monitor component
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegistryProbeInterface, CacheProbeInterface {
 

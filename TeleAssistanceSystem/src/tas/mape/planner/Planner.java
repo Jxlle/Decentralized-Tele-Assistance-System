@@ -18,10 +18,10 @@ import tas.mape.executor.Executor;
 import tas.mape.knowledge.Knowledge;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Class that represents the planner component in a MAPE-K component
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ * 
  * @note Planners that communicate should use the same protocol
  */
 public class Planner extends CommunicationComponent<PlannerMessage> {

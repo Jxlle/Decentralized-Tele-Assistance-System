@@ -1,10 +1,10 @@
 package tas.mape.knowledge;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Class representing a system goal
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ * 
  * @note An entity should never contain 2 goals with the same type
  */
 public class Goal {

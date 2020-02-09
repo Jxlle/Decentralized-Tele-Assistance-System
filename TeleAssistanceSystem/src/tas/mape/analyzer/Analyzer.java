@@ -14,10 +14,9 @@ import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *  
  * Class that represents the analyzer component in a MAPE-K component
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class Analyzer {
 	

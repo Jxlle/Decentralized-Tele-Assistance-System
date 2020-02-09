@@ -1,11 +1,10 @@
 package tas.mape.system.entity;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Class representing a system entity consisting of a workflow executer (managed system) 
  * and a MAPE-K component (managing system).
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class SystemEntity extends AbstractSystemEntity<WorkflowExecutor, MAPEKComponent> {
 	

@@ -8,10 +8,10 @@ import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.ComponentMessage;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Abstract class representing the structure of a protocol.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ *
  * @param <T> the message type
  * @param <E> the communication component type
  * @note Currently only supports communication between components of the same type, sending the same type of messages

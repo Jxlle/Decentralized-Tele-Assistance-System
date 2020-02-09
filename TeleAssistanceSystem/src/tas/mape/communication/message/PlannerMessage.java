@@ -1,10 +1,9 @@
 package tas.mape.communication.message;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Class representing the message type for communication between planner components.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class PlannerMessage extends ComponentMessage<PlannerMessageContent> {
 

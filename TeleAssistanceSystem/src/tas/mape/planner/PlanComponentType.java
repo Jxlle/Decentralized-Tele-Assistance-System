@@ -5,10 +5,10 @@ import java.util.Map;
 import service.auxiliary.ServiceDescription;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Enum representing a plan component type.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ * 
  * @note Supports multiple effectors
  */
 public enum PlanComponentType {

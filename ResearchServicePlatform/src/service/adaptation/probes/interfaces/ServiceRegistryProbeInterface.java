@@ -3,10 +3,9 @@ package service.adaptation.probes.interfaces;
 import service.auxiliary.ServiceDescription;
 
 /**
- * @author Jelle van de sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Interface with list of function definitions for a service registry probe
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public interface ServiceRegistryProbeInterface {
     

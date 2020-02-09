@@ -6,10 +6,9 @@ import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Class representing the workflow probe for the workflow analyzer
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class WorkflowAnalyzerProbe implements WorkflowProbeInterface {
 

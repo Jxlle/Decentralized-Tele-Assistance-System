@@ -4,10 +4,10 @@ import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.ComponentMessage;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Abstract class representing the structure of a two-component protocol.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ *
  * @param <T> the message type
  * @param <E> the communication component type
  */

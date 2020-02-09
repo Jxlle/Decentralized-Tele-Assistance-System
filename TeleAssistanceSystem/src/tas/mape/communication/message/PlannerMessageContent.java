@@ -3,10 +3,9 @@ package tas.mape.communication.message;
 import java.util.Map;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Class representing the message content that planners will send to each other for communication.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class PlannerMessageContent implements ComponentMessageContent {
 	

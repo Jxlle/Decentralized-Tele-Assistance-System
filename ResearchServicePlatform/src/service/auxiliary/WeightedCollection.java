@@ -6,12 +6,10 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- * 
- * @author Jelle van de sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Class providing a collection where each item in the collection has a weight.
  * This weight determines the chance that this item is randomly taken from the collection.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  * @param <E> Collection type
  * @note Items in the collection have to be unique
  */

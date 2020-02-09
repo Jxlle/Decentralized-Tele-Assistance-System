@@ -32,12 +32,13 @@
                               <RowConstraints maxHeight="50.0" minHeight="0.0" prefHeight="50.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="206.0" minHeight="10.0" prefHeight="135.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="197.0" minHeight="10.0" prefHeight="182.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="197.0" minHeight="10.0" prefHeight="182.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="350.0" minHeight="0.0" prefHeight="273.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label fx:id="workflowLabel" text="Workflow" />
-                              <Label fx:id="propertiesLabel" text="Other Properties" GridPane.rowIndex="4" />
-                              <TableView fx:id="propertyTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <Label fx:id="propertiesLabel" text="Other Properties" GridPane.rowIndex="5" />
+                              <TableView fx:id="propertyTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                 <columns>
                                   <TableColumn fx:id="nameColumn" editable="false" prefWidth="168.0" sortable="false" text="Name" />
                                   <TableColumn fx:id="typeColumn" editable="false" prefWidth="126.00003051757812" sortable="false" text="Type" />
@@ -81,6 +82,12 @@
                               <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
                                     <ComboBox fx:id="ratingTypeBox" prefWidth="150.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                              <Label fx:id="reqStratLabel" text="Requirement Analyzer Strategies" GridPane.rowIndex="4" />
+                              <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <children>
+                                    <ListView fx:id="requirementStrategyList" layoutX="90.0" layoutY="-25.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                            </children>

@@ -19,10 +19,9 @@ import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.entity.WorkflowExecutor;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Class that represents the knowledge component in a MAPE-K component
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class Knowledge {
 	

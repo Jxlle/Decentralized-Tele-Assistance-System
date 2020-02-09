@@ -6,10 +6,10 @@ import java.util.Map;
 import tas.mape.communication.CommunicationComponent;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * Class used for handling message sending and receiving between components
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ * 
  * @param <T> the message type
  * @note does not support concurrent message sending and receiving, not multithreaded
  * @note does not support multiple message types on the same host

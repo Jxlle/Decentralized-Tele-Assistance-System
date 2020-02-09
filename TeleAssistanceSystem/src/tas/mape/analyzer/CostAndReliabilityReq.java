@@ -13,11 +13,10 @@ import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- * 
  * A class for choosing service combinations in the analyzer step of the MAPE-K loop 
  * based on the cost and reliability QoS requirements.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 	

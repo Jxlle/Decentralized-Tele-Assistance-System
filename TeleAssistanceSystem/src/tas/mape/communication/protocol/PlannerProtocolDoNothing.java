@@ -4,10 +4,10 @@ import tas.mape.communication.message.PlannerMessage;
 import tas.mape.planner.Planner;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Class representing a planner protocol that does nothing. 
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ *
  * @note This class is only used to compare results with other protocols.
  */
 public class PlannerProtocolDoNothing extends PlannerTwoComponentProtocol {

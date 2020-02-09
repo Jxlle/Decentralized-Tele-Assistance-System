@@ -12,10 +12,9 @@ import tas.mape.planner.PlanComponent;
 import tas.mape.planner.PlanComponentType;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
+ * Class that represents the executor component in a MAPE-K component.
  * 
- * Class that represents the executor component in a MAPE-K component
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class Executor {
 	

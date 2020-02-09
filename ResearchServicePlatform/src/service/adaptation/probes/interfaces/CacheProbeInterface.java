@@ -4,10 +4,9 @@ import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 
 /**
- * @author Jelle van de sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Interface with list of function definitions for a cache probe
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public interface CacheProbeInterface {
 	

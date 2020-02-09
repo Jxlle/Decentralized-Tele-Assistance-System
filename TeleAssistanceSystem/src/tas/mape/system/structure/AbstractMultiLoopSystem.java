@@ -6,10 +6,10 @@ import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.system.entity.AbstractSystemEntity;
 
 /**
- * @author Jelle Van De Sijpe
- * @email jelle.vandesijpe@student.kuleuven.be
- *
  * Abstract class representing a multi-loop system containing system entities.
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ *
  * @param <T> the system entity type
  * @param <P1> protocol message type parameter
  * @param <P2> protocol communication component type parameter
