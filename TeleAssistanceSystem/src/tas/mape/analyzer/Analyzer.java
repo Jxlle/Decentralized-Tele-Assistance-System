@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import profile.ProfileExecutor;
+import profile.SystemRequirement;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import tas.mape.knowledge.Goal;
@@ -26,7 +27,7 @@ public class Analyzer {
 	private boolean plannerRequired, executed;
 	private int combinationLimit;
 	private RatingType ratingType;
-	private Map<String, Integer> QoSStrategies;
+	private Map<SystemRequirement, Integer> requirementStrategies;
 	private List<ServiceCombination> chosenServicesList;
 	
 	/**
@@ -35,47 +36,47 @@ public class Analyzer {
 	 * @param planner the given planner component
 	 * @param combinationLimit the given combination limit that will decide how much service combinations will be chosen in the execute step
 	 * @param ratingType the given type of the rating for service combinations 
-	 * @param QoSStrategies a map containing the strategy number for each QoS requirement
+	 * @param RequirementStrategies a map containing the strategy number for each requirement
 	 */
-	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, RatingType ratingType, Map<String, Integer> QoSStrategies) {
+	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, RatingType ratingType, Map<SystemRequirement, Integer> requirementStrategies) {
 		this.knowledge = knowledge;
 		this.planner = planner;
 		this.combinationLimit = combinationLimit;
 		this.ratingType = ratingType;
-		this.QoSStrategies = QoSStrategies;
+		this.requirementStrategies = requirementStrategies;
 	}
 	
 	/**
-	 * Return the strategy number for a given QoS requirement name
-	 * @param requirementName the given QoS requirement name
+	 * Return the strategy number for a given system requirement
+	 * @param requirement the given system requirement
 	 * @return the strategy number
 	 */
-	public Integer getQoSStrategy(String requirementName) {
-		return QoSStrategies.get(requirementName);
+	public Integer getRequirementStrategy(SystemRequirement requirement) {
+		return requirementStrategies.get(requirement);
 	}
 	
 	/**
-	 * Update or add a certain QoS strategy number using a given QoS requirement name and strategy number
-	 * @param requirementName the given QoS requirement name
+	 * Update or add a certain requirement strategy number using a given system requirement and strategy number
+	 * @param requirement the given system requirement
 	 * @param strategy the given strategy number
 	 */
-	public void setQoSStrategy(String requirementName, Integer strategy) {
-		QoSStrategies.put(requirementName, strategy);
+	public void setRequirementStrategy(SystemRequirement requirement, Integer strategy) {
+		requirementStrategies.put(requirement, strategy);
 	}
 	
 	/**
-	 * Remove the QoS strategy with the given QoS requirement name key
-	 * @param requirementName the given QoS requirement
+	 * Remove the requirement strategy with the given system requirement
+	 * @param requirement the given system requirement
 	 */
-	public void removeQoSStrategy(String requirementName) {
-		QoSStrategies.remove(requirementName);
+	public void removeRequirementStrategy(SystemRequirement requirement) {
+		requirementStrategies.remove(requirement);
 	}
 	
 	/**
-	 * Clear the QoS strategies map
+	 * Clear the requirement strategies map
 	 */
-	public void clearQoSStrategies() {
-		QoSStrategies.clear();
+	public void clearRequirementStrategies() {
+		requirementStrategies.clear();
 	}
 
 	/**
@@ -113,11 +114,11 @@ public class Analyzer {
 	 */
 	private List<ServiceCombination> chooseServices() {
 		
-		String requirementName = ProfileExecutor.profiles.get(knowledge.getSystemEntity().getEntityName()).getQosRequirement();
+		SystemRequirement requirement = ProfileExecutor.profiles.get(knowledge.getSystemEntity().getEntityName()).getSystemRequirement();
 		Map<Description, List<ServiceDescription>> usableServices = knowledge.getUsableServices();
-		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirementName);
+		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirement);
 		List<Goal> goals = knowledge.getGoals();
 		
-		return requirementClass.getServiceCombinations(getQoSStrategy(requirementName), combinationLimit, ratingType, goals, usableServices);
+		return requirementClass.getServiceCombinations(getRequirementStrategy(requirement), combinationLimit, ratingType, goals, usableServices);
 	}
 }

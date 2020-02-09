@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.util.Pair;
+import profile.SystemRequirement;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.composite.CompositeService;
@@ -81,12 +82,12 @@ public class MAPEKComponent {
 		 * @param combinationLimit the given combination limit that will decide how much service combinations 
 		 *        will be chosen in the execute step
 		 * @param ratingType the given type of the rating for service combinations 
-		 * @param QoSStrategies a map containing the strategy number for each QoS requirement
+		 * @param RequirementStrategies a map containing the strategy number for each requirement
 		 * @return the new Builder object with initialized analyzer
 		 * @throws InstantiationException throw when the knowledge field is null
 		 * @throws InstantiationException throw when the planner field is null
 		 */
-		public Builder initializeAnalyzer(int combinationLimit, RatingType ratingType, Map<String, Integer> QoSStrategies) 
+		public Builder initializeAnalyzer(int combinationLimit, RatingType ratingType, Map<SystemRequirement, Integer> requirementStrategies) 
 				throws InstantiationException {
 			
 			if (knowledge == null) {
@@ -97,7 +98,7 @@ public class MAPEKComponent {
 				throw new InstantiationException("Planner field is null!");
 			}
 			
-			analyzer = new Analyzer(knowledge, planner, combinationLimit, ratingType, QoSStrategies);
+			analyzer = new Analyzer(knowledge, planner, combinationLimit, ratingType, requirementStrategies);
 			return this;
 		}
 		
@@ -211,36 +212,36 @@ public class MAPEKComponent {
 	}
 	
 	/**
-	 * Return the analyzer strategy number for a given QoS requirement name
-	 * @param requirementName the given QoS requirement name
+	 * Return the analyzer strategy number for a given system requirement
+	 * @param requirement the given system requirement
 	 * @return the analyzer strategy number
 	 */
-	public Integer getQoSStrategy(String requirementName) {
-		return analyzer.getQoSStrategy(requirementName);
+	public Integer getRequirementStrategy(SystemRequirement requirement) {
+		return analyzer.getRequirementStrategy(requirement);
 	}
 	
 	/**
-	 * Update or add a certain analyzer QoS strategy number using a given QoS requirement name and strategy number
-	 * @param requirementName the given QoS requirement name
+	 * Update or add a certain analyzer requirement strategy number using a given system requirement and strategy number
+	 * @param requirement the given system requirement
 	 * @param strategy the given strategy number
 	 */
-	public void setQoSStrategy(String requirementName, Integer strategy) {
-		analyzer.setQoSStrategy(requirementName, strategy);
+	public void setRequirementStrategy(SystemRequirement requirement, Integer strategy) {
+		analyzer.setRequirementStrategy(requirement, strategy);
 	}
 	
 	/**
-	 * Remove the analyzer QoS strategy with the given QoS requirement name key
-	 * @param requirementName the given QoS requirement
+	 * Remove the analyzer requirement strategy with the given system requirement
+	 * @param requirement the given system requirement
 	 */
-	public void removeQoSStrategy(String requirementName) {
-		analyzer.removeQoSStrategy(requirementName);
+	public void removeRequirementStrategy(SystemRequirement requirement) {
+		analyzer.removeRequirementStrategy(requirement);
 	}
 	
 	/**
-	 * Clear the analyzer QoS strategies map
+	 * Clear the analyzer requirement strategies map
 	 */
-	public void clearQoSStrategies() {
-		analyzer.clearQoSStrategies();
+	public void clearRequirementStrategies() {
+		analyzer.clearRequirementStrategies();
 	}
 	
 	/**

@@ -102,6 +102,9 @@ public class SystemEntityController implements Initializable {
 	@FXML
 	private Label ratingTypeLabel;
 	
+	@FXML
+	private Label reqStratLabel;
+	
 	private String baseDir = "";
 	private String workflowPath;
 	private String resourceDirPath = baseDir + "resources" + File.separator;
