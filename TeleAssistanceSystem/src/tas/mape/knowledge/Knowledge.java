@@ -61,7 +61,7 @@ public class Knowledge {
 	
 	/**
 	 * Create a new knowledge with given starting information
-	 * @param loadFailureDelta the given delta between two load values in the approximated failure table
+	 * @param loadFailureDelta the given difference between two load values in the approximated failure table
 	 * @param serviceRegistryEndpoints the given registry endpoints used by the workflow
 	 */
 	public Knowledge(int loadFailureDelta, List<String> serviceRegistryEndpoints) {

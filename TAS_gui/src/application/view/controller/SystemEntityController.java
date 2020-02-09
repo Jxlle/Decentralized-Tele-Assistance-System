@@ -31,6 +31,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
@@ -199,8 +200,15 @@ public class SystemEntityController implements Initializable {
 		
 		Tooltip propertyTooltip = new Tooltip();
 		propertyTooltip.setText(
-		    "Choose the system entity properties\n" +
-		    "by filling in the table with the right type"
+		    "Choose the system entity properties by filling in the table with the right type.\n\n"
+		    + "A system entity currently consists of a workflow executor and a MAPEK-component.\n"
+		    + "The MAPEK-component is the managing system that chooses which services from the \n"
+		    + "available service registries are available to the workflow executor.\n"
+		    + "The default service profile increases the failure rate if the service has a bigger load,\n"
+		    + "but the managing system only knows the default failure rate, not the increased rates if the load gets bigger.\n\n"
+		    + "The managing system looks at the best service combinations depending on the current requirement.\n"
+		    + "It does this by holding an approximated failure rate table where it approximates what the failure rate of a\n"
+		    + "service will be at a certain load."
 		);
 		
 		workflowLabel.setTooltip(workflowTooltip);
@@ -244,6 +252,77 @@ public class SystemEntityController implements Initializable {
 		entityData.add(entityName);
 		propertyTable.setItems(entityData);
 		propertyTable.setEditable(true);
+		propertyTable.setRowFactory(r -> new TableRow<SystemEntityPropertyEntry>() {	
+            private Tooltip tooltip = new Tooltip();
+            
+            @Override
+            public void updateItem(SystemEntityPropertyEntry entry, boolean empty) {
+                super.updateItem(entry, empty);
+                
+                if (entry == null) {
+                    setTooltip(null);
+                } 
+                else {
+                	switch(entry.getName()) {
+                		case "Planner Endpoint":
+                			tooltip.setText("The unique planner component identifier\n"
+                					+ "used for communication");
+                			break;
+                			
+                		case "Entity Name":
+                			tooltip.setText("The unique system entity name");
+                			break;
+                			
+                		case "Load Failure Delta":
+                			tooltip.setText("[A parameter of the knowledge component]\n"
+                					+ "The difference between two load values (keys) in the approximated failure table.\n"
+                					+ "A higher value means less information about approximated failure rates.\n\n"
+                					+ "Choose a value that is around the same difference between two load values\n"
+                					+ "in the service failure load profile table for the services.");
+                			break;
+                			
+                		case "Combination Limit":
+                			tooltip.setText("[A parameter of the analyzer component]\n"
+                					+ "This limit dictates how many service combinations\n"
+                					+ "are chosen in the analyzing stage.");
+                			break;
+                			
+                		case "Min Failure Delta":
+                			tooltip.setText("[A parameter of the monitor component]\n"
+                					+ "The minimum amount of difference needed in failure rate\n"
+                					+ "between the current approximated failure rate and\n"
+                					+ "the real failure rate before the approximated failure rate is updated.");
+                			break;
+                			
+                		case "Failure Change":
+                			tooltip.setText("[A parameter of the monitor component]\n"
+                					+ "The value increment used for updating approximated failure rates.");
+                			break;
+                			
+                		default:
+                			tooltip.setText("WARNING\nMISSING TOOLTIP");
+                			break;
+                	}
+                	
+                	setTooltip(tooltip);
+                }
+            }
+		});
+		
+		/*propertyTable.setRowFactory(tv -> new TableRow<SystemEntityPropertyEntry> {
+            private Tooltip tooltip = new Tooltip();
+            @Override
+            public void updateItem(SystemEntityPropertyEntry entry, boolean empty) {
+                super.updateItem(person, empty);
+                
+                if (person == null) {
+                    setTooltip(null);
+                } else {
+                    //tooltip.setText(person.getFirstName()+" "+person.getLastName());
+                    //setTooltip(tooltip);
+                }
+            }
+        });*/
 	}
 	
 	private void addRatingTypeOptions() {

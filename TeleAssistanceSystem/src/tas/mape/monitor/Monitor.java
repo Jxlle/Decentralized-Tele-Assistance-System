@@ -32,9 +32,9 @@ public class Monitor {
 	 * Create a new monitor with a given knowledge, analyzer, minimum failure delta and failure change
 	 * @param knowledge the given knowledge
 	 * @param analyzer the given analyzer
-	 * @param minFailureDelta the minimum amount of change needed in failure rate between the current approximated failure rate and
+	 * @param minFailureDelta the minimum amount of difference needed in failure rate between the current approximated failure rate and
 	 * 						  the real failure rate before the approximated failure rate is updated
-	 * @param failureChange the parameter whose value will be used to update the approximated failure rate 
+	 * @param failureChange the value increment used for updating approximated failure rates
 	 */
 	public Monitor(Knowledge knowledge, Analyzer analyzer, double minFailureDelta, double failureChange) {		
 		this.knowledge = knowledge;
