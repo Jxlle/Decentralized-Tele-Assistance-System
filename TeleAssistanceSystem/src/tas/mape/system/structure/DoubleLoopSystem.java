@@ -71,8 +71,8 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 			protocol.executeProtocol(maxIterations);
 			
 			// Execute executers
-			entity1.getManagingSystem().executeExecuter();
-			entity2.getManagingSystem().executeExecuter();
+			entity1.getManagingSystem().executeExecutor();
+			entity2.getManagingSystem().executeExecutor();
 		}
 	}
 

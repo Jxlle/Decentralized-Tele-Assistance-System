@@ -41,7 +41,7 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 			entity.getManagingSystem().executeMonitor();
 			entity.getManagingSystem().executeAnalyzer();
 			entity.getManagingSystem().executePlanner();
-			entity.getManagingSystem().executeExecuter();
+			entity.getManagingSystem().executeExecutor();
 		}
 	}
 

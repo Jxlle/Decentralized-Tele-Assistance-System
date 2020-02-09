@@ -69,7 +69,7 @@ public class Knowledge {
 		this.loadFailureDelta = loadFailureDelta;	
 		this.registryEndpoints = serviceRegistryEndpoints;
 		cachePlanComponents = new ArrayList<>();
-		initializeApproximatedServicesFailureRates();
+		goals = new ArrayList<>();
 	}
 	
 	/**
@@ -85,6 +85,8 @@ public class Knowledge {
 			servicesUsageChance.put(description, usableServicesAndChance.get(description).getValue());
 			usableServices.put(description, usableServicesAndChance.get(description).getKey());
 		}
+		
+		initializeApproximatedServicesFailureRates();
 	}
 	
 	/**
@@ -93,7 +95,7 @@ public class Knowledge {
 	 */
 	public void setSystemEntity(SystemEntity systemEntity) throws IllegalStateException {
 		
-		if (systemEntity != null) {
+		if (this.systemEntity != null) {
 			throw new IllegalStateException("A system entity can only be assigned once!");
 		}
 		
@@ -191,7 +193,7 @@ public class Knowledge {
 	
 	/**
 	 * Add a given service to the usable services map for a given service type and operation name.
-	 * Its approximated failure rate is also removed initialized.
+	 * Its approximated failure rate is also initialized.
 	 * @param description the given service type and operation name
 	 * @param serviceDescription the given service to be added
 	 */

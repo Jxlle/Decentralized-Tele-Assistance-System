@@ -27,7 +27,7 @@ import tas.mape.knowledge.Knowledge;
 public class Planner extends CommunicationComponent<PlannerMessage> {
 
 	// Fields
-	private Executor executer;
+	private Executor executor;
 	private Knowledge knowledge;
 	private boolean executed, protocolFinished;
 	private AbstractProtocol<PlannerMessage, Planner> protocol;
@@ -36,13 +36,13 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private List<PlanComponent> plan;
 	
 	/**
-	 * Create a planner with a given endpoint and executer
+	 * Create a planner with a given endpoint and executor
 	 * @param endpoint the given endpoint (identifier)
-	 * @param executer the given executer
+	 * @param executor the given executor
 	 */
-	public Planner(String endpoint, Executor executer) {
+	public Planner(String endpoint, Executor executor) {
 		super(endpoint);
-		this.executer = executer;
+		this.executor = executor;
 	}
 	
 	/**
@@ -125,12 +125,12 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
-	 * Trigger the executer when the planner has been executed and
+	 * Trigger the executor when the planner has been executed and
 	 * when the protocol is finished when there is one
 	 */
-	public void triggerExecuter() {
+	public void triggerExecutor() {
 		if (executed && (protocolFinished || protocol == null)) {
-			executer.execute(plan);
+			executor.execute(plan);
 			executed = false;
 			protocolFinished = false;
 		}
@@ -187,7 +187,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
-	 * Make a plan for the executer to execute based on a given service combination
+	 * Make a plan for the executor to execute based on a given service combination
 	 * and data in the knowledge component.
 	 * @param serviceCombination the given service combination
 	 */

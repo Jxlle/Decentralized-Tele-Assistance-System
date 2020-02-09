@@ -16,7 +16,7 @@ public class SystemEntity extends AbstractSystemEntity<WorkflowExecutor, MAPEKCo
 	 */
 	public SystemEntity(String entityName, WorkflowExecutor managedSystem, MAPEKComponent managingSystem) {
 		super(entityName, managedSystem, managingSystem);
-		getManagingSystem().setEntityName(entityName);
+		getManagingSystem().setSystemEntity(this);
 	}
 	
 	/**
@@ -34,7 +34,7 @@ public class SystemEntity extends AbstractSystemEntity<WorkflowExecutor, MAPEKCo
 	 */
 	@Override
 	protected void LinkSystems() {
-		getManagingSystem().initializeExecuterEffectors(getManagedSystem().getAssistanceService());
+		getManagingSystem().initializeExecutorEffectors(getManagedSystem().getAssistanceService());
 		getManagingSystem().connectMonitorProbes(getManagedSystem().getAssistanceService());
 	}
 }

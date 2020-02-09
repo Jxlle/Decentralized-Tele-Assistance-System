@@ -48,7 +48,11 @@ import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CombinationStrategy;
 import tas.mape.knowledge.Goal;
 import tas.mape.planner.RatingType;
+import tas.mape.system.entity.MAPEKComponent;
+import tas.mape.system.entity.MAPEKComponent.Builder;
+import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.entity.SystemServiceInfo;
+import tas.mape.system.entity.WorkflowExecutor;
 
 public class SystemEntityController implements Initializable {
 
@@ -115,19 +119,18 @@ public class SystemEntityController implements Initializable {
 	@FXML
 	private Label reqStratLabel;
 	
+	private int loadFailureDelta, combinationLimit;
+	private double minFailureDelta, failureChange;
 	private String baseDir = "";
-	private String workflowPath;
+	private String workflowPath, strategyText, plannerEndpoint, entityName;
 	private String resourceDirPath = baseDir + "resources" + File.separator;
 	private Stage stage;
 	private GoalController controller;
-	private SystemEntityPropertyEntry entityName;
 	private SystemEntityController self;
 	private List<ServiceRegistry> entityRegistries;
 	private List<Goal> goals = new ArrayList<>();
-	private String strategyText;
 	private List<Integer> strategyList = new ArrayList<>();
-	private Map<String, ComboBox<Integer>> registryStrategies = new HashMap<>();
-	
+	private Map<SystemRequirement, ComboBox<Integer>> registryStrategies = new HashMap<>();
 	private ObservableList<SystemEntityPropertyEntry> entityData = FXCollections.observableArrayList();
 	private ObservableList<GoalEntry> goalData = FXCollections.observableArrayList();
 	
@@ -267,17 +270,46 @@ public class SystemEntityController implements Initializable {
                     			t.getTableView().getColumns().get(0).setVisible(false);
                                 t.getTableView().getColumns().get(0).setVisible(true);
                     		}
+                    		else {
+
+                    			switch (attribute.getName()) {
+                    			
+                    				case "Planner Endpoint":
+                    					plannerEndpoint = (String) realValue;
+                    					break;
+                    					
+                    				case "Entity Name":
+                    					entityName = (String) realValue;
+                    					break;
+                    					
+                    				case "Load Failure Delta":
+                    					loadFailureDelta = (int) realValue;
+                    					break;
+                    					
+                    				case "Combination Limit":
+                    					combinationLimit = (int) realValue;
+                    					break;
+                    					
+                    				case "Min Failure Delta":
+                    					minFailureDelta = (double) realValue;
+                    					break;
+                    					
+                    				case "Failure Change":
+                    					failureChange = (double) realValue;
+                    					break;
+                    			}
+                    		}
                     }
                 }
         );
 		
 		entityData.add(new SystemEntityPropertyEntry("Planner Endpoint", "String", ""));
-		entityName = new SystemEntityPropertyEntry("Entity Name", "String", "");
+		entityData.add(new SystemEntityPropertyEntry("Entity Name", "String", ""));
 		entityData.add(new SystemEntityPropertyEntry("Load Failure Delta", "Integer", ""));
 		entityData.add(new SystemEntityPropertyEntry("Combination Limit", "Integer", ""));
 		entityData.add(new SystemEntityPropertyEntry("Min Failure Delta", "Double", ""));
 		entityData.add(new SystemEntityPropertyEntry("Failure Change", "Double", ""));
-		entityData.add(entityName);
+		
 		propertyTable.setItems(entityData);
 		propertyTable.setEditable(true);
 		propertyTable.setRowFactory(r -> new TableRow<SystemEntityPropertyEntry>() {	
@@ -398,7 +430,7 @@ public class SystemEntityController implements Initializable {
 	    		    AnchorPane systemEntityPane = (AnchorPane) loader.load();
 	
 	    		    Stage dialogStage = new Stage();
-	    		    dialogStage.setTitle("Add System Entity");
+	    		    dialogStage.setTitle("Add Goal");
 	    		    dialogStage.setResizable(false);
 	
 	    		    controller = (GoalController) loader.getController();
@@ -492,7 +524,7 @@ public class SystemEntityController implements Initializable {
 			
 			requirementPane.getChildren().addAll(requirementLabel, strategyBox);	
 			requirementStrategyList.getItems().add(requirementPane);
-			registryStrategies.put(requirement.toString(), strategyBox);
+			registryStrategies.put(requirement, strategyBox);
 		}
 	}
 	
@@ -533,6 +565,40 @@ public class SystemEntityController implements Initializable {
 		            fail.showAndWait();	
 		    	}
 		    	else {
+		    		
+		    		List<String> registryEndpoints = new ArrayList<>();
+		    		Map<SystemRequirement, Integer> requirementStrategies = new HashMap<>();
+		    		
+		    		for (ServiceRegistry registry : entityRegistries) {
+		    			registryEndpoints.add(registry.getServiceDescription().getServiceEndpoint());
+		    		}
+		    		
+		    		for (SystemRequirement req : registryStrategies.keySet()) {
+		    			requirementStrategies.put(req, registryStrategies.get(req).getValue());
+		    		}
+		    		
+		    		WorkflowExecutor workflowExecutor = new WorkflowExecutor(entityRegistries);
+		    		workflowExecutor.setWorkflowPath(workflowPath);
+		    		
+		    		MAPEKComponent.Builder builder = new Builder();
+		    		
+		    		try {
+						builder.initializeKnowledge(loadFailureDelta, registryEndpoints)
+						 	   .initializePlanner(plannerEndpoint)
+							   .initializeAnalyzer(combinationLimit, ratingTypeBox.getValue(), requirementStrategies)
+							   .initializeMonitor(minFailureDelta, failureChange);
+					} catch (InstantiationException e) {
+						e.printStackTrace();
+					}
+		    		
+		    		MAPEKComponent component = builder.build();
+		    		
+		    		for (Goal goal : goals) {
+			    		component.addGoal(goal);
+		    		}
+		    	
+		    		SystemEntity systemEntity = new SystemEntity(entityName, workflowExecutor, component);
+		    		
 		    		// TODO
 		    		/*Goal goal = new Goal(typeBox.getValue(), relationBox.getValue(), Double.parseDouble(valueField.getText()));
 		    		parent.addGoalToList(goal);
@@ -628,6 +694,7 @@ public class SystemEntityController implements Initializable {
 					case "string":
 					case "String":
 					{
+						realValue = value;
 						break;
 					}
 					

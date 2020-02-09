@@ -3,10 +3,7 @@ package tas.mape.system.entity;
 import java.util.List;
 import java.util.Map;
 
-import javafx.util.Pair;
 import profile.SystemRequirement;
-import service.auxiliary.Description;
-import service.auxiliary.ServiceDescription;
 import service.composite.CompositeService;
 import tas.mape.analyzer.Analyzer;
 import tas.mape.communication.message.ComponentMessageHost;
@@ -21,7 +18,7 @@ import tas.mape.planner.RatingType;
 
 /**
  * Class representing a component that can execute a MAPEK-loop.
- * This is a managing system for the managed system, the workflow executer.
+ * This is a managing system for the managed system, the workflow executor.
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
@@ -37,14 +34,14 @@ public class MAPEKComponent {
 		private Monitor monitor;
 		private Analyzer analyzer;
 		private Planner planner;
-		private Executor executer;
+		private Executor executor;
 		private Knowledge knowledge;
 		
 		/**
-		 * Create a new builder with an initialized executer
+		 * Create a new builder with an initialized executor
 		 */
 		public Builder() {
-			executer = new Executor();
+			executor = new Executor();
 		}
 		
 		/**
@@ -53,8 +50,7 @@ public class MAPEKComponent {
 		 * @param serviceRegistryEndpoints the given registry endpoints used by the workflow
 		 * @return the new Builder object with initialized knowledge
 		 */
-		public Builder initializeKnowledge(int loadFailureDelta, List<String> serviceRegistryEndpoints, Map<Description, 
-				Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+		public Builder initializeKnowledge(int loadFailureDelta, List<String> serviceRegistryEndpoints) {
 			
 			knowledge = new Knowledge(loadFailureDelta, serviceRegistryEndpoints);
 			return this;
@@ -64,15 +60,15 @@ public class MAPEKComponent {
 		 * Creates a new builder where the planner component with its given parameters has been initialized.
 		 * @param plannerEndpoint the given planner end point
 		 * @return the new Builder object with initialized planner
-		 * @throws InstantiationException throw when the executer field is null
+		 * @throws InstantiationException throw when the executor field is null
 		 */
 		public Builder initializePlanner(String plannerEndpoint) throws InstantiationException {
 			
-			if (executer == null) {
-				throw new InstantiationException("Executer field is null!");
+			if (executor == null) {
+				throw new InstantiationException("Executor field is null!");
 			}
 			
-			planner = new Planner(plannerEndpoint, executer);
+			planner = new Planner(plannerEndpoint, executor);
 			return this;
 		}
 		
@@ -139,7 +135,7 @@ public class MAPEKComponent {
 			component.monitor = monitor;
 			component.analyzer = analyzer;
 			component.planner = planner;
-			component.executer = executer;
+			component.executor = executor;
 			component.knowledge = knowledge;
 			
 			return component;
@@ -150,7 +146,7 @@ public class MAPEKComponent {
 	private Monitor monitor;
 	private Analyzer analyzer;
 	private Planner planner;
-	private Executor executer;
+	private Executor executor;
 	private Knowledge knowledge;
 	
 	/**
@@ -163,11 +159,11 @@ public class MAPEKComponent {
 	// implemented so the user can change component parameters without misusing the components.
 	
 	/**
-	 * Initialize the executer components with the given composite service.
+	 * Initialize the executor components with the given composite service.
 	 * @param compositeService the given composite service
 	 */
-	public void initializeExecuterEffectors(CompositeService compositeService) {
-		executer.initializeEffectors(compositeService);
+	public void initializeExecutorEffectors(CompositeService compositeService) {
+		executor.initializeEffectors(compositeService);
 	}
 	
 	/**
@@ -285,19 +281,11 @@ public class MAPEKComponent {
 	}
 	
 	/**
-	 * Set the system entity name to the given name
-	 * @param entityName the given name
+	 * Set the parent system entity name to the given entity 
+	 * @param entityName the given entity
 	 */
-	public void setEntityName(String entityName) {
-		setEntityName(entityName);
-	}
-	
-	/**
-	 * Return the system entity name
-	 * @return the system entity name
-	 */
-	public String getEntityName() {
-		return getEntityName();
+	public void setSystemEntity(SystemEntity entity) {
+		knowledge.setSystemEntity(entity);
 	}
 	
 	/**
@@ -364,9 +352,9 @@ public class MAPEKComponent {
 	}
 	
 	/**
-	 * Execute the executer component
+	 * Execute the executor component
 	 */
-	public void executeExecuter() {
-		planner.triggerExecuter();
+	public void executeExecutor() {
+		planner.triggerExecutor();
 	}
 }
