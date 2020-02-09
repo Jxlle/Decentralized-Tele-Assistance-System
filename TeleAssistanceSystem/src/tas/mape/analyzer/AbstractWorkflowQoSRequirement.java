@@ -25,7 +25,6 @@ import tas.mape.planner.ServiceCombination;
  */
 public abstract class AbstractWorkflowQoSRequirement {
 	
-	
 	/**
 	 * Apply a QoS requirement strategy with a given strategy, combination limit, rating type, list of goals 
 	 * and a map of usable services.
@@ -85,7 +84,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 *        and the value is a list of the usable services for that description 
 	 * @return the generated service combinations without rating or type
 	 */
-	@CombinationStrategy()
+	@CombinationStrategy(combinationInfo = "Only a single service per service description")
 	public List<Map<Description, WeightedCollection<ServiceDescription>>> getAllServiceCombinations1(Map<Description, 
 			List<ServiceDescription>> usableServices) {
 		
@@ -100,6 +99,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 *        and the value is a list of the usable services for that description 
 	 * @return the generated service combinations without rating or type
 	 */
+	@CombinationStrategy(combinationInfo = "One or two services per service description, equal (50/50) usage chance")
 	public List<Map<Description, WeightedCollection<ServiceDescription>>> getAllServiceCombinations2(Map<Description, 
 			List<ServiceDescription>> usableServices) {
 		
@@ -114,6 +114,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 *        and the value is a list of the usable services for that description 
 	 * @return the generated service combinations without rating or type
 	 */
+	@CombinationStrategy(combinationInfo = "One or three services per service description, equal (33/33/33) usage chance")
 	public List<Map<Description, WeightedCollection<ServiceDescription>>> getAllServiceCombinations3(Map<Description, 
 			List<ServiceDescription>> usableServices) {
 		

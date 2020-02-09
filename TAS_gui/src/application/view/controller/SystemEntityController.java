@@ -1,9 +1,13 @@
 package application.view.controller;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import application.MainGui;
@@ -38,7 +42,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import profile.SystemRequirement;
 import service.registry.ServiceRegistry;
+import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
+import tas.mape.analyzer.CombinationStrategy;
 import tas.mape.knowledge.Goal;
 import tas.mape.planner.RatingType;
 import tas.mape.system.entity.SystemServiceInfo;
@@ -117,18 +124,24 @@ public class SystemEntityController implements Initializable {
 	private SystemEntityController self;
 	private List<ServiceRegistry> entityRegistries;
 	private List<Goal> goals = new ArrayList<>();
+	private String strategyText;
+	private List<Integer> strategyList = new ArrayList<>();
+	private Map<String, ComboBox<Integer>> registryStrategies = new HashMap<>();
 	
 	private ObservableList<SystemEntityPropertyEntry> entityData = FXCollections.observableArrayList();
 	private ObservableList<GoalEntry> goalData = FXCollections.observableArrayList();
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
+		initializeStrategyData();
+		initializeWorkflowButton();
+		initializeGoalStuff();
+		initializeRequirementStrategies();
+		initializeAddButton();
 		setTooltips();
 		addRatingTypeOptions();
 		addPropertyTableEntries();
-		initializeWorkflowButton();
-		initializeGoalStuff();
-		initializeAddButton();
 		
 		self = this;
 	}
@@ -204,6 +217,14 @@ public class SystemEntityController implements Initializable {
 		    "Add system goals"
 		);
 		
+		Tooltip reqStratTooltip = new Tooltip();
+		reqStratTooltip.setText(
+			    "Choose the used combination strategy when generating combinations for the given requirement.\n"
+			    + "This strategy changes what combinations are generated during the analyzer phase.\n\n"
+			    + "The different combinations are:\n"
+			    + strategyText
+		);
+		
 		Tooltip propertyTooltip = new Tooltip();
 		propertyTooltip.setText(
 		    "Choose the system entity properties by filling in the table with the right type.\n\n"
@@ -221,6 +242,7 @@ public class SystemEntityController implements Initializable {
 		ratingTypeLabel.setTooltip(ratingTypeTooltip);
 		usedServiceRegistriesLabel.setTooltip(registryTooltip);
 		goalsLabel.setTooltip(goalTooltip);
+		reqStratLabel.setTooltip(reqStratTooltip);
 		propertiesLabel.setTooltip(propertyTooltip);
 	}
 	
@@ -314,21 +336,6 @@ public class SystemEntityController implements Initializable {
                 }
             }
 		});
-		
-		/*propertyTable.setRowFactory(tv -> new TableRow<SystemEntityPropertyEntry> {
-            private Tooltip tooltip = new Tooltip();
-            @Override
-            public void updateItem(SystemEntityPropertyEntry entry, boolean empty) {
-                super.updateItem(person, empty);
-                
-                if (person == null) {
-                    setTooltip(null);
-                } else {
-                    //tooltip.setText(person.getFirstName()+" "+person.getLastName());
-                    //setTooltip(tooltip);
-                }
-            }
-        });*/
 	}
 	
 	private void addRatingTypeOptions() {
@@ -336,6 +343,28 @@ public class SystemEntityController implements Initializable {
 		ratingTypes.addAll(RatingType.values());
 		ratingTypeBox.setItems(ratingTypes);
 	}	
+	
+	private void initializeStrategyData() {
+		
+		String begin = "getAllServiceCombinations";
+		List<String> strategyTextList = new ArrayList<>();
+		
+		for (Method method : AbstractWorkflowQoSRequirement.class.getMethods()) {
+			if (method.isAnnotationPresent(CombinationStrategy.class)) {
+				if (method.getName().startsWith(begin)) {
+					Integer strategy = Integer.parseInt(method.getName().substring(begin.length()));
+					CombinationStrategy annotation = method.getAnnotation(CombinationStrategy.class);
+					
+					strategyList.add(strategy);
+					strategyTextList.add(strategy + ": " + annotation.combinationInfo());
+				}
+			}
+		}
+		
+		Collections.sort(strategyTextList);
+		strategyText = String.join("\n", strategyTextList);
+		Collections.sort(strategyList);
+	}
 	
 	private void initializeWorkflowButton() {
 		
@@ -441,6 +470,32 @@ public class SystemEntityController implements Initializable {
 		deleteColumn.setCellFactory(cellFactoryDelete);
 	}
 	
+	private void initializeRequirementStrategies() {
+		
+		AnchorPane requirementPane;
+		Label requirementLabel;
+		ComboBox<Integer> strategyBox;
+		ObservableList<Integer> strategies = FXCollections.observableArrayList();
+		strategies.setAll(strategyList);
+		
+		for (SystemRequirement requirement : SystemRequirement.values()) {
+			requirementPane = new AnchorPane();
+			
+			requirementLabel = new Label();
+			requirementLabel.setText(requirement.toString());
+			AnchorPane.setBottomAnchor(requirementLabel, 0.0);
+			AnchorPane.setTopAnchor(requirementLabel, 0.0);
+			
+			strategyBox = new ComboBox<Integer>();
+			strategyBox.setItems(strategies);			
+			AnchorPane.setRightAnchor(strategyBox, 10.0);
+			
+			requirementPane.getChildren().addAll(requirementLabel, strategyBox);	
+			requirementStrategyList.getItems().add(requirementPane);
+			registryStrategies.put(requirement.toString(), strategyBox);
+		}
+	}
+	
 	private void initializeAddButton() {
 		
 		addBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -463,6 +518,12 @@ public class SystemEntityController implements Initializable {
 		    		Alert fail = new Alert(AlertType.WARNING);
 		            fail.setHeaderText("MISSING CONTENT");
 		            fail.setContentText("No Service registry selected.");
+		            fail.showAndWait();	
+		    	}
+		    	else if (registryStrategies.values().stream().anyMatch(x -> x.getValue() == null)) {
+		    		Alert fail = new Alert(AlertType.WARNING);
+		            fail.setHeaderText("MISSING CONTENT");
+		            fail.setContentText("Not all system requirements have a selected combination strategy.");
 		            fail.showAndWait();	
 		    	}
 		    	else if (propertyTable.getItems().stream().anyMatch(x -> x.getValue() == "")) {
