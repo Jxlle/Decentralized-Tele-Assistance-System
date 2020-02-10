@@ -8,7 +8,7 @@ package tas.mape.planner;
 public enum RatingType {
 	
 	// Available ratings
-	NUMBER(Double.class),
+	SCORE(Double.class),
 	CLASS(Integer.class);
 	
 	// Fields

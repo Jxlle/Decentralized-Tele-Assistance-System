@@ -4,8 +4,10 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -47,6 +49,7 @@ import service.registry.ServiceRegistry;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CombinationStrategy;
 import tas.mape.knowledge.Goal;
+import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.planner.RatingType;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.MAPEKComponent.Builder;
@@ -199,25 +202,29 @@ public class SystemEntityController implements Initializable {
 		Tooltip workflowTooltip = new Tooltip();
 		workflowTooltip.setText(
 		    "Select which workflow (.txt)\n" +
-		    "this system entity uses"
+		    "this system entity uses."
 		);
 		
 		Tooltip ratingTypeTooltip = new Tooltip();
 		ratingTypeTooltip.setText(
-		    "Select which rating type\n" +
-		    "this system entity uses"
+		    "Select which rating type this system entity uses.\n\n"
+			+ "The different rating types are:\n"
+		    + "SCORE: Each service combination will be given a score as rating.\n"
+			+ "CLASS: Each service combination will be given a class as rating.\n"
+		    + "             The class the combination is in is based on the goal constraints."
 		);
 		
 		Tooltip registryTooltip = new Tooltip();
 		registryTooltip.setText(
 		    "Select which service registries\n" +
-		    "this system entity uses\n"
+		    "this system entity uses.\n"
 		);
 		
 		Tooltip goalTooltip = new Tooltip();
 		goalTooltip.setText(
-		    "(OPTIONAL)\n" +
-		    "Add system goals"
+		    "Add system goals when the rating type is CLASS.\n"
+		    + "There needs to be atleast one goal of each type.\n"
+		    + "Each goal type is used for a certain system requirement."
 		);
 		
 		Tooltip reqStratTooltip = new Tooltip();
@@ -423,30 +430,45 @@ public class SystemEntityController implements Initializable {
 		goalBtn.setOnAction(new EventHandler<ActionEvent>() {
 		    @Override
 			public void handle(ActionEvent event) {
-	    		try {
-	    			
-	    		    FXMLLoader loader = new FXMLLoader();
-	    		    loader.setLocation(MainGui.class.getResource("view/goalDialog.fxml"));
-	    		    AnchorPane systemEntityPane = (AnchorPane) loader.load();
-	
-	    		    Stage dialogStage = new Stage();
-	    		    dialogStage.setTitle("Add Goal");
-	    		    dialogStage.setResizable(false);
-	
-	    		    controller = (GoalController) loader.getController();
-	    		    controller.setStage(dialogStage);
-	    		    controller.setParent(self);
-	    		    
-	    		    Scene dialogScene = new Scene(systemEntityPane);
-	        	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
-	    		    dialogStage.initOwner(stage);
-	    		    dialogStage.setScene(dialogScene);
-	        	    dialogStage.setResizable(false);
-	    		    dialogStage.show();
-	        	    
-	    		} catch (Exception e) {
-	    		    e.printStackTrace();
-	    		}
+		    	
+		    	if (ratingTypeBox.getValue() == null) {
+		    		Alert fail = new Alert(AlertType.INFORMATION);
+		            fail.setHeaderText("INFORMATION");
+		            fail.setContentText("Please select a rating type first.");
+		            fail.showAndWait();
+		    	}
+		    	else if (ratingTypeBox.getValue() == RatingType.SCORE) {
+		    		Alert fail = new Alert(AlertType.INFORMATION);
+		            fail.setHeaderText("INFORMATION");
+		            fail.setContentText("Goals are not used in combination with a score rating type.");
+		            fail.showAndWait();
+		    	}
+		    	else {
+		    		try {
+		    			
+		    		    FXMLLoader loader = new FXMLLoader();
+		    		    loader.setLocation(MainGui.class.getResource("view/goalDialog.fxml"));
+		    		    AnchorPane systemEntityPane = (AnchorPane) loader.load();
+		
+		    		    Stage dialogStage = new Stage();
+		    		    dialogStage.setTitle("Add Goal");
+		    		    dialogStage.setResizable(false);
+		
+		    		    controller = (GoalController) loader.getController();
+		    		    controller.setStage(dialogStage);
+		    		    controller.setParent(self);
+		    		    
+		    		    Scene dialogScene = new Scene(systemEntityPane);
+		        	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
+		    		    dialogStage.initOwner(stage);
+		    		    dialogStage.setScene(dialogScene);
+		        	    dialogStage.setResizable(false);
+		    		    dialogStage.show();
+		        	    
+		    		} catch (Exception e) {
+		    		    e.printStackTrace();
+		    		}
+		    	}
 		    }
 		});
 		
@@ -528,6 +550,18 @@ public class SystemEntityController implements Initializable {
 		}
 	}
 	
+	private boolean hasAllGoalTypes() {
+		
+		HashSet<GoalType> goalTypes = new HashSet<>();
+		HashSet<GoalType> allGoalTypes = new HashSet<>(Arrays.asList(GoalType.values()));
+		
+		for (Goal goal : goals) {
+			goalTypes.add(goal.getType());
+		}
+		 
+		return goalTypes.equals(allGoalTypes);
+	}
+	
 	private void initializeAddButton() {
 		
 		addBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -550,6 +584,12 @@ public class SystemEntityController implements Initializable {
 		    		Alert fail = new Alert(AlertType.WARNING);
 		            fail.setHeaderText("MISSING CONTENT");
 		            fail.setContentText("No Service registry selected.");
+		            fail.showAndWait();	
+		    	}
+		    	else if (ratingTypeBox.getValue() == RatingType.CLASS && !hasAllGoalTypes()) {
+		    		Alert fail = new Alert(AlertType.WARNING);
+		            fail.setHeaderText("MISSING CONTENT");
+		            fail.setContentText("There needs to be atleast one goal of each type to work with all possible system requirements.");
 		            fail.showAndWait();	
 		    	}
 		    	else if (registryStrategies.values().stream().anyMatch(x -> x.getValue() == null)) {

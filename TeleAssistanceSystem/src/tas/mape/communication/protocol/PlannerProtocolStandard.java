@@ -22,7 +22,7 @@ import tas.mape.planner.ServiceCombination;
  * 3) The other planner gets "NEW_OFFER". It adjusts its service combination list based on the response it got. 
  *    It does a check depending on the rating type of the service combinations:
  * 
- * 	  NUMBER:
+ * 	  SCORE:
  *    It checks if his best service combination is still the same service combination as before. 
  *    
  *    CLASS:
@@ -68,7 +68,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 			
 			switch (newServiceCombinations.get(0).getRatingType()) {
 			
-			case NUMBER:
+			case SCORE:
 				
 				if (newServiceCombinations.get(0).hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == maxIterations) {
 					responseType = "ACCEPTED_OFFER";

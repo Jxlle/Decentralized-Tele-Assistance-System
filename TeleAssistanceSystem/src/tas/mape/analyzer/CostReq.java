@@ -41,7 +41,7 @@ public class CostReq extends AbstractWorkflowQoSRequirement {
 		
 		switch (ratingType) {
 		
-		case NUMBER:	
+		case SCORE:	
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
 				scoreList.add(GetNumberRatingDouble(getTotalValue(allServiceCombinations.get(i), usedProperty)));	
 			}

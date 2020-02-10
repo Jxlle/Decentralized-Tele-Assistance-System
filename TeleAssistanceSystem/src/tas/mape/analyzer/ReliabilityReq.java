@@ -41,7 +41,7 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 		
 		switch (ratingType) {
 		
-		case NUMBER:	
+		case SCORE:	
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
 				scoreList.add(GetNumberRatingDouble(getTotalValue(allServiceCombinations.get(i), usedProperty)));	
 			}
@@ -82,7 +82,7 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 		
 		switch (serviceCombinations.get(0).getRatingType()) {
 		
-		case NUMBER:	
+		case SCORE:	
 			for (int i = 0; i < serviceCombinations.size(); i++) {
 				scoreList.add(GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), serviceFailureRates, usedProperty)));
 			}

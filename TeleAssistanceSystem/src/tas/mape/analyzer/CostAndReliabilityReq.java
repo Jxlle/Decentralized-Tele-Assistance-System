@@ -41,7 +41,7 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 		
 		switch (ratingType) {
 		
-		case NUMBER:
+		case SCORE:
 			
 			// Calculate requirement scores
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
@@ -142,7 +142,7 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 		
 		switch (serviceCombinations.get(0).getRatingType()) {
 		
-		case NUMBER:
+		case SCORE:
 			
 			// Calculate requirement scores
 			for (int i = 0; i < serviceCombinations.size(); i++) {
