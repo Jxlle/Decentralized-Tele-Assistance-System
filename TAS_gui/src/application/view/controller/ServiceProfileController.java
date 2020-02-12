@@ -18,8 +18,6 @@ import service.atomic.ServiceProfileAttribute;
 import service.auxiliary.Operation;
 import service.auxiliary.ServiceDescription;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,24 +25,19 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -106,8 +99,6 @@ public class ServiceProfileController implements Initializable {
 	
 	
 	private ServiceProfile currentProfile;
-	private String currentProfileName;
-	private String currentProfileType;
 	private String attributeEditText = "edit_to_add";
 	
 	public void setStage(Stage dialogStage){
@@ -258,8 +249,6 @@ public class ServiceProfileController implements Initializable {
 								AttributeEntry attribute = new AttributeEntry(String.valueOf(key),field.getName(),type,String.valueOf(value.get(key)));		
 								
 								attributeData.add(attribute);
-								currentProfileName = field.getName();
-								currentProfileType = type;
 							}
 							
 						}		
@@ -554,80 +543,6 @@ public class ServiceProfileController implements Initializable {
 		
 		serviceProfileTable.setItems(attributeData);
 		serviceProfileTable.getColumns().addAll(profileKeyColumn, profileNameColumn, profileTypeColumn, profileValueColumn, deleteColumn);
-		
-			
-		ContextMenu contextMenu = new ContextMenu();
-		MenuItem item = new MenuItem("Add new profile");
-		item.setOnAction(new EventHandler<ActionEvent>() {
-		    public void handle(ActionEvent e) {
-		    	
-				Dialog<Void> dialog = new Dialog<>();
-				dialog.setTitle("New Profile");
-				
-				ButtonType okButtonType = new ButtonType("OK",ButtonData.OK_DONE);
-				dialog.getDialogPane().getButtonTypes().setAll(okButtonType);
-
-				GridPane grid = new GridPane();
-				grid.setHgap(10);
-				grid.setVgap(10);
-				grid.setPadding(new Insets(20, 40, 10, 20));
-
-				TextField invocationsField = new TextField();
-				invocationsField.setText("");
-				invocationsField.textProperty().addListener(new ChangeListener<String>() {
-				    @Override 
-				    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				        if (!newValue.matches("\\d*")) {
-				        	invocationsField.setText(oldValue);
-				        }
-				    }
-				});
-
-				TextField valueField = new TextField();
-				valueField.setText("");
-				
-				grid.add(new Label("Invocations: "), 0, 0);
-				grid.add(invocationsField, 1, 0);
-				grid.add(new Label("Value: "), 0, 1);
-				grid.add(valueField, 1, 1);
-
-				dialog.getDialogPane().setContent(grid);
-
-				dialog.setResultConverter(dialogButton -> {
-				    if (dialogButton == okButtonType) {
-				    	
-				    	String invocations=invocationsField.getText();
-				    	String value=valueField.getText();
-				    	
-						AttributeEntry attribute=new AttributeEntry(invocations,currentProfileName,currentProfileType,value);			
-						attributeData.add(attribute);
-
-                    	Object realValue= attribute.getRealValue(value);
-                    	
-                    	if(realValue!=null){
-                    		
-            	    	for(Field field: currentProfile.getClass().getFields()){			
-            				if(field.getAnnotation(ServiceProfileAttribute.class)!=null){                    					
-            					if(field.getName().equals(attribute.getName())){
-            							try {
-											((TreeMap<Integer,Object>)field.get(currentProfile)).put(Integer.parseInt(invocations),realValue);
-										} catch (Exception e1) {
-											e1.printStackTrace();
-										}
-                					break;
-            					}
-            				}
-            	    	}
-                    	}											
-				    }
-					return null;
-				});
-				
-				dialog.showAndWait();
-		    }
-		});
-		contextMenu.getItems().add(item);
-		serviceProfileTable.setContextMenu(contextMenu);
 	}
 	
 	@SuppressWarnings("unchecked")
