@@ -13,7 +13,7 @@ public class InputProfile {
 	
 	// TODO CHANGE!!!
 	protected int maxSteps;
-	protected SystemRequirement requirement;
+	protected SystemRequirementType requirement;
 	protected String qosRequirement;
 	protected List<InputProfileVariable> variables=new ArrayList<>();
 	protected List<Requirement> requirements=new ArrayList<>();
@@ -86,7 +86,7 @@ public class InputProfile {
 	 * Get the system requirement
 	 * @return the system requirement
 	 */
-	public SystemRequirement getSystemRequirement() {
+	public SystemRequirementType getSystemRequirement() {
 		return requirement;
 	}
 	

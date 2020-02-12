@@ -46,6 +46,10 @@ public class SystemServiceInfo {
     	return serviceRegistries;
     }
     
+    public ServiceRegistry getRegistry(String registryEndpoint) {
+    	return serviceRegistries.stream().filter(x -> x.getServiceDescription().getServiceEndpoint().equals(registryEndpoint)).findFirst().orElse(null);
+    }
+    
     public LinkedHashMap<String,String> getServiceTypes(){
     	return this.serviceTypes;
     }

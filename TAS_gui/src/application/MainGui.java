@@ -42,7 +42,6 @@ public class MainGui extends Application {
 			controller.setCompositeService(tasStart.getAssistanceService());
 			controller.setProbe(tasStart.getMonitor());
 			controller.setConfigurations(tasStart.getAdaptationEngines());
-			controller.setServiceRegistries(tasStart.getServiceRegistries());
 			
 			Scene scene=new Scene(pane);
 			scene.getStylesheets().add(getClass().getResource("view/application.css").toExternalForm());

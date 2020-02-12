@@ -3,7 +3,7 @@ package tas.mape.system.entity;
 import java.util.List;
 import java.util.Map;
 
-import profile.SystemRequirement;
+import profile.SystemRequirementType;
 import service.composite.CompositeService;
 import tas.mape.analyzer.Analyzer;
 import tas.mape.communication.message.ComponentMessageHost;
@@ -82,7 +82,7 @@ public class MAPEKComponent {
 		 * @throws InstantiationException throw when the knowledge field is null
 		 * @throws InstantiationException throw when the planner field is null
 		 */
-		public Builder initializeAnalyzer(int combinationLimit, RatingType ratingType, Map<SystemRequirement, Integer> requirementStrategies) 
+		public Builder initializeAnalyzer(int combinationLimit, RatingType ratingType, Map<SystemRequirementType, Integer> requirementStrategies) 
 				throws InstantiationException {
 			
 			if (knowledge == null) {
@@ -156,7 +156,7 @@ public class MAPEKComponent {
 	private MAPEKComponent() {}
 	
 	// The methods below are exact same methods found in the components. These are
-	// implemented so the user can change component parameters without misusing the components.
+	// implemented so the user of this class can change component parameters without mis-using the internal components.
 	
 	/**
 	 * Initialize the executor components with the given composite service.
@@ -211,7 +211,7 @@ public class MAPEKComponent {
 	 * @param requirement the given system requirement
 	 * @return the analyzer strategy number
 	 */
-	public Integer getRequirementStrategy(SystemRequirement requirement) {
+	public Integer getRequirementStrategy(SystemRequirementType requirement) {
 		return analyzer.getRequirementStrategy(requirement);
 	}
 	
@@ -220,7 +220,7 @@ public class MAPEKComponent {
 	 * @param requirement the given system requirement
 	 * @param strategy the given strategy number
 	 */
-	public void setRequirementStrategy(SystemRequirement requirement, Integer strategy) {
+	public void setRequirementStrategy(SystemRequirementType requirement, Integer strategy) {
 		analyzer.setRequirementStrategy(requirement, strategy);
 	}
 	
@@ -228,7 +228,7 @@ public class MAPEKComponent {
 	 * Remove the analyzer requirement strategy with the given system requirement
 	 * @param requirement the given system requirement
 	 */
-	public void removeRequirementStrategy(SystemRequirement requirement) {
+	public void removeRequirementStrategy(SystemRequirementType requirement) {
 		analyzer.removeRequirementStrategy(requirement);
 	}
 	
@@ -278,6 +278,14 @@ public class MAPEKComponent {
 	 */
 	public AbstractProtocol<PlannerMessage, Planner> getProtocol() {
 		return planner.getProtocol();
+	}
+	
+	/**
+	 * Return the used registry endpoints
+	 * @return the used registry endpoints
+	 */
+	public List<String> getRegistryEndpoints() {
+		return knowledge.getRegistryEndpoints();
 	}
 	
 	/**

@@ -3,14 +3,18 @@ package application.view.controller;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,7 +45,12 @@ import service.workflow.ast.rspLexer;
 import service.workflow.ast.rspParser;
 import tas.adaptation.AdaptationEngine;
 import tas.adaptation.TASStart;
+import tas.mape.planner.RatingType;
+import tas.mape.system.entity.MAPEKComponent;
+import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.entity.SystemServiceInfo;
+import tas.mape.system.entity.WorkflowExecutor;
+import tas.mape.system.entity.MAPEKComponent.Builder;
 import tas.services.assistance.AssistanceServiceCostProbe;
 import application.MainGui;
 import application.model.CostEntry;
@@ -69,6 +78,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -88,7 +98,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 //TODO
-// Service panes list with endpoints instead of names, names are not unique, endpoints are usually
+// Service panes list with endpoints instead of names, names are not unique, endpoints usually are.
 public class ApplicationController implements Initializable {
 
     Stage primaryStage;
@@ -104,7 +114,7 @@ public class ApplicationController implements Initializable {
     
     String baseDir="";
     
-    String workflowPath = baseDir+"resources" + File.separator + "TeleAssistanceWorkflow.txt";
+    String workflowPath;
     String resultFilePath = baseDir+"results" + File.separator + "result.csv";
     String logFilePath=baseDir+"results" + File.separator + "log.csv";
     
@@ -120,15 +130,21 @@ public class ApplicationController implements Initializable {
     AssistanceServiceCostProbe probe;
     TASStart tasStart;
     SystemServiceInfo serviceInfo = new SystemServiceInfo();
+    SystemEntity selectedEntity;
+    List<SystemEntity> entities = new ArrayList<>();
+    Map<String, List<ServiceRegistry>> entityRegistries;
 
     Set<Button> profileRuns = new HashSet<>();
-    int maxSteps;
     Map<String, AdaptationEngine> adaptationEngines;
     Map<String, AnchorPane> servicePanes = new ConcurrentHashMap<>();
     Map<String, ListView<AnchorPane>> serviceRegistryPanes = new ConcurrentHashMap<>();
+    int maxSteps;
     
     @FXML
     ListView<AnchorPane> profileListView;
+    
+    @FXML
+    ListView<AnchorPane> entityListView;
     
     @FXML
     TextArea workflowTextArea;
@@ -141,9 +157,6 @@ public class ApplicationController implements Initializable {
     
     @FXML
     TableView<PerformanceEntry> performanceTableView;
-
-    @FXML
-    MenuItem openWorkflowMenuItem;
 
     @FXML
     MenuItem openServicesMenuItem;
@@ -206,6 +219,9 @@ public class ApplicationController implements Initializable {
     Button addSystemEntityBtn;
     
     @FXML
+    Button saveWorkflowButton;
+    
+    @FXML
     MenuItem saveReliabilityGraphMenuItem;
 
     @FXML
@@ -241,6 +257,12 @@ public class ApplicationController implements Initializable {
     @FXML
     MenuItem saveInvMenuItem;
     
+    @FXML
+    TabPane entityTabPane;
+    
+    @FXML
+    TitledPane serviceTitledPane;
+    
     Object preAdaptation;
     Object currentAdaptation="No Adaptation";
     
@@ -249,18 +271,10 @@ public class ApplicationController implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-    	try {
-    	    String content = new String(Files.readAllBytes(Paths.get(workflowPath)));
-    	    workflowTextArea.setText(content);
-    	    
-    	    this.generateSequenceDiagram(workflowPath);
-    	    
-    	} catch (IOException e) {
-    	    e.printStackTrace();
-    	}
 
     	this.fillProfiles();
     	this.setButton();
+    	this.addTestEntity();
 
     	scheduExec.scheduleAtFixedRate(new Runnable() {
     	    @Override
@@ -308,6 +322,48 @@ public class ApplicationController implements Initializable {
 
     }
     
+	public void addEntityToList(SystemEntity entity) {
+		
+		entities.add(entity);
+		
+		AnchorPane entityPane = new AnchorPane();
+		entityPane.setId(entity.getEntityName());
+
+		Button selectButton = new Button();
+		selectButton.setText(entity.getEntityName());
+		selectButton.setId("profileButton");
+		selectButton.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override
+			public void handle(ActionEvent event) {   
+		    	selectedEntity = entities.stream().filter(x -> x.getEntityName().equals(selectButton.getText())).findFirst().orElse(null);
+		    	entityTabPane.setVisible(true);
+		    	serviceTitledPane.setVisible(true);
+		    	selectEntity();
+		    }
+		});
+    	
+    	Button deleteButton = new Button();
+    	deleteButton.setText("Delete");
+    	deleteButton.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override
+			public void handle(ActionEvent event) {   	
+		    	AnchorPane parent = (AnchorPane) deleteButton.getParent();
+		    	Button button = (Button) parent.getChildren().get(0);
+		    	entities.removeIf(x -> x.getEntityName().equals(button.getText()));
+		    	entityListView.getItems().remove(parent);
+		    }
+		});
+    	
+    	AnchorPane.setLeftAnchor(selectButton, 10.0);
+    	AnchorPane.setTopAnchor(selectButton, 10.0);
+    	AnchorPane.setBottomAnchor(selectButton, 10.0);
+    	AnchorPane.setRightAnchor(deleteButton, 10.0);
+    	AnchorPane.setTopAnchor(deleteButton, 10.0);
+    	AnchorPane.setBottomAnchor(deleteButton, 10.0);
+    	
+    	entityPane.getChildren().addAll(deleteButton, selectButton);
+    	entityListView.getItems().add(entityPane);
+	}
 
     public void setPrimaryStage(Stage primaryStage) {
     	this.primaryStage = primaryStage;
@@ -325,17 +381,77 @@ public class ApplicationController implements Initializable {
     public void setProbe(AssistanceServiceCostProbe probe) {
     	this.probe = probe;
     }
-
-    public void setServiceRegistries(List<ServiceRegistry> serviceRegistries) {
-    	this.serviceRegistries = serviceRegistries;
-    	openServicesMenuItem.fire();
-    }
     
     public void setTasStart(TASStart tasStart) {
     	this.tasStart = tasStart;
       	chartController = new ChartController(reliabilityChartPane, costChartPane,performanceChartPane,invCostChartPane,
     			avgReliabilityChartPane, avgCostChartPane, avgPerformanceChartPane,invRateChartPane,tasStart.getServiceTypes());
     	tableViewController = new TableViewController(reliabilityTableView, costTableView,performanceTableView);
+    }
+    
+    private void addTestEntity() {
+    	
+		WorkflowExecutor workflowExecutor = new WorkflowExecutor(new ArrayList<>());	
+		workflowExecutor.setWorkflowPath(baseDir + "resources" + File.separator + "TeleAssistanceWorkflow.txt");
+		
+		MAPEKComponent.Builder builder = new Builder();
+		
+		try {
+			builder.initializeKnowledge(1, new ArrayList<String>(Arrays.asList("se.lnu.service.registry")))
+			 	   .initializePlanner("planner")
+				   .initializeAnalyzer(1, RatingType.SCORE, new HashMap<>())
+				   .initializeMonitor(1, 1);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		}
+		
+		MAPEKComponent component = builder.build();
+		SystemEntity systemEntity = new SystemEntity("Test Entity", workflowExecutor, component);
+		addEntityToList(systemEntity);
+		
+		workflowExecutor = new WorkflowExecutor(new ArrayList<>());	
+		workflowExecutor.setWorkflowPath(baseDir + "resources" + File.separator + "workflow_test1.txt");
+		
+		builder = new Builder();
+		
+		try {
+			builder.initializeKnowledge(1, new ArrayList<String>(Arrays.asList("se.lnu.service.registry", "se.lnu.service.registry2")))
+			 	   .initializePlanner("planner")
+				   .initializeAnalyzer(1, RatingType.SCORE, new HashMap<>())
+				   .initializeMonitor(1, 1);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		}
+		
+		component = builder.build();
+		systemEntity = new SystemEntity("Test Entity 2 ", workflowExecutor, component);
+		addEntityToList(systemEntity);
+    }
+    
+    private void selectEntity() {
+    	
+    	// Set workflow data
+    	workflowPath = selectedEntity.getManagedSystem().getWorkflowPath();
+    	
+    	try {
+    	    String content = new String(Files.readAllBytes(Paths.get(workflowPath)));
+    	    workflowTextArea.setText(content);
+    	    
+    	    this.generateSequenceDiagram(workflowPath);
+    	    
+    	} catch (IOException e) {
+    	    e.printStackTrace();
+    	}
+    	
+    	// Set service data
+    	List<ServiceRegistry> serviceRegistries = new ArrayList<>();
+    	
+    	for (String registryEndpoint : selectedEntity.getManagingSystem().getRegistryEndpoints()) {
+    		serviceRegistries.add(serviceInfo.getRegistry(registryEndpoint));
+    	}
+    	
+    	this.serviceRegistries = serviceRegistries;
+    	openServicesMenuItem.fire();
     }
 
     private void addItems() {
@@ -368,10 +484,7 @@ public class ApplicationController implements Initializable {
     	        });
     	      }
     	      
-    	      currentAdaptation=newValue.getUserData();
-    	      //adaptationEngines.get(oldValue.getUserData()).stop();
-    	      //adaptationEngines.get(newValue.getUserData()).start();
-    	      
+    	      currentAdaptation=newValue.getUserData();    	      
     	    }
     	  });
     	progressBar=new ProgressBar(0);
@@ -400,44 +513,14 @@ public class ApplicationController implements Initializable {
     		    }
     		 }
     	});
-    	
-    	openWorkflowMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-    	    @Override
-    	    public void handle(ActionEvent event) {
-    		FileChooser fileChooser = new FileChooser();
-    		fileChooser.setInitialDirectory(new File(resourceDirPath));
-    		fileChooser.setTitle("Select workflow");
-    		FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Add Files(*.txt)", "*.txt");
-    		fileChooser.getExtensionFilters().add(extension);
-    		File file = fileChooser.showOpenDialog(primaryStage);
-    		if (file != null) {
-    		    System.out.println(file.getPath());
-    		    try {
-    			String content = new String(Files.readAllBytes(file.toPath()));
-    			workflowPath = file.getPath();
-    			workflowTextArea.setText(content);
-    			
-    			generateSequenceDiagram(workflowPath);
-
-    			Platform.runLater(new Runnable() {
-    			    @Override
-    			    public void run() {
-    				for (Button runButton : profileRuns)
-    				    runButton.setDisable(false);
-    			    }
-    			});
-
-    		    } catch (IOException e) {
-    			e.printStackTrace();
-    		    }
-    		}
-    	    }
-    	});
 
     	openServicesMenuItem.setOnAction(new EventHandler<ActionEvent>() {
     	    @Override
     	    public void handle(ActionEvent event) {
     	    	
+    	    	serviceRegistryAcc.getPanes().removeAll(serviceRegistryAcc.getPanes());
+    	    	serviceRegistryPanes = new HashMap<>();
+    	    	servicePanes = new HashMap<>();
         	    List<String> services = new ArrayList<String>();	
     	    	
         	    for (ServiceRegistry registry : serviceRegistries) {
@@ -820,7 +903,10 @@ public class ApplicationController implements Initializable {
     	    }
     	});
     	
+		ApplicationController self = this;
+    	
     	addSystemEntityBtn.setOnAction(new EventHandler<ActionEvent>() {
+    		
     	    @Override
     	    public void handle(ActionEvent event) {
 	    		try {
@@ -836,6 +922,7 @@ public class ApplicationController implements Initializable {
 	    		    SystemEntityController controller = (SystemEntityController) loader.getController();
 	    		    controller.setStage(dialogStage);
 	    		    controller.addRegistryChoices(serviceInfo);
+	    		    controller.setParent(self);
 	
 	    		    Scene dialogScene = new Scene(systemEntityPane);
 	        	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
@@ -895,6 +982,17 @@ public class ApplicationController implements Initializable {
     		} catch (Exception e) {
     		    e.printStackTrace();
     		}
+    	    }
+    	});
+    	
+    	saveWorkflowButton.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override
+    	    public void handle(ActionEvent event) {
+    	    	try (PrintWriter out = new PrintWriter(workflowPath)) {
+    	    	    out.println(workflowTextArea.getText());
+    	    	} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
     	    }
     	});
 

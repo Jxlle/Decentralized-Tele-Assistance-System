@@ -5,7 +5,7 @@ package profile;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public enum SystemRequirement {
+public enum SystemRequirementType {
 	COST,
 	RELIABILITY,
 	COST_AND_RELIABILITY;

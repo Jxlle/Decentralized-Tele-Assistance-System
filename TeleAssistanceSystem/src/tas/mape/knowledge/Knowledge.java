@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javafx.util.Pair;
-import profile.SystemRequirement;
+import profile.SystemRequirementType;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
@@ -23,6 +23,8 @@ import tas.mape.system.entity.WorkflowExecutor;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
+
+// TODO Return copies but not the original lists for security
 public class Knowledge {
 	
 	// Parent system entity this component belongs to
@@ -51,12 +53,12 @@ public class Knowledge {
 	private Map<Description, List<ServiceDescription>> usableServices;
 	
 	// map containing all possible requirement and abstract workflow requirement classes pairs
-	private static HashMap<SystemRequirement, AbstractWorkflowQoSRequirement> QoSRequirementClasses = new HashMap<SystemRequirement, AbstractWorkflowQoSRequirement>() {
+	private static HashMap<SystemRequirementType, AbstractWorkflowQoSRequirement> QoSRequirementClasses = new HashMap<SystemRequirementType, AbstractWorkflowQoSRequirement>() {
 		private static final long serialVersionUID = 1L;
 	{
-        put(SystemRequirement.COST, new CostReq());
-        put(SystemRequirement.RELIABILITY, new ReliabilityReq());
-        put(SystemRequirement.COST_AND_RELIABILITY, new CostAndReliabilityReq());
+        put(SystemRequirementType.COST, new CostReq());
+        put(SystemRequirementType.RELIABILITY, new ReliabilityReq());
+        put(SystemRequirementType.COST_AND_RELIABILITY, new CostAndReliabilityReq());
     }};;
 	
 	/**
@@ -123,7 +125,7 @@ public class Knowledge {
 	 * @param requirement the given requirement
 	 * @return the QoS requirement class
 	 */
-	public AbstractWorkflowQoSRequirement getQoSRequirementClass(SystemRequirement requirement) {
+	public AbstractWorkflowQoSRequirement getQoSRequirementClass(SystemRequirementType requirement) {
 		return QoSRequirementClasses.get(requirement);
 	}
 	
@@ -133,7 +135,7 @@ public class Knowledge {
 	 * @param requirementClass the new requirement class
 	 * @throws IllegalArgumentException throw when the given requirement name is already linked to a requirement class
 	 */
-	public void AddQoSRequirementClass(SystemRequirement requirement, AbstractWorkflowQoSRequirement requirementClass) throws IllegalArgumentException {
+	public void AddQoSRequirementClass(SystemRequirementType requirement, AbstractWorkflowQoSRequirement requirementClass) throws IllegalArgumentException {
 	
 		if (QoSRequirementClasses.get(requirement) == null) {
 			throw new IllegalArgumentException("The given requirement is already linked to a requirement class!");

@@ -44,7 +44,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import profile.SystemRequirement;
+import profile.SystemRequirementType;
 import service.registry.ServiceRegistry;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CombinationStrategy;
@@ -128,12 +128,11 @@ public class SystemEntityController implements Initializable {
 	private String workflowPath, strategyText, plannerEndpoint, entityName;
 	private String resourceDirPath = baseDir + "resources" + File.separator;
 	private Stage stage;
-	private GoalController controller;
-	private SystemEntityController self;
+	private ApplicationController parent;
 	private List<ServiceRegistry> entityRegistries;
 	private List<Goal> goals = new ArrayList<>();
 	private List<Integer> strategyList = new ArrayList<>();
-	private Map<SystemRequirement, ComboBox<Integer>> registryStrategies = new HashMap<>();
+	private Map<SystemRequirementType, ComboBox<Integer>> registryStrategies = new HashMap<>();
 	private ObservableList<SystemEntityPropertyEntry> entityData = FXCollections.observableArrayList();
 	private ObservableList<GoalEntry> goalData = FXCollections.observableArrayList();
 	
@@ -148,12 +147,14 @@ public class SystemEntityController implements Initializable {
 		setTooltips();
 		addRatingTypeOptions();
 		addPropertyTableEntries();
-		
-		self = this;
 	}
 	
 	public void setStage(Stage dialogStage) {
 		this.stage = dialogStage;
+	}
+	
+	public void setParent(ApplicationController parent) {
+		this.parent = parent;
 	}
 	
 	public void addRegistryChoices(SystemServiceInfo serviceInfo) {
@@ -427,6 +428,8 @@ public class SystemEntityController implements Initializable {
 	
 	private void initializeGoalStuff() {
 		
+		SystemEntityController self = this;
+		
 		goalBtn.setOnAction(new EventHandler<ActionEvent>() {
 		    @Override
 			public void handle(ActionEvent event) {
@@ -444,8 +447,7 @@ public class SystemEntityController implements Initializable {
 		            fail.showAndWait();
 		    	}
 		    	else {
-		    		try {
-		    			
+		    		try {	
 		    		    FXMLLoader loader = new FXMLLoader();
 		    		    loader.setLocation(MainGui.class.getResource("view/goalDialog.fxml"));
 		    		    AnchorPane systemEntityPane = (AnchorPane) loader.load();
@@ -454,7 +456,7 @@ public class SystemEntityController implements Initializable {
 		    		    dialogStage.setTitle("Add Goal");
 		    		    dialogStage.setResizable(false);
 		
-		    		    controller = (GoalController) loader.getController();
+		    		    GoalController controller = (GoalController) loader.getController();
 		    		    controller.setStage(dialogStage);
 		    		    controller.setParent(self);
 		    		    
@@ -532,7 +534,7 @@ public class SystemEntityController implements Initializable {
 		ObservableList<Integer> strategies = FXCollections.observableArrayList();
 		strategies.setAll(strategyList);
 		
-		for (SystemRequirement requirement : SystemRequirement.values()) {
+		for (SystemRequirementType requirement : SystemRequirementType.values()) {
 			requirementPane = new AnchorPane();
 			
 			requirementLabel = new Label();
@@ -607,13 +609,13 @@ public class SystemEntityController implements Initializable {
 		    	else {
 		    		
 		    		List<String> registryEndpoints = new ArrayList<>();
-		    		Map<SystemRequirement, Integer> requirementStrategies = new HashMap<>();
+		    		Map<SystemRequirementType, Integer> requirementStrategies = new HashMap<>();
 		    		
 		    		for (ServiceRegistry registry : entityRegistries) {
 		    			registryEndpoints.add(registry.getServiceDescription().getServiceEndpoint());
 		    		}
 		    		
-		    		for (SystemRequirement req : registryStrategies.keySet()) {
+		    		for (SystemRequirementType req : registryStrategies.keySet()) {
 		    			requirementStrategies.put(req, registryStrategies.get(req).getValue());
 		    		}
 		    		
@@ -638,11 +640,8 @@ public class SystemEntityController implements Initializable {
 		    		}
 		    	
 		    		SystemEntity systemEntity = new SystemEntity(entityName, workflowExecutor, component);
-		    		
-		    		// TODO
-		    		/*Goal goal = new Goal(typeBox.getValue(), relationBox.getValue(), Double.parseDouble(valueField.getText()));
-		    		parent.addGoalToList(goal);
-		    		stage.close();*/
+		    		parent.addEntityToList(systemEntity);
+		    		stage.close();
 		    	}
 		    }
 		});

@@ -36,7 +36,6 @@
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
                         <MenuButton mnemonicParsing="false" text="Open">
                           <items>
-                            <MenuItem fx:id="openWorkflowMenuItem" mnemonicParsing="false" text="Open Workflow" />
                               <MenuItem fx:id="changeServiceCollectionMenuItem" mnemonicParsing="false" text="Change Service Collection" />
                             <MenuItem fx:id="openServicesMenuItem" mnemonicParsing="false" text="Open Available Services" visible="false" />
                               <MenuItem fx:id="configureMenuItem" mnemonicParsing="false" text="Open Configuration" visible="false" />
@@ -64,7 +63,7 @@
                                  <center>
                                     <TitledPane animated="false" collapsible="false" text="Available System Entities" BorderPane.alignment="CENTER">
                                        <content>
-                                          <ListView />
+                                          <ListView fx:id="entityListView" />
                                        </content>
                                        <BorderPane.margin>
                                           <Insets />
@@ -83,7 +82,7 @@
                         </AnchorPane>
                       <AnchorPane minWidth="100.0" prefWidth="200.0">
                            <children>
-                              <TitledPane animated="false" collapsible="false" layoutY="24.0" prefHeight="255.0" prefWidth="233.0" text="Available Concrete Services" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TitledPane fx:id="serviceTitledPane" animated="false" collapsible="false" layoutY="24.0" prefHeight="255.0" prefWidth="233.0" text="Available Concrete Services" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <content>
                                   <AnchorPane fx:id="scrollAnchorPane" prefHeight="180.0" prefWidth="200.0">
                                        <children>
@@ -96,7 +95,7 @@
                         </AnchorPane>
                       <AnchorPane minWidth="200.0" prefWidth="400.0">
                            <children>
-                              <TabPane layoutX="19.0" layoutY="14.0" prefHeight="165.0" prefWidth="329.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TabPane fx:id="entityTabPane" layoutX="19.0" layoutY="14.0" prefHeight="165.0" prefWidth="329.0" tabClosingPolicy="UNAVAILABLE" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <tabs>
                                   <Tab text="Workflow Diagram">
                                     <content>
@@ -112,6 +111,7 @@
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
                                                 <TextArea fx:id="workflowTextArea" layoutX="48.0" layoutY="-21.0" prefHeight="132.0" prefWidth="438.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                                                <Button fx:id="saveWorkflowButton" layoutX="751.0" layoutY="218.0" mnemonicParsing="false" text="Save" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="30.0" />
                                              </children>
                                           </AnchorPane>
                                     </content>

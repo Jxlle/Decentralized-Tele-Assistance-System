@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import profile.ProfileExecutor;
-import profile.SystemRequirement;
+import profile.SystemRequirementType;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import tas.mape.knowledge.Goal;
@@ -26,7 +26,7 @@ public class Analyzer {
 	private boolean plannerRequired, executed;
 	private int combinationLimit;
 	private RatingType ratingType;
-	private Map<SystemRequirement, Integer> requirementStrategies;
+	private Map<SystemRequirementType, Integer> requirementStrategies;
 	private List<ServiceCombination> chosenServicesList;
 	
 	/**
@@ -37,7 +37,7 @@ public class Analyzer {
 	 * @param ratingType the given type of the rating for service combinations 
 	 * @param RequirementStrategies a map containing the strategy number for each requirement
 	 */
-	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, RatingType ratingType, Map<SystemRequirement, Integer> requirementStrategies) {
+	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, RatingType ratingType, Map<SystemRequirementType, Integer> requirementStrategies) {
 		this.knowledge = knowledge;
 		this.planner = planner;
 		this.combinationLimit = combinationLimit;
@@ -50,7 +50,7 @@ public class Analyzer {
 	 * @param requirement the given system requirement
 	 * @return the strategy number
 	 */
-	public Integer getRequirementStrategy(SystemRequirement requirement) {
+	public Integer getRequirementStrategy(SystemRequirementType requirement) {
 		return requirementStrategies.get(requirement);
 	}
 	
@@ -59,7 +59,7 @@ public class Analyzer {
 	 * @param requirement the given system requirement
 	 * @param strategy the given strategy number
 	 */
-	public void setRequirementStrategy(SystemRequirement requirement, Integer strategy) {
+	public void setRequirementStrategy(SystemRequirementType requirement, Integer strategy) {
 		requirementStrategies.put(requirement, strategy);
 	}
 	
@@ -67,7 +67,7 @@ public class Analyzer {
 	 * Remove the requirement strategy with the given system requirement
 	 * @param requirement the given system requirement
 	 */
-	public void removeRequirementStrategy(SystemRequirement requirement) {
+	public void removeRequirementStrategy(SystemRequirementType requirement) {
 		requirementStrategies.remove(requirement);
 	}
 	
@@ -113,7 +113,7 @@ public class Analyzer {
 	 */
 	private List<ServiceCombination> chooseServices() {
 		
-		SystemRequirement requirement = ProfileExecutor.profiles.get(knowledge.getSystemEntity().getEntityName()).getSystemRequirement();
+		SystemRequirementType requirement = ProfileExecutor.profiles.get(knowledge.getSystemEntity().getEntityName()).getSystemRequirement();
 		Map<Description, List<ServiceDescription>> usableServices = knowledge.getUsableServices();
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirement);
 		List<Goal> goals = knowledge.getGoals();
