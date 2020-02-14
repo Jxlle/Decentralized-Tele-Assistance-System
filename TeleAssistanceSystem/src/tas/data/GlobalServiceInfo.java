@@ -21,8 +21,7 @@ import tas.services.profiles.SimpleServiceFailureProfile;
  */
 public class GlobalServiceInfo {
     
-	// TODO
-	// Look what types do in GUI
+	// TODO Look what types do in GUI
     private List<AtomicService> services = new ArrayList<>();
     private List<Class<?>> serviceProfileClasses = new ArrayList<>();
     private List<ServiceRegistry> serviceRegistries = new ArrayList<>();

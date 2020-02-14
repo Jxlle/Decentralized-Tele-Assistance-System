@@ -395,7 +395,7 @@ public class ApplicationController implements Initializable {
     private void addTestEntity() {
     	
 		WorkflowExecutor workflowExecutor = new WorkflowExecutor(new ArrayList<>());	
-		workflowExecutor.setWorkflowPath(baseDir + "resources" + File.separator + "TeleAssistanceWorkflow.txt");
+		workflowExecutor.setWorkflowPath(fileDirPath + "TeleAssistanceWorkflow.txt");
 		
 		MAPEKComponent.Builder builder = new Builder();
 		
@@ -413,7 +413,7 @@ public class ApplicationController implements Initializable {
 		addEntityToList(systemEntity);
 		
 		workflowExecutor = new WorkflowExecutor(new ArrayList<>());	
-		workflowExecutor.setWorkflowPath(baseDir + "resources" + File.separator + "workflow_test1.txt");
+		workflowExecutor.setWorkflowPath(fileDirPath + "workflow_test1.txt");
 		
 		builder = new Builder();
 		
