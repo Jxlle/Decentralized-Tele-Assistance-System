@@ -1,7 +1,7 @@
 package tas.mape.knowledge;
 
 /**
- * Class representing a system goal
+ * Class representing a system threshold goal
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  * 

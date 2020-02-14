@@ -591,7 +591,7 @@ public class SystemEntityController implements Initializable {
 		    	else if (ratingTypeBox.getValue() == RatingType.CLASS && !hasAllGoalTypes()) {
 		    		Alert fail = new Alert(AlertType.WARNING);
 		            fail.setHeaderText("MISSING CONTENT");
-		            fail.setContentText("There needs to be atleast one goal of each type to work with all possible system requirements.");
+		            fail.setContentText("There needs to be atleast one threshold goal of each type to work with all possible system requirements.");
 		            fail.showAndWait();	
 		    	}
 		    	else if (registryStrategies.values().stream().anyMatch(x -> x.getValue() == null)) {
