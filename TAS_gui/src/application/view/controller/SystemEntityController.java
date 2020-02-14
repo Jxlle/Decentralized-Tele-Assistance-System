@@ -124,9 +124,8 @@ public class SystemEntityController implements Initializable {
 	
 	private int loadFailureDelta, combinationLimit;
 	private double minFailureDelta, failureChange;
-	private String baseDir = "";
 	private String workflowPath, strategyText, plannerEndpoint, entityName;
-	private String fileDirPath = baseDir + "resources" + File.separator + "files" + File.separator;
+	private String workflowFilePath = "resources" + File.separator + "files" + File.separator + "workflow" + File.separator;
 	private Stage stage;
 	private ApplicationController parent;
 	private List<ServiceRegistry> entityRegistries;
@@ -412,7 +411,7 @@ public class SystemEntityController implements Initializable {
 		    @Override
 			public void handle(ActionEvent event) {
 				FileChooser fileChooser = new FileChooser();
-				fileChooser.setInitialDirectory(new File(fileDirPath));
+				fileChooser.setInitialDirectory(new File(workflowFilePath));
 				fileChooser.setTitle("Select workflow");
 				FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Add Files(*.txt)", "*.txt");
 				fileChooser.getExtensionFilters().add(extension);

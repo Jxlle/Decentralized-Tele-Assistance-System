@@ -119,9 +119,12 @@ public class ApplicationController implements Initializable {
     String fileDirPath = baseDir + "resources" + File.separator + "files" + File.separator;
     
     String workflowPath;
+    String workflowFilePath = fileDirPath + "workflow" + File.separator;
+    String profileFilePath = fileDirPath + "profiles" + File.separator;
+    String serviceDataFilePath = fileDirPath + "service data" + File.separator;
     String resultFilePath = resultDirPath + "result.csv";
     String logFilePath = resultDirPath + "log.csv";
-    String defaultServiceDataPath = fileDirPath + "DefaultServiceData.xml";
+    String defaultServiceDataPath = serviceDataFilePath + "DefaultServiceData.xml";
 
     ScheduledExecutorService scheduExec = Executors.newScheduledThreadPool(5);
 
@@ -395,7 +398,7 @@ public class ApplicationController implements Initializable {
     private void addTestEntity() {
     	
 		WorkflowExecutor workflowExecutor = new WorkflowExecutor(new ArrayList<>());	
-		workflowExecutor.setWorkflowPath(fileDirPath + "TeleAssistanceWorkflow.txt");
+		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");
 		
 		MAPEKComponent.Builder builder = new Builder();
 		
@@ -413,7 +416,7 @@ public class ApplicationController implements Initializable {
 		addEntityToList(systemEntity);
 		
 		workflowExecutor = new WorkflowExecutor(new ArrayList<>());	
-		workflowExecutor.setWorkflowPath(fileDirPath + "workflow_test1.txt");
+		workflowExecutor.setWorkflowPath(workflowFilePath + "workflow_test1.txt");
 		
 		builder = new Builder();
 		
@@ -1000,15 +1003,18 @@ public class ApplicationController implements Initializable {
 		    @Override
 			public void handle(ActionEvent event) {
 				FileChooser fileChooser = new FileChooser();
-				fileChooser.setInitialDirectory(new File(fileDirPath));
+				fileChooser.setInitialDirectory(new File(serviceDataFilePath));
 				fileChooser.setTitle("Select service data");
 				FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Add Files(*.xml)", "*.xml");
 				fileChooser.getExtensionFilters().add(extension);
 				File file = fileChooser.showOpenDialog(primaryStage);
-				serviceInfo.loadData(file);
 				
-				if (selectedEntity != null) {
-					selectEntity();
+				if (file != null) {
+					serviceInfo.loadData(file);
+					
+					if (selectedEntity != null) {
+						selectEntity();
+					}
 				}
 		    }
     	});
@@ -1016,7 +1022,7 @@ public class ApplicationController implements Initializable {
     }
 
     private void fillProfiles() {
-	File folder = new File(fileDirPath);
+	File folder = new File(profileFilePath);
 	File[] files = folder.listFiles();
 
 	try {

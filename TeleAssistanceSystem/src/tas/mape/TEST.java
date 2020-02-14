@@ -300,10 +300,10 @@ public class TEST {
 		//SoloLoopSystem s = new SoloLoopSystem(e);
 		// TODO system testing
 		
-		GlobalServiceInfo info = new GlobalServiceInfo();
+		/*GlobalServiceInfo info = new GlobalServiceInfo();
 		File file = new File("resources" + File.separator + "DefaultServiceData.xml");
 		//GlobalServiceInfoWriter.writeToXml(info, file);
 		info.loadData(file);
-		//GlobalServiceInfoLoader.loadFromXml(info, file);
+		//GlobalServiceInfoLoader.loadFromXml(info, file);*/
 	}
 }
