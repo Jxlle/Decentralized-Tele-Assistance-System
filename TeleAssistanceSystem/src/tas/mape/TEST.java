@@ -1,5 +1,6 @@
 package tas.mape;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +13,9 @@ import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import service.registry.ServiceRegistry;
+import tas.data.GlobalServiceInfo;
+import tas.data.GlobalServiceInfoLoader;
+import tas.data.GlobalServiceInfoWriter;
 import tas.mape.analyzer.CostAndReliabilityReq;
 import tas.mape.analyzer.CostReq;
 import tas.mape.analyzer.ReliabilityReq;
@@ -62,7 +66,6 @@ public class TEST {
 		init();
 	}
 	
-	@SuppressWarnings("unused")
 	public static void init() {
 		serviceRegistry = new ServiceRegistry("ServiceRegistry", "se.lnu.service.registry");
 		serviceRegistry.startService();
@@ -296,5 +299,11 @@ public class TEST {
 		//SystemEntity e = new SystemEntity(null, null);
 		//SoloLoopSystem s = new SoloLoopSystem(e);
 		// TODO system testing
+		
+		GlobalServiceInfo info = new GlobalServiceInfo();
+		File file = new File("resources" + File.separator + "DefaultServiceData.xml");
+		//GlobalServiceInfoWriter.writeToXml(info, file);
+		info.loadData(file);
+		//GlobalServiceInfoLoader.loadFromXml(info, file);
 	}
 }

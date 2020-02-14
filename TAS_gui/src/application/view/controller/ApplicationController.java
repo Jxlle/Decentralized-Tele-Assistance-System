@@ -45,10 +45,10 @@ import service.workflow.ast.rspLexer;
 import service.workflow.ast.rspParser;
 import tas.adaptation.AdaptationEngine;
 import tas.adaptation.TASStart;
+import tas.data.GlobalServiceInfo;
 import tas.mape.planner.RatingType;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.entity.SystemServiceInfo;
 import tas.mape.system.entity.WorkflowExecutor;
 import tas.mape.system.entity.MAPEKComponent.Builder;
 import tas.services.assistance.AssistanceServiceCostProbe;
@@ -97,8 +97,8 @@ import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-//TODO
-// Service panes list with endpoints instead of names, names are not unique, endpoints usually are.
+// TODO Service panes list with endpoints instead of names, names are not unique, endpoints usually are.
+// TODO Reset registry IDs when changing service data
 public class ApplicationController implements Initializable {
 
     Stage primaryStage;
@@ -114,13 +114,14 @@ public class ApplicationController implements Initializable {
     
     String baseDir="";
     
-    String workflowPath;
-    String resultFilePath = baseDir+"results" + File.separator + "result.csv";
-    String logFilePath=baseDir+"results" + File.separator + "log.csv";
+    String resourceDirPath = baseDir + "resources" + File.separator;
+    String resultDirPath = baseDir + "results" + File.separator;
+    String fileDirPath = baseDir + "resources" + File.separator + "files" + File.separator;
     
-    String resourceDirPath=baseDir+"resources" + File.separator;
-    String resultDirPath=baseDir+"results" + File.separator;
-    String profileDirPath=baseDir+"resources" + File.separator + "files" + File.separator;
+    String workflowPath;
+    String resultFilePath = resultDirPath + "result.csv";
+    String logFilePath = resultDirPath + "log.csv";
+    String defaultServiceDataPath = fileDirPath + "DefaultServiceData.xml";
 
     ScheduledExecutorService scheduExec = Executors.newScheduledThreadPool(5);
 
@@ -129,7 +130,7 @@ public class ApplicationController implements Initializable {
     CompositeService compositeService;
     AssistanceServiceCostProbe probe;
     TASStart tasStart;
-    SystemServiceInfo serviceInfo = new SystemServiceInfo();
+    GlobalServiceInfo serviceInfo = new GlobalServiceInfo();
     SystemEntity selectedEntity;
     List<SystemEntity> entities = new ArrayList<>();
     Map<String, List<ServiceRegistry>> entityRegistries;
@@ -275,6 +276,7 @@ public class ApplicationController implements Initializable {
     	this.fillProfiles();
     	this.setButton();
     	this.addTestEntity();
+    	serviceInfo.loadData(new File(defaultServiceDataPath));
 
     	scheduExec.scheduleAtFixedRate(new Runnable() {
     	    @Override
@@ -291,6 +293,7 @@ public class ApplicationController implements Initializable {
     					
     					Circle circle=(Circle)servicePanes.get(service).getChildren().get(0);
     					
+    					// TODO check on endpoints, not names
     				    if(services != null && services.contains(service))
     					    circle.setFill(Color.GREEN);
     				    else
@@ -447,7 +450,7 @@ public class ApplicationController implements Initializable {
     	List<ServiceRegistry> serviceRegistries = new ArrayList<>();
     	
     	for (String registryEndpoint : selectedEntity.getManagingSystem().getRegistryEndpoints()) {
-    		serviceRegistries.add(serviceInfo.getRegistry(registryEndpoint));
+    		serviceRegistries.add(serviceInfo.getServiceRegistry(registryEndpoint));
     	}
     	
     	this.serviceRegistries = serviceRegistries;
@@ -508,7 +511,6 @@ public class ApplicationController implements Initializable {
     		@Override
     		 public void handle(KeyEvent event){
     			if (event.getCode().equals(KeyCode.ENTER)){
-    				//System.out.println(sliceTextField.getText());
 					chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(),Integer.parseInt(sliceTextField.getText()));
     		    }
     		 }
@@ -525,7 +527,7 @@ public class ApplicationController implements Initializable {
     	    	
         	    for (ServiceRegistry registry : serviceRegistries) {
         	    	serviceRegistryPanes.put(registry.getServiceDescription().getServiceEndpoint(), addServiceRegistry(registry));
-        	    	services.addAll(registry.getAllServices());
+        	    	services.addAll(registry.getAllServiceNames());
         	    }
         	    
         		for (String service : services) {
@@ -548,7 +550,6 @@ public class ApplicationController implements Initializable {
         
     			ConfigureController controller=(ConfigureController)loader.getController();
     			controller.setStage(dialogStage);
-    			//controller.setService(tasStart.getService(serviceName));
 
     			Scene dialogScene = new Scene(configurePane);
     			dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
@@ -575,7 +576,6 @@ public class ApplicationController implements Initializable {
         
     			ConfigureController controller=(ConfigureController)loader.getController();
     			controller.setStage(dialogStage);
-    			//controller.setService(tasStart.getService(serviceName));
 
     			Scene dialogScene = new Scene(configurePane);
     			dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
@@ -995,11 +995,28 @@ public class ApplicationController implements Initializable {
 				}
     	    }
     	});
+    	
+    	changeServiceCollectionMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override
+			public void handle(ActionEvent event) {
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setInitialDirectory(new File(fileDirPath));
+				fileChooser.setTitle("Select service data");
+				FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Add Files(*.xml)", "*.xml");
+				fileChooser.getExtensionFilters().add(extension);
+				File file = fileChooser.showOpenDialog(primaryStage);
+				serviceInfo.loadData(file);
+				
+				if (selectedEntity != null) {
+					selectEntity();
+				}
+		    }
+    	});
 
     }
 
     private void fillProfiles() {
-	File folder = new File(profileDirPath);
+	File folder = new File(fileDirPath);
 	File[] files = folder.listFiles();
 
 	try {
@@ -1248,8 +1265,6 @@ public class ApplicationController implements Initializable {
     private AnchorPane addService(String serviceName, boolean state) {
 	
     	AnchorPane itemPane = new AnchorPane();
-    	//itemPane.setPrefHeight(40);
-    	//itemPane.setMinHeight(40);
 
     	Button inspectButton = new Button();
     	inspectButton.setPrefWidth(32);
@@ -1268,8 +1283,8 @@ public class ApplicationController implements Initializable {
         	    
         		ServiceProfileController controller=(ServiceProfileController)loader.getController();
         		controller.setStage(dialogStage);
-        		controller.setServiceProfileClasses(tasStart.getServiceProfileClasses());
-        		controller.setService(tasStart.getService(serviceName));
+        		controller.setServiceProfileClasses(serviceInfo.getServiceProfileClasses());
+        		controller.setService(serviceInfo.getService(serviceName));
         		
         	    Scene dialogScene = new Scene(pane);
         	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
@@ -1304,11 +1319,10 @@ public class ApplicationController implements Initializable {
     	
     	ServiceDescription description = Idescription;
     	
-    	List<Class<?>> allProfiles = tasStart.getServiceProfileClasses();
-    	AtomicService service = tasStart.getService(serviceName);
-    	List<ServiceProfile> serviceProfiles = service.getServiceProfiles();
-    	
-    	
+    	List<Class<?>> allProfiles = serviceInfo.getServiceProfileClasses();
+    	AtomicService service = serviceInfo.getService(serviceName);
+    	System.err.print(serviceName + " " + service + "\n");
+    	List<ServiceProfile> serviceProfiles = service.getServiceProfiles(); 
 		List<String> availableProfiles=new ArrayList<>();
 		
 		for(int i=0;i< serviceProfiles.size();i++){

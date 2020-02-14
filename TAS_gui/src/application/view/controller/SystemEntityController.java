@@ -46,6 +46,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import profile.SystemRequirementType;
 import service.registry.ServiceRegistry;
+import tas.data.GlobalServiceInfo;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CombinationStrategy;
 import tas.mape.knowledge.Goal;
@@ -54,7 +55,6 @@ import tas.mape.planner.RatingType;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.MAPEKComponent.Builder;
 import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.entity.SystemServiceInfo;
 import tas.mape.system.entity.WorkflowExecutor;
 
 public class SystemEntityController implements Initializable {
@@ -126,7 +126,7 @@ public class SystemEntityController implements Initializable {
 	private double minFailureDelta, failureChange;
 	private String baseDir = "";
 	private String workflowPath, strategyText, plannerEndpoint, entityName;
-	private String resourceDirPath = baseDir + "resources" + File.separator;
+	private String fileDirPath = baseDir + "resources" + File.separator + "files" + File.separator;
 	private Stage stage;
 	private ApplicationController parent;
 	private List<ServiceRegistry> entityRegistries;
@@ -157,10 +157,10 @@ public class SystemEntityController implements Initializable {
 		this.parent = parent;
 	}
 	
-	public void addRegistryChoices(SystemServiceInfo serviceInfo) {
+	public void addRegistryChoices(GlobalServiceInfo serviceInfo) {
 		
 		entityRegistries = new ArrayList<>();
-		List<ServiceRegistry> registries = serviceInfo.getRegistries();
+		List<ServiceRegistry> registries = serviceInfo.getServiceRegistries();
 		AnchorPane registryPane;
 		Label registryLabel;
 		
@@ -412,7 +412,7 @@ public class SystemEntityController implements Initializable {
 		    @Override
 			public void handle(ActionEvent event) {
 				FileChooser fileChooser = new FileChooser();
-				fileChooser.setInitialDirectory(new File(resourceDirPath));
+				fileChooser.setInitialDirectory(new File(fileDirPath));
 				fileChooser.setTitle("Select workflow");
 				FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Add Files(*.txt)", "*.txt");
 				fileChooser.getExtensionFilters().add(extension);

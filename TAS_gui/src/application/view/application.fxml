@@ -36,7 +36,7 @@
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
                         <MenuButton mnemonicParsing="false" text="Open">
                           <items>
-                              <MenuItem fx:id="changeServiceCollectionMenuItem" mnemonicParsing="false" text="Change Service Collection" />
+                              <MenuItem fx:id="changeServiceCollectionMenuItem" mnemonicParsing="false" text="Change Service Data" />
                             <MenuItem fx:id="openServicesMenuItem" mnemonicParsing="false" text="Open Available Services" visible="false" />
                               <MenuItem fx:id="configureMenuItem" mnemonicParsing="false" text="Open Configuration" visible="false" />
                           </items>
@@ -95,7 +95,7 @@
                         </AnchorPane>
                       <AnchorPane minWidth="200.0" prefWidth="400.0">
                            <children>
-                              <TabPane fx:id="entityTabPane" layoutX="19.0" layoutY="14.0" prefHeight="165.0" prefWidth="329.0" tabClosingPolicy="UNAVAILABLE" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TabPane fx:id="entityTabPane" layoutX="19.0" layoutY="14.0" prefHeight="165.0" prefWidth="329.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <tabs>
                                   <Tab text="Workflow Diagram">
                                     <content>

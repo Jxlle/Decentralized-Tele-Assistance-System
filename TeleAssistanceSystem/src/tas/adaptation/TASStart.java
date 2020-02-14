@@ -135,7 +135,7 @@ public class TASStart {
 
     public void initializeTAS() {	
     	
-	serviceRegistry = new ServiceRegistry("ServiceRegistry", "se.lnu.service.registry");
+	/*serviceRegistry = new ServiceRegistry("ServiceRegistry", "se.lnu.service.registry");
 	serviceRegistry.startService();
 	
 	serviceRegistry2 = new ServiceRegistry("ServiceRegistry2", "se.lnu.service.registry2");
@@ -144,7 +144,7 @@ public class TASStart {
 	serviceRegistries = new ArrayList<ServiceRegistry>();
 	serviceRegistries.add(serviceRegistry);
 	serviceRegistries.add(serviceRegistry2);
-
+	
 	// Alarm Services
 	alarm1 = new AlarmService("AlarmService1", "service.alarmService1");
 	alarm1.getServiceDescription().getCustomProperties().put("Cost", 4.0);
