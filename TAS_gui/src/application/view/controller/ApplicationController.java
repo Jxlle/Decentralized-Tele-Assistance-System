@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
@@ -50,6 +49,9 @@ import tas.mape.planner.RatingType;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.entity.WorkflowExecutor;
+import tas.mape.system.structure.AbstractSystem;
+import tas.mape.system.structure.DoubleLoopSystem;
+import tas.mape.system.structure.SoloLoopSystem;
 import tas.mape.system.entity.MAPEKComponent.Builder;
 import tas.services.assistance.AssistanceServiceCostProbe;
 import application.MainGui;
@@ -96,6 +98,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 // TODO Service panes list with endpoints instead of names, names are not unique, endpoints usually are.
 // TODO Reset registry IDs when changing service data
@@ -137,7 +140,8 @@ public class ApplicationController implements Initializable {
     SystemEntity selectedEntity;
     List<SystemEntity> entities = new ArrayList<>();
     Map<String, List<ServiceRegistry>> entityRegistries;
-
+    List<Pair<String, Class<? extends AbstractSystem<SystemEntity>>>> systemLoops = 
+    		Arrays.asList(new Pair<>("Solo Loop System", SoloLoopSystem.class), new Pair<>("Double Loop System", DoubleLoopSystem.class));
     Set<Button> profileRuns = new HashSet<>();
     Map<String, AdaptationEngine> adaptationEngines;
     Map<String, AnchorPane> servicePanes = new ConcurrentHashMap<>();
@@ -276,7 +280,8 @@ public class ApplicationController implements Initializable {
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
-    	this.fillProfiles();
+    	//this.fillProfiles();
+    	this.fillLoops();
     	this.setButton();
     	this.addTestEntity();
     	serviceInfo.loadData(new File(defaultServiceDataPath));
@@ -1019,6 +1024,42 @@ public class ApplicationController implements Initializable {
 		    }
     	});
 
+    }
+    
+    private void fillLoops() {
+    	for (Pair<String, Class<? extends AbstractSystem<SystemEntity>>> loopInfo : systemLoops) {
+    		addLoop(loopInfo);
+    	}
+    }
+    
+    private void addLoop(Pair<String, Class<? extends AbstractSystem<SystemEntity>>> loopInfo) {
+    	AnchorPane itemPane = new AnchorPane();
+
+    	Button inspectButton = new Button();
+    	inspectButton.setPrefWidth(32);
+    	inspectButton.setPrefHeight(32);
+    	inspectButton.setLayoutY(5);
+    	inspectButton.setId("inspectButton");
+    	
+    	Button runButton = new Button();
+    	runButton.setPrefWidth(32);
+    	runButton.setPrefHeight(32);
+    	runButton.setLayoutY(5);
+    	runButton.setId("runButton");
+    	profileRuns.add(runButton);
+    	
+    	Label label = new Label();
+    	label.setLayoutY(15);
+    	label.setText(loopInfo.getKey());
+    	
+    	AnchorPane.setTopAnchor(label, 10.0);
+    	AnchorPane.setBottomAnchor(label, 10.0);
+    	AnchorPane.setLeftAnchor(label, 10.0);
+    	AnchorPane.setRightAnchor(inspectButton, 60.0);
+    	AnchorPane.setRightAnchor(runButton, 10.0);
+    	
+    	itemPane.getChildren().setAll(label, runButton, inspectButton);
+    	profileListView.getItems().add(itemPane);
     }
 
     private void fillProfiles() {
