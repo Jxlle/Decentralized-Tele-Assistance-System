@@ -39,7 +39,6 @@ public class MainGui extends Application {
 			ApplicationController controller=(ApplicationController)loader.getController();
 			controller.setPrimaryStage(primaryStage);
 			controller.setTasStart(tasStart);
-			controller.setCompositeService(tasStart.getAssistanceService());
 			controller.setProbe(tasStart.getMonitor());
 			controller.setConfigurations(tasStart.getAdaptationEngines());
 			

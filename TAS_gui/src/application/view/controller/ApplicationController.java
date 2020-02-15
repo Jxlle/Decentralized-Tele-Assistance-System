@@ -38,7 +38,6 @@ import service.atomic.AtomicService;
 import service.atomic.ServiceProfile;
 import service.auxiliary.ExecutionThread;
 import service.auxiliary.ServiceDescription;
-import service.composite.CompositeService;
 import service.registry.ServiceRegistry;
 import service.workflow.ast.rspLexer;
 import service.workflow.ast.rspParser;
@@ -133,7 +132,6 @@ public class ApplicationController implements Initializable {
 
     List<ServiceRegistry> serviceRegistries;
     
-    CompositeService compositeService;
     AssistanceServiceCostProbe probe;
     TASStart tasStart;
     GlobalServiceInfo serviceInfo = new GlobalServiceInfo();
@@ -383,10 +381,6 @@ public class ApplicationController implements Initializable {
     public void setConfigurations(Map<String, AdaptationEngine> adaptationEngines){
     	this.adaptationEngines=adaptationEngines;
     	this.addItems();
-    }
-    
-    public void setCompositeService(CompositeService service) {
-    	this.compositeService = service;
     }
 
     public void setProbe(AssistanceServiceCostProbe probe) {
