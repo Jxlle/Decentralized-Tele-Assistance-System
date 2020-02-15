@@ -154,11 +154,11 @@
 </Registry>
 <Registry>
 <Endpoint>se.lnu.service.registry2</Endpoint>
-<Endpoint>service.medical1</Endpoint>
-<Endpoint>service.medical2</Endpoint>
 <Name>ServiceRegistry2</Name>
 <ServiceList>
 <Endpoint>service.alarmService1</Endpoint>
+<Endpoint>service.medical1</Endpoint>
+<Endpoint>service.medical2</Endpoint>
 </ServiceList>
 </Registry>
 </Registries>

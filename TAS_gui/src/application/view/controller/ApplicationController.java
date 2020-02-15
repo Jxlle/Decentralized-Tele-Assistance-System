@@ -281,7 +281,7 @@ public class ApplicationController implements Initializable {
     	this.addTestEntity();
     	serviceInfo.loadData(new File(defaultServiceDataPath));
 
-    	scheduExec.scheduleAtFixedRate(new Runnable() {
+    	/*scheduExec.scheduleAtFixedRate(new Runnable() {
     	    @Override
     		public void run() {
     	    	
@@ -294,7 +294,7 @@ public class ApplicationController implements Initializable {
     				@Override
     				public void run() {
     					
-    					Circle circle=(Circle)servicePanes.get(service).getChildren().get(0);
+    					Circle circle = (Circle) servicePanes.get(service).getChildren().get(0);
     					
     					// TODO check on endpoints, not names
     				    if(services != null && services.contains(service))
@@ -306,7 +306,7 @@ public class ApplicationController implements Initializable {
     			}
 
     	    }
-    	}, 0, 1000, TimeUnit.MILLISECONDS);
+    	}, 0, 1000, TimeUnit.MILLISECONDS);*/
     }
     
     
@@ -536,7 +536,7 @@ public class ApplicationController implements Initializable {
         		for (String service : services) {
         			// Check might not be needed, this service is usually not added to the service list
         		    if (!service.equals("TeleAssistanceService"))
-        		    	servicePanes.put(service, addService(service, true));
+        		    	servicePanes.put(service, addService(service));
         		}
     	    }
     	});
@@ -1268,7 +1268,7 @@ public class ApplicationController implements Initializable {
     	return registryListView;
     }
 
-    private AnchorPane addService(String serviceName, boolean state) {
+    private AnchorPane addService(String serviceName) {
 	
     	AnchorPane itemPane = new AnchorPane();
 
@@ -1370,21 +1370,22 @@ public class ApplicationController implements Initializable {
     	Circle circle = new Circle();
     	circle.setOnMouseClicked(event -> {
     		if(circle.getFill().equals(Color.DARKRED)) {
-    			compositeService.getCache().addService(description);
+    			selectedEntity.getManagingSystem().removeServiceFromBlacklist(description);
     		    circle.setFill(Color.GREEN);
     		}
     		else {    		    
-    			compositeService.getCache().remove(description);
+    			selectedEntity.getManagingSystem().addServiceToBlacklist(description);
     		    circle.setFill(Color.DARKRED);
     		}
     	});
     	
     	circle.setLayoutY(20);
-    	if (state)
+    	circle.setRadius(10);
+    	
+    	if (!selectedEntity.getManagingSystem().isBlacklisted(description))
     	    circle.setFill(Color.GREEN);
     	else
     	    circle.setFill(Color.DARKRED);
-    	circle.setRadius(10);
 
     	AnchorPane.setLeftAnchor(circle, 10.0);
     	AnchorPane.setLeftAnchor(label, 40.0);

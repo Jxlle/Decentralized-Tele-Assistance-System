@@ -186,9 +186,9 @@ public class Monitor {
 			String type = serviceChange.getValue();
 			
 			if (type == "added") {
-				knowledge.addUsableService(serviceChange.getKey().getKey(), serviceChange.getKey().getValue());
+				knowledge.addUsedService(serviceChange.getKey().getKey(), serviceChange.getKey().getValue());
 			} else if (type == "removed") {
-				knowledge.removeUsableService(serviceChange.getKey().getKey(), serviceChange.getKey().getValue());
+				knowledge.removeUsedService(serviceChange.getKey().getKey(), serviceChange.getKey().getValue());
 			} else {
 				throw new RuntimeException("Cache service change type is illegal!");
 			}	

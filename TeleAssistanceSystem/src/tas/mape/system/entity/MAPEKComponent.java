@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import profile.SystemRequirementType;
+import service.auxiliary.ServiceDescription;
 import service.composite.CompositeService;
 import tas.mape.analyzer.Analyzer;
 import tas.mape.communication.message.ComponentMessageHost;
@@ -278,6 +279,31 @@ public class MAPEKComponent {
 	 */
 	public AbstractProtocol<PlannerMessage, Planner> getProtocol() {
 		return planner.getProtocol();
+	}
+	
+	/**
+	 * Add a given service to the blacklist and update the usable services accordingly
+	 * @param blacklistedService the given service to be blacklisted
+	 */
+	public void addServiceToBlacklist(ServiceDescription blacklistedService) {
+		knowledge.addServiceToBlacklist(blacklistedService);
+	}
+	
+	/**
+	 * Remove a given service from the blacklist and update the usable services accordingly
+	 * @param blacklistedService the given service to be freed
+	 */
+	public void removeServiceFromBlacklist(ServiceDescription freedService) {
+		knowledge.removeServiceFromBlacklist(freedService);
+	}
+	
+	/**
+	 * Return whether a given service is blacklisted
+	 * @param service the given service
+	 * @return whether a given service is blacklisted
+	 */
+	public boolean isBlacklisted(ServiceDescription service) {
+		return knowledge.isBlacklisted(service);
 	}
 	
 	/**
