@@ -1,12 +1,7 @@
 <tas.data.systemprofile.SystemProfile>
   <executionCycles>50</executionCycles>
   <workflowCycles>250</workflowCycles>
-  <systemType>SOLO_LOOP</systemType>
-  <requirementType>COST_AND_RELIABILITY</requirementType>
-  <ratingType>SCORE</ratingType>
-  <participatingEntities>
-    <string>Test Entity</string>
-  </participatingEntities>
+  <systemClass>tas.mape.system.structure.SoloLoopSystem</systemClass>
   <variables>
     <variable>
       <name>patientId</name>
@@ -26,9 +21,11 @@
         </value>
         <value>
           <data class="int">2</data>
-          <ratio>0.3</ratio>
+          <ratio>0.25</ratio>
         </value>
       </values>
     </variable>
   </variables>
+  <requirementType>COST</requirementType>
+  <ratingType>SCORE</ratingType>
 </tas.data.systemprofile.SystemProfile>

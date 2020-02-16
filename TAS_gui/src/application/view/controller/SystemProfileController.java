@@ -6,11 +6,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.function.UnaryOperator;
 
 import javax.xml.transform.OutputKeys;
@@ -32,6 +37,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -48,6 +54,8 @@ import javafx.util.converter.IntegerStringConverter;
 import profile.SystemProfileValue;
 import profile.SystemProfileVariable;
 import profile.SystemRequirementType;
+import tas.data.systemprofile.ProtocolType;
+import tas.data.systemprofile.SystemType;
 import tas.data.systemprofile.SystemProfile;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.planner.RatingType;
@@ -66,13 +74,16 @@ public class SystemProfileController implements Initializable {
 	TextField workflowCyclesTextField;
 	
 	@FXML
-	TextField systemClassTextField;
-	
-	@FXML
 	ComboBox<SystemRequirementType> requirementTypeComboBox;
 	
 	@FXML
 	ComboBox<RatingType> ratingTypeComboBox;
+	
+	@FXML
+	ComboBox<SystemType> systemTypeComboBox;
+	
+	@FXML
+	ComboBox<ProtocolType> protocolTypeComboBox;
 	
 	@FXML
 	ListView<String> variableListView;
@@ -95,18 +106,34 @@ public class SystemProfileController implements Initializable {
 	@FXML
 	Button saveButton2;
 	
+	@FXML
+	Label protocolTypeLabel;
+	
+	@FXML
+	ListView<ComboBox<String>> entityListView;
+	
 	private Stage stage;
 	private String filePath;
 	private ObservableList<ValueEntry> valueData = FXCollections.observableArrayList();
 	private SystemProfileVariable currentVariable = null;
+	private List<String> entityNameList;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initializeValueTable();
 	}
 
-	public void setStage(Stage stage){
+	public void setStage(Stage stage) {
 		this.stage = stage;
+	}
+	
+	public void setEntityData(List<SystemEntity> entities) {
+		
+		entityNameList = new ArrayList<>();
+		
+		for (SystemEntity entity : entities) {
+			entityNameList.add(entity.getEntityName());
+		}
 	}
 	
 	public void setFilePath(String filePath) {
@@ -136,12 +163,18 @@ public class SystemProfileController implements Initializable {
 				new EventHandler<CellEditEvent<ValueEntry, String>>() {
 	                    @Override
 	                    public void handle(CellEditEvent<ValueEntry, String> t) {
-	                    	ValueEntry value=(ValueEntry) t.getTableView().getItems().get(
+	                    	ValueEntry value = (ValueEntry) t.getTableView().getItems().get(
 	                                t.getTablePosition().getRow());
 	                    	
-	                    	Object data= value.getRealData(t.getNewValue());
-	                    	if(data!=null){
+	                    	Object data = value.getRealData(t.getNewValue());
+	                    	
+	                    	if (data != null) {
 		                    	value.getProfileValue().setData(data);
+	                    	}
+	                    	else {
+		                    	// Force render update
+		            			t.getTableView().getColumns().get(0).setVisible(false);
+		                        t.getTableView().getColumns().get(0).setVisible(true);
 	                    	}
 	                    }
 	                }
@@ -155,9 +188,19 @@ public class SystemProfileController implements Initializable {
 				new EventHandler<CellEditEvent<ValueEntry, String>>() {
 	                    @Override
 	                    public void handle(CellEditEvent<ValueEntry, String> t) {
-	                    	ValueEntry value=(ValueEntry) t.getTableView().getItems().get(
+	                    	ValueEntry value = (ValueEntry) t.getTableView().getItems().get(
 	                                t.getTablePosition().getRow());
-	                    	double ratio=Double.parseDouble(t.getNewValue());
+	                    	
+	                    	double ratio = 0;
+	                    	
+	                    	try {
+	                    		ratio = Double.parseDouble(t.getNewValue());
+	                    	} catch (Exception e) {
+		                    	// Force render update
+		            			t.getTableView().getColumns().get(0).setVisible(false);
+		                        t.getTableView().getColumns().get(0).setVisible(true);
+	                    	}
+	                    	
 	                    	value.getProfileValue().setRatio(ratio);
 	                    }
 	                }
@@ -220,8 +263,6 @@ public class SystemProfileController implements Initializable {
 		workflowCyclesTextField.setTextFormatter(new TextFormatter<Integer>(new IntegerStringConverter(), 0, integerFilter));
 		workflowCyclesTextField.setText(profile.getWorkflowCycles() + "");
 		
-		systemClassTextField.setText(profile.getSystemClass().getName());
-		
 		ObservableList<SystemRequirementType> requirementTypes = FXCollections.observableArrayList();
 		requirementTypes.addAll(SystemRequirementType.values());
 		requirementTypeComboBox.setItems(requirementTypes);
@@ -231,6 +272,101 @@ public class SystemProfileController implements Initializable {
 		ratingTypes.addAll(RatingType.values());
 		ratingTypeComboBox.setItems(ratingTypes);
 		ratingTypeComboBox.setValue(profile.getRatingType());
+		
+		ObservableList<SystemType> systemTypes = FXCollections.observableArrayList();
+		systemTypes.addAll(SystemType.values());
+		systemTypeComboBox.setItems(systemTypes);
+		systemTypeComboBox.setValue(profile.getSystemType());
+		systemTypeComboBox.valueProperty().addListener(new ChangeListener<SystemType>() {
+
+			@Override
+			public void changed(ObservableValue<? extends SystemType> observable, SystemType oldValue,
+					SystemType newValue) {
+				
+				Class<? extends AbstractSystem<?>> systemClass = newValue.getSystemClass();
+				Method method = null;
+				int entityCount = 0;
+				
+				try {
+					method = systemClass.getMethod("getSystemEntityCount");
+				} catch (NoSuchMethodException e1) {
+					e1.printStackTrace();
+				} catch (SecurityException e1) {
+					e1.printStackTrace();
+				}
+					
+				try {
+					entityCount = (int) method.invoke(null);
+				} catch (IllegalAccessException e1) {
+					e1.printStackTrace();
+				} catch (IllegalArgumentException e1) {
+					e1.printStackTrace();
+				} catch (InvocationTargetException e1) {
+					e1.printStackTrace();
+				}
+				
+				if (entityCount > 1) {
+					protocolTypeComboBox.setVisible(true);
+					protocolTypeLabel.setVisible(false);
+				}
+				else {
+					protocolTypeComboBox.setVisible(false);
+					protocolTypeLabel.setVisible(true);
+				}
+				
+				entityListView.getItems().removeAll(entityListView.getItems());
+				
+				for (int i = 0; i < entityCount; i++) {
+					ComboBox<String> comboBox = new ComboBox<String>();
+					
+					if (i < profile.getAmountOfParticipatingEntities()) {
+						comboBox.setValue(profile.getParticipatingEntity(i));
+					}
+					
+					ObservableList<String> entityNames = FXCollections.observableArrayList();
+					entityNames.addAll(entityNameList);
+					comboBox.setItems(entityNames);
+					comboBox.setPrefWidth(200);
+					entityListView.getItems().add(comboBox);
+				}
+			}    
+	    });
+		
+		Class<? extends AbstractSystem<?>> systemClass = profile.getSystemType().getSystemClass();
+		Method method = null;
+		int entityCount = 0;
+		
+		try {
+			method = systemClass.getMethod("getSystemEntityCount");
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
+			
+		try {
+			entityCount = (int) method.invoke(null);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		if (entityCount > 1) {
+			protocolTypeComboBox.setValue(profile.getProtocolType());
+			protocolTypeComboBox.setVisible(true);
+			protocolTypeLabel.setVisible(false);
+		}
+		else {
+			protocolTypeComboBox.setVisible(false);
+			protocolTypeLabel.setVisible(true);
+		}
+		
+		ObservableList<ProtocolType> protocolTypes = FXCollections.observableArrayList();
+		protocolTypes.addAll(ProtocolType.values());
+		protocolTypeComboBox.setItems(protocolTypes);
 	
 		variableListView.getItems().addAll(profile.getVariableNames());
 		variableListView.getSelectionModel().selectedItemProperty().addListener(
@@ -276,26 +412,90 @@ public class SystemProfileController implements Initializable {
                 }
             });
 		
+		if (entityCount != profile.getAmountOfParticipatingEntities()) {
+			throw new IllegalStateException("The current selected profile has an illegal XML file. "
+					+ "The system type and participating entity count don't match!");
+		}
+		
+		for (int i = 0; i < entityCount; i++) {
+			ComboBox<String> comboBox = new ComboBox<String>();
+			comboBox.setValue(profile.getParticipatingEntity(i));
+			ObservableList<String> entityNames = FXCollections.observableArrayList();
+			entityNames.addAll(entityNameList);
+			comboBox.setItems(entityNames);
+			comboBox.setPrefWidth(200);
+			entityListView.getItems().add(comboBox);
+		}
+		
 		saveButton2.setOnAction(event -> {
 			
-			try {
-				@SuppressWarnings("unchecked")
-				Class<? extends AbstractSystem<SystemEntity>> systemClass = (Class<? extends AbstractSystem<SystemEntity>>) Class.forName(systemClassTextField.getText());
+			if (Integer.parseInt(executionCyclesTextField.getText()) <= 0) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("INVALID CONTENT");
+	            fail.setContentText("The amount of execution cycles must be greater than 0.");
+	            fail.showAndWait();
+			}
+			else if (Integer.parseInt(workflowCyclesTextField.getText()) <= 0) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("INVALID CONTENT");
+	            fail.setContentText("The amount of workflow cycles must be greater than 0.");
+	            fail.showAndWait();
+			}
+			else if (protocolTypeComboBox.isVisible() && protocolTypeComboBox.getValue() == null) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("MISSING CONTENT");
+	            fail.setContentText("No protocol type selected.");
+	            fail.showAndWait();
+			}
+			else if (!UniqueComboBox(entityListView.getItems())) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("INVALID CONTENT");
+	            fail.setContentText("Some participating entities are duplicates.");
+	            fail.showAndWait();
+			}
+			else if (entityListView.getItems().stream().anyMatch(x -> x.getValue() == null)) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("MISSING CONTENT");
+	            fail.setContentText("Not all participating entities are selected.");
+	            fail.showAndWait();
+			}
+			else if (!entityListView.getItems().stream().anyMatch(x -> entityNameList.contains(x.getValue()))) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("INVALID CONTENT");
+	            fail.setContentText("Some participating entity isn't present in the entity list. Choose a valid entity.");
+	            fail.showAndWait();
+			}
+			else {
+				profile.clearEntities();
 				profile.setExecutionCycles(Integer.valueOf(executionCyclesTextField.getText()));
 				profile.setWorkflowCycles(Integer.valueOf(workflowCyclesTextField.getText()));	
-				profile.setSystemClass(systemClass);
-				SystemProfileDataHandler.writeToXml(profile, filePath);	
+				profile.setRatingType(ratingTypeComboBox.getValue());
+				profile.setSystemType(systemTypeComboBox.getValue());
+				profile.setRequirementType(requirementTypeComboBox.getValue());
+				
+				if (protocolTypeComboBox.isVisible()) {
+					profile.setProtocolType(protocolTypeComboBox.getValue());
+				}
+				
+				for (ComboBox<String> comboBox : entityListView.getItems()) {
+					profile.addEntity(comboBox.getValue());
+				}
+				
+				SystemProfileDataHandler.writeToXml(profile, filePath);
 				stage.close();
-				
-			} catch (ClassNotFoundException e) {
-				
-	    		Alert fail = new Alert(AlertType.WARNING);
-	            fail.setHeaderText("INVALID INFO");
-	            fail.setContentText("Invalid system class.");
-	            fail.showAndWait();
-				
 			}
 		});
+	}
+	
+	private boolean UniqueComboBox(List<ComboBox<String>> list){
+	    Set<String> set = new HashSet<>();
+
+	    for (ComboBox<String> s: list){
+	        if (!set.add(s.getValue()))
+	            return false;
+	    }
+
+	    return true;
 	}
 	
 	public class ValueEntry {
@@ -330,7 +530,7 @@ public class SystemProfileController implements Initializable {
 	    }
 	    
 	    public void setRatio(String ratio) {
-	    	this.ratio=new SimpleStringProperty(ratio);
+	    	this.ratio = new SimpleStringProperty(ratio);
 	    }
 	    
 	    public Object getRealData(String data) {

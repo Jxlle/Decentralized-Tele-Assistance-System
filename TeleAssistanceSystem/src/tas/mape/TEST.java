@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.util.Pair;
+import profile.SystemProfileValue;
+import profile.SystemProfileVariable;
 import profile.SystemRequirementType;
 import service.adaptation.effectors.WorkflowEffector;
 import service.auxiliary.Description;
@@ -17,8 +19,10 @@ import service.registry.ServiceRegistry;
 import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.data.serviceinfo.GlobalServiceInfoLoader;
 import tas.data.serviceinfo.GlobalServiceInfoWriter;
+import tas.data.systemprofile.ProtocolType;
 import tas.data.systemprofile.SystemProfile;
 import tas.data.systemprofile.SystemProfileDataHandler;
+import tas.data.systemprofile.SystemType;
 import tas.mape.analyzer.CostAndReliabilityReq;
 import tas.mape.analyzer.CostReq;
 import tas.mape.analyzer.ReliabilityReq;
@@ -310,7 +314,23 @@ public class TEST {
 		info.loadData(file);
 		//GlobalServiceInfoLoader.loadFromXml(info, file);*/
 		
-		SystemProfile profile = new SystemProfile(50, 250, SystemRequirementType.COST, RatingType.SCORE, DoubleLoopSystem.class, new ArrayList<>());
+		SystemProfile profile = new SystemProfile();//50, 250, SystemRequirementType.COST, RatingType.SCORE, DoubleLoopSystem.class, new ArrayList<>());
+		profile.setExecutionCycles(50);
+		profile.setWorkflowCycles(250);
+		profile.setRequirementType(SystemRequirementType.COST_AND_RELIABILITY);
+		profile.setRatingType(RatingType.SCORE);
+		profile.setSystemType(SystemType.SOLO_LOOP);
+		//profile.setProtocolType(ProtocolType.STANDARD_PROTOCOL);
+		SystemProfileVariable patientId = new SystemProfileVariable("patientId");
+		patientId.addValue(new SystemProfileValue(1, 1.0));
+		SystemProfileVariable pick = new SystemProfileVariable("pick");
+		pick.addValue(new SystemProfileValue(1, 0.75));
+		pick.addValue(new SystemProfileValue(2, 0.25));
+		profile.addVariable(patientId);
+		profile.addVariable(pick);
+		profile.addEntity("Test Entity");
+		//profile.addEntity("Test Entity 2");
+		
 		SystemProfileDataHandler.writeToXml(profile, "test");
 	}
 }

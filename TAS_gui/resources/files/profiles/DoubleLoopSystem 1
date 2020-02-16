@@ -1,33 +1,36 @@
 <tas.data.systemprofile.SystemProfile>
   <executionCycles>50</executionCycles>
   <workflowCycles>250</workflowCycles>
-  <systemClass>tas.mape.system.structure.DoubleLoopSystem</systemClass>
-  	<variables>
-		<variable>
-			<name>patientId</name>
-			<values>
-				<value>
-					<data class="int">1</data>
-					<ratio>1.0</ratio>
-				</value>
-			</values>
-		</variable>
-		<variable>
-			<name>pick</name>
-			<values>
-				<value>
-				<!-- Invoke Medical Analysis Service with setting value of pick 1 -->
-					<data class="int">1</data>
-					<ratio>0.75</ratio>
-				</value>
-				<value>
-				<!-- Invoke AlarmService with setting value of pick 2 -->
-					<data class="int">2</data>
-					<ratio>0.25</ratio>
-				</value>
-			</values>
-		</variable>
-	</variables>
-  <requirementType>COST</requirementType>
+  <systemType>DOUBLE_LOOP</systemType>
+  <protocolType>STANDARD_PROTOCOL</protocolType>
+  <requirementType>COST_AND_RELIABILITY</requirementType>
   <ratingType>SCORE</ratingType>
+  <participatingEntities>
+    <string>Test Entity</string>
+    <string>Test Entity 2</string>
+  </participatingEntities>
+  <variables>
+    <variable>
+      <name>patientId</name>
+      <values>
+        <value>
+          <data class="int">1</data>
+          <ratio>1.0</ratio>
+        </value>
+      </values>
+    </variable>
+    <variable>
+      <name>pick</name>
+      <values>
+        <value>
+          <data class="int">1</data>
+          <ratio>0.75</ratio>
+        </value>
+        <value>
+          <data class="int">2</data>
+          <ratio>0.25</ratio>
+        </value>
+      </values>
+    </variable>
+  </variables>
 </tas.data.systemprofile.SystemProfile>

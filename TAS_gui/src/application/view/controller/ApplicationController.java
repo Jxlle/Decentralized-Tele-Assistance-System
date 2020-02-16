@@ -283,7 +283,7 @@ public class ApplicationController implements Initializable {
     	//this.fillProfiles();
     	this.fillSystemProfiles();
     	this.setButton();
-    	this.addTestEntity();
+    	this.addTestEntities();
     	serviceInfo.loadData(new File(defaultServiceDataPath));
 
     	/*scheduExec.scheduleAtFixedRate(new Runnable() {
@@ -396,7 +396,7 @@ public class ApplicationController implements Initializable {
     	tableViewController = new TableViewController(reliabilityTableView, costTableView,performanceTableView);
     }
     
-    private void addTestEntity() {
+    private void addTestEntities() {
     	
 		WorkflowExecutor workflowExecutor = new WorkflowExecutor(new ArrayList<>());	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");
@@ -431,7 +431,7 @@ public class ApplicationController implements Initializable {
 		}
 		
 		component = builder.build();
-		systemEntity = new SystemEntity("Test Entity 2 ", workflowExecutor, component);
+		systemEntity = new SystemEntity("Test Entity 2", workflowExecutor, component);
 		addEntityToList(systemEntity);
     }
     
@@ -1060,6 +1060,7 @@ public class ApplicationController implements Initializable {
         		    
         			SystemProfileController controller = (SystemProfileController) loader.getController();
         			controller.setStage(dialogStage);
+        			controller.setEntityData(entities);
         			controller.setFilePath(profilePath);
 
         		    Scene dialogScene = new Scene(pane);

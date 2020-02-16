@@ -5,6 +5,9 @@ import java.util.List;
 
 import profile.SystemProfileVariable;
 import profile.SystemRequirementType;
+import tas.mape.communication.message.PlannerMessage;
+import tas.mape.communication.protocol.AbstractProtocol;
+import tas.mape.planner.Planner;
 import tas.mape.planner.RatingType;
 import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.structure.AbstractSystem;
@@ -17,29 +20,12 @@ import tas.mape.system.structure.AbstractSystem;
 public class SystemProfile {
 	
 	private int executionCycles, workflowCycles;
-	private Class<? extends AbstractSystem<SystemEntity>> systemClass;
-	private List<SystemProfileVariable> variables = new ArrayList<>();
+	private SystemType systemType;
+	private ProtocolType protocolType;
 	private SystemRequirementType requirementType;
 	private RatingType ratingType;
-	
-	/**
-	 * Create a new system profile with given data
-	 * @param executionCycles the given amount of execution cycles the system will execute
-	 * @param workflowCycles the given amount of cycles that the workflow will execute in one execution cycle
-	 * @param requirementType the given system requirement type
-	 * @param ratingType the given rating type
-	 * @param systemClass the given system class used to depict which system is used for workflow execution
-	 * @param variables the given list of profile variables
-	 */
-	public SystemProfile(int executionCycles, int workflowCycles, SystemRequirementType requirementType, RatingType ratingType, 
-			Class<? extends AbstractSystem<SystemEntity>> systemClass, List<SystemProfileVariable> variables) {
-		this.executionCycles = executionCycles;
-		this.workflowCycles = workflowCycles;
-		this.requirementType = requirementType;
-		this.ratingType = ratingType;
-		this.systemClass = systemClass;
-		this.variables = variables;
-	}
+	private List<String> participatingEntities = new ArrayList<>();
+	private List<SystemProfileVariable> variables = new ArrayList<>();
 	
 	/**
 	 * Create an empty system profile
@@ -47,19 +33,35 @@ public class SystemProfile {
 	public SystemProfile() {}
 	
 	/**
-	 * Return the system profile system class
-	 * @return the system profile system class
+	 * Return the system profile system type
+	 * @return the system profile system type
 	 */
-	public Class<? extends AbstractSystem<SystemEntity>> getSystemClass() {
-		return systemClass;
+	public SystemType getSystemType() {
+		return systemType;
 	}
 	
 	/**
-	 * Set the system profile system class to the given class
-	 * @param systemClass the given system class
+	 * Set the system profile system type to the given type
+	 * @param systemType the given system type
 	 */
-	public void setSystemClass(Class<? extends AbstractSystem<SystemEntity>> systemClass) {
-		this.systemClass = systemClass;
+	public void setSystemType(SystemType systemType) {
+		this.systemType = systemType;
+	}
+	
+	/**
+	 * Return the system profile protocol type
+	 * @return the system profile protocol type
+	 */
+	public ProtocolType getProtocolType() {
+		return protocolType;
+	}
+	
+	/**
+	 * Set the system profile protocol class to the given type
+	 * @param protocolType the given protocol type
+	 */
+	public void setProtocolType(ProtocolType protocolType) {
+		this.protocolType = protocolType;
 	}
 	
 	/**
@@ -127,6 +129,46 @@ public class SystemProfile {
 	}
 	
 	/**
+	 * Add a given entity name to the participating entities list
+	 * @param entityName the given entity name
+	 */
+	public void addEntity(String entityName) {
+		participatingEntities.add(entityName);
+	}
+	
+	/**
+	 * Remove a given entity name from the participating entities list
+	 * @param entityName the given entity name
+	 */
+	public void removeEntity(String entityName) {
+		participatingEntities.remove(entityName);
+	}
+	
+	/**
+	 * Clear the participating entities list
+	 */
+	public void clearEntities() {
+		participatingEntities.clear();
+	}
+	
+	/**
+	 * Return the amount of participating entities
+	 * @return the amount of participating entities
+	 */
+	public int getAmountOfParticipatingEntities() {
+		return participatingEntities.size();
+	}
+	
+	/**
+	 * Return the participating entity at the given index in the system profile list
+	 * @param index the given index
+	 * @return the participating entity at the given index
+	 */
+	public String getParticipatingEntity(int index) {
+		return participatingEntities.get(index);
+	}
+	
+	/**
 	 * Add new input profile variable
 	 * @param variable the specific variable
 	 */
@@ -139,7 +181,7 @@ public class SystemProfile {
 	 * @return the variable names
 	 */
 	public List<String> getVariableNames() {
-		List<String> variableNames=new ArrayList<>();
+		List<String> variableNames = new ArrayList<>();
 		variables.forEach(variable -> {
 			variableNames.add(variable.getName());
 		});

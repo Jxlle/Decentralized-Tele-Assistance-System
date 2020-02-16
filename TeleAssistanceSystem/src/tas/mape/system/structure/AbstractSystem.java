@@ -57,5 +57,7 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	 * Return the amount of needed entities in the system
 	 * @return the amount of needed entities in the system
 	 */
-	protected abstract int getSystemEntityCount();
+	public static int getSystemEntityCount() {
+		return -1;
+	};
 }

@@ -47,8 +47,7 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 	 * Return the amount of needed entities in the system
 	 * @return the amount of needed entities in the system
 	 */
-	@Override
-	protected int getSystemEntityCount() {
+	public static int getSystemEntityCount() {
 		return 1;
 	}
 }
