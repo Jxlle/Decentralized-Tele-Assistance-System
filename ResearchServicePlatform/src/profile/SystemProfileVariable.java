@@ -9,17 +9,17 @@ import java.util.List;
  * Combination of name and related list of values
  * @author Yifan Ruan (ry222ad@student.lnu.se)
  */
-public class InputProfileVariable {
+public class SystemProfileVariable {
 
 	private String name;
-	private List<InputProfileValue> values=new ArrayList<>();
+	private List<SystemProfileValue> values=new ArrayList<>();
 	
 	/**
 	 * Construct
 	 * @param name specific name
 	 * @param values related list of values
 	 */
-	public InputProfileVariable(String name, List<InputProfileValue> values){
+	public SystemProfileVariable(String name, List<SystemProfileValue> values){
 		this.name=name;
 		this.values=values;
 	}
@@ -37,7 +37,7 @@ public class InputProfileVariable {
 	 * Construct
 	 * @param name specific name
 	 */
-	public InputProfileVariable(String name){
+	public SystemProfileVariable(String name){
 		this.name=name;
 	}
 	
@@ -45,7 +45,7 @@ public class InputProfileVariable {
 	 * Add new input profile value to the inherent list
 	 * @param value the value to be added
 	 */
-	public void addValue(InputProfileValue value){
+	public void addValue(SystemProfileValue value){
 		this.values.add(value);
 	}
 	
@@ -53,7 +53,7 @@ public class InputProfileVariable {
 	 * Return list of values
 	 * @return the list of values
 	 */
-	public List<InputProfileValue> getValues(){
+	public List<SystemProfileValue> getValues(){
 		return this.values;
 	}
 }

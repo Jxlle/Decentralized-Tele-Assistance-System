@@ -1,6 +1,3 @@
-/**
- * 
- */
 package profile;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +12,9 @@ public class InputProfile {
 	protected int maxSteps;
 	protected SystemRequirementType requirement;
 	protected String qosRequirement;
-	protected List<InputProfileVariable> variables=new ArrayList<>();
-	protected List<Requirement> requirements=new ArrayList<>();
+	protected List<SystemProfileVariable> variables = new ArrayList<>();
+	protected List<Requirement> requirements = new ArrayList<>();
+	//private RatingType ratingType;
 		
 	/**
 	 * Constructor without any parameters
@@ -32,7 +30,7 @@ public class InputProfile {
 	 * @param qosRequirement  the specific QoS requirements to be satisfied
 	 * @param variables   specific variables
 	 */
-	public InputProfile(int maxSteps, String qosRequirement,List<InputProfileVariable> variables){
+	public InputProfile(int maxSteps, String qosRequirement,List<SystemProfileVariable> variables){
 		this.maxSteps=maxSteps;
 		this.qosRequirement=qosRequirement;
 		this.variables=variables;
@@ -110,7 +108,7 @@ public class InputProfile {
 	 * Add new input profile variable
 	 * @param variable the specific variable
 	 */
-	public void addVariable(InputProfileVariable variable){
+	public void addVariable(SystemProfileVariable variable){
 		this.variables.add(variable);
 	}
 
@@ -133,8 +131,8 @@ public class InputProfile {
 	 * @param variableName the name of input profile variable
 	 * @return the input profile variable
 	 */
-	public InputProfileVariable getVariable(String variableName){
-		for(InputProfileVariable variable:variables){
+	public SystemProfileVariable getVariable(String variableName){
+		for(SystemProfileVariable variable:variables){
 			if(variable.getName().equals(variableName))
 				return variable;
 		}

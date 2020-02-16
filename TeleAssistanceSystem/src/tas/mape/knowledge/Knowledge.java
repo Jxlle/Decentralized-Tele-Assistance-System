@@ -29,9 +29,6 @@ import tas.mape.system.entity.WorkflowExecutor;
 // TODO Return copies but not the original lists for security
 public class Knowledge {
 	
-	// Parent system entity this component belongs to
-	private SystemEntity systemEntity;
-	
 	// List of used registry endpoints by the workflow
 	private List<String> registryEndpoints;
 	
@@ -175,27 +172,6 @@ public class Knowledge {
 	 */
 	public boolean isBlacklisted(ServiceDescription service) {
 		return serviceBlackList.get(service.getServiceEndpoint()) != null;
-	}
-	
-	/**
-	 * Set the parent system entity to the given entity
-	 * @param entityName the given entity
-	 */
-	public void setSystemEntity(SystemEntity systemEntity) throws IllegalStateException {
-		
-		if (this.systemEntity != null) {
-			throw new IllegalStateException("A system entity can only be assigned once!");
-		}
-		
-		this.systemEntity = systemEntity;
-	}
-	
-	/**
-	 * Return the parent system entity
-	 * @return the parent system entity
-	 */
-	public SystemEntity getSystemEntity() {
-		return systemEntity;
 	}
 	
 	/**

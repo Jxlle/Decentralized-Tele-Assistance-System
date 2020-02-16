@@ -43,7 +43,8 @@ import service.workflow.ast.rspLexer;
 import service.workflow.ast.rspParser;
 import tas.adaptation.AdaptationEngine;
 import tas.adaptation.TASStart;
-import tas.data.GlobalServiceInfo;
+import tas.data.serviceinfo.GlobalServiceInfo;
+import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.mape.planner.RatingType;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.SystemEntity;
@@ -136,6 +137,7 @@ public class ApplicationController implements Initializable {
     TASStart tasStart;
     GlobalServiceInfo serviceInfo = new GlobalServiceInfo();
     SystemEntity selectedEntity;
+    WorkflowAnalyzer workflowAnalyzer;
     List<SystemEntity> entities = new ArrayList<>();
     Map<String, List<ServiceRegistry>> entityRegistries;
     List<Pair<String, Class<? extends AbstractSystem<SystemEntity>>>> systemLoops = 
@@ -279,7 +281,7 @@ public class ApplicationController implements Initializable {
     public void initialize(URL arg0, ResourceBundle arg1) {
 
     	//this.fillProfiles();
-    	this.fillLoops();
+    	this.fillSystemProfiles();
     	this.setButton();
     	this.addTestEntity();
     	serviceInfo.loadData(new File(defaultServiceDataPath));
@@ -1020,13 +1022,24 @@ public class ApplicationController implements Initializable {
 
     }
     
-    private void fillLoops() {
-    	for (Pair<String, Class<? extends AbstractSystem<SystemEntity>>> loopInfo : systemLoops) {
-    		addLoop(loopInfo);
+    private void fillSystemProfiles() {
+    	File folder = new File(profileFilePath);
+    	File[] files = folder.listFiles();
+
+    	try {
+    	    for (File file : files) {
+        		if (file.isFile()) {
+        		    if (file.getName().lastIndexOf('.') > 0)
+        		    	System.err.print("test");
+        			this.addSystemProfile(file.getAbsolutePath());
+        		}
+    	    }
+    	} catch (Exception e) {
+    	    e.printStackTrace();
     	}
     }
     
-    private void addLoop(Pair<String, Class<? extends AbstractSystem<SystemEntity>>> loopInfo) {
+    private void addSystemProfile(String profilePath) {
     	AnchorPane itemPane = new AnchorPane();
 
     	Button inspectButton = new Button();
@@ -1034,6 +1047,34 @@ public class ApplicationController implements Initializable {
     	inspectButton.setPrefHeight(32);
     	inspectButton.setLayoutY(5);
     	inspectButton.setId("inspectButton");
+    	inspectButton.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override
+    	    public void handle(ActionEvent event) {
+        		try {	
+        		    FXMLLoader loader = new FXMLLoader();
+        		    loader.setLocation(MainGui.class.getResource("view/systemProfileDialog.fxml"));
+        		    AnchorPane pane = (AnchorPane) loader.load();
+
+        		    Stage dialogStage = new Stage();
+        		    dialogStage.setTitle("System Profile");
+        		    
+        			SystemProfileController controller = (SystemProfileController) loader.getController();
+        			controller.setStage(dialogStage);
+        			controller.setFilePath(profilePath);
+
+        		    Scene dialogScene = new Scene(pane);
+        		    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
+
+        		    dialogStage.initOwner(primaryStage);
+        		    dialogStage.setResizable(false);
+        		    dialogStage.setScene(dialogScene);
+        		    dialogStage.show();    		    
+        		    
+        		} catch (Exception e) {
+        		    e.printStackTrace();
+        		}
+    	    }
+    	});
     	
     	Button runButton = new Button();
     	runButton.setPrefWidth(32);
@@ -1044,7 +1085,7 @@ public class ApplicationController implements Initializable {
     	
     	Label label = new Label();
     	label.setLayoutY(15);
-    	label.setText(loopInfo.getKey());
+    	label.setText(Paths.get(profilePath).getFileName().toString().split("\\.")[0]);
     	
     	AnchorPane.setTopAnchor(label, 10.0);
     	AnchorPane.setBottomAnchor(label, 10.0);

@@ -7,6 +7,7 @@ import profile.ProfileExecutor;
 import profile.SystemRequirementType;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.Planner;
@@ -113,7 +114,7 @@ public class Analyzer {
 	 */
 	private List<ServiceCombination> chooseServices() {
 		
-		SystemRequirementType requirement = ProfileExecutor.profiles.get(knowledge.getSystemEntity().getEntityName()).getSystemRequirement();
+		SystemRequirementType requirement = SystemProfileDataHandler.activeProfile.getRequirementType();
 		Map<Description, List<ServiceDescription>> usableServices = knowledge.getUsableServices();
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirement);
 		List<Goal> goals = knowledge.getGoals();

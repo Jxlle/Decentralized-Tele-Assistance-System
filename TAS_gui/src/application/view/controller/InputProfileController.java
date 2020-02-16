@@ -52,8 +52,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import application.utility.Convert;
 import profile.InputProfile;
-import profile.InputProfileValue;
-import profile.InputProfileVariable;
+import profile.SystemProfileValue;
+import profile.SystemProfileVariable;
 import profile.ProfileExecutor;
 import profile.Requirement;
 
@@ -109,7 +109,7 @@ public class InputProfileController implements Initializable {
 	
 	ObservableList<ValueEntry> valueData = FXCollections.observableArrayList();
 	ObservableList<ValueEntry> reqData = FXCollections.observableArrayList();
-	InputProfileVariable currentVariable=null;
+	SystemProfileVariable currentVariable=null;
 	Requirement currentReq=null;
 
 	
@@ -296,16 +296,16 @@ public class InputProfileController implements Initializable {
 	                    	valueData.clear();
 	                    	
 	                    	currentVariable=profile.getVariable(newVal);
-	                    	List<InputProfileValue> values=currentVariable.getValues();
+	                    	List<SystemProfileValue> values=currentVariable.getValues();
 	                    	for(int i=0;i<values.size();i++){
-	                    		InputProfileValue value=values.get(i);
+	                    		SystemProfileValue value=values.get(i);
 	                    		valueData.add(new ValueEntry("value "+i,value.getData().getClass().getSimpleName(),
 	                    				value.getData().toString(),String.valueOf(value.getRatio()),value));
 	                    	}
 	                    	String type=values.get(0).getData().getClass().getSimpleName();
 	                    	addValueButton.setDisable(false);
 	                    	addValueButton.setOnAction(event->{
-	                    		InputProfileValue newValue=new InputProfileValue(Convert.toObject(type, dataTextField.getText()),
+	                    		SystemProfileValue newValue=new SystemProfileValue(Convert.toObject(type, dataTextField.getText()),
 	                    				Double.parseDouble(ratioTextField.getText()));
 	                    		currentVariable.getValues().add(newValue);
 	                    		valueData.add(new ValueEntry("value "+valueData.size(),newValue.getData().getClass().getSimpleName(),
@@ -429,10 +429,10 @@ public class InputProfileController implements Initializable {
 	    private  SimpleStringProperty type;
 	    private  SimpleStringProperty data;
 	    private  SimpleStringProperty ratio;
-	    private  InputProfileValue profileValue;
+	    private  SystemProfileValue profileValue;
 	    
 	    
-	    public ValueEntry(String invocations, String name,String type,String data, String ratio,InputProfileValue profileValue){
+	    public ValueEntry(String invocations, String name,String type,String data, String ratio,SystemProfileValue profileValue){
 	    	this.invocations=new SimpleStringProperty(invocations);
 	    	this.name=new SimpleStringProperty(name);
 	    	this.type=new SimpleStringProperty(type);
@@ -442,7 +442,7 @@ public class InputProfileController implements Initializable {
 	    }
 	    
 	    
-	    public ValueEntry(String name,String type,String data, String ratio,InputProfileValue profileValue){
+	    public ValueEntry(String name,String type,String data, String ratio,SystemProfileValue profileValue){
 	    	this.name=new SimpleStringProperty(name);
 	    	this.type=new SimpleStringProperty(type);
 	    	this.data=new SimpleStringProperty(data);
@@ -450,7 +450,7 @@ public class InputProfileController implements Initializable {
 	    	this.profileValue=profileValue;
 	    }
 	    	    
-	    public InputProfileValue getProfileValue(){
+	    public SystemProfileValue getProfileValue(){
 	    	return this.profileValue;
 	    }
 	    

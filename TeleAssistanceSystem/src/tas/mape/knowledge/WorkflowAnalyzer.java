@@ -7,8 +7,8 @@ import java.util.Random;
 
 import javafx.util.Pair;
 import profile.InputProfile;
-import profile.InputProfileValue;
-import profile.InputProfileVariable;
+import profile.SystemProfileValue;
+import profile.SystemProfileVariable;
 import profile.ProfileExecutor;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
@@ -16,6 +16,9 @@ import service.auxiliary.WeightedCollection;
 import service.composite.CompositeService;
 import service.composite.CompositeServiceClient;
 import service.utility.Time;
+import tas.data.systemprofile.SystemProfile;
+import tas.data.systemprofile.SystemProfileDataHandler;
+import tas.mape.system.entity.WorkflowExecutor;
 
 /**
  * Class used to analyze workflows and gather information for the knowledge component
@@ -32,14 +35,14 @@ public class WorkflowAnalyzer {
     /**
      * Indicate that the analyzer has been stopped
      */
-    public synchronized void stop(){
+    public synchronized void stop() {
     	isStopped = true;
     }
     
     /**
      * Indicate that the analyzer has been started
      */
-    public synchronized void start(){
+    public synchronized void start() {
     	isStopped = false;
     }
     
@@ -57,7 +60,7 @@ public class WorkflowAnalyzer {
     	compositeService.getWorkflowProbe().register(workflowAnalyzerProbe);
     	
     	// Get input profile
-    	InputProfile profile = ProfileExecutor.profiles.get(entityName);
+    	SystemProfile profile = SystemProfileDataHandler.activeProfile;
     	
     	// Execute workflow and gather data
     	compositeService.setTestMode(true);
@@ -93,24 +96,23 @@ public class WorkflowAnalyzer {
      * @param profile the given input profile
      * @param compositeService the given composite service
      */
-	private void executeWorkflow(InputProfile profile, CompositeService compositeService) {
+	private void executeWorkflow(SystemProfile profile, CompositeService compositeService) {
 
 		CompositeServiceClient client = new CompositeServiceClient("service.assistance");
 		compositeService.updateCache();
 		Time.steps.set(0);
 		
 		if (profile != null) {
-		    InputProfileVariable variable = profile.getVariable("pick");
-		    List<InputProfileValue> values = variable.getValues();
+		    SystemProfileVariable variable = profile.getVariable("pick");
+		    List<SystemProfileValue> values = variable.getValues();
 
 		    int patientId = (int) profile.getVariable("patientId").getValues().get(0).getData();
-		    int workflowCycles = (int) profile.getVariable("workflowCycles").getValues().get(0).getData();
 		    int pick;
 		    
 		    start();
 		    Random rand = new Random();
 
-		    for (currentSteps = 0; currentSteps < workflowCycles; currentSteps++) {
+		    for (currentSteps = 0; currentSteps < profile.getWorkflowCycles(); currentSteps++) {
 		    	
 			    Time.steps.incrementAndGet();   	    	
 				double probability = rand.nextDouble();
@@ -120,7 +122,8 @@ public class WorkflowAnalyzer {
 					
 				    if ((values.get(j).getRatio() + valueProbability) > probability) {
 				    	pick = (int) values.get(j).getData();
-				    	client.invokeCompositeService(profile.getQosRequirement(), patientId, pick);
+				    	// TODO
+				    	client.invokeCompositeService("delete", patientId, pick);
 				    	break;
 				    } 
 				    else {

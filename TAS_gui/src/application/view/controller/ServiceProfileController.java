@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import application.MainGui;
+import application.utility.Convert;
 import service.atomic.AtomicService;
 import service.atomic.ServiceProfile;
 import service.atomic.ServiceProfileAttribute;
@@ -47,9 +48,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class ServiceProfileController implements Initializable {
-
-    //@FXML
-    //VBox serviceProfileVBox;
 	
 	@FXML
 	ListView<AnchorPane> serviceProfileListView;
@@ -667,61 +665,14 @@ public class ServiceProfileController implements Initializable {
 	    	this.type=new SimpleStringProperty(type);
 	    }
 	    
-	    public Object getRealValue(String value){
-	    	Object realValue=null;
-			try {
-				switch (type.get()) {
-				case "boolean": 
-				case "Boolean":
-				{
-					if (value.equals("true"))
-						realValue= true;
-					else
-						realValue= false;
-					break;
-				}
-				case "short":
-				case "Short":
-				{
-					realValue= Short.parseShort(value);
-					break;
-				}
-				case "int": 
-				case "Integer": 
-				{
-					realValue= Integer.parseInt(value);
-					break;
-				}
-				case "long": 
-				case "Long": 
-				{
-					realValue= Long.parseLong(value);
-					break;
-				}
-				case "float": 
-				case "Float": 
-				{
-					realValue= Float.parseFloat(value);
-					break;
-				}
-				case "double":
-				case "Double": 
-				{
-					realValue= Double.parseDouble(value);
-					break;
-				}
-				default: {
-					System.out.println("Wrong attribute!!!!");
-					break;
-				}
-				}
-
-			} catch (Exception e) {
-				return null;
-			}			
-			
-	    	this.value=new SimpleStringProperty(value);
-			return realValue;
+	    public Object getRealValue(String value) {
+	    	Object realValue = Convert.toObject(type.get(), value);
+	    	
+	    	if (realValue != null) {
+	    		this.value = new SimpleStringProperty(value);
+	    	}
+	    	
+	    	return realValue;
 	    }
 	    
 	    public String getName(){

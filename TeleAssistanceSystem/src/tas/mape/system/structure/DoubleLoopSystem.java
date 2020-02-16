@@ -54,10 +54,8 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 		for (int i = 0; i < executionCycles; i++) {
 			
 			// Execute workflow
-			for (int j = 0; j < WorkflowExecutor.workflowCycles; j++) {
-				entity1.getManagedSystem().executeWorkflow();
-				entity2.getManagedSystem().executeWorkflow();
-			}
+			entity1.getManagedSystem().executeWorkflow();
+			entity2.getManagedSystem().executeWorkflow();
 			
 			// Execute MAPE-K loop until the communication step
 			entity1.getManagingSystem().executeMonitor();

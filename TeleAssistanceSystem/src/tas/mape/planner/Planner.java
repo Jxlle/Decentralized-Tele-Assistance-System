@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import profile.ProfileExecutor;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
+import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.PlannerMessage;
@@ -111,7 +111,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public List<ServiceCombination> calculateNewServiceCombinations(PlannerMessageContent content) {
 		AbstractWorkflowQoSRequirement requirementClass = 
-				knowledge.getQoSRequirementClass(ProfileExecutor.profiles.get(knowledge.getSystemEntity().getEntityName()).getSystemRequirement());
+				knowledge.getQoSRequirementClass(SystemProfileDataHandler.activeProfile.getRequirementType());
 		return requirementClass.getNewServiceCombinations(availableServiceCombinations, getFailureRates(content), knowledge.getGoals());
 	}
 	

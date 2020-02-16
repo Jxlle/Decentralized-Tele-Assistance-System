@@ -169,7 +169,7 @@
                     <items>
                       <AnchorPane maxWidth="400.0" minWidth="350.0" prefWidth="400.0">
                            <children>
-                              <TitledPane animated="false" collapsible="false" layoutX="16.0" prefHeight="255.0" prefWidth="233.0" text="System loop" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TitledPane animated="false" collapsible="false" layoutX="16.0" prefHeight="255.0" prefWidth="233.0" text="System Profiles" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>

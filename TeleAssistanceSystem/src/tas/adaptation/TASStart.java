@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Random;
 
 import profile.InputProfile;
-import profile.InputProfileValue;
-import profile.InputProfileVariable;
+import profile.SystemProfileValue;
+import profile.SystemProfileVariable;
 import profile.ProfileExecutor;
 import service.adaptation.effectors.WorkflowEffector;
 import service.atomic.AtomicService;
@@ -260,8 +260,8 @@ public class TASStart {
 	InputProfile profile = ProfileExecutor.profiles.get("test");
 	if (profile != null) {
 	    int maxSteps = (int) profile.getMaxSteps();
-	    InputProfileVariable variable = profile.getVariable("pick");
-	    List<InputProfileValue> values = variable.getValues();
+	    SystemProfileVariable variable = profile.getVariable("pick");
+	    List<SystemProfileValue> values = variable.getValues();
 
 	    int patientId = (int) profile.getVariable("patientId").getValues().get(0).getData();
 	    int pick;

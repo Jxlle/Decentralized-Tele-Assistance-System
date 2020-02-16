@@ -315,14 +315,6 @@ public class MAPEKComponent {
 	}
 	
 	/**
-	 * Set the parent system entity name to the given entity 
-	 * @param entityName the given entity
-	 */
-	public void setSystemEntity(SystemEntity entity) {
-		knowledge.setSystemEntity(entity);
-	}
-	
-	/**
 	 * Return the system goals
 	 * @return the system goals
 	 */

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import application.MainGui;
+import application.utility.Convert;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -46,7 +47,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import profile.SystemRequirementType;
 import service.registry.ServiceRegistry;
-import tas.data.GlobalServiceInfo;
+import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CombinationStrategy;
 import tas.mape.knowledge.Goal;
@@ -679,75 +680,13 @@ public class SystemEntityController implements Initializable {
 	    }
 	    
 	    public Object getRealValue(String value){
-	    	Object realValue = null;
+	    	Object realValue = Convert.toObject(type.get(), value);
 	    	
-			try {
-				switch (type.get()) {
-				
-					case "boolean": 
-					case "Boolean":
-					{
-						if (value.equals("true"))
-							realValue = true;
-						else
-							realValue = false;
-						break;
-					}
-					
-					case "short":
-					case "Short":
-					{
-						realValue = Short.parseShort(value);
-						break;
-					}
-					
-					case "int": 
-					case "Integer": 
-					{
-						realValue = Integer.parseInt(value);
-						break;
-					}
-					
-					case "long": 
-					case "Long": 
-					{
-						realValue = Long.parseLong(value);
-						break;
-					}
-					
-					case "float": 
-					case "Float": 
-					{
-						realValue = Float.parseFloat(value);
-						break;
-					}
-					
-					case "double":
-					case "Double": 
-					{
-						realValue = Double.parseDouble(value);
-						break;
-					}
-					
-					case "string":
-					case "String":
-					{
-						realValue = value;
-						break;
-					}
-					
-					default: {
-						System.out.println("Wrong attribute!!!!");
-						break;
-					}
-				}
-
-			} catch (Exception e) {
-				return null;
-			}			
-			
-	    	this.value=new SimpleStringProperty(value);
-			return realValue;
+	    	if (realValue != null) {
+	    		this.value = new SimpleStringProperty(value);
+	    	}
+	    	
+	    	return realValue;
 	    }
 	}
 	

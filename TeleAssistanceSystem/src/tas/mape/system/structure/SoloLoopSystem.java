@@ -33,9 +33,7 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 		for (int i = 0; i < executionCycles; i++) {
 			
 			// Execute workflow
-			for (int j = 0; j < WorkflowExecutor.workflowCycles; j++) {
-				entity.getManagedSystem().executeWorkflow();
-			}
+			entity.getManagedSystem().executeWorkflow();
 			
 			// Execute MAPE-K loop
 			entity.getManagingSystem().executeMonitor();

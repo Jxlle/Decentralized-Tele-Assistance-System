@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Random;
 
 import profile.InputProfile;
-import profile.InputProfileValue;
-import profile.InputProfileVariable;
+import profile.SystemProfileValue;
+import profile.SystemProfileVariable;
 import profile.ProfileExecutor;
 import service.adaptation.effectors.WorkflowEffector;
 import service.composite.CompositeServiceClient;
 import service.registry.ServiceRegistry;
 import service.utility.Time;
+import tas.data.systemprofile.SystemProfile;
+import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.services.assistance.AssistanceService;
 import tas.services.assistance.AssistanceServiceCostProbe;
 import tas.services.qos.MinCostQoS;
@@ -133,23 +135,22 @@ public class WorkflowExecutor {
 	
     public void executeWorkflow() {
 
-    	InputProfile profile = ProfileExecutor.profiles.get(systemEntity.getEntityName());
+    	SystemProfile profile = SystemProfileDataHandler.activeProfile;
 		CompositeServiceClient client = new CompositeServiceClient("service.assistance");
 		workflowEffector.refreshAllServices();
 		Time.steps.set(0);
 	
 		if (profile != null) {
 			
-		    int maxSteps = (int) profile.getMaxSteps();
-		    InputProfileVariable variable = profile.getVariable("pick");
-		    List<InputProfileValue> values = variable.getValues();
+		    SystemProfileVariable variable = profile.getVariable("pick");
+		    List<SystemProfileValue> values = variable.getValues();
 	
 		    int patientId = (int) profile.getVariable("patientId").getValues().get(0).getData();
 		    int pick;
 	
 		    start();
 		    Random rand = new Random();
-		    for (currentSteps = 0; currentSteps < maxSteps; currentSteps++) {  
+		    for (currentSteps = 0; currentSteps < profile.getWorkflowCycles(); currentSteps++) {  
 		    	
 		    	Time.steps.incrementAndGet();	    	    	
 				double probability = rand.nextDouble();
@@ -158,7 +159,8 @@ public class WorkflowExecutor {
 				for (int j = 0; j < values.size(); j++) {
 				    if ((values.get(j).getRatio() + valueProbability) > probability) {
 						pick = (int) values.get(j).getData();
-						client.invokeCompositeService(profile.getQosRequirement(), patientId, pick);
+						// TODO
+						client.invokeCompositeService("delete", patientId, pick);
 						break;
 				    } 
 				    else {

@@ -7,7 +7,7 @@ package profile;
  * Combination of data and related ratio
  * @author Yifan Ruan (ry222ad@student.lnu.se)
  */
-public class InputProfileValue {
+public class SystemProfileValue {
 	
 	private Object data;
 	private double ratio;
@@ -17,7 +17,7 @@ public class InputProfileValue {
 	 * @param data the data
 	 * @param ratio the definition of how many times to execute with this data
 	 */
-	public InputProfileValue(Object data, double ratio){
+	public SystemProfileValue(Object data, double ratio){
 		this.data=data;
 		this.ratio=ratio;
 	}

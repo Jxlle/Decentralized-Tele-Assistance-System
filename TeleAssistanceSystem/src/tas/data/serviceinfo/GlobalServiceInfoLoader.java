@@ -1,4 +1,4 @@
-package tas.data;
+package tas.data.serviceinfo;
 
 import java.io.File;
 import java.lang.reflect.Constructor;

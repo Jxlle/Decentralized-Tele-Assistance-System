@@ -8,14 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.util.Pair;
+import profile.SystemRequirementType;
 import service.adaptation.effectors.WorkflowEffector;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import service.registry.ServiceRegistry;
-import tas.data.GlobalServiceInfo;
-import tas.data.GlobalServiceInfoLoader;
-import tas.data.GlobalServiceInfoWriter;
+import tas.data.serviceinfo.GlobalServiceInfo;
+import tas.data.serviceinfo.GlobalServiceInfoLoader;
+import tas.data.serviceinfo.GlobalServiceInfoWriter;
+import tas.data.systemprofile.SystemProfile;
+import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.analyzer.CostAndReliabilityReq;
 import tas.mape.analyzer.CostReq;
 import tas.mape.analyzer.ReliabilityReq;
@@ -31,6 +34,7 @@ import tas.mape.planner.PlanComponentType;
 import tas.mape.planner.Planner;
 import tas.mape.planner.ServiceCombination;
 import tas.mape.system.entity.SystemEntity;
+import tas.mape.system.structure.DoubleLoopSystem;
 import tas.mape.system.structure.SoloLoopSystem;
 import tas.mape.planner.RatingType;
 import tas.services.alarm.AlarmService;
@@ -305,5 +309,8 @@ public class TEST {
 		//GlobalServiceInfoWriter.writeToXml(info, file);
 		info.loadData(file);
 		//GlobalServiceInfoLoader.loadFromXml(info, file);*/
+		
+		SystemProfile profile = new SystemProfile(50, 250, SystemRequirementType.COST, RatingType.SCORE, DoubleLoopSystem.class, new ArrayList<>());
+		SystemProfileDataHandler.writeToXml(profile, "test");
 	}
 }
