@@ -46,13 +46,14 @@
                               <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="152.0" minHeight="10.0" prefHeight="152.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="473.0" minHeight="10.0" prefHeight="357.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="# Execution Cycles: " />
-                              <GridPane GridPane.rowIndex="8">
+                              <GridPane GridPane.rowIndex="9">
                                 <columnConstraints>
                                   <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
@@ -73,7 +74,7 @@
                                     </ListView>
                                  </children>
                               </GridPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                  <GridPane.margin>
                                     <Insets top="30.0" />
                                  </GridPane.margin>
@@ -117,26 +118,26 @@
                                     <Insets left="20.0" right="20.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <Label text="System Type: " GridPane.rowIndex="2" />
-                              <Label text="Requirement Type: " GridPane.rowIndex="4" />
-                              <Label text="Rating Type: " GridPane.rowIndex="5" />
-                              <ComboBox fx:id="requirementTypeComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <Label text="System Type: " GridPane.rowIndex="3" />
+                              <Label text="Requirement Type: " GridPane.rowIndex="5" />
+                              <Label text="Rating Type: " GridPane.rowIndex="6" />
+                              <ComboBox fx:id="requirementTypeComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <GridPane.margin>
                                     <Insets left="20.0" right="20.0" />
                                  </GridPane.margin>
                               </ComboBox>
-                              <ComboBox fx:id="ratingTypeComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <ComboBox fx:id="ratingTypeComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                  <GridPane.margin>
                                     <Insets left="20.0" right="20.0" />
                                  </GridPane.margin>
                               </ComboBox>
-                              <ComboBox fx:id="systemTypeComboBox" maxWidth="-Infinity" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <ComboBox fx:id="systemTypeComboBox" maxWidth="-Infinity" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
                               </ComboBox>
-                              <Label text="Protocol Type: " GridPane.rowIndex="3" />
-                              <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <Label text="Protocol Type: " GridPane.rowIndex="4" />
+                              <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
@@ -145,12 +146,18 @@
                                     <Label fx:id="protocolTypeLabel" text="A solo loop system consists of one entity. No protocol used." visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
-                              <Label text="Participating entities: " GridPane.rowIndex="7" />
-                              <ListView fx:id="entityListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                              <Label text="Participating entities: " GridPane.rowIndex="8" />
+                              <ListView fx:id="entityListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
                               </ListView>
+                              <Label text="Max Protocol Iterations: " GridPane.rowIndex="2" />
+                              <TextField fx:id="maxProtocolIterations" maxWidth="-Infinity" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                              </TextField>
                            </children>
                         </GridPane>
                         <Button fx:id="saveButton2" mnemonicParsing="false" prefWidth="60.0" text="Save" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="30.0" />

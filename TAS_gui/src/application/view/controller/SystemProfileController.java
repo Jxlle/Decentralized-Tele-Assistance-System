@@ -74,6 +74,9 @@ public class SystemProfileController implements Initializable {
 	TextField workflowCyclesTextField;
 	
 	@FXML
+	TextField maxProtocolIterations;
+	
+	@FXML
 	ComboBox<SystemRequirementType> requirementTypeComboBox;
 	
 	@FXML
@@ -263,6 +266,8 @@ public class SystemProfileController implements Initializable {
 		workflowCyclesTextField.setTextFormatter(new TextFormatter<Integer>(new IntegerStringConverter(), 0, integerFilter));
 		workflowCyclesTextField.setText(profile.getWorkflowCycles() + "");
 		
+		maxProtocolIterations.setTextFormatter(new TextFormatter<Integer>(new IntegerStringConverter(), 0, integerFilter));
+		
 		ObservableList<SystemRequirementType> requirementTypes = FXCollections.observableArrayList();
 		requirementTypes.addAll(SystemRequirementType.values());
 		requirementTypeComboBox.setItems(requirementTypes);
@@ -289,28 +294,24 @@ public class SystemProfileController implements Initializable {
 				
 				try {
 					method = systemClass.getMethod("getSystemEntityCount");
-				} catch (NoSuchMethodException e1) {
-					e1.printStackTrace();
-				} catch (SecurityException e1) {
-					e1.printStackTrace();
-				}
+				} catch (NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+				} 
 					
 				try {
 					entityCount = (int) method.invoke(null);
-				} catch (IllegalAccessException e1) {
-					e1.printStackTrace();
-				} catch (IllegalArgumentException e1) {
-					e1.printStackTrace();
-				} catch (InvocationTargetException e1) {
-					e1.printStackTrace();
-				}
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					e.printStackTrace();
+				} 
 				
 				if (entityCount > 1) {
 					protocolTypeComboBox.setVisible(true);
+					maxProtocolIterations.setVisible(true);
 					protocolTypeLabel.setVisible(false);
 				}
 				else {
 					protocolTypeComboBox.setVisible(false);
+					maxProtocolIterations.setVisible(false);
 					protocolTypeLabel.setVisible(true);
 				}
 				
@@ -338,29 +339,26 @@ public class SystemProfileController implements Initializable {
 		
 		try {
 			method = systemClass.getMethod("getSystemEntityCount");
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
+		} catch (NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 			
 		try {
 			entityCount = (int) method.invoke(null);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		
 		if (entityCount > 1) {
 			protocolTypeComboBox.setValue(profile.getProtocolType());
+			maxProtocolIterations.setText(profile.getMaxProtocolIterations() + "");
 			protocolTypeComboBox.setVisible(true);
+			maxProtocolIterations.setVisible(true);
 			protocolTypeLabel.setVisible(false);
 		}
 		else {
 			protocolTypeComboBox.setVisible(false);
+			maxProtocolIterations.setVisible(false);
 			protocolTypeLabel.setVisible(true);
 		}
 		
@@ -441,6 +439,12 @@ public class SystemProfileController implements Initializable {
 	            fail.setContentText("The amount of workflow cycles must be greater than 0.");
 	            fail.showAndWait();
 			}
+			else if (Integer.parseInt(maxProtocolIterations.getText()) <= 0) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("INVALID CONTENT");
+	            fail.setContentText("The maximum amount of protocol iterations must be greater than 0.");
+	            fail.showAndWait();
+			}
 			else if (protocolTypeComboBox.isVisible() && protocolTypeComboBox.getValue() == null) {
 	    		Alert fail = new Alert(AlertType.WARNING);
 	            fail.setHeaderText("MISSING CONTENT");
@@ -468,13 +472,14 @@ public class SystemProfileController implements Initializable {
 			else {
 				profile.clearEntities();
 				profile.setExecutionCycles(Integer.valueOf(executionCyclesTextField.getText()));
-				profile.setWorkflowCycles(Integer.valueOf(workflowCyclesTextField.getText()));	
+				profile.setWorkflowCycles(Integer.valueOf(workflowCyclesTextField.getText()));
 				profile.setRatingType(ratingTypeComboBox.getValue());
 				profile.setSystemType(systemTypeComboBox.getValue());
 				profile.setRequirementType(requirementTypeComboBox.getValue());
 				
 				if (protocolTypeComboBox.isVisible()) {
 					profile.setProtocolType(protocolTypeComboBox.getValue());
+					profile.setMaxProtocolIterations(Integer.valueOf(maxProtocolIterations.getText()));
 				}
 				
 				for (ComboBox<String> comboBox : entityListView.getItems()) {

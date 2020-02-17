@@ -5,12 +5,7 @@ import java.util.List;
 
 import profile.SystemProfileVariable;
 import profile.SystemRequirementType;
-import tas.mape.communication.message.PlannerMessage;
-import tas.mape.communication.protocol.AbstractProtocol;
-import tas.mape.planner.Planner;
 import tas.mape.planner.RatingType;
-import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.structure.AbstractSystem;
 
 /**
  * Class storing data for how to execute the workflow
@@ -19,7 +14,7 @@ import tas.mape.system.structure.AbstractSystem;
  */
 public class SystemProfile {
 	
-	private int executionCycles, workflowCycles;
+	private int executionCycles, workflowCycles, maxProtocolIterations;
 	private SystemType systemType;
 	private ProtocolType protocolType;
 	private SystemRequirementType requirementType;
@@ -62,6 +57,22 @@ public class SystemProfile {
 	 */
 	public void setProtocolType(ProtocolType protocolType) {
 		this.protocolType = protocolType;
+	}
+	
+	/**
+	 * Return the system profile max amount of protocol iterations
+	 * @return the system profile max amount of protocol iterations
+	 */
+	public int getMaxProtocolIterations() {
+		return maxProtocolIterations;
+	}
+	
+	/**
+	 * Set the system profile max amount of protocol iterations to the given value
+	 * @param executionCycles the given max amount of protocol iterations
+	 */
+	public void setMaxProtocolIterations(int maxProtocolIterations) {
+		this.maxProtocolIterations = maxProtocolIterations;
 	}
 	
 	/**
