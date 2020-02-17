@@ -12,12 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import service.adaptation.probes.interfaces.CostProbeInterface;
-import service.adaptation.probes.interfaces.ServiceRegistryProbeInterface;
 import service.adaptation.probes.interfaces.WorkflowProbeInterface;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.TimeOutError;
 import service.utility.SimClock;
-import tas.services.log.Log;
 
 /**
  * @author yfruan
@@ -59,7 +57,7 @@ public class AssistanceServiceCostProbe implements WorkflowProbeInterface, CostP
      * @see service.adaptation.Probe#workflowStarted(java.lang.String, java.lang.Object[])
      */
     @Override
-    public void workflowStarted(String qosRequirement, Object[] params) {
+    public void workflowStarted(Object[] params) {
     	System.out.println("Probe: workflowStarted");
 	    //Log.addLog("WorkflowStarted", "Workflow Started monitoring");
     	resultBuilder=new StringBuilder();
@@ -73,7 +71,7 @@ public class AssistanceServiceCostProbe implements WorkflowProbeInterface, CostP
      * @see service.adaptation.Probe#workflowEnded(java.lang.Object, java.lang.String, java.lang.Object[])
      */
     @Override
-    public void workflowEnded(Object result, String qosRequirement, Object[] params) {
+    public void workflowEnded(Object result, Object[] params) {
     	System.out.println("Probe: workflowEnded");
     	if(result instanceof TimeOutError){
     		System.out.println("WorkflowError!!!");

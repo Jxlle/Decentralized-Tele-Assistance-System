@@ -18,13 +18,13 @@ public class MyProbe implements WorkflowProbeInterface {
 	}
 
 	@Override
-	public void workflowStarted(String qosRequirement, Object[] params) {
+	public void workflowStarted(Object[] params) {
 	    System.err.println("Workflow Started monitoring");
 	    //Log.addLog("WorkflowStarted", "Workflow Started monitoring");
 	}
 
 	@Override
-	public void workflowEnded(Object result, String qosRequirement, Object[] params) {
+	public void workflowEnded(Object result, Object[] params) {
 	    System.err.println("Workflow Ended");
 	}
 

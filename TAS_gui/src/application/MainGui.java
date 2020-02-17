@@ -28,19 +28,14 @@ public class MainGui extends Application {
 	    	Utility.createFile(logFile);
 	    	Utility.createFile(resultFile);
 	    	Log.initialize(logFile);
-
-			TASStart tasStart = new TASStart();
  
 			//System.out.println("Start services");
-			FXMLLoader loader=new FXMLLoader();
+			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("view/application.fxml"));
-			SplitPane pane=(SplitPane)loader.load();			
+			SplitPane pane = (SplitPane) loader.load();			
 			
 			ApplicationController controller=(ApplicationController)loader.getController();
 			controller.setPrimaryStage(primaryStage);
-			controller.setTasStart(tasStart);
-			controller.setProbe(tasStart.getMonitor());
-			controller.setConfigurations(tasStart.getAdaptationEngines());
 			
 			Scene scene=new Scene(pane);
 			scene.getStylesheets().add(getClass().getResource("view/application.css").toExternalForm());

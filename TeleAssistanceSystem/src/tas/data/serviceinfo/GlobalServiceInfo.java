@@ -8,6 +8,7 @@ import java.util.List;
 import service.atomic.AtomicService;
 import service.registry.ServiceRegistry;
 import tas.services.alarm.AlarmService;
+import tas.services.assistance.AssistanceServiceCostProbe;
 import tas.services.drug.DrugService;
 import tas.services.medical.MedicalAnalysisService;
 import tas.services.profiles.ServiceDelayProfile;
@@ -26,7 +27,7 @@ public class GlobalServiceInfo {
     private List<Class<?>> serviceProfileClasses = new ArrayList<>();
     private List<ServiceRegistry> serviceRegistries = new ArrayList<>();
     private LinkedHashMap<String, String> serviceTypes = new LinkedHashMap<>();
-	
+    
     /**
      * Create a new global service info object
      */

@@ -17,7 +17,7 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	/**
 	 * Create a new abstract system with given system entities
 	 * @param systemEntities the given system entities
-	 * @throws IllegalArgumentException throw when the given 
+	 * @throws IllegalArgumentException throw when the given
 	 *         amount of entities is not supported by the system
 	 */
 	@SafeVarargs

@@ -1,7 +1,6 @@
 package tas.mape.system.structure;
 
 import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.entity.WorkflowExecutor;
 
 /**
  * Class representing a solo-loop system containing one system entity.
@@ -16,7 +15,7 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 	 * @throws IllegalArgumentException throw when the given 
 	 *         amount of entities is not supported by the system
 	 */
-	public SoloLoopSystem(SystemEntity... systemEntity) throws IllegalArgumentException {
+	public SoloLoopSystem(SystemEntity systemEntity) throws IllegalArgumentException {
 		super(systemEntity);
 	}
 
@@ -32,14 +31,14 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 		
 		for (int i = 0; i < executionCycles; i++) {
 			
-			// Execute workflow
-			entity.getManagedSystem().executeWorkflow();
-			
 			// Execute MAPE-K loop
 			entity.getManagingSystem().executeMonitor();
 			entity.getManagingSystem().executeAnalyzer();
 			entity.getManagingSystem().executePlanner();
 			entity.getManagingSystem().executeExecutor();
+			
+			// Execute workflow
+			entity.getManagedSystem().executeWorkflow();
 		}
 	}
 

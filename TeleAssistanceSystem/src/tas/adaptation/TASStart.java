@@ -223,13 +223,7 @@ public class TASStart {
 	//this.serviceProfileClasses.add(ServiceFailureProfile.class);
 	this.serviceProfileClasses.add(ServiceDelayProfile.class);
 	this.serviceProfileClasses.add(SimpleServiceFailureProfile.class);
-	this.serviceProfileClasses.add(ServiceFailureLoadProfile.class);
-	
-	/*Knowledge knowledge = new Knowledge(10);
-	Executer executer1 = new Executer(assistanceService);
-	Planner planner = new Planner(executer1);
-	Analyzer analyzer = new Analyzer(knowledge, planner);
-	Monitor monitor = new Monitor(assistanceService, knowledge, analyzer, 100);*/
+	this.serviceProfileClasses.add(ServiceFailureLoadProfile.class);*/
     }
 
     public void stopServices() {
@@ -291,7 +285,7 @@ public class TASStart {
 		for (int j = 0; j < values.size(); j++) {
 		    if ((values.get(j).getRatio() + valueProbability) > probability) {
 			pick = (int) values.get(j).getData();
-			client.invokeCompositeService(profile.getQosRequirement(), patientId, pick);
+			//client.invokeCompositeService(profile.getQosRequirement(), patientId, pick);
 			break;
 		    } else
 			valueProbability = valueProbability + values.get(j).getRatio();

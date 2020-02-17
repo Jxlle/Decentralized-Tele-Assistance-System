@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.CommonTree;
 
 import service.composite.CompositeService;
 import service.workflow.ast.ASTNode.Start;
@@ -13,7 +12,6 @@ import service.workflow.ast.rspLexer;
 import service.workflow.ast.rspParser;
 import taskgraph.TaskGraph.START;
 import taskgraph.TaskGraphInterpreter;
-import tools.ASTSymTabVisualizer;
 
 /**
  * Workflow execution of composite service
@@ -34,11 +32,10 @@ public class WorkflowEngine {
     /**
      * Execute the workflow with specific QoS requirement and initial parameters
      * @param workFlow the workflow to be executed
-     * @param qosRequirement the QoS requirements to be satisfied
      * @param params   initial parameters for the workflow
      * @return the result after executing the workflow
      */
-    public Object executeWorkflow(String workFlow, String qosRequirement, Object... params) {
+    public Object executeWorkflow(String workFlow, Object... params) {
 		rspLexer lexer;
 		try {
 			lexer = new rspLexer(new ANTLRFileStream(workFlow));
@@ -56,8 +53,7 @@ public class WorkflowEngine {
 			// tgVisualizer.exportGML(workFlow + "_TaskGraph", startGraph);
 
 			TaskGraphInterpreter interpreter = new TaskGraphInterpreter();
-			Object value = interpreter.interpret(startGraph, 
-					qosRequirement, service, params);
+			Object value = interpreter.interpret(startGraph, service, params);
 			//System.out.println("Result:" + value);
 			return value;
 		} catch (IOException | RecognitionException e) {

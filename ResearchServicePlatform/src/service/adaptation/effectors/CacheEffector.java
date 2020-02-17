@@ -80,10 +80,10 @@ public class CacheEffector {
      * @param opName the operation name
      * @return a list of service descriptions after refreshing
      */
-    public List<ServiceDescription> refreshCache(ServiceDescription description, String opName) {
+    /*public List<ServiceDescription> refreshCache(ServiceDescription description, String opName) {
     	removeService(description, opName);
     	return compositeService.lookupService(description.getServiceType(), opName);
-    }
+    }*/
 
     /**
      * Update service description

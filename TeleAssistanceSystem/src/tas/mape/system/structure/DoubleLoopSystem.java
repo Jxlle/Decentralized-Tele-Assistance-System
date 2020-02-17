@@ -5,7 +5,6 @@ import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.communication.protocol.PlannerProtocolDoNothing;
 import tas.mape.planner.Planner;
 import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.entity.WorkflowExecutor;
 
 /**
  * Class representing a double-loop system containing two system entities.
@@ -20,7 +19,7 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 	 * @throws IllegalArgumentException throw when the given 
 	 *         amount of entities is not supported by the system
 	 */
-	public DoubleLoopSystem(SystemEntity[] systemEntities) throws IllegalArgumentException {
+	public DoubleLoopSystem(SystemEntity... systemEntities) throws IllegalArgumentException {
 		super(systemEntities);
 	}
 	
@@ -47,15 +46,7 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 		SystemEntity entity1 = getSystemEntity(0);
 		SystemEntity entity2 = getSystemEntity(1);
 		
-		// Set chosen protocol
-		entity1.getManagingSystem().setProtocol(protocol);
-		entity2.getManagingSystem().setProtocol(protocol);
-		
 		for (int i = 0; i < executionCycles; i++) {
-			
-			// Execute workflow
-			entity1.getManagedSystem().executeWorkflow();
-			entity2.getManagedSystem().executeWorkflow();
 			
 			// Execute MAPE-K loop until the communication step
 			entity1.getManagingSystem().executeMonitor();
@@ -71,6 +62,10 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 			// Execute executers
 			entity1.getManagingSystem().executeExecutor();
 			entity2.getManagingSystem().executeExecutor();
+			
+			// Execute workflow
+			entity1.getManagedSystem().executeWorkflow();
+			entity2.getManagedSystem().executeWorkflow();
 		}
 	}
 

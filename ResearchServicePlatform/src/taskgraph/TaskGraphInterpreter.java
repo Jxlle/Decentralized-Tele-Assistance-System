@@ -35,7 +35,6 @@ public class TaskGraphInterpreter {
     AbstractServiceClient serviceClient;
     // AbstractServiceClient registryServiceClient = new
     // AbstractServiceClient(ServiceRegistry.ADDRESS);
-    String qosRequirement;
     CompositeService compositeService;
     //SDCache sdCache;
 
@@ -66,21 +65,16 @@ public class TaskGraphInterpreter {
     /*
      * Each template object have its own ID, which can be used to set/get data variables For global section 0 will be used
      */
-    public Object interpret(TaskGraph first, String qosRequirement, final CompositeService compositeService, final Object... args) {
+    public Object interpret(TaskGraph first, final CompositeService compositeService, final Object... args) {
 
 	if (first == null) {
 	    System.err.println("Interpreter received null taskgraph");
-	}
-
-	if (qosRequirement == null) {
-	    System.err.println("Interpreter received null qosRequirement");
 	}
 
 	if (compositeService == null) {
 	    System.err.println("Interpreter received null compositeService");
 	}
 
-	this.qosRequirement = qosRequirement;
 	this.compositeService = compositeService;
 	//this.sdCache = cache;
 	// Start from global declaration which has id = 0 in taskGraphs
@@ -384,7 +378,7 @@ public class TaskGraphInterpreter {
 		if (call.getServiceName().equalsIgnoreCase("this")) {
 		    resultInvoke = compositeService.invokeLocalOperation(call.getOperationName(), params);
 		} else {
-		    resultInvoke = compositeService.invokeServiceOperation(qosRequirement, call.getServiceName(), call.getOperationName(), params);
+		    resultInvoke = compositeService.invokeServiceOperation(call.getServiceName(), call.getOperationName(), params);
 		}
 
 		if (!compositeService.getConfiguration().ignoreTimeoutError && resultInvoke instanceof TimeOutError)
@@ -410,7 +404,7 @@ public class TaskGraphInterpreter {
 				    TaskGraphInterpreter interpreter = new TaskGraphInterpreter();
 				    interpreter.heap = heap;
 				    interpreter.compositeService = compositeService;
-				    interpreter.interpret(task, qosRequirement, compositeService, args);
+				    interpreter.interpret(task, compositeService, args);
 				    return ((ExecutionThread)Thread.currentThread()).getCurrentTime();
 				}  	
 		    };

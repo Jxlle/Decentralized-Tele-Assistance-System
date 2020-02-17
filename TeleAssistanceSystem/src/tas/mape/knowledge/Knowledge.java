@@ -10,6 +10,7 @@ import javafx.util.Pair;
 import profile.SystemRequirementType;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CostAndReliabilityReq;
 import tas.mape.analyzer.CostReq;
@@ -295,7 +296,7 @@ public class Knowledge {
 	 * @return the service load
 	 */
 	public int getServiceLoad(Description description, double usePercentage) {
-		return (int) (servicesUsageChance.get(description) * usePercentage * WorkflowExecutor.workflowCycles);
+		return (int) (servicesUsageChance.get(description) * usePercentage * SystemProfileDataHandler.activeProfile.getWorkflowCycles());
 	}
 	
 	/**

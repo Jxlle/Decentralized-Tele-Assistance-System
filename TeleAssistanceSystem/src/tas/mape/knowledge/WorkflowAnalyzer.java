@@ -26,7 +26,7 @@ public class WorkflowAnalyzer {
 	
 	// Fields
 	private int currentSteps;
-	private static int analyzerCycles = 5000;
+	private static int analyzerCycles = 3000;
 	private boolean isStopped, hasBeenStopped;
 	private WorkflowAnalyzerProbe workflowAnalyzerProbe = new WorkflowAnalyzerProbe();
 	
@@ -47,11 +47,10 @@ public class WorkflowAnalyzer {
     /**
      * Analyze a given workflow and return a result used in the knowledge component
      * @param workflowPath the workflow path
-     * @param entityName the name of the system entity
      * @param compositeService the composite service
      * @return a map containing a usage chance and list of used services for each used service type & operation combination
      */
-    public Map<Description, Pair<List<ServiceDescription>, Double>> analyzeWorkflow(String entityName, CompositeService compositeService) { 
+    public Map<Description, Pair<List<ServiceDescription>, Double>> analyzeWorkflow(CompositeService compositeService) { 
     	
     	// Initialize workflow probe
     	workflowAnalyzerProbe.reset();
@@ -77,7 +76,7 @@ public class WorkflowAnalyzer {
 		
 		for (Description description : usedDescriptions.getItems()) {
 			
-			double descriptionChance = usedDescriptions.getWeight(description) / (double) profile.getVariable("workflowCycles").getValues().get(0).getData();
+			double descriptionChance = usedDescriptions.getWeight(description) / (double) analyzerCycles;
 			Pair<List<ServiceDescription>, Double> pair = new Pair<List<ServiceDescription>, Double>(compositeService.getCache().getServiceDescriptions(description), descriptionChance);
 			usableServicesAndChance.put(description, pair);
 		}
@@ -96,7 +95,8 @@ public class WorkflowAnalyzer {
      */
 	private void executeWorkflow(SystemProfile profile, CompositeService compositeService) {
 
-		CompositeServiceClient client = new CompositeServiceClient("service.assistance");
+		System.err.print(compositeService.getServiceDescription().getServiceEndpoint() + " test \n");
+		CompositeServiceClient client = new CompositeServiceClient(compositeService.getServiceDescription().getServiceEndpoint());
 		compositeService.updateCache();
 		Time.steps.set(0);
 		
@@ -120,8 +120,8 @@ public class WorkflowAnalyzer {
 					
 				    if ((values.get(j).getRatio() + valueProbability) > probability) {
 				    	pick = (int) values.get(j).getData();
-				    	// TODO
-				    	client.invokeCompositeService("delete", patientId, pick);
+				    	System.err.print("[" + currentSteps + "]-------------------------------------------------\n");
+				    	client.invokeCompositeService(new Object[]{patientId, pick});
 				    	break;
 				    } 
 				    else {

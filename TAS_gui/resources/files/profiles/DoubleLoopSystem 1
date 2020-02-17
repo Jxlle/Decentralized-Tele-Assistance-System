@@ -1,6 +1,7 @@
 <tas.data.systemprofile.SystemProfile>
   <executionCycles>50</executionCycles>
   <workflowCycles>250</workflowCycles>
+  <maxProtocolIterations>300</maxProtocolIterations>
   <systemType>DOUBLE_LOOP</systemType>
   <protocolType>STANDARD_PROTOCOL</protocolType>
   <requirementType>COST_AND_RELIABILITY</requirementType>

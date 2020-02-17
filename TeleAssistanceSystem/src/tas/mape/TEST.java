@@ -1,6 +1,7 @@
 package tas.mape;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -156,9 +157,6 @@ public class TEST {
 		assistanceService.getWorkflowProbe().register(monitor);
 		//assistanceService.getWorkflowProbe().register(new AssistanceServiceDelayProbe());
 		// assistanceService.getServiceInvocationProbe().register(monitor);
-		assistanceService.addQosRequirement("ReliabilityQoS", new ReliabilityQoS());
-		assistanceService.addQosRequirement("PreferencesQoS", new PreferencesQoS());
-		assistanceService.addQosRequirement("CostQoS", new MinCostQoS());
 		
 		workflowEffector = new WorkflowEffector(assistanceService);
 		
@@ -314,7 +312,7 @@ public class TEST {
 		info.loadData(file);
 		//GlobalServiceInfoLoader.loadFromXml(info, file);*/
 		
-		SystemProfile profile = new SystemProfile();//50, 250, SystemRequirementType.COST, RatingType.SCORE, DoubleLoopSystem.class, new ArrayList<>());
+		/*SystemProfile profile = new SystemProfile();//50, 250, SystemRequirementType.COST, RatingType.SCORE, DoubleLoopSystem.class, new ArrayList<>());
 		profile.setExecutionCycles(50);
 		profile.setWorkflowCycles(250);
 		profile.setRequirementType(SystemRequirementType.COST_AND_RELIABILITY);
@@ -331,6 +329,7 @@ public class TEST {
 		profile.addEntity("Test Entity");
 		//profile.addEntity("Test Entity 2");
 		
-		SystemProfileDataHandler.writeToXml(profile, "test");
+		SystemProfileDataHandler.writeToXml(profile, "test");*/
+
 	}
 }

@@ -77,14 +77,14 @@ public class WorkflowAnalyzerProbe implements WorkflowProbeInterface {
 	 * Not used
 	 */
 	@Override
-	public void workflowStarted(String qosRequirement, Object[] params) {
+	public void workflowStarted(Object[] params) {
 	}
 
 	/**
 	 * Not used
 	 */
 	@Override
-	public void workflowEnded(Object result, String qosRequirement, Object[] params) {
+	public void workflowEnded(Object result, Object[] params) {
 	}
 
 }

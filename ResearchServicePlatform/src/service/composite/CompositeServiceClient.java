@@ -31,22 +31,11 @@ public class CompositeServiceClient {
     }
     
     /**
-     * Invoke related composite service to start a workflow with specific QoS requirements 
-     * and initial parameters for the workflow
-     * @param qosRequirement the QoS requirements
+     * Invoke related composite service to start a workflow with initial parameters for the workflow
      * @param params  the initial parameters
      * @return the result 
      */
-    public Object invokeCompositeService(String qosRequirement, Object...params){
-    	return client.sendRequest("invokeCompositeService", qosRequirement, params);
-    }
-    
-    /**
-     * Get list of QoS requirements
-     * @return the list of QoS requirement names
-     */
-    @SuppressWarnings("unchecked")
-	public List<String> getQosRequirementNames(){
-    	return (List<String>) client.sendRequest("getQosRequirementNames"); 
+    public Object invokeCompositeService(Object[] params) {
+    	return client.sendRequest("invokeCompositeService", new Object[]{params});
     }
 }

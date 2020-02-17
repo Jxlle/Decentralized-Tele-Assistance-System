@@ -1,5 +1,6 @@
 package tas.mape.monitor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegi
 	public MonitorWorkflowProbe() {	
 		serviceInvocations = new HashMap<String, Integer>();
 		serviceFailures = new HashMap<String, Integer>();
+		servicesChangedInCache = new ArrayList<>();
+		servicesChangedInRegistries = new ArrayList<>();
 	}
 	
 	/**
@@ -128,7 +131,7 @@ public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegi
 	 * Not used
 	 */
 	@Override
-	public void workflowStarted(String qosRequirement, Object[] params) {	
+	public void workflowStarted(Object[] params) {	
 	}
 	
 	/**
@@ -163,6 +166,6 @@ public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegi
 	 * Not used
 	 */
 	@Override
-	public void workflowEnded(Object result, String qosRequirement, Object[] params) {
+	public void workflowEnded(Object result, Object[] params) {
 	}
 }

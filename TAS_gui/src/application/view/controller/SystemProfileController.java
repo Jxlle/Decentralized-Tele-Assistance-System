@@ -439,7 +439,7 @@ public class SystemProfileController implements Initializable {
 	            fail.setContentText("The amount of workflow cycles must be greater than 0.");
 	            fail.showAndWait();
 			}
-			else if (Integer.parseInt(maxProtocolIterations.getText()) <= 0) {
+			else if (maxProtocolIterations.isVisible() && Integer.parseInt(maxProtocolIterations.getText()) <= 0) {
 	    		Alert fail = new Alert(AlertType.WARNING);
 	            fail.setHeaderText("INVALID CONTENT");
 	            fail.setContentText("The maximum amount of protocol iterations must be greater than 0.");

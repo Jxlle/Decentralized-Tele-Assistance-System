@@ -14,15 +14,11 @@ import tas.data.systemprofile.SystemProfile;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.services.assistance.AssistanceService;
 import tas.services.assistance.AssistanceServiceCostProbe;
-import tas.services.qos.MinCostQoS;
-import tas.services.qos.PreferencesQoS;
-import tas.services.qos.ReliabilityQoS;
 
 public class WorkflowExecutor {
 
 	// Fields	
-	// The amount of workflow execution cycles that are executed before the possibility of analyzer execution
-	public static int workflowCycles = 100;
+	public static int amountOfWorkflows = 0; 
 	
     private boolean isStopped = false;
     private boolean isPaused = false;
@@ -30,25 +26,13 @@ public class WorkflowExecutor {
     
     private SystemEntity systemEntity;
     private AssistanceService assistanceService;
-    private AssistanceServiceCostProbe monitor;
+    private AssistanceServiceCostProbe probe;
     private WorkflowEffector workflowEffector;
     private String workflowPath, profilePath;
     
 	public WorkflowExecutor(List<ServiceRegistry> serviceRegistries) {
+		amountOfWorkflows++;
 		initializeWorkFlowExecuter(serviceRegistries);
-	}
-	
-	/**
-	 * Set the parent system entity to the given entity
-	 * @param entityName the given entity
-	 */
-	public void setSystemEntity(SystemEntity systemEntity) throws IllegalStateException {
-		
-		if (systemEntity != null) {
-			throw new IllegalStateException("A system entity can only be assigned once!");
-		}
-		
-		this.systemEntity = systemEntity;
 	}
 	
 	/**
@@ -88,6 +72,10 @@ public class WorkflowExecutor {
     	return currentSteps;
     }
     
+    public AssistanceServiceCostProbe getProbe() {
+    	return probe;
+    }
+    
     public void setWorkflowPath(String workflowPath) {
     	this.workflowPath = workflowPath;
 		assistanceService.setWorkflow(workflowPath);
@@ -117,17 +105,15 @@ public class WorkflowExecutor {
     public void initializeWorkFlowExecuter(List<ServiceRegistry> serviceRegistries) {
 	
 		// Assistance Service. Workflow is provided by TAS_gui through executeWorkflow method
-		assistanceService = new AssistanceService("TeleAssistanceService", "service.assistance", "resources/TeleAssistanceWorkflow.txt", serviceRegistries);
+		assistanceService = new AssistanceService("TeleAssistanceService", "service.assistance" + amountOfWorkflows, "resources/TeleAssistanceWorkflow.txt", serviceRegistries);
+		System.err.print("started ass service\n");
 		assistanceService.startService();
 		//assistanceService.register(serviceRegistry);
-		monitor = new AssistanceServiceCostProbe();
-		assistanceService.getCostProbe().register(monitor);
-		assistanceService.getWorkflowProbe().register(monitor);
+		probe = new AssistanceServiceCostProbe();
+		assistanceService.getCostProbe().register(probe);
+		assistanceService.getWorkflowProbe().register(probe);
 		//assistanceService.getWorkflowProbe().register(new AssistanceServiceDelayProbe());
 		// assistanceService.getServiceInvocationProbe().register(monitor);
-		assistanceService.addQosRequirement("ReliabilityQoS", new ReliabilityQoS());
-		assistanceService.addQosRequirement("PreferencesQoS", new PreferencesQoS());
-		assistanceService.addQosRequirement("CostQoS", new MinCostQoS());
 		
 		workflowEffector = new WorkflowEffector(assistanceService);
     }
@@ -135,7 +121,7 @@ public class WorkflowExecutor {
     public void executeWorkflow() {
 
     	SystemProfile profile = SystemProfileDataHandler.activeProfile;
-		CompositeServiceClient client = new CompositeServiceClient("service.assistance");
+		CompositeServiceClient client = new CompositeServiceClient(assistanceService.getServiceDescription().getServiceEndpoint());
 		workflowEffector.refreshAllServices();
 		Time.steps.set(0);
 	
@@ -158,8 +144,7 @@ public class WorkflowExecutor {
 				for (int j = 0; j < values.size(); j++) {
 				    if ((values.get(j).getRatio() + valueProbability) > probability) {
 						pick = (int) values.get(j).getData();
-						// TODO
-						client.invokeCompositeService("delete", patientId, pick);
+						client.invokeCompositeService(new Object[]{patientId, pick});
 						break;
 				    } 
 				    else {

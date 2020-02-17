@@ -1,6 +1,7 @@
 <tas.data.systemprofile.SystemProfile>
   <executionCycles>50</executionCycles>
   <workflowCycles>250</workflowCycles>
+  <maxProtocolIterations>0</maxProtocolIterations>
   <systemType>SOLO_LOOP</systemType>
   <requirementType>COST_AND_RELIABILITY</requirementType>
   <ratingType>SCORE</ratingType>
@@ -26,7 +27,7 @@
         </value>
         <value>
           <data class="int">2</data>
-          <ratio>0.3</ratio>
+          <ratio>0.25</ratio>
         </value>
       </values>
     </variable>

@@ -12,24 +12,22 @@ public class WorkflowProbe extends AbstractProbe<WorkflowProbeInterface> {
     
 	/**
 	 * 
-	 * @param qosRequirement
 	 * @param params
 	 */
-    public void notifyWorkflowStarted(String qosRequirement, Object[] params){
-    	for(WorkflowProbeInterface workflowInterface: subscribers){
-    		workflowInterface.workflowStarted(qosRequirement, params);
+    public void notifyWorkflowStarted(Object[] params){
+    	for(WorkflowProbeInterface workflowInterface: subscribers) {
+    		workflowInterface.workflowStarted(params);
     	}
     }
 
     /**
      * 
      * @param result
-     * @param qosRequirement
      * @param params
      */
-    public void notifyWorkflowEnded(Object result, String qosRequirement, Object[] params){
-    	for(WorkflowProbeInterface workflowInterface: subscribers){
-    		workflowInterface.workflowEnded(result, qosRequirement, params);
+    public void notifyWorkflowEnded(Object result, Object[] params){
+    	for(WorkflowProbeInterface workflowInterface: subscribers) {
+    		workflowInterface.workflowEnded(result, params);
     	}
     }
     

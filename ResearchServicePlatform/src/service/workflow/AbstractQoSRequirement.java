@@ -1,12 +1,7 @@
 package service.workflow;
 
 import java.util.List;
-import java.util.Map;
-
-import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
-import service.auxiliary.WeightedCollection;
-import service.atomic.AtomicService;
 
 /**
  * 

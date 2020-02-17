@@ -11,10 +11,9 @@ public interface WorkflowProbeInterface {
 
 	/**
 	 * This event is triggered when a request has been made to composite service to start the execution of the workflow.
-	 * @param qosRequirement the QoS requirements for executing the current workflow
 	 * @param params initial parameters for the current workflow
 	 */
-    public void workflowStarted(String qosRequirement, Object[] params);
+    public void workflowStarted(Object[] params);
 
     /**
      * Generates an event when the workflow cannot find a concrete service for the given service type and operation.
@@ -26,10 +25,9 @@ public interface WorkflowProbeInterface {
     /**
      * When a workflow finish execution, this event is triggered.
      * @param result  the result after executing the current workflow
-     * @param qosRequirement the QoS requirements for executing the current workflow
      * @param params initial parameters for the current workflow
      */
-    public void workflowEnded(Object result, String qosRequirement, Object[] params);
+    public void workflowEnded(Object result, Object[] params);
     
     /**
      * Generates an event when a service operation invoked by a workflow returns successfully.

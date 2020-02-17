@@ -64,8 +64,6 @@ public class CompositeService extends AbstractService {
     	this.workflow = workflow;
     }
 
-    private Map<String, AbstractQoSRequirement> qosRequirements = new HashMap<String, AbstractQoSRequirement>();
-
     // Cache containing the available services
     private SDCache cache;
 
@@ -153,7 +151,6 @@ public class CompositeService extends AbstractService {
     	for (ServiceRegistry registry : registries) {
     		addRegistryData(registry);
     	}
-    	
     }
     
     /**
@@ -161,6 +158,7 @@ public class CompositeService extends AbstractService {
      * @param registry the registry whose data needs to be removed
      */
     public void removeRegistryData(ServiceRegistry registry) {
+    	
     	RegistryData data = new RegistryData(registry.getServiceDescription().getServiceName(), registry.getServiceDescription().getServiceEndpoint());
     	serviceRegistriesData.remove(data);	
     	
@@ -169,7 +167,6 @@ public class CompositeService extends AbstractService {
     	for (ServiceDescription description : serviceDescriptions) {
         	cache.remove(description);
     	}
-    	
     }
     
     /**
@@ -206,23 +203,6 @@ public class CompositeService extends AbstractService {
     public void setUsedServicesInfo(Map<Description, WeightedCollection<String>> usedServicesInfo) {
     	this.usedServicesInfo = usedServicesInfo;
     }
-
-    /**
-     * Add QoS requirement
-     * @param requirementName the QoS requirement name
-     * @param qosRequirement  the QoS requirement Object
-     */
-    public void addQosRequirement(String requirementName, AbstractQoSRequirement qosRequirement) {
-    	qosRequirements.put(requirementName, qosRequirement);
-    }
-    
-    /**
-     * Return QoS requirements
-     * @return the current QoS requirements
-     */
-    public Map<String, AbstractQoSRequirement> getQosRequirements() {
-    	return qosRequirements;
-    }
     
     /**
      * Set test mode of this composite service based on a given boolean
@@ -233,27 +213,14 @@ public class CompositeService extends AbstractService {
     }
 
     /**
-     * Returns list of QoS names added in to the composite service
-     * 
-     * @return list of QoS requirement names
-     */
-    @ServiceOperation
-    public List<String> getQosRequirementNames() {
-		List<String> list = new LinkedList<String>();
-		list.addAll(qosRequirements.keySet());
-		return list;
-    }
-
-    /**
      * Invoke this composite service to start a workflow with specific QoS requirements 
      * and initial parameters for the workflow
      * 
-     * @param qosRequirement  the QoS requirement name for executing the workflow
      * @param params  the initial parameters for the workflow
      * @return the result after executing the workflow
      */
     @ServiceOperation
-    public Object invokeCompositeService(String qosRequirement, Object params[]) {
+    public Object invokeCompositeService(Object params[]) {
     	
     	// Activate no fail in test mode
     	if (testMode) {
@@ -265,9 +232,9 @@ public class CompositeService extends AbstractService {
 		//SDCache sdCache = configuration.SDCacheShared == true ? cache : new SDCache() ;
 		//WorkflowEngine engine = new WorkflowEngine(this, sdCache);
 		WorkflowEngine engine = new WorkflowEngine(this);
-		workflowProbe.notifyWorkflowStarted(qosRequirement, params);
-		Object result = engine.executeWorkflow(workflow, qosRequirement, params);
-		workflowProbe.notifyWorkflowEnded(result, qosRequirement, params);
+		workflowProbe.notifyWorkflowStarted(params);
+		Object result = engine.executeWorkflow(workflow, params);
+		workflowProbe.notifyWorkflowEnded(result, params);
 		AtomicService.setNoFail(false);
 		
 		return result;
@@ -302,13 +269,13 @@ public class CompositeService extends AbstractService {
 
 
     /**
-     * Search through service registry to get the list of service descriptions
+     * Search through service registries to get the list of service descriptions
      * @param serviceType  the service type
      * @param opName the operation name
      * @return list of service descriptions with the same service type and operation name
      */
     @SuppressWarnings("unchecked")
-	public List<ServiceDescription> lookupService(String serviceType, String opName) {
+	public List<ServiceDescription> lookupServiceOld(String serviceType, String opName) {
 		List<ServiceDescription> serviceDescriptions = cache.get(serviceType,
 				opName);
 		
@@ -331,7 +298,7 @@ public class CompositeService extends AbstractService {
 		}
 		
 		return serviceDescriptions;
-    }  
+    } 
     
     @SuppressWarnings("unchecked")
 	public void updateCache() {
@@ -347,12 +314,17 @@ public class CompositeService extends AbstractService {
     	}
     	
     	for (ServiceDescription description : serviceDescriptions) {
+    		System.err.print("ADDED " + description.getServiceEndpoint() + " \n");
         	cache.addService(description);
     	}
+    	
+    	System.err.print("done adding services...\n");
     }
     
-    public ServiceDescription lookupService2(String serviceType, String opName) {
-    		
+    public ServiceDescription lookupService(String serviceType, String opName) {
+    	
+    	System.err.print("SIZE: " + cache.getServices().size() + "  \n");
+    	System.err.print("INFO: " + serviceType + " " + opName + "  \n");
     	Description description = new Description(serviceType, opName);	
     	String chosenServiceEndpoint = usedServicesInfo.get(description).next();
     	
@@ -408,16 +380,6 @@ public class CompositeService extends AbstractService {
     	return cache.getServiceDescription(registerId);
     }
 
-    protected ServiceDescription applyQoSRequirement(String qosRequirementName, List<ServiceDescription> descriptions, String opName, Object... params) {
-	AbstractQoSRequirement qosRequirement = qosRequirements.get(qosRequirementName);
-	if (qosRequirement == null) {
-	    System.err.println("QoS requirement is null. To select among multiple services, a QoS requirement must have been provided.");
-	    System.err.println("Selecting a service randomly...");
-	    return descriptions.get(new Random().nextInt(descriptions.size()));
-	}
-	return qosRequirement.applyQoSRequirement(descriptions, opName, params);
-    }
-
     /**
      * Invoke a service operation
      * @param qosRequirement the applied QoS requirements
@@ -426,7 +388,7 @@ public class CompositeService extends AbstractService {
      * @param params the parameters of the operation
      * @return the result
      */
-    public Object invokeServiceOperation(String qosRequirement, String serviceName, String opName, Object[] params) {
+    /*public Object invokeServiceOperation2(String qosRequirement, String serviceName, String opName, Object[] params) {
 
 	int timeout = this.getConfiguration().timeout;
 	Object resultVal;
@@ -478,16 +440,25 @@ public class CompositeService extends AbstractService {
 	} while (resultVal instanceof TimeOutError && retryAttempts < this.getConfiguration().maxRetryAttempts);
 
 	return resultVal;
-    }
+    }*/
     
-    public Object invokeServiceOperation2(String serviceName, String opName, Object[] params) {
+    public Object invokeServiceOperation(String serviceName, String opName, Object[] params) {
     	int timeout = this.getConfiguration().timeout;
     	Object resultVal;
     	int retryAttempts = 0;
     	stopRetrying.set(false);
     	do {
     		
-    	    ServiceDescription service = lookupService2(serviceName, opName);
+    		ServiceDescription service2 = null;
+    		
+    		if (testMode) {
+    			service2 = lookupServiceOld(serviceName, opName).get(0);
+    		}
+    		else {
+        	    service2 = lookupService(serviceName, opName);
+    		}
+    		
+    		final ServiceDescription service = service2;
     	    
     	    // Only one registry probe is searched. Same service in multiple probes will not trigger multiple probes.
     	    RegistryData registryData = serviceRegistriesData.stream().filter(x -> x.registryEndpoint.equals(service.getServiceRegistryEndpoint())).findFirst().orElse(null);

@@ -3,7 +3,9 @@ package tas.mape.system.entity;
 import java.util.List;
 import java.util.Map;
 
+import javafx.util.Pair;
 import profile.SystemRequirementType;
+import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.composite.CompositeService;
 import tas.mape.analyzer.Analyzer;
@@ -286,6 +288,14 @@ public class MAPEKComponent {
 	 */
 	public AbstractProtocol<PlannerMessage, Planner> getProtocol() {
 		return planner.getProtocol();
+	}
+	
+	/**
+	 * Initialize used services, usable services and their usage changes
+	 * @param usableServicesAndChance map containing usable service information with additional usage chance
+	 */
+	public void setUsedServicesAndChances(Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
+		knowledge.setUsedServicesAndChances(usableServicesAndChance);
 	}
 	
 	/**
