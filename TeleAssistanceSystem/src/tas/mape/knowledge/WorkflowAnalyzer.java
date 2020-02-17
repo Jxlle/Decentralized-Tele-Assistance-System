@@ -26,6 +26,7 @@ public class WorkflowAnalyzer {
 	
 	// Fields
 	private int currentSteps;
+	private static int analyzerCycles = 5000;
 	private boolean isStopped, hasBeenStopped;
 	private WorkflowAnalyzerProbe workflowAnalyzerProbe = new WorkflowAnalyzerProbe();
 	
@@ -109,7 +110,7 @@ public class WorkflowAnalyzer {
 		    start();
 		    Random rand = new Random();
 
-		    for (currentSteps = 0; currentSteps < profile.getWorkflowCycles(); currentSteps++) {
+		    for (currentSteps = 0; currentSteps < analyzerCycles; currentSteps++) {
 		    	
 			    Time.steps.incrementAndGet();   	    	
 				double probability = rand.nextDouble();
