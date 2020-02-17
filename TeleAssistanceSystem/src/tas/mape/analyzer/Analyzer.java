@@ -3,7 +3,6 @@ package tas.mape.analyzer;
 import java.util.List;
 import java.util.Map;
 
-import profile.ProfileExecutor;
 import profile.SystemRequirementType;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
@@ -35,15 +34,21 @@ public class Analyzer {
 	 * @param knowledge the given knowledge component
 	 * @param planner the given planner component
 	 * @param combinationLimit the given combination limit that will decide how much service combinations will be chosen in the execute step
-	 * @param ratingType the given type of the rating for service combinations 
 	 * @param RequirementStrategies a map containing the strategy number for each requirement
 	 */
-	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, RatingType ratingType, Map<SystemRequirementType, Integer> requirementStrategies) {
+	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, Map<SystemRequirementType, Integer> requirementStrategies) {
 		this.knowledge = knowledge;
 		this.planner = planner;
 		this.combinationLimit = combinationLimit;
-		this.ratingType = ratingType;
 		this.requirementStrategies = requirementStrategies;
+	}
+	
+	/**
+	 * Set the planner rating type to the given rating type
+	 * @param ratingType the given rating type
+	 */
+	public void setRatingType(RatingType ratingType) {
+		this.ratingType = ratingType;
 	}
 	
 	/**
@@ -111,8 +116,13 @@ public class Analyzer {
 	 * This method applies a strategy for a certain QoS requirement and returns the N (based on combination limit) best 
 	 * service combinations rated with the analyzer rating type.
 	 * @return The list of the best N chosen service combinations
+	 * @throws IllegalStateException throws when the rating type has not been set
 	 */
-	private List<ServiceCombination> chooseServices() {
+	private List<ServiceCombination> chooseServices() throws IllegalStateException {
+		
+		if (ratingType == null) {
+			throw new IllegalStateException("The rating type has not been set!");
+		}
 		
 		SystemRequirementType requirement = SystemProfileDataHandler.activeProfile.getRequirementType();
 		Map<Description, List<ServiceDescription>> usableServices = knowledge.getUsableServices();

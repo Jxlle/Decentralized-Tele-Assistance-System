@@ -3,7 +3,6 @@ package tas.mape.system.entity;
 import java.util.List;
 import java.util.Random;
 
-import profile.InputProfile;
 import profile.SystemProfileValue;
 import profile.SystemProfileVariable;
 import profile.ProfileExecutor;

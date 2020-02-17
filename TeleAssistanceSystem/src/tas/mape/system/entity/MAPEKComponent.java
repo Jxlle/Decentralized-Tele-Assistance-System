@@ -77,13 +77,12 @@ public class MAPEKComponent {
 		 * Creates a new builder where the analyzer component with its given parameters has been initialized.
 		 * @param combinationLimit the given combination limit that will decide how much service combinations 
 		 *        will be chosen in the execute step
-		 * @param ratingType the given type of the rating for service combinations 
 		 * @param RequirementStrategies a map containing the strategy number for each requirement
 		 * @return the new Builder object with initialized analyzer
 		 * @throws InstantiationException throw when the knowledge field is null
 		 * @throws InstantiationException throw when the planner field is null
 		 */
-		public Builder initializeAnalyzer(int combinationLimit, RatingType ratingType, Map<SystemRequirementType, Integer> requirementStrategies) 
+		public Builder initializeAnalyzer(int combinationLimit, Map<SystemRequirementType, Integer> requirementStrategies) 
 				throws InstantiationException {
 			
 			if (knowledge == null) {
@@ -94,7 +93,7 @@ public class MAPEKComponent {
 				throw new InstantiationException("Planner field is null!");
 			}
 			
-			analyzer = new Analyzer(knowledge, planner, combinationLimit, ratingType, requirementStrategies);
+			analyzer = new Analyzer(knowledge, planner, combinationLimit, requirementStrategies);
 			return this;
 		}
 		
@@ -205,6 +204,14 @@ public class MAPEKComponent {
 	 */
 	public double getFailureChange() {
 		return monitor.getFailureChange();
+	}
+	
+	/**
+	 * Set the planner rating type to the given rating type
+	 * @param ratingType the given rating type
+	 */
+	public void setRatingType(RatingType ratingType) {
+		analyzer.setRatingType(ratingType);
 	}
 	
 	/**

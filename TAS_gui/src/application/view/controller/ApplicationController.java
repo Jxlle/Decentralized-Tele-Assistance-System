@@ -406,7 +406,7 @@ public class ApplicationController implements Initializable {
 		try {
 			builder.initializeKnowledge(1, new ArrayList<String>(Arrays.asList("se.lnu.service.registry")))
 			 	   .initializePlanner("planner")
-				   .initializeAnalyzer(1, RatingType.SCORE, new HashMap<>())
+				   .initializeAnalyzer(1, new HashMap<>())
 				   .initializeMonitor(1, 1);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
@@ -424,7 +424,7 @@ public class ApplicationController implements Initializable {
 		try {
 			builder.initializeKnowledge(1, new ArrayList<String>(Arrays.asList("se.lnu.service.registry", "se.lnu.service.registry2")))
 			 	   .initializePlanner("planner")
-				   .initializeAnalyzer(1, RatingType.SCORE, new HashMap<>())
+				   .initializeAnalyzer(1, new HashMap<>())
 				   .initializeMonitor(1, 1);
 		} catch (InstantiationException e) {
 			e.printStackTrace();

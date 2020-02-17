@@ -6,10 +6,8 @@ import java.util.Map;
 import java.util.Random;
 
 import javafx.util.Pair;
-import profile.InputProfile;
 import profile.SystemProfileValue;
 import profile.SystemProfileVariable;
-import profile.ProfileExecutor;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
@@ -18,7 +16,6 @@ import service.composite.CompositeServiceClient;
 import service.utility.Time;
 import tas.data.systemprofile.SystemProfile;
 import tas.data.systemprofile.SystemProfileDataHandler;
-import tas.mape.system.entity.WorkflowExecutor;
 
 /**
  * Class used to analyze workflows and gather information for the knowledge component
