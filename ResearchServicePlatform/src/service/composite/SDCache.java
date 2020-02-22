@@ -190,9 +190,6 @@ public class SDCache {
      * @param service the service description
      */
     public void remove(ServiceDescription service) {
-    	
-    	System.err.print("REMOVED 1 \n");
-    	
     	for (Operation operation : service.getOperationList())
     		remove(service, operation.getOpName());
     		
@@ -205,9 +202,6 @@ public class SDCache {
      * @return true if removed successfully, otherwise false
      */
     public boolean remove(String serviceType,String opName){
-    	
-    	System.err.print("REMOVED 2 \n");
-    	
     	Description description=new Description(serviceType, opName);
     	
     	if(caches.containsKey(description)){
@@ -232,9 +226,6 @@ public class SDCache {
      * @return true if removed successfully, otherwise false
      */
     public boolean remove(String serviceType, String opName, ServiceDescription service){
-    	
-    	System.err.print("REMOVED 3 \n");
-    	
     	Description description = new Description(serviceType, opName);
     	
     	if(caches.containsKey(description)) {
@@ -255,7 +246,6 @@ public class SDCache {
      * @return true if removed successfully, otherwise false
      */
     public boolean remove(ServiceDescription service, String opName){
-    	System.err.print("REMOVED 4 \n");
     	return this.remove(service.getServiceType(), opName,service);
     }
     
@@ -287,7 +277,7 @@ public class SDCache {
      * Refresh the cache
      */
     public void refresh(){
-    	System.err.print("RESET \n");
+    	//System.err.print("RESET \n");
         caches.clear();
     }
 
@@ -331,9 +321,6 @@ public class SDCache {
      * @param registerId the register id of a service to be removed
      */
     public void remove(int registerId) {
-    	
-    	System.err.print("REMOVED 6 \n");
-    	
     	ServiceDescription serviceDescription = getServiceDescription(registerId);
     	if (serviceDescription != null){
     		remove(serviceDescription);
