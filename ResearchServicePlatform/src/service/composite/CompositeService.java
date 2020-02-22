@@ -3,11 +3,8 @@ package service.composite;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import service.adaptation.probes.CostProbe;
@@ -25,7 +22,6 @@ import service.auxiliary.ServiceOperation;
 import service.auxiliary.TimeOutError;
 import service.auxiliary.WeightedCollection;
 import service.registry.ServiceRegistry;
-import service.workflow.AbstractQoSRequirement;
 import service.workflow.WorkflowEngine;
 
 /**
