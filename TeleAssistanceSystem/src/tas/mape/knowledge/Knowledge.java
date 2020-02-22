@@ -16,8 +16,6 @@ import tas.mape.analyzer.CostAndReliabilityReq;
 import tas.mape.analyzer.CostReq;
 import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.planner.PlanComponent;
-import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.entity.WorkflowExecutor;
 
 /**
  * Class that represents the knowledge component in a MAPE-K component
@@ -243,7 +241,8 @@ public class Knowledge {
 		if (serviceFailureTable.get(loadKeyHigh) == null) {
 			serviceFailureTable.put(loadKeyHigh, serviceFailureTable.get(0));
 		}
-					
+				
+		System.err.print(serviceFailureTable.get(loadKeyHigh) + " VALUE \n");
 		return serviceFailureTable.get(loadKeyHigh);
 	}
 	
@@ -371,7 +370,8 @@ public class Knowledge {
 		
 		// Loop over all service descriptions
 		for (List<ServiceDescription> serviceDescriptions : usedServices.values()) {
-			for (ServiceDescription serviceDescription : serviceDescriptions) {			
+			for (ServiceDescription serviceDescription : serviceDescriptions) {		
+				System.err.print(serviceDescription.getServiceEndpoint() + ", INIT APPROX FAIL RATE\n");
 				InitializeApproximatedServiceFailureRates(serviceDescription);
 			}
 		}
@@ -385,12 +385,9 @@ public class Knowledge {
 	private void InitializeApproximatedServiceFailureRates(ServiceDescription serviceDescription) {
 		
 		// If service description is new
-		if (approximatedServiceFailureRates.get(serviceDescription.getServiceEndpoint()) != null) {
+		if (approximatedServiceFailureRates.get(serviceDescription.getServiceEndpoint()) == null) {
 			
-			// New TreeMap
-			approximatedServiceFailureRates.put(serviceDescription.getServiceEndpoint(), new HashMap<>());
-			
-			Map<Integer, Double> failureRates = new TreeMap<>();
+			HashMap<Integer, Double> failureRates = new HashMap<>();
 			double serviceFailureRate = 0;
 			
 			if (serviceDescription.getCustomProperties().containsKey("FailureRate")) {
@@ -399,6 +396,9 @@ public class Knowledge {
 			
 			// Fill first value in failure rate map with the default fail rate of the service
 			failureRates.put(0, serviceFailureRate);
+			
+			// New TreeMap
+			approximatedServiceFailureRates.put(serviceDescription.getServiceEndpoint(), failureRates);
 		}
 	}
 }

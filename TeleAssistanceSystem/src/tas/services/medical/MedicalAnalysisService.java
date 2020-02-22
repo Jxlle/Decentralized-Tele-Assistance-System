@@ -14,7 +14,7 @@ public class MedicalAnalysisService extends AtomicService {
 
     @ServiceOperation()
     public int analyzeData(HashMap<?, ?> data) {
-	System.out.println(this.getServiceDescription().getServiceName() + " is started to analyze the data.");
+	//System.out.println(this.getServiceDescription().getServiceName() + " is started to analyze the data.");
 	return new Random().nextInt(3) + 1;
     }
 }

@@ -58,7 +58,7 @@ public class AssistanceServiceCostProbe implements WorkflowProbeInterface, CostP
      */
     @Override
     public void workflowStarted(Object[] params) {
-    	System.out.println("Probe: workflowStarted");
+    	//System.out.println("Probe: workflowStarted");
 	    //Log.addLog("WorkflowStarted", "Workflow Started monitoring");
     	resultBuilder=new StringBuilder();
     	totalCost=0;
@@ -72,7 +72,7 @@ public class AssistanceServiceCostProbe implements WorkflowProbeInterface, CostP
      */
     @Override
     public void workflowEnded(Object result, Object[] params) {
-    	System.out.println("Probe: workflowEnded");
+    	//System.out.println("Probe: workflowEnded");
     	if(result instanceof TimeOutError){
     		System.out.println("WorkflowError!!!");
         	resultBuilder.append(workflowInvocationCount+","+"AssistanceService"+",false,"+totalCost+"\n");
@@ -100,7 +100,7 @@ public class AssistanceServiceCostProbe implements WorkflowProbeInterface, CostP
 	@Override
 	public void serviceCost(ServiceDescription service, String opName, double cost) {
 		String serviceName = service.getServiceName();
-		System.out.println("Serivice Cost: "+cost);
+		//System.out.println("Service Cost: "+cost);
 		String fullOperation=serviceName+"."+opName;
 		Double begin=delays.get(fullOperation);
 		//Double end=(Double)(System.nanoTime()/1000000.000);

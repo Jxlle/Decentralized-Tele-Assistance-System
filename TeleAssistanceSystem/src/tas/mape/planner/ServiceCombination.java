@@ -1,6 +1,8 @@
 package tas.mape.planner;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import service.auxiliary.Description;
@@ -68,6 +70,30 @@ public class ServiceCombination implements Comparable<ServiceCombination> {
 	public Map<Description, WeightedCollection<ServiceDescription>> getAllServices() {
 		return allServices;
 	}
+	
+	/**
+	 * Generate and return an 'all service endpoints' map
+	 * @return the service endpoints map
+	 */
+	public Map<Description, WeightedCollection<String>> getAllServiceEndpoints() {
+		
+		Map<Description, WeightedCollection<String>> serviceEndpointMap = new HashMap<>();
+		
+		for (Entry<Description, WeightedCollection<ServiceDescription>> entry : allServices.entrySet()) {
+			WeightedCollection<String> strings = new WeightedCollection<String>();
+			WeightedCollection<ServiceDescription> serviceDescriptions = entry.getValue();
+			
+			for (ServiceDescription serviceDescription : serviceDescriptions.getItems()) {
+				strings.add(serviceDescription.getServiceEndpoint(), serviceDescriptions.getWeight(serviceDescription));
+			}
+			
+			serviceEndpointMap.put(entry.getKey(), strings);
+		}
+		
+		return serviceEndpointMap;
+	}
+	
+	
 	
 	/**
 	 * Return all service type and operation name keys of this service combination

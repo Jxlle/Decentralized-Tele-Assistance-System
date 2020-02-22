@@ -83,6 +83,10 @@ public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegi
 	public void serviceSucceeded(ServiceDescription description) {
 		String serviceEndpoint = description.getServiceEndpoint();
 		serviceInvocations.compute(serviceEndpoint, (k, v) -> (v == null) ? 0 : v + 1);
+		
+		if (serviceInvocations.get(serviceEndpoint) == 0) {
+			serviceFailures.put(serviceEndpoint, 0);
+		}
 	}
 
 	/**
@@ -90,8 +94,8 @@ public class MonitorWorkflowProbe implements WorkflowProbeInterface, ServiceRegi
 	 */
 	@Override
 	public void serviceFailed(ServiceDescription description) {
-		String serviceEndpoint = description.getServiceEndpoint();
-		serviceFailures.compute(serviceEndpoint, (k, v) -> (v == null) ? 0 : v + 1);		
+		String serviceEndpoint = description.getServiceEndpoint();	
+		serviceFailures.compute(serviceEndpoint, (k, v) -> (v == null) ? 0 : v + 1);	
 		serviceInvocations.compute(serviceEndpoint, (k, v) -> (v == null) ? 0 : v + 1);
 	}
 

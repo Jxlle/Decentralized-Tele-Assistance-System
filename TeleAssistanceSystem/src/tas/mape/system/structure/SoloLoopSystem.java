@@ -29,8 +29,8 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 		// System entity
 		SystemEntity entity = getSystemEntity(0);
 		
-		for (int i = 0; i < executionCycles; i++) {
-			
+		for (int i = 0; i < 10; i++) {
+			System.err.print("--------------------CYCLE START [" + (i + 1) + "]--------------------\n");
 			// Execute MAPE-K loop
 			entity.getManagingSystem().executeMonitor();
 			entity.getManagingSystem().executeAnalyzer();
@@ -38,7 +38,10 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 			entity.getManagingSystem().executeExecutor();
 			
 			// Execute workflow
+			System.err.print("Workflow\n");
 			entity.getManagedSystem().executeWorkflow();
+			
+			System.err.print("--------------------CYCLE END [" + (i + 1) + "]--------------------\n");
 		}
 	}
 
@@ -46,7 +49,8 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 	 * Return the amount of needed entities in the system
 	 * @return the amount of needed entities in the system
 	 */
-	public static int getSystemEntityCount() {
+	@Override
+	public int getSystemEntityCount() {
 		return 1;
 	}
 }

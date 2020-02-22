@@ -63,15 +63,20 @@ public class MAPEKComponent {
 		 * Creates a new builder where the planner component with its given parameters has been initialized.
 		 * @param plannerEndpoint the given planner end point
 		 * @return the new Builder object with initialized planner
+		 * @throws InstantiationException throw when the knowledge field is null
 		 * @throws InstantiationException throw when the executor field is null
 		 */
 		public Builder initializePlanner(String plannerEndpoint) throws InstantiationException {
+			
+			if (knowledge == null) {
+				throw new InstantiationException("Knowledge field is null!");
+			}
 			
 			if (executor == null) {
 				throw new InstantiationException("Executor field is null!");
 			}
 			
-			planner = new Planner(plannerEndpoint, executor);
+			planner = new Planner(plannerEndpoint, knowledge, executor);
 			return this;
 		}
 		
@@ -198,6 +203,13 @@ public class MAPEKComponent {
 	 */
 	public void setFailureChange(double failureChange) {
 		monitor.setFailureChange(failureChange);
+	}
+	
+	/**
+	 * Reset monitor workflow probes
+	 */
+	public void resetMonitorProbes() {
+		monitor.resetProbes();
 	}
 	
 	/**

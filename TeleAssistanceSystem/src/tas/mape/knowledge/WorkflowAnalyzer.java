@@ -25,22 +25,22 @@ import tas.data.systemprofile.SystemProfileDataHandler;
 public class WorkflowAnalyzer {
 	
 	// Fields
-	private int currentSteps;
-	private static int analyzerCycles = 3000;
-	private boolean isStopped, hasBeenStopped;
-	private WorkflowAnalyzerProbe workflowAnalyzerProbe = new WorkflowAnalyzerProbe();
+	private static int currentSteps;
+	private static int analyzerCycles = 100;
+	private static boolean isStopped, hasBeenStopped;
+	private static WorkflowAnalyzerProbe workflowAnalyzerProbe = new WorkflowAnalyzerProbe();
 	
     /**
      * Indicate that the analyzer has been stopped
      */
-    public synchronized void stop() {
+    public synchronized static void stop() {
     	isStopped = true;
     }
     
     /**
      * Indicate that the analyzer has been started
      */
-    public synchronized void start() {
+    public synchronized static void start() {
     	isStopped = false;
     }
     
@@ -50,7 +50,7 @@ public class WorkflowAnalyzer {
      * @param compositeService the composite service
      * @return a map containing a usage chance and list of used services for each used service type & operation combination
      */
-    public Map<Description, Pair<List<ServiceDescription>, Double>> analyzeWorkflow(CompositeService compositeService) { 
+    public static Map<Description, Pair<List<ServiceDescription>, Double>> analyzeWorkflow(CompositeService compositeService) { 
     	
     	// Initialize workflow probe
     	workflowAnalyzerProbe.reset();
@@ -63,6 +63,7 @@ public class WorkflowAnalyzer {
     	compositeService.setTestMode(true);
 		executeWorkflow(profile, compositeService);
 		compositeService.setTestMode(false);
+		compositeService.getWorkflowProbe().unRegister(workflowAnalyzerProbe);
 		
 		// Return null if the analyzer has been stopped early
 		if (hasBeenStopped) {
@@ -93,11 +94,10 @@ public class WorkflowAnalyzer {
      * @param profile the given input profile
      * @param compositeService the given composite service
      */
-	private void executeWorkflow(SystemProfile profile, CompositeService compositeService) {
+	private static void executeWorkflow(SystemProfile profile, CompositeService compositeService) {
 
 		System.err.print(compositeService.getServiceDescription().getServiceEndpoint() + " test \n");
 		CompositeServiceClient client = new CompositeServiceClient(compositeService.getServiceDescription().getServiceEndpoint());
-		compositeService.updateCache();
 		Time.steps.set(0);
 		
 		if (profile != null) {

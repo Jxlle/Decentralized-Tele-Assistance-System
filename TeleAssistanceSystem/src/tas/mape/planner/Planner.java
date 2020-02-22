@@ -36,12 +36,14 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private List<PlanComponent> plan;
 	
 	/**
-	 * Create a planner with a given endpoint and executor
+	 * Create a planner with a given endpoint, knowledge and executor
 	 * @param endpoint the given endpoint (identifier)
+	 * @param knowledge the given knowledge
 	 * @param executor the given executor
 	 */
-	public Planner(String endpoint, Executor executor) {
+	public Planner(String endpoint, Knowledge knowledge, Executor executor) {
 		super(endpoint);
+		this.knowledge = knowledge;
 		this.executor = executor;
 	}
 	
@@ -76,6 +78,11 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	public void execute(List<ServiceCombination> availableServiceCombinations) {
 		this.availableServiceCombinations = availableServiceCombinations;
 		protocolFinished = false;
+		
+		// If no protocol is used, just use the best service combination
+		if (protocol == null) {
+			makePlan(availableServiceCombinations.get(0));
+		}
 	}
 	
 	/**
@@ -194,7 +201,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private void makePlan(ServiceCombination serviceCombination) {
 		
 		plan = new ArrayList<PlanComponent>();	
-		plan.add(new PlanComponent(PlanComponentType.SET_USED_SERVICES, serviceCombination.getAllServices()));
+		plan.add(new PlanComponent(PlanComponentType.SET_USED_SERVICES, serviceCombination.getAllServiceEndpoints()));
 		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination);
 		
 		for (String loadEndpoint : serviceLoads.keySet()) {

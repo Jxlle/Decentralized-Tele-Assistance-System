@@ -43,20 +43,23 @@ public class SystemProfileExecutor {
 		}
 		
 		Class<? extends AbstractSystem<?>> systemClass = profile.getSystemType().getSystemClass();
-		Constructor<?> systemConstructor = null;
+		Constructor<?> systemConstructor = null;	
 		
-		if (profile.getAmountOfParticipatingEntities() > 1) {
+		if (profile.getAmountOfParticipatingEntities() == 1) {
 			
 			AbstractSystem<?> system = null;
 			
 			try {
 				systemConstructor = systemClass.getConstructor(SystemEntity.class);
+				System.err.print(systemClass + " " + systemConstructor.getDeclaringClass() + "\n");
 			} catch (NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
 			
 			try {
-				system = (AbstractSystem<?>) systemConstructor.newInstance(entityList.toArray());
+				
+				SystemEntity entity = entityList.stream().filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(0))).findFirst().orElse(null);
+				system = (AbstractSystem<?>) systemConstructor.newInstance(entity);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
 				e.printStackTrace();
@@ -75,6 +78,7 @@ public class SystemProfileExecutor {
 			}
 			
 			try {
+				// TODO Fix
 				system = (AbstractMultiLoopSystem<?, PlannerMessage, Planner>) systemConstructor.newInstance(entityList.toArray());
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {

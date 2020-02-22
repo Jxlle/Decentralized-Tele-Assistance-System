@@ -34,6 +34,7 @@ import org.antlr.runtime.tree.CommonTree;
 import profile.InputProfile;
 import profile.ProfileExecutor;
 import profile.Requirement;
+import profile.SystemRequirementType;
 import service.atomic.AtomicService;
 import service.atomic.ServiceProfile;
 import service.auxiliary.Description;
@@ -48,6 +49,9 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.data.systemprofile.SystemProfile;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.data.systemprofile.SystemProfileExecutor;
+import tas.mape.analyzer.CostAndReliabilityReq;
+import tas.mape.analyzer.CostReq;
+import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.SystemEntity;
@@ -140,7 +144,6 @@ public class ApplicationController implements Initializable {
     AssistanceServiceCostProbe probe = new AssistanceServiceCostProbe();
     GlobalServiceInfo serviceInfo = new GlobalServiceInfo();
     SystemEntity selectedEntity;
-    WorkflowAnalyzer workflowAnalyzer = new WorkflowAnalyzer();
     List<SystemEntity> entities = new ArrayList<>();
     Map<String, Boolean> workflowAnalyzed = new HashMap<>(); 
     Map<String, List<ServiceRegistry>> entityRegistries;
@@ -282,6 +285,7 @@ public class ApplicationController implements Initializable {
     public void initialize(URL arg0, ResourceBundle arg1) {
 
     	serviceInfo.loadData(new File(defaultServiceDataPath));
+    	this.addServicesProfiles();
     	this.addItems();
     	this.fillSystemProfiles();
     	this.setButton();
@@ -383,7 +387,9 @@ public class ApplicationController implements Initializable {
 		
 		System.err.print("starting analyzing for " + entity.getEntityName() + "\n");
 		Map<Description, Pair<List<ServiceDescription>, Double>> usableServices = 
-				workflowAnalyzer.analyzeWorkflow(entity.getManagedSystem().getAssistanceService());
+				WorkflowAnalyzer.analyzeWorkflow(entity.getManagedSystem().getAssistanceService());
+		
+		entity.getManagingSystem().resetMonitorProbes();
 		
 		for (Description d : usableServices.keySet()) {
 			System.err.print("------------------------------------------------------------ \n");
@@ -423,13 +429,22 @@ public class ApplicationController implements Initializable {
 		WorkflowExecutor workflowExecutor = new WorkflowExecutor(Arrays.asList(serviceInfo.getServiceRegistry("se.lnu.service.registry")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");
 		
+		Map<SystemRequirementType, Integer> requirementMap = new HashMap<SystemRequirementType, Integer>() {
+			private static final long serialVersionUID = 1L;
+			{
+		        put(SystemRequirementType.COST, 1);
+		        put(SystemRequirementType.RELIABILITY, 1);
+		        put(SystemRequirementType.COST_AND_RELIABILITY, 1);
+		    }};;
+				
+		
 		MAPEKComponent.Builder builder = new Builder();
 		
 		try {
-			builder.initializeKnowledge(1, new ArrayList<String>(Arrays.asList("se.lnu.service.registry")))
+			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("se.lnu.service.registry")))
 			 	   .initializePlanner("planner")
-				   .initializeAnalyzer(1, new HashMap<>())
-				   .initializeMonitor(1, 1);
+				   .initializeAnalyzer(100, requirementMap)
+				   .initializeMonitor(5, 5);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
@@ -445,10 +460,10 @@ public class ApplicationController implements Initializable {
 		builder = new Builder();
 		
 		try {
-			builder.initializeKnowledge(1, new ArrayList<String>(Arrays.asList("se.lnu.service.registry", "se.lnu.service.registry2")))
+			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("se.lnu.service.registry", "se.lnu.service.registry2")))
 			 	   .initializePlanner("planner")
-				   .initializeAnalyzer(1, new HashMap<>())
-				   .initializeMonitor(1, 1);
+				   .initializeAnalyzer(100, requirementMap)
+				   .initializeMonitor(5, 5);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
@@ -1093,6 +1108,26 @@ public class ApplicationController implements Initializable {
     			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
     			SystemProfileDataHandler.activeProfile = profile;
     			
+		    	for (int i = 0; i < profile.getAmountOfParticipatingEntities(); i++) {
+		    		
+		    		final int index = i;
+		    		
+		    		SystemEntity entity = entities.stream()
+		    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
+		    		
+		    		if (!workflowAnalyzed.get(entity.getEntityName())) {
+    			    	System.err.print("analyzing \n");
+		    			analyzeEntity(entity);
+		    		}
+		    	}
+		    	
+		    	System.err.print("test2 \n");
+		    	
+		    	analyzed = true;
+
+		    	// Execute system
+		    	SystemProfileExecutor.execute(entities);
+    			
     			Task<Void> task = new Task<Void>() {
     			    @Override
     			    protected Void call() throws Exception {
@@ -1101,7 +1136,7 @@ public class ApplicationController implements Initializable {
     			    	System.err.print("test \n");
     			    	
     			    	// Analyze entity workflows if needed
-    			    	for (int i = 0; i < profile.getAmountOfParticipatingEntities(); i++) {
+    			    	/*for (int i = 0; i < profile.getAmountOfParticipatingEntities(); i++) {
     			    		
     			    		final int index = i;
     			    		
@@ -1119,7 +1154,7 @@ public class ApplicationController implements Initializable {
     			    	analyzed = true;
 
     			    	// Execute system
-    			    	SystemProfileExecutor.execute(entities);
+    			    	SystemProfileExecutor.execute(entities);*/
 					    
     			    	//TODO CHARTS
     				    /*Platform.runLater(new Runnable() {
@@ -1474,57 +1509,22 @@ public class ApplicationController implements Initializable {
     	
     	return registryListView;
     }
-
-    private AnchorPane addService(String serviceName) {
-	
-    	AnchorPane itemPane = new AnchorPane();
-
-    	Button inspectButton = new Button();
-    	inspectButton.setPrefWidth(32);
-    	inspectButton.setPrefHeight(32);
-    	inspectButton.setLayoutY(5);
-    	inspectButton.setId("inspectButton");
-    	inspectButton.setOnAction(event->{
-    		 			
-    		try{
-        	    FXMLLoader loader = new FXMLLoader();
-        	    loader.setLocation(MainGui.class.getResource("view/serviceProfileDialog.fxml"));
-        	    AnchorPane pane = (AnchorPane) loader.load();
-
-        	    Stage dialogStage = new Stage();
-        	    dialogStage.setTitle(serviceName);
-        	    
-        		ServiceProfileController controller=(ServiceProfileController)loader.getController();
-        		controller.setStage(dialogStage);
-        		controller.setServiceProfileClasses(serviceInfo.getServiceProfileClasses());
-        		controller.setService(serviceInfo.getService(serviceName));
-        		
-        	    Scene dialogScene = new Scene(pane);
-        	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
-
-        	    dialogStage.initOwner(primaryStage);
-        	    dialogStage.setScene(dialogScene);
-        	    dialogStage.setResizable(false);
-        	    dialogStage.show();
-    		}
-    		catch(Exception e){
-    			e.printStackTrace();
-    		}
-    	});
-
-    	Label label = new Label();
-    	label.setLayoutY(15);
-    	label.setText(serviceName);
-
-    	ServiceDescription Idescription = null;
-    	ServiceRegistry Iregistry = null;
+    
+    private void addServicesProfiles() {
+    	for (AtomicService service : serviceInfo.getServices()) {
+    		addServiceProfiles(service.getServiceDescription().getServiceName());
+    	}
+    }
+    
+    private void addServiceProfiles(String serviceName) {
     	
-    	for (ServiceRegistry registry : serviceRegistries) {
+    	ServiceDescription Idescription = null;
+    	
+    	for (ServiceRegistry registry : serviceInfo.getServiceRegistries()) {
     		
     		Idescription = registry.getService(serviceName);
     		
     		if (Idescription != null) {
-    			Iregistry = registry;
     			break;
     		}
     		
@@ -1534,7 +1534,6 @@ public class ApplicationController implements Initializable {
     	
     	List<Class<?>> allProfiles = serviceInfo.getServiceProfileClasses();
     	AtomicService service = serviceInfo.getService(serviceName);
-    	System.err.print(serviceName + " " + service + "\n");
     	List<ServiceProfile> serviceProfiles = service.getServiceProfiles(); 
 		List<String> availableProfiles=new ArrayList<>();
 		
@@ -1572,6 +1571,64 @@ public class ApplicationController implements Initializable {
 				e.printStackTrace();
 			}
 		}
+    }
+
+    private AnchorPane addService(String serviceName) {
+	
+    	AnchorPane itemPane = new AnchorPane();
+
+    	Button inspectButton = new Button();
+    	inspectButton.setPrefWidth(32);
+    	inspectButton.setPrefHeight(32);
+    	inspectButton.setLayoutY(5);
+    	inspectButton.setId("inspectButton");
+    	inspectButton.setOnAction(event->{
+    		 			
+    		try{
+        	    FXMLLoader loader = new FXMLLoader();
+        	    loader.setLocation(MainGui.class.getResource("view/serviceProfileDialog.fxml"));
+        	    AnchorPane pane = (AnchorPane) loader.load();
+
+        	    Stage dialogStage = new Stage();
+        	    dialogStage.setTitle(serviceName);
+        	    
+        		ServiceProfileController controller=(ServiceProfileController)loader.getController();
+        		controller.setStage(dialogStage);
+        		controller.setServiceProfileClasses(serviceInfo.getServiceProfileClasses());
+        		controller.setService(serviceInfo.getService(serviceName));
+        		
+        	    Scene dialogScene = new Scene(pane);
+        	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
+
+        	    dialogStage.initOwner(primaryStage);
+        	    dialogStage.setScene(dialogScene);
+        	    dialogStage.setResizable(false);
+        	    dialogStage.show();
+    		}
+    		catch(Exception e){
+    			e.printStackTrace();
+    		}
+    	});
+    	
+    	ServiceDescription Idescription = null;
+    	ServiceRegistry Iregistry = null;
+    	
+    	for (ServiceRegistry registry : serviceRegistries) {
+    		
+    		Idescription = registry.getService(serviceName);
+    		
+    		if (Idescription != null) {
+    			Iregistry = registry;
+    			break;
+    		}
+    		
+    	}
+    	
+    	ServiceDescription description = Idescription;
+
+    	Label label = new Label();
+    	label.setLayoutY(15);
+    	label.setText(serviceName);
     	
     	// TODO Check if this works with new system
     	Circle circle = new Circle();

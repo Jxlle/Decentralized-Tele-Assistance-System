@@ -106,14 +106,13 @@ public class WorkflowExecutor {
 	
 		// Assistance Service. Workflow is provided by TAS_gui through executeWorkflow method
 		assistanceService = new AssistanceService("TeleAssistanceService", "service.assistance" + amountOfWorkflows, "resources/TeleAssistanceWorkflow.txt", serviceRegistries);
-		System.err.print("started ass service\n");
 		assistanceService.startService();
-		//assistanceService.register(serviceRegistry);
 		probe = new AssistanceServiceCostProbe();
 		assistanceService.getCostProbe().register(probe);
 		assistanceService.getWorkflowProbe().register(probe);
 		//assistanceService.getWorkflowProbe().register(new AssistanceServiceDelayProbe());
 		// assistanceService.getServiceInvocationProbe().register(monitor);
+		assistanceService.updateCache();
 		
 		workflowEffector = new WorkflowEffector(assistanceService);
     }
@@ -122,7 +121,6 @@ public class WorkflowExecutor {
 
     	SystemProfile profile = SystemProfileDataHandler.activeProfile;
 		CompositeServiceClient client = new CompositeServiceClient(assistanceService.getServiceDescription().getServiceEndpoint());
-		workflowEffector.refreshAllServices();
 		Time.steps.set(0);
 	
 		if (profile != null) {

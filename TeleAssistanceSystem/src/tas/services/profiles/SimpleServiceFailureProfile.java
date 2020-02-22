@@ -19,7 +19,6 @@ public class SimpleServiceFailureProfile extends ServiceProfile {
 	@Override
 	public boolean preInvokeOperation(ServiceDescription description, String operationName, Object... args) {
 		
-		System.err.print("fail\n");
 		Random rand = new Random();
 		double failrate = 0;
 		

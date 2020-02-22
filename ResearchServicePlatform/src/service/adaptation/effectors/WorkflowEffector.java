@@ -45,7 +45,7 @@ public class WorkflowEffector extends AbstractEffector {
      * Add a given service to the workflow cache
      * @param description the service description
      */
-    public void addService(ServiceDescription description){
+    public void addService(ServiceDescription description) {
     	cacheEffector.addService(description);
     }
     

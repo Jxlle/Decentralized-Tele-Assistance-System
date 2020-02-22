@@ -24,7 +24,8 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	protected AbstractSystem(T... systemEntities) throws IllegalArgumentException {
 		
 		if (systemEntities.length > getSystemEntityCount()) {
-			throw new IllegalArgumentException("This system doesn't support " + systemEntities.length + " entities!");
+			throw new IllegalArgumentException("This system doesn't support " + systemEntities.length + " entities! "
+					+ "It supports " + getSystemEntityCount() + " entities.");
 		}
 		
 		this.systemEntities = systemEntities;
@@ -57,7 +58,7 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	 * Return the amount of needed entities in the system
 	 * @return the amount of needed entities in the system
 	 */
-	public static int getSystemEntityCount() {
+	public int getSystemEntityCount() {
 		return -1;
 	};
 }

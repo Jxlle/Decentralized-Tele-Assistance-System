@@ -314,17 +314,15 @@ public class CompositeService extends AbstractService {
     	}
     	
     	for (ServiceDescription description : serviceDescriptions) {
-    		System.err.print("ADDED " + description.getServiceEndpoint() + " \n");
+    		//System.err.print("ADDED " + description.getServiceEndpoint() + " \n");
         	cache.addService(description);
     	}
     	
-    	System.err.print("done adding services...\n");
+    	//System.err.print("done adding services...\n");
     }
     
     public ServiceDescription lookupService(String serviceType, String opName) {
     	
-    	System.err.print("SIZE: " + cache.getServices().size() + "  \n");
-    	System.err.print("INFO: " + serviceType + " " + opName + "  \n");
     	Description description = new Description(serviceType, opName);	
     	String chosenServiceEndpoint = usedServicesInfo.get(description).next();
     	
@@ -476,10 +474,12 @@ public class CompositeService extends AbstractService {
     	    resultVal = this.sendRequest(service.getServiceType(), service.getServiceEndpoint(), true, maxResponseTime, opName, params);
 
     	    if (resultVal instanceof TimeOutError) {
+    	    	//System.err.print("FAILED :'( \n");
     	    	this.getWorkflowProbe().notifyServiceOperationTimeout((ServiceDescription) service.clone(), opName, params);
     	    	registryProbe.notifyServiceFailed((ServiceDescription) service.clone());
     	    } 
-    	    else {  	
+    	    else {  
+    	    	//System.err.print("SUCCEEDED :) \n");
     	    	this.getWorkflowProbe().notifyServiceOperationReturned((ServiceDescription) service.clone(), resultVal, opName, params);
     	    	this.getCostProbe().notifyCostSubscribers((ServiceDescription) service.clone(), opName);
     	    	registryProbe.notifyServiceSucceeded((ServiceDescription) service.clone());

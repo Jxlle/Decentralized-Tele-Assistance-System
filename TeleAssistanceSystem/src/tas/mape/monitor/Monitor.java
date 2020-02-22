@@ -26,6 +26,7 @@ public class Monitor {
 	private MonitorWorkflowProbe workflowProbe;
 	private boolean analyzerRequired, executed;
 	private double minFailureDelta, failureChange;
+	private int executions;
 	
 	/**
 	 * Create a new monitor with a given knowledge, analyzer, minimum failure delta and failure change
@@ -57,6 +58,13 @@ public class Monitor {
 		for (ServiceRegistryProbe serviceRegistryProbe : compositeService.getServiceRegistryProbes()) {
 			serviceRegistryProbe.register(workflowProbe);
 		}
+	}
+	
+	/**
+	 * Reset the monitor probes
+	 */
+	public void resetProbes() {
+		workflowProbe.reset();
 	}
 	
 	/**
@@ -107,6 +115,11 @@ public class Monitor {
 		
 		workflowProbe.reset();
 		executed = true;
+		executions++;
+		
+		if (executions == 1) {
+			analyzerRequired = true;
+		}
 	}
 	
 	/**
@@ -131,6 +144,7 @@ public class Monitor {
 		// Loop over each service endpoint in the service invocations map
 		for (String serviceEndpoint : serviceInvocations.keySet()) {
 			
+			// TODO Error when no service fails
 			double approximatedServiceFailureRate = serviceFailures.get(serviceEndpoint) / (double) serviceInvocations.get(serviceEndpoint);
 			double currentServiceFailureRate = knowledge.getApproximatedServiceFailureRate(serviceEndpoint, serviceInvocations.get(serviceEndpoint));
 			double newServiceFailureRate = getNewFailureRate(approximatedServiceFailureRate, currentServiceFailureRate);

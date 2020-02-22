@@ -11,11 +11,11 @@ public class DrugService extends AtomicService {
 
 	@ServiceOperation()
 	public void changeDoses(int patientId){
-		System.out.println("Doses are changed.");
+		//System.out.println("Doses are changed.");
 	}
 	
 	@ServiceOperation()
 	public void changeDrug(int patientId){
-		System.out.println("Drug is changed.");
+		//System.out.println("Drug is changed.");
 	}
 }
