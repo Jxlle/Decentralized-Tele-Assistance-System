@@ -389,6 +389,7 @@ public class MAPEKComponent {
 	 * Execute the monitor component
 	 */
 	public void executeMonitor() {
+		System.err.print("Executing monitor...\n");
 		monitor.execute();
 	}
 	

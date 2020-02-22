@@ -137,6 +137,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public void triggerExecutor() {
 		if (executed && (protocolFinished || protocol == null)) {
+			System.err.print("Executing executor...\n");
 			executor.execute(plan);
 			executed = false;
 			protocolFinished = false;
@@ -248,6 +249,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		return serviceLoads;
 	}
 	
+	// TODO RESET VAN LOAD
 	/**
 	 * Calculate the service loads for each service in a given service combination
 	 * @param serviceCombination the given service combination 
@@ -261,9 +263,10 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			
 			WeightedCollection<ServiceDescription> serviceUsage = serviceCombination.getAllServices(description);
 			
-			for (ServiceDescription service : serviceUsage.getItems()) {		
+			for (ServiceDescription service : serviceUsage.getItems()) {
+				System.err.print("LOAD " + knowledge.getServiceLoad(description, serviceUsage.getChance(service)) + service.getServiceEndpoint() +"\n");
 				int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(service));
-				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? 1 : v + serviceLoad);		
+				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? serviceLoad : v + serviceLoad);		
 			}
 		}
 		

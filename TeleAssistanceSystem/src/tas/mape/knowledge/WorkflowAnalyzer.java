@@ -26,7 +26,7 @@ public class WorkflowAnalyzer {
 	
 	// Fields
 	private static int currentSteps;
-	private static int analyzerCycles = 100;
+	private static int analyzerCycles = 1000;
 	private static boolean isStopped, hasBeenStopped;
 	private static WorkflowAnalyzerProbe workflowAnalyzerProbe = new WorkflowAnalyzerProbe();
 	
@@ -120,7 +120,7 @@ public class WorkflowAnalyzer {
 					
 				    if ((values.get(j).getRatio() + valueProbability) > probability) {
 				    	pick = (int) values.get(j).getData();
-				    	System.err.print("[" + currentSteps + "]-------------------------------------------------\n");
+						System.err.print("--------------------ANALYZING CYCLE [" + (currentSteps + 1) + "]--------------------\n");
 				    	client.invokeCompositeService(new Object[]{patientId, pick});
 				    	break;
 				    } 

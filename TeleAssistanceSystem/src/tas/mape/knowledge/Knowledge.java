@@ -236,13 +236,13 @@ public class Knowledge {
 		}
 		
 		HashMap<Integer, Double> serviceFailureTable = approximatedServiceFailureRates.get(serviceEndpoint);
+		// TODO moet miss anders
 		int loadKeyHigh = (load / loadFailureDelta) + 1;
 		
 		if (serviceFailureTable.get(loadKeyHigh) == null) {
 			serviceFailureTable.put(loadKeyHigh, serviceFailureTable.get(0));
 		}
 				
-		System.err.print(serviceFailureTable.get(loadKeyHigh) + " VALUE \n");
 		return serviceFailureTable.get(loadKeyHigh);
 	}
 	

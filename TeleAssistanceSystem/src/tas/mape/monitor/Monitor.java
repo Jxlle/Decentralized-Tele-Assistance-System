@@ -39,6 +39,8 @@ public class Monitor {
 	public Monitor(Knowledge knowledge, Analyzer analyzer, double minFailureDelta, double failureChange) {		
 		this.knowledge = knowledge;
 		this.analyzer = analyzer;	
+		this.minFailureDelta = minFailureDelta;
+		this.failureChange = failureChange;
 		workflowProbe = new MonitorWorkflowProbe();
 	}
 	
@@ -127,6 +129,7 @@ public class Monitor {
 	 */
 	public void triggerAnalyzer() {	
 		if (analyzerRequired && executed) {
+			System.err.print("Executing analyzer...\n");
 			analyzer.execute();
 			executed = false;
 			analyzerRequired = false;
@@ -144,10 +147,13 @@ public class Monitor {
 		// Loop over each service endpoint in the service invocations map
 		for (String serviceEndpoint : serviceInvocations.keySet()) {
 			
-			// TODO Error when no service fails
+			System.err.print("System invocations: " + serviceInvocations.get(serviceEndpoint) + ", service failures: " + serviceFailures.get(serviceEndpoint));
+			
 			double approximatedServiceFailureRate = serviceFailures.get(serviceEndpoint) / (double) serviceInvocations.get(serviceEndpoint);
 			double currentServiceFailureRate = knowledge.getApproximatedServiceFailureRate(serviceEndpoint, serviceInvocations.get(serviceEndpoint));
 			double newServiceFailureRate = getNewFailureRate(approximatedServiceFailureRate, currentServiceFailureRate);
+			
+			System.err.print(serviceEndpoint + " " + approximatedServiceFailureRate + " " + newServiceFailureRate + " " + currentServiceFailureRate + "\n");
 			
 			if (newServiceFailureRate != currentServiceFailureRate) {
 				
@@ -219,6 +225,8 @@ public class Monitor {
 		
 		double failureDelta = approximatedFailureRate - currentFailureRate;
 		double newFailureRate = currentFailureRate;
+		
+		System.err.print("FAILURE DELTA " + failureDelta + " " + minFailureDelta + "\n");
 		
 		if (Math.abs(failureDelta) >= minFailureDelta) {
 			

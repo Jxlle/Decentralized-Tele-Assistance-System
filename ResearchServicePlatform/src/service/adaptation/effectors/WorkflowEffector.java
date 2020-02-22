@@ -121,6 +121,7 @@ public class WorkflowEffector extends AbstractEffector {
      * @param loadIncreasement increasement of the load 
      */
     public void increaseServiceLoad(String serviceEndpoint, int loadIncreasement) {
+    	//System.err.print("INCREASED LOAD: " + serviceEndpoint  + " " + loadIncreasement + " \n");
     	cacheEffector.increaseServiceLoad(serviceEndpoint, loadIncreasement);
     }
 }

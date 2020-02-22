@@ -12,7 +12,6 @@ import service.auxiliary.ServiceDescription;
 public class SimpleServiceFailureProfile extends ServiceProfile {
 	
 	public SimpleServiceFailureProfile() {
-		defaultEnabled = true;
 		type = "Failure";
 	}
 	

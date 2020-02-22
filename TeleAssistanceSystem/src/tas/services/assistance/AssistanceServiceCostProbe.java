@@ -74,7 +74,7 @@ public class AssistanceServiceCostProbe implements WorkflowProbeInterface, CostP
     public void workflowEnded(Object result, Object[] params) {
     	//System.out.println("Probe: workflowEnded");
     	if(result instanceof TimeOutError){
-    		System.out.println("WorkflowError!!!");
+    		//System.out.println("WorkflowError!!!");
         	resultBuilder.append(workflowInvocationCount+","+"AssistanceService"+",false,"+totalCost+"\n");
     	}
     	else
@@ -93,7 +93,7 @@ public class AssistanceServiceCostProbe implements WorkflowProbeInterface, CostP
      */
     @Override
     public void serviceOperationTimeout(ServiceDescription service, String opName, Object[] params) {
-    	System.out.println("Probe: timeout");
+    	//System.out.println("Probe: timeout");
     	resultBuilder.append(workflowInvocationCount+","+service.getServiceName()+",false\n");
     }
 

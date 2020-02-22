@@ -105,6 +105,7 @@ public class Analyzer {
 	 */
 	public void triggerPlanner() {
 		if (plannerRequired && executed) {
+			System.err.print("Executing planner...\n");
 			planner.execute(chosenServicesList);
 			executed = false;
 			plannerRequired = false;
