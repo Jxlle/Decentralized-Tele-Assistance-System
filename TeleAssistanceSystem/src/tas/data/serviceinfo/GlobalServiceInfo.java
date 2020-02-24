@@ -121,7 +121,7 @@ public class GlobalServiceInfo {
      * @return a linked hash map of all service types
      */
     public static LinkedHashMap<String,String> getServiceTypes() {
-    	return GlobalServiceInfo.serviceTypes;
+    	return serviceTypes;
     }
     
     /**

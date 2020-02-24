@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -31,9 +30,6 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.CommonTree;
 
-import profile.InputProfile;
-import profile.ProfileExecutor;
-import profile.Requirement;
 import profile.SystemRequirementType;
 import service.atomic.AtomicService;
 import service.atomic.ServiceProfile;
@@ -43,15 +39,10 @@ import service.auxiliary.ServiceDescription;
 import service.registry.ServiceRegistry;
 import service.workflow.ast.rspLexer;
 import service.workflow.ast.rspParser;
-import tas.adaptation.AdaptationEngine;
-import tas.adaptation.TASStart;
 import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.data.systemprofile.SystemProfile;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.data.systemprofile.SystemProfileExecutor;
-import tas.mape.analyzer.CostAndReliabilityReq;
-import tas.mape.analyzer.CostReq;
-import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.SystemEntity;
@@ -65,7 +56,6 @@ import application.MainGui;
 import application.model.CostEntry;
 import application.model.PerformanceEntry;
 import application.model.ReliabilityEntry;
-import application.utility.FileManager;
 import application.utility.NodeVisitor;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -86,15 +76,11 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
@@ -152,6 +138,7 @@ public class ApplicationController implements Initializable {
     Map<String, AnchorPane> servicePanes = new ConcurrentHashMap<>();
     Map<String, ListView<AnchorPane>> serviceRegistryPanes = new ConcurrentHashMap<>();
     int maxSteps;
+    String entityBeingAnalyzed;
     boolean analyzed;
     
     @FXML
@@ -1106,26 +1093,6 @@ public class ApplicationController implements Initializable {
     			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
     			SystemProfileDataHandler.activeProfile = profile;
     			
-		    	for (int i = 0; i < profile.getAmountOfParticipatingEntities(); i++) {
-		    		
-		    		final int index = i;
-		    		
-		    		SystemEntity entity = entities.stream()
-		    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
-		    		
-		    		if (!workflowAnalyzed.get(entity.getEntityName())) {
-    			    	System.err.print("analyzing \n");
-		    			analyzeEntity(entity);
-		    		}
-		    	}
-		    	
-		    	System.err.print("test2 \n");
-		    	
-		    	analyzed = true;
-
-		    	// Execute system
-		    	SystemProfileExecutor.execute(entities);
-    			
     			Task<Void> task = new Task<Void>() {
     			    @Override
     			    protected Void call() throws Exception {
@@ -1134,7 +1101,7 @@ public class ApplicationController implements Initializable {
     			    	System.err.print("test \n");
     			    	
     			    	// Analyze entity workflows if needed
-    			    	/*for (int i = 0; i < profile.getAmountOfParticipatingEntities(); i++) {
+    			    	for (int i = 0; i < profile.getAmountOfParticipatingEntities(); i++) {
     			    		
     			    		final int index = i;
     			    		
@@ -1143,6 +1110,7 @@ public class ApplicationController implements Initializable {
     			    		
     			    		if (!workflowAnalyzed.get(entity.getEntityName())) {
     	    			    	System.err.print("analyzing \n");
+    	    			    	entityBeingAnalyzed = entity.getEntityName();
     			    			analyzeEntity(entity);
     			    		}
     			    	}
@@ -1150,12 +1118,13 @@ public class ApplicationController implements Initializable {
     			    	System.err.print("test2 \n");
     			    	
     			    	analyzed = true;
+    			    	entityBeingAnalyzed = "";
 
     			    	// Execute system
-    			    	SystemProfileExecutor.execute(entities);*/
+    			    	SystemProfileExecutor.execute(entities);
 					    
     			    	//TODO CHARTS
-    				    /*Platform.runLater(new Runnable() {
+    				    Platform.runLater(new Runnable() {
         					@Override
         					public void run() {
         					    runButton.setId("runButton");
@@ -1170,7 +1139,7 @@ public class ApplicationController implements Initializable {
         					    tableViewController.fillCostData(resultFilePath);
         						tableViewController.fillPerformanceData(resultFilePath);
         					}
-    				    });*/
+    				    });
     				
     				return null;
     				
@@ -1186,6 +1155,31 @@ public class ApplicationController implements Initializable {
     			Task<Void> progressTask = new Task<Void>() {
     			    @Override
     			    protected Void call() throws Exception {
+    			    	while (WorkflowAnalyzer.getCurrentSteps() < WorkflowAnalyzer.analyzerCycles && !analyzed) {
+        				    Platform.runLater(new Runnable() {
+            					@Override
+            					public void run() {	
+        							invocationLabel.setText("Analyzing the workflows: Analyzing the workflow of " + entityBeingAnalyzed
+        									+ " | PROGRESS: "+ WorkflowAnalyzer.getCurrentSteps() + " / " + WorkflowAnalyzer.analyzerCycles);
+            					}
+        				    });
+        				    
+        				    updateProgress(WorkflowAnalyzer.getCurrentSteps(), WorkflowAnalyzer.analyzerCycles);
+        				    Thread.sleep(100);
+    			    	}
+    			    	
+    			    	while (analyzed) {
+        				    Platform.runLater(new Runnable() {
+            					@Override
+            					public void run() {	
+        							invocationLabel.setText("Executing system run...");
+            					}
+        				    });
+        				    
+        				    //updateProgress(WorkflowAnalyzer.getCurrentSteps(), WorkflowAnalyzer.analyzerCycles);
+        				    Thread.sleep(100);
+    			    	}
+    			    	
         				/*while (probe.workflowInvocationCount < maxSteps) {
         					
         				    Platform.runLater(new Runnable() {

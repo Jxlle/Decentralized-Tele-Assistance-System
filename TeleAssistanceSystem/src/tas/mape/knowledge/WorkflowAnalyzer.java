@@ -25,10 +25,15 @@ import tas.data.systemprofile.SystemProfileDataHandler;
 public class WorkflowAnalyzer {
 	
 	// Fields
+	public static int analyzerCycles = 1000;
 	private static int currentSteps;
-	private static int analyzerCycles = 1000;
 	private static boolean isStopped, hasBeenStopped;
 	private static WorkflowAnalyzerProbe workflowAnalyzerProbe = new WorkflowAnalyzerProbe();
+	
+	/**
+	 * Private constructor
+	 */
+	private WorkflowAnalyzer() {}
 	
     /**
      * Indicate that the analyzer has been stopped
@@ -42,6 +47,14 @@ public class WorkflowAnalyzer {
      */
     public synchronized static void start() {
     	isStopped = false;
+    }
+    
+    /**
+     * Return the current amount of taken steps in the analyzer
+     * @return the current amount of taken steps in the analyzer
+     */
+    public static int getCurrentSteps() {
+    	return currentSteps;
     }
     
     /**
