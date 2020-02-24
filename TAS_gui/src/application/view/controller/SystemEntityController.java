@@ -149,10 +149,10 @@ public class SystemEntityController implements Initializable {
 		this.parent = parent;
 	}
 	
-	public void addRegistryChoices(GlobalServiceInfo serviceInfo) {
+	public void addRegistryChoices() {
 		
 		entityRegistries = new ArrayList<>();
-		List<ServiceRegistry> registries = serviceInfo.getServiceRegistries();
+		List<ServiceRegistry> registries = GlobalServiceInfo.getServiceRegistries();
 		AnchorPane registryPane;
 		Label registryLabel;
 		

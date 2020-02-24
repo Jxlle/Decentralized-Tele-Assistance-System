@@ -22,12 +22,11 @@ import service.registry.ServiceRegistry;
 public class GlobalServiceInfoLoader {
 	
 	/**
-	 * Load the important data from a given file into the given global service info object
-	 * @param serviceInfo the given global service info object
+	 * Load the important data from a given file into the the global service info
 	 * @param file the given file
 	 * @throws IllegalStateException throws when the given file contains illegal service endpoints
 	 */
-	public static void loadFromXml(GlobalServiceInfo serviceInfo, File file) throws IllegalStateException {
+	public static void loadFromXml(File file) throws IllegalStateException {
 		try {
 			
 			List<AtomicService> servicesList = new ArrayList<>();
@@ -64,8 +63,8 @@ public class GlobalServiceInfoLoader {
             	}
             	
             	servicesList.add(serviceObject);
-            	serviceInfo.setServices(servicesList);
-            	serviceInfo.startServices();
+            	GlobalServiceInfo.setServices(servicesList);
+            	GlobalServiceInfo.startServices();
             }
             
             // Load registry data
@@ -99,7 +98,7 @@ public class GlobalServiceInfoLoader {
             	serviceRegistriesList.add(registryObject);
             }
             
-            serviceInfo.setServiceRegistries(serviceRegistriesList);
+            GlobalServiceInfo.setServiceRegistries(serviceRegistriesList);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -142,7 +142,6 @@ public class ApplicationController implements Initializable {
     
     // TODO FIX PROBE STUFF
     AssistanceServiceCostProbe probe = new AssistanceServiceCostProbe();
-    GlobalServiceInfo serviceInfo = new GlobalServiceInfo();
     SystemEntity selectedEntity;
     List<SystemEntity> entities = new ArrayList<>();
     Map<String, Boolean> workflowAnalyzed = new HashMap<>(); 
@@ -284,7 +283,7 @@ public class ApplicationController implements Initializable {
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
 
-    	serviceInfo.loadData(new File(defaultServiceDataPath));
+    	GlobalServiceInfo.loadData(new File(defaultServiceDataPath));
     	this.addServicesProfiles();
     	this.addItems();
     	this.fillSystemProfiles();
@@ -426,7 +425,7 @@ public class ApplicationController implements Initializable {
     
     private void addTestEntities() {
     	
-		WorkflowExecutor workflowExecutor = new WorkflowExecutor(Arrays.asList(serviceInfo.getServiceRegistry("se.lnu.service.registry")));	
+		WorkflowExecutor workflowExecutor = new WorkflowExecutor(Arrays.asList(GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");
 		
 		Map<SystemRequirementType, Integer> requirementMap = new HashMap<SystemRequirementType, Integer>() {
@@ -453,8 +452,8 @@ public class ApplicationController implements Initializable {
 		SystemEntity systemEntity = new SystemEntity("Test Entity", workflowExecutor, component);
 		addEntityToList(systemEntity);
 		
-		workflowExecutor = new WorkflowExecutor(Arrays.asList(serviceInfo.getServiceRegistry("se.lnu.service.registry"), 
-				serviceInfo.getServiceRegistry("se.lnu.service.registry2")));	
+		workflowExecutor = new WorkflowExecutor(Arrays.asList(GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry"), 
+				GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry2")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "workflow_test1.txt");
 		
 		builder = new Builder();
@@ -492,7 +491,7 @@ public class ApplicationController implements Initializable {
     	List<ServiceRegistry> serviceRegistries = new ArrayList<>();
     	
     	for (String registryEndpoint : selectedEntity.getManagingSystem().getRegistryEndpoints()) {
-    		serviceRegistries.add(serviceInfo.getServiceRegistry(registryEndpoint));
+    		serviceRegistries.add(GlobalServiceInfo.getServiceRegistry(registryEndpoint));
     	}
     	
     	this.serviceRegistries = serviceRegistries;
@@ -936,7 +935,6 @@ public class ApplicationController implements Initializable {
 	    		    
 	    		    SystemEntityController controller = (SystemEntityController) loader.getController();
 	    		    controller.setStage(dialogStage);
-	    		    controller.addRegistryChoices(serviceInfo);
 	    		    controller.setParent(self);
 	
 	    		    Scene dialogScene = new Scene(systemEntityPane);
@@ -1024,7 +1022,7 @@ public class ApplicationController implements Initializable {
 				File file = fileChooser.showOpenDialog(primaryStage);
 				
 				if (file != null) {
-					serviceInfo.loadData(file);
+					GlobalServiceInfo.loadData(file);
 					
 					if (selectedEntity != null) {
 						selectEntity();
@@ -1511,7 +1509,7 @@ public class ApplicationController implements Initializable {
     }
     
     private void addServicesProfiles() {
-    	for (AtomicService service : serviceInfo.getServices()) {
+    	for (AtomicService service : GlobalServiceInfo.getServices()) {
     		addServiceProfiles(service.getServiceDescription().getServiceName());
     	}
     }
@@ -1520,7 +1518,7 @@ public class ApplicationController implements Initializable {
     	
     	ServiceDescription Idescription = null;
     	
-    	for (ServiceRegistry registry : serviceInfo.getServiceRegistries()) {
+    	for (ServiceRegistry registry : GlobalServiceInfo.getServiceRegistries()) {
     		
     		Idescription = registry.getService(serviceName);
     		
@@ -1532,8 +1530,8 @@ public class ApplicationController implements Initializable {
     	
     	ServiceDescription description = Idescription;
     	
-    	List<Class<?>> allProfiles = serviceInfo.getServiceProfileClasses();
-    	AtomicService service = serviceInfo.getService(serviceName);
+    	List<Class<?>> allProfiles = GlobalServiceInfo.getServiceProfileClasses();
+    	AtomicService service = GlobalServiceInfo.getService(serviceName);
     	List<ServiceProfile> serviceProfiles = service.getServiceProfiles(); 
 		List<String> availableProfiles=new ArrayList<>();
 		
@@ -1594,8 +1592,8 @@ public class ApplicationController implements Initializable {
         	    
         		ServiceProfileController controller=(ServiceProfileController)loader.getController();
         		controller.setStage(dialogStage);
-        		controller.setServiceProfileClasses(serviceInfo.getServiceProfileClasses());
-        		controller.setService(serviceInfo.getService(serviceName));
+        		controller.setServiceProfileClasses(GlobalServiceInfo.getServiceProfileClasses());
+        		controller.setService(GlobalServiceInfo.getService(serviceName));
         		
         	    Scene dialogScene = new Scene(pane);
         	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());

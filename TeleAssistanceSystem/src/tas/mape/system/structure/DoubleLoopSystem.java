@@ -1,5 +1,6 @@
 package tas.mape.system.structure;
 
+import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.communication.protocol.PlannerProtocolDoNothing;
@@ -66,6 +67,9 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 			// Execute workflow
 			entity1.getManagedSystem().executeWorkflow();
 			entity2.getManagedSystem().executeWorkflow();
+			
+			// Reset all service loads after each execution cycle
+			GlobalServiceInfo.resetServiceLoads();
 		}
 	}
 

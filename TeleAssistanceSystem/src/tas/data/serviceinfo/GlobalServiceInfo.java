@@ -2,13 +2,13 @@ package tas.data.serviceinfo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import service.atomic.AtomicService;
 import service.registry.ServiceRegistry;
 import tas.services.alarm.AlarmService;
-import tas.services.assistance.AssistanceServiceCostProbe;
 import tas.services.drug.DrugService;
 import tas.services.medical.MedicalAnalysisService;
 import tas.services.profiles.ServiceDelayProfile;
@@ -23,30 +23,24 @@ import tas.services.profiles.SimpleServiceFailureProfile;
 public class GlobalServiceInfo {
     
 	// TODO Look what types do in GUI
-    private List<AtomicService> services = new ArrayList<>();
-    private List<Class<?>> serviceProfileClasses = new ArrayList<>();
-    private List<ServiceRegistry> serviceRegistries = new ArrayList<>();
-    private LinkedHashMap<String, String> serviceTypes = new LinkedHashMap<>();
+    private static List<AtomicService> services = new ArrayList<>();
+    private static List<ServiceRegistry> serviceRegistries = new ArrayList<>();
+    private static LinkedHashMap<String, String> serviceTypes = new LinkedHashMap<>();
+    private static List<Class<?>> serviceProfileClasses = Arrays.asList(
+    	ServiceDelayProfile.class,
+    	SimpleServiceFailureProfile.class,
+    	ServiceFailureLoadProfile.class
+    );
     
     /**
-     * Create a new global service info object
+     * Private constructor
      */
-    public GlobalServiceInfo() {
-    	initializeProfileClasses();
-    }
-    
-    /**
-     * Return the used service profile classes
-     * @return the used service profile classes
-     */
-    public List<Class<?>> getServiceProfileClasses() {
-    	return this.serviceProfileClasses;
-    }
+    private GlobalServiceInfo() {}
     
     /**
      * Start all services
      */
-    public void startServices() {
+    public static void startServices() {
     	for (AtomicService service : services) {
     		service.startService();
     	}
@@ -62,11 +56,20 @@ public class GlobalServiceInfo {
     }
     
     /**
+     * Reset all service loads
+     */
+    public static void resetServiceLoads() {
+    	for (AtomicService service : services) {
+    		service.getServiceDescription().resetLoad();
+    	}
+    }
+    
+    /**
      * Set the currently used services to the given service list
      * @param services the given service list
      */
-    public void setServiceRegistries(List<ServiceRegistry> serviceRegistries) {
-    	this.serviceRegistries = serviceRegistries;
+    public static void setServiceRegistries(List<ServiceRegistry> serviceRegistries) {
+    	GlobalServiceInfo.serviceRegistries = serviceRegistries;
     }
     
     /**
@@ -75,7 +78,7 @@ public class GlobalServiceInfo {
      * @param registryEndpoint the given service registry endpoint
      * @return the matched service registry endpoint or null if there was no registry match
      */
-    public ServiceRegistry getServiceRegistry(String registryEndpoint) {
+    public static ServiceRegistry getServiceRegistry(String registryEndpoint) {
     	return serviceRegistries.stream().filter(x -> x.getServiceDescription().getServiceEndpoint().equals(registryEndpoint)).findFirst().orElse(null);
     }
     
@@ -83,7 +86,7 @@ public class GlobalServiceInfo {
      * Return a list of all currently used service registries
      * @return a list of all currently used service registries
      */
-    public List<ServiceRegistry> getServiceRegistries() {
+    public static List<ServiceRegistry> getServiceRegistries() {
     	return serviceRegistries;
     }
     
@@ -91,8 +94,8 @@ public class GlobalServiceInfo {
      * Set the currently used services to the given service list
      * @param services the given service list
      */
-    public void setServices(List<AtomicService> services) {
-    	this.services = services;
+    public static void setServices(List<AtomicService> services) {
+    	GlobalServiceInfo.services = services;
     }
     
     /**
@@ -101,7 +104,7 @@ public class GlobalServiceInfo {
      * @param serviceEndpoint the given service endpoint
      * @return the matched service endpoint or null if there was no service match
      */
-    public AtomicService getService(String serviceEndpoint) {
+    public static AtomicService getService(String serviceEndpoint) {
     	return services.stream().filter(x -> x.getServiceDescription().getServiceName().equals(serviceEndpoint)).findFirst().orElse(null);
     }
     
@@ -109,7 +112,7 @@ public class GlobalServiceInfo {
      * Return a list of all currently used services
      * @return a list of all currently used services
      */
-    public List<AtomicService> getServices() {
+    public static List<AtomicService> getServices() {
     	return services;
     }
     
@@ -117,24 +120,40 @@ public class GlobalServiceInfo {
      * Return a linked hash map of all service types
      * @return a linked hash map of all service types
      */
-    public LinkedHashMap<String,String> getServiceTypes() {
-    	return this.serviceTypes;
+    public static LinkedHashMap<String,String> getServiceTypes() {
+    	return GlobalServiceInfo.serviceTypes;
     }
+    
+    /**
+     * Return the service profile classes list
+     * @return the service profile classes list
+     */
+	public static List<Class<?>> getServiceProfileClasses() {
+		return serviceProfileClasses;
+	}
+
+	/**
+	 * Set the service profile classes list to the given list
+	 * @param serviceProfileClasses the given service profile classes list
+	 */
+	public static void setServiceProfileClasses(List<Class<?>> serviceProfileClasses) {
+		GlobalServiceInfo.serviceProfileClasses = serviceProfileClasses;
+	}
     
     /**
      * Save the current service data to a given file
      * @param file the given file
      */
-    public void saveData(File file) {
-    	GlobalServiceInfoWriter.writeToXml(this, file);
+    public static void saveData(File file) {
+    	GlobalServiceInfoWriter.writeToXml(file);
     }
     
     /**
      * Load service data from a given file
      * @param file the given file
      */
-    public void loadData(File file) {
-    	GlobalServiceInfoLoader.loadFromXml(this, file);
+    public static void loadData(File file) {
+    	GlobalServiceInfoLoader.loadFromXml(file);
     }
     
     /**
@@ -142,7 +161,7 @@ public class GlobalServiceInfo {
      * Changes the service data of this global service info object to the default data used when starting the simulator.
      * Can be used to restore the default XML file when accidentally deleted.
      */
-    public void ChangeToDefaultServices() {
+    public static void ChangeToDefaultServices() {
     	
     	// Reset data
     	services = new ArrayList<>();
@@ -227,14 +246,5 @@ public class GlobalServiceInfo {
 		drugService.register(serviceRegistry);
 		
 		services.add(drugService);
-    }
-    
-    /**
-     * Initialize the usable/interactive service profile classes
-     */
-    private void initializeProfileClasses() {
-		serviceProfileClasses.add(ServiceDelayProfile.class);
-		serviceProfileClasses.add(SimpleServiceFailureProfile.class);
-		serviceProfileClasses.add(ServiceFailureLoadProfile.class);
     }
 }

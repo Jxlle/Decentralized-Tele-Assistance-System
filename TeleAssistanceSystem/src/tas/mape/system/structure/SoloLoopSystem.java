@@ -1,5 +1,6 @@
 package tas.mape.system.structure;
 
+import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.system.entity.SystemEntity;
 
 /**
@@ -41,7 +42,11 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 			// Execute workflow
 			System.err.print("Executing workflow...\n");
 			entity.getManagedSystem().executeWorkflow();
+			
+			// Reset all service loads after each execution cycle
+			GlobalServiceInfo.resetServiceLoads();
 		}
+		
 		
 		System.err.print("--------------------CYCLES ENDED--------------------\n");
 	}

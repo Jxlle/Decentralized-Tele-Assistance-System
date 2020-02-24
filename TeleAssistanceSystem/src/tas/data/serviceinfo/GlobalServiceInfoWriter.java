@@ -24,11 +24,10 @@ import service.registry.ServiceRegistry;
 public class GlobalServiceInfoWriter {
 	
 	/**
-	 * Write the important data from a given global service info object to a given file
-	 * @param serviceInfo the given global service info object
+	 * Write the important data from the global service info object to a given file
 	 * @param file the given file
 	 */
-	public static void writeToXml(GlobalServiceInfo serviceInfo, File file) {
+	public static void writeToXml(File file) {
 		try {
 			
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -39,7 +38,7 @@ public class GlobalServiceInfoWriter {
 			Element services = doc.createElement("Services");
 			root.appendChild(services);
 			
-			for (AtomicService service : serviceInfo.getServices()) {
+			for (AtomicService service : GlobalServiceInfo.getServices()) {
 				
 				Element serviceRoot  = doc.createElement("Service");
 				services.appendChild(serviceRoot);
@@ -82,7 +81,7 @@ public class GlobalServiceInfoWriter {
 			Element registries = doc.createElement("Registries");
 			root.appendChild(registries);
 			
-			for (ServiceRegistry registry : serviceInfo.getServiceRegistries()) {
+			for (ServiceRegistry registry : GlobalServiceInfo.getServiceRegistries()) {
 				
 				Element registryRoot = doc.createElement("Registry");
 				registries.appendChild(registryRoot);

@@ -32,7 +32,7 @@ public class WorkflowExecutor {
     
 	public WorkflowExecutor(List<ServiceRegistry> serviceRegistries) {
 		amountOfWorkflows++;
-		initializeWorkFlowExecuter(serviceRegistries);
+		initializeWorkFlowExecutor(serviceRegistries);
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public class WorkflowExecutor {
     	assistanceService.stopService();
     }
 	
-    public void initializeWorkFlowExecuter(List<ServiceRegistry> serviceRegistries) {
+    public void initializeWorkFlowExecutor(List<ServiceRegistry> serviceRegistries) {
 	
 		// Assistance Service. Workflow is provided by TAS_gui through executeWorkflow method
 		assistanceService = new AssistanceService("TeleAssistanceService", "service.assistance" + amountOfWorkflows, "resources/TeleAssistanceWorkflow.txt", serviceRegistries);
