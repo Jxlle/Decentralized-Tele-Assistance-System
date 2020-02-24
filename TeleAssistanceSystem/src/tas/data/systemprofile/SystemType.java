@@ -12,17 +12,20 @@ import tas.mape.system.structure.SoloLoopSystem;
 public enum SystemType {
 	
 	// Available system types
-	SOLO_LOOP(SoloLoopSystem.class),
-	DOUBLE_LOOP(DoubleLoopSystem.class);
+	SOLO_LOOP(SoloLoopSystem.class, 1),
+	DOUBLE_LOOP(DoubleLoopSystem.class, 2);
 	
 	private Class<? extends AbstractSystem<?>> systemClass;
+	private int maxEntities;
 	
 	/**
 	 * Create a new system type with a given system class
 	 * @param systemClass the given class representing the class that is used to create the system object
+	 * @param maxEntities The maximum amount of participating system entities
 	 */
-	private SystemType(Class<? extends AbstractSystem<?>> systemClass) {
+	private SystemType(Class<? extends AbstractSystem<?>> systemClass, int maxEntities) {
 		this.systemClass = systemClass;
+		this.maxEntities = maxEntities;
 	}
 	
 	/**
@@ -31,5 +34,13 @@ public enum SystemType {
 	 */
 	public Class<? extends AbstractSystem<?>> getSystemClass() {
 		return systemClass;
+	}
+	
+	/**
+	 * Return the maximum amount of participating system entities
+	 * @return
+	 */
+	public int getMaxEntities() {
+		return maxEntities;
 	}
 }

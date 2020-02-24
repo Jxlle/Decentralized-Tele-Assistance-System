@@ -142,8 +142,19 @@ public class SystemProfile {
 	/**
 	 * Add a given entity name to the participating entities list
 	 * @param entityName the given entity name
+	 * @throws IllegalStateException throws when the system type has not yet been set
+	 * @throws IllegalStateException throws when the maximum amount of entities has already been reached
 	 */
-	public void addEntity(String entityName) {
+	public void addEntity(String entityName) throws IllegalStateException {
+		
+		if (systemType == null) {
+			throw new IllegalStateException("System type needs to be set before changing the participating entities!");
+		}
+		
+		if (participatingEntities.size() == systemType.getMaxEntities()) {
+			throw new IllegalStateException("The maximum amount of entities has already been reached!");
+		}
+		
 		participatingEntities.add(entityName);
 	}
 	

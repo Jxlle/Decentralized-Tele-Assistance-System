@@ -1101,7 +1101,7 @@ public class ApplicationController implements Initializable {
     			    	System.err.print("test \n");
     			    	
     			    	// Analyze entity workflows if needed
-    			    	for (int i = 0; i < profile.getAmountOfParticipatingEntities(); i++) {
+    			    	for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
     			    		
     			    		final int index = i;
     			    		

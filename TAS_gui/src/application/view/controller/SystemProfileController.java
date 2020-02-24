@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -320,7 +321,7 @@ public class SystemProfileController implements Initializable {
 				for (int i = 0; i < entityCount; i++) {
 					ComboBox<String> comboBox = new ComboBox<String>();
 					
-					if (i < profile.getAmountOfParticipatingEntities()) {
+					if (i < profile.getSystemType().getMaxEntities()) {
 						comboBox.setValue(profile.getParticipatingEntity(i));
 					}
 					
@@ -333,21 +334,7 @@ public class SystemProfileController implements Initializable {
 			}    
 	    });
 		
-		Class<? extends AbstractSystem<?>> systemClass = profile.getSystemType().getSystemClass();
-		Method method = null;
-		int entityCount = 0;
-		
-		try {
-			method = systemClass.getMethod("getSystemEntityCount");
-		} catch (NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-		}
-			
-		try {
-			entityCount = (int) method.invoke(null);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		int entityCount = profile.getSystemType().getMaxEntities();
 		
 		if (entityCount > 1) {
 			protocolTypeComboBox.setValue(profile.getProtocolType());
