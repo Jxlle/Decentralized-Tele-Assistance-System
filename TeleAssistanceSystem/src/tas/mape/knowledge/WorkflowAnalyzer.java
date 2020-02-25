@@ -25,7 +25,7 @@ import tas.data.systemprofile.SystemProfileDataHandler;
 public class WorkflowAnalyzer {
 	
 	// Fields
-	public static int analyzerCycles = 1000;
+	public static int analyzerCycles = 5000;
 	private static int currentSteps;
 	private static boolean isStopped, hasBeenStopped;
 	private static WorkflowAnalyzerProbe workflowAnalyzerProbe = new WorkflowAnalyzerProbe();
@@ -109,7 +109,6 @@ public class WorkflowAnalyzer {
      */
 	private static void executeWorkflow(SystemProfile profile, CompositeService compositeService) {
 
-		System.err.print(compositeService.getServiceDescription().getServiceEndpoint() + " test \n");
 		CompositeServiceClient client = new CompositeServiceClient(compositeService.getServiceDescription().getServiceEndpoint());
 		Time.steps.set(0);
 		
@@ -133,7 +132,7 @@ public class WorkflowAnalyzer {
 					
 				    if ((values.get(j).getRatio() + valueProbability) > probability) {
 				    	pick = (int) values.get(j).getData();
-						System.err.print("--------------------ANALYZING CYCLE [" + (currentSteps + 1) + "]--------------------\n");
+						//System.err.print("--------------------ANALYZING CYCLE [" + (currentSteps + 1) + "]--------------------\n");
 				    	client.invokeCompositeService(new Object[]{patientId, pick});
 				    	break;
 				    } 

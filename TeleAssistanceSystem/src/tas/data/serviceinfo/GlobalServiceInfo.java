@@ -168,6 +168,7 @@ public class GlobalServiceInfo {
     	serviceRegistries = new ArrayList<>();
     	serviceTypes = new LinkedHashMap<>();
     	
+    	// Service registries
 		ServiceRegistry serviceRegistry = new ServiceRegistry("ServiceRegistry", "se.lnu.service.registry");
 		serviceRegistry.startService();
 		

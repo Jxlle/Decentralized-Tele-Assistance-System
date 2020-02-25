@@ -14,6 +14,7 @@ import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalType;
+import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 
@@ -26,20 +27,17 @@ import tas.mape.planner.ServiceCombination;
 public abstract class AbstractWorkflowQoSRequirement {
 	
 	/**
-	 * Apply a QoS requirement strategy with a given strategy, combination limit, rating type, list of goals 
-	 * and a map of usable services.
-	 * @param strategy the given strategy number
+	 * Generate usable service combinations with a given generation strategy, combination limit, rating type and knowledge 
+	 * based on the knowledge requirement, goals, rating type and more.
+	 * @param generationStrategy the given generation strategy number
 	 * @param combinationLimit the given limit of returned service combinations
-	 * @param ratingType the given rating type 
-	 * @param goals the given system goals
-	 * @param usableServices a map of usable services where each key is a service type & operation name combination (description) 
-	 *        and the value is a list of the usable services for that description 
+	 * @param ratingType the given rating type
+	 * @param knowledge the given knowledge
 	 * @return a list of the chosen service combinations
 	 * @throws IllegalArgumentException throw when the combination limit is illegal
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ServiceCombination> getServiceCombinations(int strategy, int combinationLimit, 
-			RatingType ratingType, List<Goal> goals, Map<Description, List<ServiceDescription>> usableServices) 
+	public List<ServiceCombination> getServiceCombinations(int generationStrategy, int combinationLimit, RatingType ratingType, Knowledge knowledge) 
 					throws IllegalArgumentException {
 		
 		// Check if given combination limit is legal
@@ -51,7 +49,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 		
 		// Search service combination generator 
 		try {
-			method = this.getClass().getMethod("getAllServiceCombinations" + strategy, Map.class);
+			method = this.getClass().getMethod("getAllServiceCombinations" + generationStrategy, Map.class);
 		} catch (NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
@@ -59,23 +57,23 @@ public abstract class AbstractWorkflowQoSRequirement {
 		// Invoke method
 		try {
 			allServiceCombinations = (List<Map<Description, WeightedCollection<ServiceDescription>>>) 
-					method.invoke(this, usableServices);
+					method.invoke(this, knowledge.getUsableServices());
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}	
 
-		return getServiceCombinations(combinationLimit, ratingType, goals, allServiceCombinations);
+		return getServiceCombinations(combinationLimit, ratingType, knowledge, allServiceCombinations);
 	}
 	
 	/**
-	 * Re-rank the given service combinations with a given map of service failure rates and given system goals
+	 * Re-rank the given service combinations with a given map of service failure rates and given knowledge
 	 * @param serviceCombinations the given service combinations
 	 * @param serviceFailureRates the given map of service failure rates
-	 * @param goals the given system goals
+	 * @param knowledge knowledge
 	 * @return the new service combinations
 	 */
 	public abstract List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
-			Map<String, Double> serviceFailureRates, List<Goal> goals);
+			Map<String, Double> serviceFailureRates, Knowledge knowledge);
 	
 	/**
 	 * STRATEGY 1: Only a single service per service description
@@ -212,26 +210,25 @@ public abstract class AbstractWorkflowQoSRequirement {
 	}
 	
 	/**
-	 * Calculate the accumulated value of a given property for a given service combination and extra property values
-	 * @param combination the given service combination
-	 * @param values the given values map
-	 * @param property the given property
+	 * Calculate the accumulated value of the approximated failure rate for a given service combination.
+	 * @param combination the given service combination without the rating and rating type
+	 * @param knowledge the given knowledge
 	 * @return the total value
 	 */
-	public double getTotalValue(ServiceCombination combination, Map<String, Double> values, String property) {
+	public double getTotalApproximatedFailureRateValue(Map<Description, WeightedCollection<ServiceDescription>> combination, Knowledge knowledge) {
 		
 		double totalValue = 0;
 		
-		for (Description description : combination.getDescriptions()) {
+		for (Description description : combination.keySet()) {
 			
-			for (ServiceDescription service : combination.getAllServices(description).getItems()) {
+			for (ServiceDescription service : combination.get(description).getItems()) {
 				
-				if (values.get(service.getServiceEndpoint()) != null) {
-					totalValue += values.get(service.getServiceEndpoint()) * combination.getAllServices(description).getChance(service);
-				}
-				
-				if (service.getCustomProperties().containsKey(property)) {
-					totalValue += (double) service.getCustomProperties().get(property) * combination.getAllServices(description).getChance(service);
+				if (service.getCustomProperties().containsKey("FailureRate")) {
+					
+					double useChance = combination.get(description).getChance(service);
+									
+					totalValue += useChance * 
+							knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), knowledge.getServiceLoad(description, useChance));
 				}
 			}
 		}
@@ -240,16 +237,46 @@ public abstract class AbstractWorkflowQoSRequirement {
 	}
 	
 	/**
-	 * Chooses the service combinations for a requirement with a given combination limit, rating type 
-	 * and service combinations without rating or type
+	 * Calculate the accumulated value of the approximated failure rate for a given service combination and extra property values
+	 * @param combination the given service combination
+	 * @param values the given values map
+	 * @param knowledge the given knowledge
+	 * @return the total value
+	 */
+	public double getTotalApproximatedFailureRateValue(ServiceCombination combination, Map<String, Double> values, Knowledge knowledge) {
+		
+		double totalValue = 0;
+		
+		for (Description description : combination.getDescriptions()) {
+			
+			for (ServiceDescription service : combination.getAllServices(description).getItems()) {	
+				
+				double useChance = combination.getAllServices(description).getChance(service);
+				
+				if (values.get(service.getServiceEndpoint()) != null) {
+					totalValue += values.get(service.getServiceEndpoint()) * useChance;
+				}
+				
+				if (service.getCustomProperties().containsKey("FailureRate")) {
+					totalValue += knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), knowledge.getServiceLoad(description, useChance)) * useChance;
+				}
+			}
+		}
+		
+		return totalValue;
+	}
+	
+	/**
+	 * Choose the service combinations for a requirement with a given combination limit, 
+	 * rating type, knowledge and service combinations without rating or type
 	 * @param combinationLimit the given limit of returned service combinations
 	 * @param ratingType the given rating type
-	 * @param goals the given system goals
+	 * @param knowledge the given knowledge
 	 * @param allServiceCombinations the given generated service combinations without rating or type
 	 * @return a list of the chosen service combinations
 	 */
 	protected abstract List<ServiceCombination> getServiceCombinations(int combinationLimit, RatingType ratingType, 
-			List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations);
+			Knowledge knowledge, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations);
 	
 	/**
 	 * Calculate the number rating of a service combination with a given value.

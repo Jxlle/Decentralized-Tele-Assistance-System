@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import profile.SystemRequirementType;
-import service.auxiliary.Description;
-import service.auxiliary.ServiceDescription;
 import tas.data.systemprofile.SystemProfileDataHandler;
-import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.Planner;
 import tas.mape.planner.RatingType;
@@ -126,10 +123,8 @@ public class Analyzer {
 		}
 		
 		SystemRequirementType requirement = SystemProfileDataHandler.activeProfile.getRequirementType();
-		Map<Description, List<ServiceDescription>> usableServices = knowledge.getUsableServices();
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirement);
-		List<Goal> goals = knowledge.getGoals();
 		
-		return requirementClass.getServiceCombinations(getRequirementStrategy(requirement), combinationLimit, ratingType, goals, usableServices);
+		return requirementClass.getServiceCombinations(getRequirementStrategy(requirement), combinationLimit, ratingType, knowledge);
 	}
 }

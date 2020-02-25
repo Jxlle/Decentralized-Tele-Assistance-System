@@ -1,9 +1,9 @@
 <tas.data.systemprofile.SystemProfile>
   <executionCycles>50</executionCycles>
-  <workflowCycles>1000</workflowCycles>
+  <workflowCycles>2000</workflowCycles>
   <maxProtocolIterations>0</maxProtocolIterations>
   <systemType>SOLO_LOOP</systemType>
-  <requirementType>COST_AND_RELIABILITY</requirementType>
+  <requirementType>RELIABILITY</requirementType>
   <ratingType>SCORE</ratingType>
   <participatingEntities>
     <string>Test Entity</string>

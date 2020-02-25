@@ -8,7 +8,7 @@ import java.util.Map;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
-import tas.mape.knowledge.Goal;
+import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 
@@ -21,18 +21,18 @@ import tas.mape.planner.ServiceCombination;
 public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 	
 	/**
-	 * Chooses the service combinations for the cost an reliability requirements with a given combination limit, 
-	 * rating type and service combinations without rating or type
+	 * Choose the service combinations for the cost an reliability requirements with a given combination limit, 
+	 * rating type, knowledge and service combinations without rating or type
 	 * @param combinationLimit the given limit of returned service combinations
 	 * @param ratingType the given rating type
-	 * @param goals the given system goals
+	 * @param knowledge the given knowledge
 	 * @param allServiceCombinations the given generated service combinations without rating or type
 	 * @return a list of the chosen service combinations
 	 * @throws IllegalArgumentException throw when the given rating type has no implementation for the requirement
 	 */
 	@Override
-	public List<ServiceCombination> getServiceCombinations(int combinationLimit, 
-			RatingType ratingType, List<Goal> goals, List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations)
+	public List<ServiceCombination> getServiceCombinations(int combinationLimit, RatingType ratingType, Knowledge knowledge, 
+			List<Map<Description, WeightedCollection<ServiceDescription>>> allServiceCombinations)
 			throws IllegalArgumentException {
 			
 		List<Comparable<?>> scoreListCost = new ArrayList<>();
@@ -46,7 +46,7 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			// Calculate requirement scores
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
 				scoreListCost.add((double) GetNumberRatingDouble(getTotalValue(allServiceCombinations.get(i), "Cost")));
-				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalValue(allServiceCombinations.get(i), "FailureRate")));
+				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalApproximatedFailureRateValue(allServiceCombinations.get(i), knowledge)));
 			}
 			
 			// Initialize lists
@@ -104,8 +104,8 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 			// Calculate requirement scores
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreListCost.add(getClassRating(goals, getTotalValue(allServiceCombinations.get(i), "Cost"), "Cost"));
-				scoreListFailureRate.add(getClassRating(goals, getTotalValue(allServiceCombinations.get(i), "FailureRate"), "FailureRate"));
+				scoreListCost.add(getClassRating(knowledge.getGoals(), getTotalValue(allServiceCombinations.get(i), "Cost"), "Cost"));
+				scoreListFailureRate.add(getClassRating(knowledge.getGoals(), getTotalApproximatedFailureRateValue(allServiceCombinations.get(i), knowledge), "FailureRate"));
 			}
 			
 			// Calculate total class for each service combination
@@ -124,17 +124,17 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 	}
 
 	/**
-	 * Re-rank the given service combinations with a given map of service failure rates and given system goals
+	 * Re-rank the given service combinations with a given map of service failure rates and given knowledge
 	 * @param serviceCombinations the given service combinations
 	 * @param serviceFailureRates the given map of service failure rates
-	 * @param goals the given system goals
+	 * @param knowledge the given knowledge
 	 * @return the new service combinations
 	 * @throws IllegalArgumentException the given service combination rating type has no implementation 
 	 *         for the requirement
 	 */
 	@Override
 	public List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
-			Map<String, Double> serviceFailureRates, List<Goal> goals) throws IllegalArgumentException {
+			Map<String, Double> serviceFailureRates, Knowledge knowledge) throws IllegalArgumentException {
 		
 		List<Comparable<?>> scoreListCost = new ArrayList<>();
 		List<Comparable<?>> scoreListFailureRate = new ArrayList<>();
@@ -147,7 +147,7 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			// Calculate requirement scores
 			for (int i = 0; i < serviceCombinations.size(); i++) {
 				scoreListCost.add((double) GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), "Cost")));
-				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), serviceFailureRates, "FailureRate")));
+				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceFailureRates, knowledge)));
 			}
 			
 			// Initialize lists
@@ -204,8 +204,8 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 			// Calculate requirement scores
 			for (int i = 0; i < serviceCombinations.size(); i++) {
-				scoreListCost.add(getClassRating(goals, getTotalValue(serviceCombinations.get(i), "Cost"), "Cost"));
-				scoreListFailureRate.add(getClassRating(goals, getTotalValue(serviceCombinations.get(i), serviceFailureRates, "FailureRate"), "FailureRate"));
+				scoreListCost.add(getClassRating(knowledge.getGoals(), getTotalValue(serviceCombinations.get(i), "Cost"), "Cost"));
+				scoreListFailureRate.add(getClassRating(knowledge.getGoals(), getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceFailureRates, knowledge), "FailureRate"));
 			}
 			
 			// Calculate total class for each service combination

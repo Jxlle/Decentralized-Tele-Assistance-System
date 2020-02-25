@@ -38,7 +38,7 @@ public class Knowledge {
 	private Map<Description, Double> servicesUsageChance;
 	
 	// Map containing information about the approximated service failure rates
-	private Map<String, HashMap<Integer, Double>> approximatedServiceFailureRates;
+	private Map<String, TreeMap<Integer, Double>> approximatedServiceFailureRates;
 	
 	// Delta value used for updating the service failure rate map
 	private int loadFailureDelta;
@@ -218,7 +218,9 @@ public class Knowledge {
 			throw new IllegalArgumentException("The approximated service failure rate for " + serviceEndpoint + " was not found! \n");
 		}
 		
-		int loadKeyHigh = (load / loadFailureDelta) + 1;
+		int loadKeyHigh = (load / loadFailureDelta) + ((load % loadFailureDelta == 0) ? 0 : 1);
+		
+		System.err.print("UPDATE FAIL TABLE: " + serviceEndpoint + ", KEY " + loadKeyHigh + ", NEW FAIL RATE: " + failureRate + "\n");
 		approximatedServiceFailureRates.get(serviceEndpoint).put(loadKeyHigh, failureRate);
 	}
 	
@@ -235,15 +237,28 @@ public class Knowledge {
 			throw new IllegalArgumentException("The approximated service failure rate for " + serviceEndpoint + " was not found! \n");
 		}
 		
-		HashMap<Integer, Double> serviceFailureTable = approximatedServiceFailureRates.get(serviceEndpoint);
-		// TODO moet miss anders
-		int loadKeyHigh = (load / loadFailureDelta) + 1;
+		TreeMap<Integer, Double> serviceFailureTable = approximatedServiceFailureRates.get(serviceEndpoint);
+		int loadKey = (load / loadFailureDelta) + ((load % loadFailureDelta == 0) ? 0 : 1);
 		
-		if (serviceFailureTable.get(loadKeyHigh) == null) {
-			serviceFailureTable.put(loadKeyHigh, serviceFailureTable.get(0));
-		}
+		// Entry does not exist
+		if (serviceFailureTable.get(loadKey) == null) {
+			
+			// Find nearest entry
+			if (serviceFailureTable.higherEntry(loadKey) != null) {
 				
-		return serviceFailureTable.get(loadKeyHigh);
+				System.err.print("FAIL TABLE GET: " + serviceEndpoint + ", LOAD: " + load + ", KEY: " + loadKey + ", VALUE: " + serviceFailureTable.get(getNearestKey(serviceFailureTable, loadKey)) + "\n");
+				return serviceFailureTable.get(getNearestKey(serviceFailureTable, loadKey));
+			}
+			
+			System.err.print("FAIL TABLE GET: " + serviceEndpoint + ", LOAD: " + load + ", KEY: " + loadKey + ", VALUE: " + serviceFailureTable.lowerEntry(loadKey).getValue() + "\n");
+			
+			// Lower key will always exist
+			return serviceFailureTable.lowerEntry(loadKey).getValue();
+		}
+		
+		System.err.print("FAIL TABLE GET: " + serviceEndpoint + ", LOAD: " + load + ", KEY: " + loadKey + ", VALUE: " + serviceFailureTable.get(loadKey) + "\n");
+				
+		return serviceFailureTable.get(loadKey);
 	}
 	
 	/**
@@ -387,7 +402,7 @@ public class Knowledge {
 		// If service description is new
 		if (approximatedServiceFailureRates.get(serviceDescription.getServiceEndpoint()) == null) {
 			
-			HashMap<Integer, Double> failureRates = new HashMap<>();
+			TreeMap<Integer, Double> failureRates = new TreeMap<>();
 			double serviceFailureRate = 0;
 			
 			if (serviceDescription.getCustomProperties().containsKey("FailureRate")) {
@@ -400,5 +415,19 @@ public class Knowledge {
 			// New TreeMap
 			approximatedServiceFailureRates.put(serviceDescription.getServiceEndpoint(), failureRates);
 		}
+	}
+	
+	/**
+	 * Find the nearest key to the given key in the given tree map
+	 * @param map the given tree map
+	 * @param key the given key
+	 * @return the nearest key
+	 */
+	private int getNearestKey(TreeMap<Integer, ?> map, int key) {
+		
+		int higherKey = map.higherKey(key);
+		int lowerKey = map.lowerKey(key);
+		
+		return (higherKey - key <= key - lowerKey) ? higherKey : lowerKey; 
 	}
 }
