@@ -6,7 +6,6 @@ import java.util.Random;
 import profile.SystemProfileValue;
 import profile.SystemProfileVariable;
 import profile.ProfileExecutor;
-import service.adaptation.effectors.WorkflowEffector;
 import service.composite.CompositeServiceClient;
 import service.registry.ServiceRegistry;
 import service.utility.Time;
@@ -27,7 +26,6 @@ public class WorkflowExecutor {
     private SystemEntity systemEntity;
     private AssistanceService assistanceService;
     private AssistanceServiceCostProbe probe;
-    private WorkflowEffector workflowEffector;
     private String workflowPath, profilePath;
     
 	public WorkflowExecutor(List<ServiceRegistry> serviceRegistries) {
@@ -113,8 +111,6 @@ public class WorkflowExecutor {
 		//assistanceService.getWorkflowProbe().register(new AssistanceServiceDelayProbe());
 		// assistanceService.getServiceInvocationProbe().register(monitor);
 		assistanceService.updateCache();
-		
-		workflowEffector = new WorkflowEffector(assistanceService);
     }
 	
     public void executeWorkflow() {
