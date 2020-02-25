@@ -35,8 +35,8 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 	private void constructFailRates() {
 		failureRate = new TreeMap<>();
 		failureRate.put(0, 1.0);
-		failureRate.put(50, 1.0);
-		failureRate.put(75, 1.05);
+		failureRate.put(50, 0.95);
+		failureRate.put(75, 0.90);
 		failureRate.put(100, 0.85);
 		failureRate.put(125, 0.70);
 		failureRate.put(180, 0.60);

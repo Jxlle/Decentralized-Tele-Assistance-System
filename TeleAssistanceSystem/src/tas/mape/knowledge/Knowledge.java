@@ -262,6 +262,19 @@ public class Knowledge {
 	}
 	
 	/**
+	 * Reset all approximated service failure rates to the default values
+	 */
+	public void resetApproximatedServiceFailureRates() {
+		
+		for (String endpoint : approximatedServiceFailureRates.keySet()) {
+			Double defaultFailRate = approximatedServiceFailureRates.get(endpoint).get(0);
+			TreeMap<Integer, Double> failureRates = new TreeMap<>();
+			failureRates.put(0, defaultFailRate);
+			approximatedServiceFailureRates.put(endpoint, failureRates);
+		}
+	}
+	
+	/**
 	 * Returns the list of usable services
 	 * @return the list of usable services
 	 * @note Should actually return a deep copy of the list, but slows down execution
