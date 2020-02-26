@@ -6,10 +6,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import application.MainGui;
@@ -45,7 +43,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import profile.SystemRequirementType;
+import javafx.util.StringConverter;
 import service.registry.ServiceRegistry;
 import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
@@ -69,13 +67,13 @@ public class SystemEntityController implements Initializable {
 	private Button addBtn;
 	
 	@FXML
+	private ComboBox<StrategyItem> generationStrategyComboBox;
+	
+	@FXML
 	private TableView<SystemEntityPropertyEntry> propertyTable;
 	
 	@FXML
 	private ListView<AnchorPane> registryList;
-	
-	@FXML
-	private ListView<AnchorPane> requirementStrategyList;
 	
 	@FXML
 	private TableView<GoalEntry> goalList;
@@ -118,14 +116,12 @@ public class SystemEntityController implements Initializable {
 	
 	private int loadFailureDelta, combinationLimit;
 	private double minFailureDelta, failureChange;
-	private String workflowPath, strategyText, plannerEndpoint, entityName;
+	private String workflowPath, plannerEndpoint, entityName;
 	private String workflowFilePath = "resources" + File.separator + "files" + File.separator + "workflow" + File.separator;
 	private Stage stage;
 	private ApplicationController parent;
 	private List<ServiceRegistry> entityRegistries;
 	private List<Goal> goals = new ArrayList<>();
-	private List<Integer> strategyList = new ArrayList<>();
-	private Map<SystemRequirementType, ComboBox<Integer>> registryStrategies = new HashMap<>();
 	private ObservableList<SystemEntityPropertyEntry> entityData = FXCollections.observableArrayList();
 	private ObservableList<GoalEntry> goalData = FXCollections.observableArrayList();
 	
@@ -135,7 +131,6 @@ public class SystemEntityController implements Initializable {
 		initializeStrategyData();
 		initializeWorkflowButton();
 		initializeGoalStuff();
-		initializeRequirementStrategies();
 		initializeAddButton();
 		setTooltips();
 		addPropertyTableEntries();
@@ -213,10 +208,9 @@ public class SystemEntityController implements Initializable {
 		
 		Tooltip reqStratTooltip = new Tooltip();
 		reqStratTooltip.setText(
-			    "Choose the used combination strategy when generating combinations for the given requirement.\n"
-			    + "This strategy changes what combinations are generated during the analyzer phase.\n\n"
-			    + "The different combinations are:\n"
-			    + strategyText
+			    "Choose the used service generation strategy.\n"
+			    + "This strategy changes what service combinations are generated during the analyzer phase.\n\n"
+			    + "See the combo box options for more information about each strategy."
 		);
 		
 		Tooltip propertyTooltip = new Tooltip();
@@ -363,7 +357,7 @@ public class SystemEntityController implements Initializable {
 	private void initializeStrategyData() {
 		
 		String begin = "getAllServiceCombinations";
-		List<String> strategyTextList = new ArrayList<>();
+		ObservableList<StrategyItem> strategies = FXCollections.observableArrayList();
 		
 		for (Method method : AbstractWorkflowQoSRequirement.class.getMethods()) {
 			if (method.isAnnotationPresent(CombinationStrategy.class)) {
@@ -371,15 +365,26 @@ public class SystemEntityController implements Initializable {
 					Integer strategy = Integer.parseInt(method.getName().substring(begin.length()));
 					CombinationStrategy annotation = method.getAnnotation(CombinationStrategy.class);
 					
-					strategyList.add(strategy);
-					strategyTextList.add(strategy + ": " + annotation.combinationInfo());
+					strategies.add(new StrategyItem(strategy, annotation.combinationInfo()));
 				}
 			}
 		}
 		
-		Collections.sort(strategyTextList);
-		strategyText = String.join("\n", strategyTextList);
-		Collections.sort(strategyList);
+		Collections.sort(strategies, (o1, o2) -> o1.getStrategy().compareTo(o2.getStrategy()));
+		generationStrategyComboBox.setItems(strategies);
+		generationStrategyComboBox.setConverter(new StringConverter<StrategyItem>() {
+
+			@Override
+			public String toString(StrategyItem object) {
+				return object.getStrategy() + ": " + object.getStrategyDescription();
+			}
+
+			@Override
+			public StrategyItem fromString(String string) {
+				return generationStrategyComboBox.getItems().stream().filter(x -> 
+	            string.equals(x.getStrategy() + ": " + x.getStrategyDescription())).findFirst().orElse(null);
+			}
+		});
 	}
 	
 	private void initializeWorkflowButton() {
@@ -487,32 +492,6 @@ public class SystemEntityController implements Initializable {
 		deleteColumn.setCellFactory(cellFactoryDelete);
 	}
 	
-	private void initializeRequirementStrategies() {
-		
-		AnchorPane requirementPane;
-		Label requirementLabel;
-		ComboBox<Integer> strategyBox;
-		ObservableList<Integer> strategies = FXCollections.observableArrayList();
-		strategies.setAll(strategyList);
-		
-		for (SystemRequirementType requirement : SystemRequirementType.values()) {
-			requirementPane = new AnchorPane();
-			
-			requirementLabel = new Label();
-			requirementLabel.setText(requirement.toString());
-			AnchorPane.setBottomAnchor(requirementLabel, 0.0);
-			AnchorPane.setTopAnchor(requirementLabel, 0.0);
-			
-			strategyBox = new ComboBox<Integer>();
-			strategyBox.setItems(strategies);			
-			AnchorPane.setRightAnchor(strategyBox, 10.0);
-			
-			requirementPane.getChildren().addAll(requirementLabel, strategyBox);	
-			requirementStrategyList.getItems().add(requirementPane);
-			registryStrategies.put(requirement, strategyBox);
-		}
-	}
-	
 	private boolean hasAllGoalTypes() {
 		
 		HashSet<GoalType> goalTypes = new HashSet<>();
@@ -550,10 +529,10 @@ public class SystemEntityController implements Initializable {
 		            		+ "These goals are only used in CLASS type system runs.");
 		            fail.showAndWait();	
 		    	}
-		    	else if (registryStrategies.values().stream().anyMatch(x -> x.getValue() == null)) {
+		    	else if (generationStrategyComboBox.getValue() == null) {
 		    		Alert fail = new Alert(AlertType.WARNING);
 		            fail.setHeaderText("MISSING CONTENT");
-		            fail.setContentText("Not all system requirements have a selected combination strategy.");
+		            fail.setContentText("No service generation strategy has been chosen.");
 		            fail.showAndWait();	
 		    	}
 		    	else if (propertyTable.getItems().stream().anyMatch(x -> x.getValue() == "")) {
@@ -565,14 +544,9 @@ public class SystemEntityController implements Initializable {
 		    	else {
 		    		
 		    		List<String> registryEndpoints = new ArrayList<>();
-		    		Map<SystemRequirementType, Integer> requirementStrategies = new HashMap<>();
 		    		
 		    		for (ServiceRegistry registry : entityRegistries) {
 		    			registryEndpoints.add(registry.getServiceDescription().getServiceEndpoint());
-		    		}
-		    		
-		    		for (SystemRequirementType req : registryStrategies.keySet()) {
-		    			requirementStrategies.put(req, registryStrategies.get(req).getValue());
 		    		}
 		    		
 		    		WorkflowExecutor workflowExecutor = new WorkflowExecutor(entityRegistries);
@@ -583,7 +557,7 @@ public class SystemEntityController implements Initializable {
 		    		try {
 						builder.initializeKnowledge(loadFailureDelta, registryEndpoints)
 						 	   .initializePlanner(plannerEndpoint)
-							   .initializeAnalyzer(combinationLimit, requirementStrategies)
+							   .initializeAnalyzer(combinationLimit, generationStrategyComboBox.getValue().getStrategy())
 							   .initializeMonitor(minFailureDelta, failureChange);
 					} catch (InstantiationException e) {
 						e.printStackTrace();
@@ -675,5 +649,32 @@ public class SystemEntityController implements Initializable {
 	    public String getValue() {
 	    	return this.value.get();
 	    }
+	}
+	
+	public class StrategyItem {
+		
+		private Integer strategy;
+		private String strategyDescription;
+		
+		public StrategyItem(Integer strategy, String strategyDescription) {
+			this.strategy = strategy;
+			this.strategyDescription = strategyDescription;
+		}
+
+		public String getStrategyDescription() {
+			return strategyDescription;
+		}
+		
+		public void setStrategyDescription(String strategyDescription) {
+			this.strategyDescription = strategyDescription;
+		}
+		
+		public Integer getStrategy() {
+			return strategy;
+		}
+		
+		public void setStrategy(int strategy) {
+			this.strategy = strategy;
+		}
 	}
 }

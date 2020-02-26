@@ -413,23 +413,13 @@ public class ApplicationController implements Initializable {
     private void addTestEntities() {
     	
 		WorkflowExecutor workflowExecutor = new WorkflowExecutor(Arrays.asList(GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry")));	
-		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");
-		
-		Map<SystemRequirementType, Integer> requirementMap = new HashMap<SystemRequirementType, Integer>() {
-			private static final long serialVersionUID = 1L;
-			{
-		        put(SystemRequirementType.COST, 1);
-		        put(SystemRequirementType.RELIABILITY, 1);
-		        put(SystemRequirementType.COST_AND_RELIABILITY, 1);
-		    }};;
-				
-		
+		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");		
 		MAPEKComponent.Builder builder = new Builder();
 		
 		try {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("se.lnu.service.registry")))
 			 	   .initializePlanner("planner")
-				   .initializeAnalyzer(100, requirementMap)
+				   .initializeAnalyzer(100, 1)
 				   .initializeMonitor(0.05, 0.05);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
@@ -448,7 +438,7 @@ public class ApplicationController implements Initializable {
 		try {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("se.lnu.service.registry", "se.lnu.service.registry2")))
 			 	   .initializePlanner("planner")
-				   .initializeAnalyzer(100, requirementMap)
+				   .initializeAnalyzer(100, 1)
 				   .initializeMonitor(0.05, 0.05);
 		} catch (InstantiationException e) {
 			e.printStackTrace();

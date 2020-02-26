@@ -84,12 +84,12 @@ public class MAPEKComponent {
 		 * Creates a new builder where the analyzer component with its given parameters has been initialized.
 		 * @param combinationLimit the given combination limit that will decide how much service combinations 
 		 *        will be chosen in the execute step
-		 * @param RequirementStrategies a map containing the strategy number for each requirement
+	 * @param serviceGenerationStrategy the given service generation strategy
 		 * @return the new Builder object with initialized analyzer
 		 * @throws InstantiationException throw when the knowledge field is null
 		 * @throws InstantiationException throw when the planner field is null
 		 */
-		public Builder initializeAnalyzer(int combinationLimit, Map<SystemRequirementType, Integer> requirementStrategies) 
+		public Builder initializeAnalyzer(int combinationLimit, int serviceGenerationStrategy) 
 				throws InstantiationException {
 			
 			if (knowledge == null) {
@@ -100,7 +100,7 @@ public class MAPEKComponent {
 				throw new InstantiationException("Planner field is null!");
 			}
 			
-			analyzer = new Analyzer(knowledge, planner, combinationLimit, requirementStrategies);
+			analyzer = new Analyzer(knowledge, planner, combinationLimit, serviceGenerationStrategy);
 			return this;
 		}
 		
@@ -229,36 +229,19 @@ public class MAPEKComponent {
 	}
 	
 	/**
-	 * Return the analyzer strategy number for a given system requirement
-	 * @param requirement the given system requirement
-	 * @return the analyzer strategy number
+	 * Return the service generation strategy number 
+	 * @return the service generation strategy number
 	 */
-	public Integer getRequirementStrategy(SystemRequirementType requirement) {
-		return analyzer.getRequirementStrategy(requirement);
+	public Integer getServiceGenerationStrategy() {
+		return analyzer.getServiceGenerationStrategy();
 	}
 	
 	/**
-	 * Update or add a certain analyzer requirement strategy number using a given system requirement and strategy number
-	 * @param requirement the given system requirement
-	 * @param strategy the given strategy number
+	 * Set the service generation strategy
+	 * @param serviceGenerationStrategy the given service generation strategy
 	 */
-	public void setRequirementStrategy(SystemRequirementType requirement, Integer strategy) {
-		analyzer.setRequirementStrategy(requirement, strategy);
-	}
-	
-	/**
-	 * Remove the analyzer requirement strategy with the given system requirement
-	 * @param requirement the given system requirement
-	 */
-	public void removeRequirementStrategy(SystemRequirementType requirement) {
-		analyzer.removeRequirementStrategy(requirement);
-	}
-	
-	/**
-	 * Clear the analyzer requirement strategies map
-	 */
-	public void clearRequirementStrategies() {
-		analyzer.clearRequirementStrategies();
+	public void setServiceGenerationStrategy(int serviceGenerationStrategy) {
+		analyzer.setServiceGenerationStrategy(serviceGenerationStrategy);
 	}
 	
 	/**

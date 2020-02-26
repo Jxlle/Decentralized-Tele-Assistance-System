@@ -1,7 +1,6 @@
 package tas.mape.analyzer;
 
 import java.util.List;
-import java.util.Map;
 
 import profile.SystemRequirementType;
 import tas.mape.knowledge.Knowledge;
@@ -22,21 +21,21 @@ public class Analyzer {
 	private boolean plannerRequired, executed;
 	private int combinationLimit;
 	private RatingType ratingType;
-	private Map<SystemRequirementType, Integer> requirementStrategies;
+	private int serviceGenerationStrategy;
 	private List<ServiceCombination> chosenServicesList;
 	
 	/**
-	 * Create a new analyzer with a given knowledge and planner component, a combination limit and the service combination rating type.
+	 * Create a new analyzer with a given knowledge and planner component, a combination limit and a service generation strategy
 	 * @param knowledge the given knowledge component
 	 * @param planner the given planner component
 	 * @param combinationLimit the given combination limit that will decide how much service combinations will be chosen in the execute step
-	 * @param RequirementStrategies a map containing the strategy number for each requirement
+	 * @param serviceGenerationStrategy the given service generation strategy
 	 */
-	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, Map<SystemRequirementType, Integer> requirementStrategies) {
+	public Analyzer(Knowledge knowledge, Planner planner, int combinationLimit, int serviceGenerationStrategy) {
 		this.knowledge = knowledge;
 		this.planner = planner;
 		this.combinationLimit = combinationLimit;
-		this.requirementStrategies = requirementStrategies;
+		this.serviceGenerationStrategy = serviceGenerationStrategy;
 	}
 	
 	/**
@@ -48,36 +47,19 @@ public class Analyzer {
 	}
 	
 	/**
-	 * Return the strategy number for a given system requirement
-	 * @param requirement the given system requirement
-	 * @return the strategy number
+	 * Return the service generation strategy number 
+	 * @return the service generation strategy number
 	 */
-	public Integer getRequirementStrategy(SystemRequirementType requirement) {
-		return requirementStrategies.get(requirement);
+	public Integer getServiceGenerationStrategy() {
+		return serviceGenerationStrategy;
 	}
 	
 	/**
-	 * Update or add a certain requirement strategy number using a given system requirement and strategy number
-	 * @param requirement the given system requirement
-	 * @param strategy the given strategy number
+	 * Set the service generation strategy
+	 * @param serviceGenerationStrategy the given service generation strategy
 	 */
-	public void setRequirementStrategy(SystemRequirementType requirement, Integer strategy) {
-		requirementStrategies.put(requirement, strategy);
-	}
-	
-	/**
-	 * Remove the requirement strategy with the given system requirement
-	 * @param requirement the given system requirement
-	 */
-	public void removeRequirementStrategy(SystemRequirementType requirement) {
-		requirementStrategies.remove(requirement);
-	}
-	
-	/**
-	 * Clear the requirement strategies map
-	 */
-	public void clearRequirementStrategies() {
-		requirementStrategies.clear();
+	public void setServiceGenerationStrategy(int serviceGenerationStrategy) {
+		this.serviceGenerationStrategy = serviceGenerationStrategy;
 	}
 
 	/**
@@ -124,6 +106,6 @@ public class Analyzer {
 		SystemRequirementType requirement = knowledge.getSystemRequirement();
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirement);
 		
-		return requirementClass.getServiceCombinations(getRequirementStrategy(requirement), combinationLimit, ratingType, knowledge);
+		return requirementClass.getServiceCombinations(serviceGenerationStrategy, combinationLimit, ratingType, knowledge);
 	}
 }
