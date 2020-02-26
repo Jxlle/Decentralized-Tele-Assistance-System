@@ -17,7 +17,7 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 	 *         amount of entities is not supported by the system
 	 */
 	public SoloLoopSystem(SystemEntity systemEntity) throws IllegalArgumentException {
-		super(systemEntity);
+		super(new SystemEntity[] {systemEntity});
 	}
 
 	/**

@@ -22,8 +22,7 @@ public abstract class AbstractMultiLoopSystem<T extends AbstractSystemEntity<?, 
 	 * @throws IllegalArgumentException throw when the given 
 	 *         amount of entities is not supported by the system
 	 */
-	@SafeVarargs
-	protected AbstractMultiLoopSystem(T... systemEntities) throws IllegalArgumentException {
+	protected AbstractMultiLoopSystem(T[] systemEntities) throws IllegalArgumentException {
 		super(systemEntities);
 	}
 	

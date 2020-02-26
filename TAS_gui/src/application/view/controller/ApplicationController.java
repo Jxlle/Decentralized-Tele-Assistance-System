@@ -1098,7 +1098,6 @@ public class ApplicationController implements Initializable {
     			    protected Void call() throws Exception {
     			    	
     			    	analyzed = false;
-    			    	System.err.print("test \n");
     			    	
     			    	// Analyze entity workflows if needed
     			    	for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {

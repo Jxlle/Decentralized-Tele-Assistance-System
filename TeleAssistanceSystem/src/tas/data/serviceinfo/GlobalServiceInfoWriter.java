@@ -24,6 +24,11 @@ import service.registry.ServiceRegistry;
 public class GlobalServiceInfoWriter {
 	
 	/**
+	 * Private constructor
+	 */
+	private GlobalServiceInfoWriter() {}
+	
+	/**
 	 * Write the important data from the global service info object to a given file
 	 * @param file the given file
 	 */

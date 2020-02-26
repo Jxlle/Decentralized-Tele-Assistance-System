@@ -25,7 +25,6 @@ import tas.mape.planner.PlanComponent;
  * This is skipped here because it slows down the execution of the workflow entity.
  */
 
-// TODO Return copies but not the original lists for security
 public class Knowledge {
 	
 	// List of used registry endpoints by the workflow
@@ -46,12 +45,13 @@ public class Knowledge {
 	// List of plan components containing information about needed changes to the cache as a result of changes in the service registries
 	private List<PlanComponent> cachePlanComponents;
 	
-	// hash map of services that are blacklisted. Blacklisted services are not considered when creating service combinations. 
+	// Map of services that are blacklisted. Blacklisted services are not considered when creating service combinations. 
 	private Map<String, ServiceDescription> serviceBlackList;
 	
+	// Map of the usable services. These are the services that may be used if they aren't blacklisted.
 	private Map<Description, List<ServiceDescription>> usableServices;
 	
-	// Map of used services. This is a map of all used services minus the blacklisted service entries.
+	// Map of used services. This is a map of all usable services without the blacklisted service entries.
 	private Map<Description, List<ServiceDescription>> usedServices;
 	
 	// map containing all possible requirement and abstract workflow requirement classes pairs

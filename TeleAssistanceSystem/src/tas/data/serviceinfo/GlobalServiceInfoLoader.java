@@ -22,6 +22,11 @@ import service.registry.ServiceRegistry;
 public class GlobalServiceInfoLoader {
 	
 	/**
+	 * Private constructor
+	 */
+	private GlobalServiceInfoLoader() {}
+	
+	/**
 	 * Load the important data from a given file into the the global service info
 	 * @param file the given file
 	 * @throws IllegalStateException throws when the given file contains illegal service endpoints

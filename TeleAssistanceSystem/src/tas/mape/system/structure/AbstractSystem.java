@@ -20,8 +20,7 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	 * @throws IllegalArgumentException throw when the given
 	 *         amount of entities is not supported by the system
 	 */
-	@SafeVarargs
-	protected AbstractSystem(T... systemEntities) throws IllegalArgumentException {
+	protected AbstractSystem(T[] systemEntities) throws IllegalArgumentException {
 		
 		if (systemEntities.length > getSystemEntityCount()) {
 			throw new IllegalArgumentException("This system doesn't support " + systemEntities.length + " entities! "

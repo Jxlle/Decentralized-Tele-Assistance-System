@@ -20,7 +20,7 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 	 * @throws IllegalArgumentException throw when the given 
 	 *         amount of entities is not supported by the system
 	 */
-	public DoubleLoopSystem(SystemEntity... systemEntities) throws IllegalArgumentException {
+	public DoubleLoopSystem(SystemEntity[] systemEntities) throws IllegalArgumentException {
 		super(systemEntities);
 	}
 	

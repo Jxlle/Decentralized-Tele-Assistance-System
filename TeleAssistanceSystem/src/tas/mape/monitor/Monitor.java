@@ -18,7 +18,7 @@ import tas.mape.planner.PlanComponentType;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-// TODO Sometimes, the load resets but the monitor doesn't execute
+// TODO Sometimes, the load resets but the monitor doesn't execute, RESET LOAD ONLY WHEN NEEDED
 public class Monitor {
 	
 	// Fields

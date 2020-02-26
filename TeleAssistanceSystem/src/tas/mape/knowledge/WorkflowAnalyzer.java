@@ -25,7 +25,7 @@ import tas.data.systemprofile.SystemProfileDataHandler;
 public class WorkflowAnalyzer {
 	
 	// Fields
-	public static int analyzerCycles = 5000;
+	public static int analyzerCycles = 2000;
 	private static int currentSteps;
 	private static boolean isStopped, hasBeenStopped;
 	private static WorkflowAnalyzerProbe workflowAnalyzerProbe = new WorkflowAnalyzerProbe();

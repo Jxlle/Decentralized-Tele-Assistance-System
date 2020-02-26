@@ -137,7 +137,6 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public void triggerExecutor() {
 		if (executed && (protocolFinished || protocol == null)) {
-			System.err.print("Executing executor...\n");
 			executor.execute(plan);
 			executed = false;
 			protocolFinished = false;
@@ -249,7 +248,6 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		return serviceLoads;
 	}
 	
-	// TODO RESET VAN LOAD
 	/**
 	 * Calculate the service loads for each service in a given service combination
 	 * @param serviceCombination the given service combination 
