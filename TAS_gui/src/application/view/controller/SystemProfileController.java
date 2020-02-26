@@ -32,11 +32,13 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -49,6 +51,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
 import profile.SystemProfileValue;
 import profile.SystemProfileVariable;
@@ -150,16 +153,19 @@ public class SystemProfileController implements Initializable {
            
 		TableColumn<ValueEntry,String> nameColumn = new TableColumn<ValueEntry,String>("Value");
 		nameColumn.setCellValueFactory(new PropertyValueFactory<ValueEntry, String>("name"));
-		nameColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(4));
-			
+		nameColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(5));
+		nameColumn.setStyle("-fx-alignment: CENTER-LEFT;");	
+		
 		TableColumn<ValueEntry,String> typeColumn = new TableColumn<ValueEntry,String>("Type");
 		typeColumn.setCellValueFactory(new PropertyValueFactory<ValueEntry, String>("type"));
-		typeColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(4));
+		typeColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(5));
+		typeColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 	        
 		TableColumn<ValueEntry,String> valueColumn = new TableColumn<ValueEntry,String>("Data");
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ValueEntry, String>("data"));
-		valueColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(4));
-		valueColumn.setCellFactory(TextFieldTableCell.<ValueEntry>forTableColumn());			
+		valueColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(5));
+		valueColumn.setCellFactory(TextFieldTableCell.<ValueEntry>forTableColumn());	
+		valueColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 		valueColumn.setOnEditCommit(
 				new EventHandler<CellEditEvent<ValueEntry, String>>() {
 	                    @Override
@@ -183,8 +189,9 @@ public class SystemProfileController implements Initializable {
 		
 		TableColumn<ValueEntry,String> ratioColumn = new TableColumn<ValueEntry,String>("Ratio");
 		ratioColumn.setCellValueFactory(new PropertyValueFactory<ValueEntry, String>("ratio"));
-		ratioColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(4));
-		ratioColumn.setCellFactory(TextFieldTableCell.<ValueEntry>forTableColumn());	
+		ratioColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(5));
+		ratioColumn.setCellFactory(TextFieldTableCell.<ValueEntry>forTableColumn());
+		ratioColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 		ratioColumn.setOnEditCommit(
 				new EventHandler<CellEditEvent<ValueEntry, String>>() {
 	                    @Override
@@ -206,9 +213,55 @@ public class SystemProfileController implements Initializable {
 	                    }
 	                }
 	        );
+		
+		TableColumn<ValueEntry, String> deleteColumn = new TableColumn<>("");
+		deleteColumn.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
+		deleteColumn.prefWidthProperty().bind(valueTableView.widthProperty().divide(5));
+		deleteColumn.setSortable(false);
+		
+		Callback<TableColumn<ValueEntry, String>, TableCell<ValueEntry, String>> cellFactoryDelete
+        =
+        new Callback<TableColumn<ValueEntry, String>, TableCell<ValueEntry, String>>() {
+		    @Override
+		    public TableCell<ValueEntry, String> call(final TableColumn<ValueEntry, String> param) {
+		        final TableCell<ValueEntry, String> cell = new TableCell<ValueEntry, String>() {
+		
+		            final Button btn = new Button("Delete");
+		
+		            @Override
+		            public void updateItem(String item, boolean empty) {
+		            	
+		            	ValueEntry attribute = (ValueEntry) this.getTableRow().getItem();
+		                super.updateItem(item, empty);
+		              
+		                if (empty) {
+		                    setGraphic(null);
+		                    setText(null);
+		                } 
+		                else {
+		                    btn.setOnAction(event -> {
+		                    	SystemProfileValue value = currentVariable.getValues().stream()
+		                    			.filter(x -> x.getData().equals(attribute.getRealData(attribute.getData()))).findAny().orElse(null);
+		                    	
+		                    	currentVariable.getValues().remove(value);
+		                    	valueData.remove(getTableRow().getItem());
+		                    });
+		                    
+		                    setGraphic(btn);
+		                    setText(null);
+		                }
+		            }
+		        };
+		        
+		        cell.setAlignment(Pos.CENTER);
+		        return cell;
+		    }
+		};
+		
+		deleteColumn.setCellFactory(cellFactoryDelete);
 			
 		valueTableView.setItems(valueData);
-		valueTableView.getColumns().addAll(nameColumn, typeColumn, valueColumn, ratioColumn);
+		valueTableView.getColumns().addAll(nameColumn, typeColumn, valueColumn, ratioColumn, deleteColumn);
 	}
 	
 	private void initializeXML() {

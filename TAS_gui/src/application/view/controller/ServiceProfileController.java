@@ -501,7 +501,6 @@ public class ServiceProfileController implements Initializable {
 		            public void updateItem(String item, boolean empty) {
 		            	
 		            	AttributeEntry attribute = (AttributeEntry) this.getTableRow().getItem();
-		            	
 		                super.updateItem(item, empty);
 		                
 		                if (empty || (attribute != null && (attribute.getKey().equals(attributeEditText) || attribute.getValue().equals(attributeEditText)))) {

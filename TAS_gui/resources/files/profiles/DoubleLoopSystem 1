@@ -1,7 +1,7 @@
 <tas.data.systemprofile.SystemProfile>
   <executionCycles>10</executionCycles>
   <workflowCycles>2000</workflowCycles>
-  <maxProtocolIterations>0</maxProtocolIterations>
+  <maxProtocolIterations>100</maxProtocolIterations>
   <systemType>DOUBLE_LOOP</systemType>
   <protocolType>STANDARD_PROTOCOL</protocolType>
   <ratingType>SCORE</ratingType>

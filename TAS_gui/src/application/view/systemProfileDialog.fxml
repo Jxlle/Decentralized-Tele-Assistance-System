@@ -21,17 +21,17 @@
         <panes>
           <TitledPane animated="false" text="Text View">
             <content>
-                  <AnchorPane>
+                  <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
                         <TextArea fx:id="profileTextArea" layoutX="20.0" layoutY="8.0" prefHeight="700.0" prefWidth="580.0" />
-                        <Button fx:id="saveButton1" layoutX="537.5999996185303" layoutY="390.5999996185303" mnemonicParsing="false" prefWidth="60.0" text="Save" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="30.0" />
+                        <Button fx:id="saveButton1" layoutX="537.5999996185303" layoutY="390.5999996185303" mnemonicParsing="false" prefWidth="60.0" text="Save" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                      </children>
                   </AnchorPane>
             </content>
           </TitledPane>
           <TitledPane animated="false" text="Table View">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
                         <GridPane prefHeight="447.0" prefWidth="640.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                           <columnConstraints>
@@ -94,7 +94,7 @@
                                                 <Label layoutX="378.0" layoutY="18.0" text="Ratio" AnchorPane.leftAnchor="140.0" AnchorPane.topAnchor="15.0" />
                                                 <TextField fx:id="dataTextField" layoutX="193.0" layoutY="1.0" prefWidth="60.0" AnchorPane.leftAnchor="60.0" AnchorPane.topAnchor="10.0" />
                                                 <TextField fx:id="ratioTextField" layoutX="191.0" layoutY="1.0" prefWidth="60.0" AnchorPane.leftAnchor="180.0" AnchorPane.topAnchor="10.0" />
-                                                <Button fx:id="addValueButton" disable="true" layoutX="265.0" layoutY="7.0" mnemonicParsing="false" text="Add Value" AnchorPane.leftAnchor="260.0" AnchorPane.topAnchor="10.0" />
+                                                <Button fx:id="addValueButton" disable="true" layoutX="265.0" layoutY="7.0" mnemonicParsing="false" text="Add Data" AnchorPane.leftAnchor="260.0" AnchorPane.topAnchor="10.0" />
                                              </children>
                                           </AnchorPane>
                                        </children>
@@ -157,7 +157,7 @@
                               </AnchorPane>
                            </children>
                         </GridPane>
-                        <Button fx:id="saveButton2" mnemonicParsing="false" prefWidth="60.0" text="Save" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="30.0" />
+                        <Button fx:id="saveButton2" mnemonicParsing="false" prefWidth="60.0" text="Save" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                      </children>
                   </AnchorPane>
             </content>
