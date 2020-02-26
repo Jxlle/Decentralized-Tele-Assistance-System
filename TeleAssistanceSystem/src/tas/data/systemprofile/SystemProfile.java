@@ -1,6 +1,7 @@
 package tas.data.systemprofile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import profile.SystemProfileVariable;
@@ -17,8 +18,8 @@ public class SystemProfile {
 	private int executionCycles, workflowCycles, maxProtocolIterations;
 	private SystemType systemType;
 	private ProtocolType protocolType;
-	private SystemRequirementType requirementType;
 	private RatingType ratingType;
+	private HashMap<String, SystemRequirementType> entityRequirementTypes = new HashMap<>();
 	private List<String> participatingEntities = new ArrayList<>();
 	private List<SystemProfileVariable> variables = new ArrayList<>();
 	
@@ -108,44 +109,53 @@ public class SystemProfile {
 	}
 	
 	/**
-	 * Return the system profile requirement type
-	 * @return the system profile requirement type
-	 */
-	public SystemRequirementType getRequirementType() {
-		return requirementType;
-	}
-	
-	/**
-	 * Set the system profile requirement type to the given system requirement type
-	 * @param requirementType the given system requirement type
-	 */
-	public void setRequirementType(SystemRequirementType requirementType) {
-		this.requirementType = requirementType;
-	}
-	
-	/**
-	 * Return the system profile rating type 
-	 * @return the system profile rating type 
+	 * Return the system profile rating type
+	 * @return the system profile rating type
 	 */
 	public RatingType getRatingType() {
 		return ratingType;
 	}
 	
 	/**
-	 * Set the system profile rating type to the given rating type
-	 * @param ratingType the given rating type
+	 * Set the system profile rating type to the given system rating type
+	 * @param ratingtype the given system rating type
 	 */
 	public void setRatingType(RatingType ratingType) {
 		this.ratingType = ratingType;
 	}
 	
 	/**
-	 * Add a given entity name to the participating entities list
+	 * Return the requirement type of a certain participating entity with the given entity name
 	 * @param entityName the given entity name
+	 * @return the entity requirement type 
+	 */
+	public SystemRequirementType getEntityRequirementType(String entityName) {
+		return entityRequirementTypes.get(entityName);
+	}
+	
+	/**
+	 * Set the requirement type of a certain participating entity to the given type
+	 * @param entityName the given entity name whose value needs to be set
+	 * @param requirementType the given requirement type
+	 * @throws IllegalArgumentException throws when the given entity name doesn't exist in the profile
+	 */
+	public void setRequirementType(String entityName, SystemRequirementType requirementType) {
+		
+		if (entityRequirementTypes.get(entityName) == null) {
+			throw new IllegalArgumentException("The given entity name doesn't exist in the profile!");
+		}
+		
+		entityRequirementTypes.put(entityName, requirementType);
+	}
+	
+	/**
+	 * Add a given entity name and requirement type to the profile
+	 * @param entityName the given entity name
+	 * @param requirementType the given requirement type
 	 * @throws IllegalStateException throws when the system type has not yet been set
 	 * @throws IllegalStateException throws when the maximum amount of entities has already been reached
 	 */
-	public void addEntity(String entityName) throws IllegalStateException {
+	public void addEntity(String entityName, SystemRequirementType requirementType) throws IllegalStateException {
 		
 		if (systemType == null) {
 			throw new IllegalStateException("System type needs to be set before changing the participating entities!");
@@ -156,14 +166,16 @@ public class SystemProfile {
 		}
 		
 		participatingEntities.add(entityName);
+		entityRequirementTypes.put(entityName,  requirementType);
 	}
 	
 	/**
-	 * Remove a given entity name from the participating entities list
+	 * Remove a given entity name and requirement type from the profile
 	 * @param entityName the given entity name
 	 */
 	public void removeEntity(String entityName) {
 		participatingEntities.remove(entityName);
+		entityRequirementTypes.remove(entityName);
 	}
 	
 	/**

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import profile.SystemRequirementType;
-import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.Planner;
 import tas.mape.planner.RatingType;
@@ -122,7 +121,7 @@ public class Analyzer {
 			throw new IllegalStateException("The rating type has not been set!");
 		}
 		
-		SystemRequirementType requirement = SystemProfileDataHandler.activeProfile.getRequirementType();
+		SystemRequirementType requirement = knowledge.getSystemRequirement();
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirement);
 		
 		return requirementClass.getServiceCombinations(getRequirementStrategy(requirement), combinationLimit, ratingType, knowledge);

@@ -35,9 +35,10 @@ public class SystemProfileExecutor {
 		Constructor<?> protocolConstructor = null;
 		AbstractTwoComponentProtocol<PlannerMessage, Planner> protocol = null;
 		
-		// Set the chosen rating type for all entities
+		// Set the chosen data for all entities
 		for (SystemEntity entity : entityList) {
 			entity.getManagingSystem().setRatingType(profile.getRatingType());
+			entity.getManagingSystem().setRequirementType(profile.getEntityRequirementType(entity.getEntityName()));
 		}
 		
 		// Initialize protocol in a system with more than 2 participating entities

@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -50,6 +47,7 @@ import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 import profile.SystemProfileValue;
@@ -61,7 +59,6 @@ import tas.data.systemprofile.SystemProfile;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.planner.RatingType;
 import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.structure.AbstractSystem;
 
 public class SystemProfileController implements Initializable {
 
@@ -76,9 +73,6 @@ public class SystemProfileController implements Initializable {
 	
 	@FXML
 	TextField maxProtocolIterations;
-	
-	@FXML
-	ComboBox<SystemRequirementType> requirementTypeComboBox;
 	
 	@FXML
 	ComboBox<RatingType> ratingTypeComboBox;
@@ -114,7 +108,10 @@ public class SystemProfileController implements Initializable {
 	Label protocolTypeLabel;
 	
 	@FXML
-	ListView<ComboBox<String>> entityListView;
+	Label protocolIterationsLabel;
+	
+	@FXML
+	ListView<BorderPane> entityListView;
 	
 	private Stage stage;
 	private String filePath;
@@ -233,6 +230,7 @@ public class SystemProfileController implements Initializable {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void initializeOther() {
 			
 		stage.setOnCloseRequest(event -> {
@@ -269,11 +267,6 @@ public class SystemProfileController implements Initializable {
 		
 		maxProtocolIterations.setTextFormatter(new TextFormatter<Integer>(new IntegerStringConverter(), 0, integerFilter));
 		
-		ObservableList<SystemRequirementType> requirementTypes = FXCollections.observableArrayList();
-		requirementTypes.addAll(SystemRequirementType.values());
-		requirementTypeComboBox.setItems(requirementTypes);
-		requirementTypeComboBox.setValue(profile.getRequirementType());
-		
 		ObservableList<RatingType> ratingTypes = FXCollections.observableArrayList();
 		ratingTypes.addAll(RatingType.values());
 		ratingTypeComboBox.setItems(ratingTypes);
@@ -289,47 +282,45 @@ public class SystemProfileController implements Initializable {
 			public void changed(ObservableValue<? extends SystemType> observable, SystemType oldValue,
 					SystemType newValue) {
 				
-				Class<? extends AbstractSystem<?>> systemClass = newValue.getSystemClass();
-				Method method = null;
-				int entityCount = 0;
-				
-				try {
-					method = systemClass.getMethod("getSystemEntityCount");
-				} catch (NoSuchMethodException | SecurityException e) {
-					e.printStackTrace();
-				} 
-					
-				try {
-					entityCount = (int) method.invoke(null);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
-				} 
+				int entityCount = newValue.getMaxEntities();
 				
 				if (entityCount > 1) {
 					protocolTypeComboBox.setVisible(true);
 					maxProtocolIterations.setVisible(true);
 					protocolTypeLabel.setVisible(false);
+					protocolIterationsLabel.setVisible(false);
 				}
 				else {
 					protocolTypeComboBox.setVisible(false);
 					maxProtocolIterations.setVisible(false);
 					protocolTypeLabel.setVisible(true);
+					protocolIterationsLabel.setVisible(true);
 				}
 				
 				entityListView.getItems().removeAll(entityListView.getItems());
 				
 				for (int i = 0; i < entityCount; i++) {
-					ComboBox<String> comboBox = new ComboBox<String>();
-					
-					if (i < profile.getSystemType().getMaxEntities()) {
-						comboBox.setValue(profile.getParticipatingEntity(i));
-					}
-					
+			
+					ComboBox<String> comboBoxEntity = new ComboBox<String>();
 					ObservableList<String> entityNames = FXCollections.observableArrayList();
 					entityNames.addAll(entityNameList);
-					comboBox.setItems(entityNames);
-					comboBox.setPrefWidth(200);
-					entityListView.getItems().add(comboBox);
+					comboBoxEntity.setItems(entityNames);
+					comboBoxEntity.setPrefWidth(200);
+					
+					ComboBox<SystemRequirementType> requirementTypeComboBox = new ComboBox<SystemRequirementType>();
+					ObservableList<SystemRequirementType> requirementTypes = FXCollections.observableArrayList();
+					requirementTypes.addAll(SystemRequirementType.values());
+					requirementTypeComboBox.setItems(requirementTypes);
+					
+					if (i < profile.getSystemType().getMaxEntities()) {
+						comboBoxEntity.setValue(profile.getParticipatingEntity(i));
+						requirementTypeComboBox.setValue(profile.getEntityRequirementType(profile.getParticipatingEntity(i)));
+					}
+					
+					BorderPane borderPane = new BorderPane();	
+					borderPane.setRight(requirementTypeComboBox);
+					borderPane.setLeft(comboBoxEntity);
+					entityListView.getItems().add(borderPane);
 				}
 			}    
 	    });
@@ -342,11 +333,13 @@ public class SystemProfileController implements Initializable {
 			protocolTypeComboBox.setVisible(true);
 			maxProtocolIterations.setVisible(true);
 			protocolTypeLabel.setVisible(false);
+			protocolIterationsLabel.setVisible(false);
 		}
 		else {
 			protocolTypeComboBox.setVisible(false);
 			maxProtocolIterations.setVisible(false);
 			protocolTypeLabel.setVisible(true);
+			protocolIterationsLabel.setVisible(true);
 		}
 		
 		ObservableList<ProtocolType> protocolTypes = FXCollections.observableArrayList();
@@ -403,13 +396,24 @@ public class SystemProfileController implements Initializable {
 		}
 		
 		for (int i = 0; i < entityCount; i++) {
-			ComboBox<String> comboBox = new ComboBox<String>();
-			comboBox.setValue(profile.getParticipatingEntity(i));
+			
+			ComboBox<String> comboBoxEntity = new ComboBox<String>();
 			ObservableList<String> entityNames = FXCollections.observableArrayList();
 			entityNames.addAll(entityNameList);
-			comboBox.setItems(entityNames);
-			comboBox.setPrefWidth(200);
-			entityListView.getItems().add(comboBox);
+			comboBoxEntity.setItems(entityNames);
+			comboBoxEntity.setPrefWidth(200);
+			comboBoxEntity.setValue(profile.getParticipatingEntity(i));
+			
+			ComboBox<SystemRequirementType> requirementTypeComboBox = new ComboBox<SystemRequirementType>();
+			ObservableList<SystemRequirementType> requirementTypes = FXCollections.observableArrayList();
+			requirementTypes.addAll(SystemRequirementType.values());
+			requirementTypeComboBox.setItems(requirementTypes);
+			requirementTypeComboBox.setValue(profile.getEntityRequirementType(profile.getParticipatingEntity(i)));
+			
+			BorderPane borderPane = new BorderPane();	
+			borderPane.setRight(requirementTypeComboBox);
+			borderPane.setLeft(comboBoxEntity);
+			entityListView.getItems().add(borderPane);
 		}
 		
 		saveButton2.setOnAction(event -> {
@@ -438,19 +442,25 @@ public class SystemProfileController implements Initializable {
 	            fail.setContentText("No protocol type selected.");
 	            fail.showAndWait();
 			}
-			else if (!UniqueComboBox(entityListView.getItems())) {
+			else if (!uniqueEntityList(entityListView.getItems())) {
 	    		Alert fail = new Alert(AlertType.WARNING);
 	            fail.setHeaderText("INVALID CONTENT");
 	            fail.setContentText("Some participating entities are duplicates.");
 	            fail.showAndWait();
 			}
-			else if (entityListView.getItems().stream().anyMatch(x -> x.getValue() == null)) {
+			else if (emptyEntities(entityListView.getItems())) {
 	    		Alert fail = new Alert(AlertType.WARNING);
 	            fail.setHeaderText("MISSING CONTENT");
 	            fail.setContentText("Not all participating entities are selected.");
 	            fail.showAndWait();
+			}	
+			else if (emptyRequirements(entityListView.getItems())) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("MISSING CONTENT");
+	            fail.setContentText("Not all requirements for the participating entities are selected.");
+	            fail.showAndWait();
 			}
-			else if (!entityListView.getItems().stream().anyMatch(x -> entityNameList.contains(x.getValue()))) {
+			else if (invalidEntities(entityListView.getItems())) {
 	    		Alert fail = new Alert(AlertType.WARNING);
 	            fail.setHeaderText("INVALID CONTENT");
 	            fail.setContentText("Some participating entity isn't present in the entity list. Choose a valid entity.");
@@ -462,15 +472,16 @@ public class SystemProfileController implements Initializable {
 				profile.setWorkflowCycles(Integer.valueOf(workflowCyclesTextField.getText()));
 				profile.setRatingType(ratingTypeComboBox.getValue());
 				profile.setSystemType(systemTypeComboBox.getValue());
-				profile.setRequirementType(requirementTypeComboBox.getValue());
 				
 				if (protocolTypeComboBox.isVisible()) {
 					profile.setProtocolType(protocolTypeComboBox.getValue());
 					profile.setMaxProtocolIterations(Integer.valueOf(maxProtocolIterations.getText()));
 				}
 				
-				for (ComboBox<String> comboBox : entityListView.getItems()) {
-					profile.addEntity(comboBox.getValue());
+				for (BorderPane borderPane : entityListView.getItems()) {
+					ComboBox<String> entityBox = (ComboBox<String>) borderPane.getLeft();
+					ComboBox<SystemRequirementType> requirementBox = (ComboBox<SystemRequirementType>) borderPane.getRight();
+					profile.addEntity(entityBox.getValue(), requirementBox.getValue());
 				}
 				
 				SystemProfileDataHandler.writeToXml(profile, filePath);
@@ -479,15 +490,58 @@ public class SystemProfileController implements Initializable {
 		});
 	}
 	
-	private boolean UniqueComboBox(List<ComboBox<String>> list){
+	private boolean uniqueEntityList(List<BorderPane> list) {
 	    Set<String> set = new HashSet<>();
 
-	    for (ComboBox<String> s: list){
-	        if (!set.add(s.getValue()))
+	    for (BorderPane pane: list) {
+	    	
+	    	@SuppressWarnings("unchecked")
+			ComboBox<String> comboBox = (ComboBox<String>) pane.getLeft();
+	    	
+	        if (!set.add(comboBox.getValue()))
 	            return false;
 	    }
 
 	    return true;
+	}
+	
+	private boolean invalidEntities(List<BorderPane> list) {
+	    for (BorderPane pane: list) {
+	    	
+	    	@SuppressWarnings("unchecked")
+			ComboBox<String> comboBox = (ComboBox<String>) pane.getLeft();
+	    	
+	        if (!entityNameList.contains(comboBox.getValue()))
+	            return true;
+	    }
+
+	    return false;
+	}
+	
+	private boolean emptyEntities(List<BorderPane> list) {
+	    for (BorderPane pane: list) {
+	    	
+	    	@SuppressWarnings("unchecked")
+			ComboBox<String> comboBox = (ComboBox<String>) pane.getLeft();
+	    	
+	        if (comboBox.getValue() == null)
+	            return true;
+	    }
+
+	    return false;
+	}
+	
+	private boolean emptyRequirements(List<BorderPane> list) {
+	    for (BorderPane pane: list) {
+	    	
+	    	@SuppressWarnings("unchecked")
+			ComboBox<String> comboBox = (ComboBox<String>) pane.getRight();
+	    	
+	        if (comboBox.getValue() == null)
+	            return true;
+	    }
+
+	    return false;
 	}
 	
 	public class ValueEntry {

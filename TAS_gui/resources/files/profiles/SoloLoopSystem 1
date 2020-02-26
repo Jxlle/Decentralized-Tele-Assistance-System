@@ -1,10 +1,15 @@
 <tas.data.systemprofile.SystemProfile>
-  <executionCycles>50</executionCycles>
-  <workflowCycles>3000</workflowCycles>
+  <executionCycles>10</executionCycles>
+  <workflowCycles>2000</workflowCycles>
   <maxProtocolIterations>0</maxProtocolIterations>
   <systemType>SOLO_LOOP</systemType>
-  <requirementType>RELIABILITY</requirementType>
   <ratingType>SCORE</ratingType>
+  <entityRequirementTypes>
+    <entry>
+      <string>Test Entity</string>
+      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
+    </entry>
+  </entityRequirementTypes>
   <participatingEntities>
     <string>Test Entity</string>
   </participatingEntities>

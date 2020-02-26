@@ -220,7 +220,7 @@ public class GlobalServiceInfo {
 		medicalAnalysis2.getServiceDescription().getCustomProperties().put("preferred", true);
 		medicalAnalysis2.getServiceDescription().getCustomProperties().put("Cost", 14.0);
 		medicalAnalysis2.getServiceDescription().setOperationCost("analyzeData", 14.0);
-		medicalAnalysis2.getServiceDescription().getCustomProperties().put("FailureRate", 0);
+		medicalAnalysis2.getServiceDescription().getCustomProperties().put("FailureRate", 0.07);
 		medicalAnalysis2.startService();
 		medicalAnalysis2.register(serviceRegistry);
 	

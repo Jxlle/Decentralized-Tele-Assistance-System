@@ -389,6 +389,14 @@ public class MAPEKComponent {
 		knowledge.resetApproximatedServiceFailureRates();
 	}
 	
+	/**
+	 * Set the current requirement type to the given type
+	 * @param requirementType the given requirement type
+	 */
+	public void setRequirementType(SystemRequirementType requirementType) {
+		knowledge.setRequirementType(requirementType);
+	}
+	
 	// The methods below are used to simulate the mape loop for multiple workflow entities 'concurrently'
 	// instead of using multiple threads. Using multiple threads is possible, but can introduce race conditions.
 	

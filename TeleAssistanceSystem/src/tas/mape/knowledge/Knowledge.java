@@ -27,6 +27,12 @@ import tas.mape.planner.PlanComponent;
 
 public class Knowledge {
 	
+	// Delta value used for updating the service failure rate map
+	private int loadFailureDelta;
+	
+	// the current system requirement type
+	private SystemRequirementType requirementType;
+	
 	// List of used registry endpoints by the workflow
 	private List<String> registryEndpoints;
 	
@@ -38,9 +44,6 @@ public class Knowledge {
 	
 	// Map containing information about the approximated service failure rates
 	private Map<String, TreeMap<Integer, Double>> approximatedServiceFailureRates;
-	
-	// Delta value used for updating the service failure rate map
-	private int loadFailureDelta;
 	
 	// List of plan components containing information about needed changes to the cache as a result of changes in the service registries
 	private List<PlanComponent> cachePlanComponents;
@@ -114,6 +117,22 @@ public class Knowledge {
 		
 		// Initialize approximated failure rates
 		initializeApproximatedServicesFailureRates();
+	}
+	
+	/**
+	 * Set the current requirement type to the given type
+	 * @param requirementType the given requirement type
+	 */
+	public void setRequirementType(SystemRequirementType requirementType) {
+		this.requirementType = requirementType;
+	}
+	
+	/**
+	 * Return the current requirement type
+	 * @return the current requirement type
+	 */
+	public SystemRequirementType getSystemRequirement() {
+		return requirementType;
 	}
 	
 	/**

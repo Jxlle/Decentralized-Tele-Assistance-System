@@ -236,7 +236,7 @@ public class TEST {
 		//List<ServiceCombination> services = carr.getNewServiceCombinations(services1, serviceFailureRates, goals);
 		//List<Map<Description, ServiceDescription>> services2 = mcr.getAllServiceCombinations(assistanceService.getCache().caches);
 		
-		for (ServiceCombination comb : services1) {
+		/*for (ServiceCombination comb : services1) {
 			System.err.print("-----------------------------------------------------------------------------------------\n");
 			
 			comb.getDescriptions();
@@ -256,7 +256,7 @@ public class TEST {
 			System.err.print("score: " + comb.getRating() + " \n");
 		}
 		
-		System.err.print("\n total combinations: " + services1.size());
+		System.err.print("\n total combinations: " + services1.size());*/
 		
 		
 		/*for (Map<Description, ServiceDescription> map : services2) {
@@ -313,13 +313,14 @@ public class TEST {
 		info.loadData(file);
 		//GlobalServiceInfoLoader.loadFromXml(info, file);*/
 		
-		/*SystemProfile profile = new SystemProfile();//50, 250, SystemRequirementType.COST, RatingType.SCORE, DoubleLoopSystem.class, new ArrayList<>());
-		profile.setExecutionCycles(50);
-		profile.setWorkflowCycles(250);
-		profile.setRequirementType(SystemRequirementType.COST_AND_RELIABILITY);
+		SystemProfile profile = new SystemProfile();//50, 250, SystemRequirementType.COST, RatingType.SCORE, DoubleLoopSystem.class, new ArrayList<>());
+		profile.setExecutionCycles(10);
+		profile.setWorkflowCycles(2000);
 		profile.setRatingType(RatingType.SCORE);
-		profile.setSystemType(SystemType.SOLO_LOOP);
-		//profile.setProtocolType(ProtocolType.STANDARD_PROTOCOL);
+		profile.setSystemType(SystemType.DOUBLE_LOOP);
+		profile.addEntity("Test Entity", SystemRequirementType.COST_AND_RELIABILITY);
+		profile.addEntity("Test Entity 2", SystemRequirementType.COST_AND_RELIABILITY);
+		profile.setProtocolType(ProtocolType.STANDARD_PROTOCOL);
 		SystemProfileVariable patientId = new SystemProfileVariable("patientId");
 		patientId.addValue(new SystemProfileValue(1, 1.0));
 		SystemProfileVariable pick = new SystemProfileVariable("pick");
@@ -327,10 +328,8 @@ public class TEST {
 		pick.addValue(new SystemProfileValue(2, 0.25));
 		profile.addVariable(patientId);
 		profile.addVariable(pick);
-		profile.addEntity("Test Entity");
-		//profile.addEntity("Test Entity 2");
 		
-		SystemProfileDataHandler.writeToXml(profile, "test");*/
+		SystemProfileDataHandler.writeToXml(profile, "test");
 
 	}
 }

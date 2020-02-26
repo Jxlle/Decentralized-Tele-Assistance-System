@@ -8,7 +8,6 @@ import java.util.Map;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
-import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.PlannerMessage;
@@ -117,8 +116,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * @return the newly calculated service combinations
 	 */
 	public List<ServiceCombination> calculateNewServiceCombinations(PlannerMessageContent content) {
-		AbstractWorkflowQoSRequirement requirementClass = 
-				knowledge.getQoSRequirementClass(SystemProfileDataHandler.activeProfile.getRequirementType());
+		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(knowledge.getSystemRequirement());
 		return requirementClass.getNewServiceCombinations(availableServiceCombinations, getFailureRates(content), knowledge);
 	}
 	
