@@ -30,7 +30,7 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 		// System entity
 		SystemEntity entity = getSystemEntity(0);
 		
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < executionCycles; i++) {
 			System.err.print("--------------------CYCLE START [" + (i + 1) + "]--------------------\n");
 			
 			// Execute MAPE-K loop
