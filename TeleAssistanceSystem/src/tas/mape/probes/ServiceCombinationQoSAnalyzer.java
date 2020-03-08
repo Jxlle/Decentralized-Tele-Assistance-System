@@ -2,9 +2,11 @@ package tas.mape.probes;
 
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.ServiceCombination;
+import tas.services.profiles.ServiceFailureLoadProfile;
 
 /**
  * Class used to calculate service combination data used to generate graphs
@@ -13,11 +15,23 @@ import tas.mape.planner.ServiceCombination;
  */
 public class ServiceCombinationQoSAnalyzer {
 	
+	/**
+	 * Calculate and return the total cost of the given service combination
+	 * @param combination the given service combination
+	 * @return the total cost of the given service combination
+	 */
 	public double getRealServiceCombinationCost(ServiceCombination combination) {
 		return AbstractWorkflowQoSRequirement.getTotalValue(combination, "Cost");
 	}
 	
-	public double getRealServiceCombinationFailureRate(ServiceCombination combination, Knowledge knowledge) {
+	/**
+	 * Calculate and return the real failure rate of the given service combination based on the given knowledge
+	 * @param combination the given service combination
+	 * @param knowledge the given knowledge
+	 * @return the real failure rate of the given service combination
+	 * @throws IllegalStateException throws when the required profile 'ServiceFailureLoadProfile' was not found
+	 */
+	public double getRealServiceCombinationFailureRate(ServiceCombination combination, Knowledge knowledge) throws IllegalStateException {
 		double totalValue = 0;
 		
 		for (Description description : combination.getDescriptions()) {
@@ -26,10 +40,18 @@ public class ServiceCombinationQoSAnalyzer {
 				
 				if (service.getCustomProperties().containsKey("FailureRate")) {
 					
-					double useChance = combination.getAllServices(description).getChance(service);	
+					// Find service failure load profile to get the real failure rate
+					ServiceFailureLoadProfile profile = 
+							(ServiceFailureLoadProfile) GlobalServiceInfo.getService(service.getServiceName())
+					.getServiceProfiles().stream().filter(x -> x.getClass().equals(ServiceFailureLoadProfile.class)).findAny().orElse(null);
 					
-					// TODO
-					//totalValue += useChance * knowledge.getServiceUsageChance(description) *   e(service.getServiceEndpoint(), description, useChance);
+					if (profile == null) {
+						throw new IllegalStateException("The required profile 'ServiceFailureLoadProfile' was not found!");
+					}
+					
+					// Calculate current service failure rate value and add to the current value
+					double useChance = combination.getAllServices(description).getChance(service);	
+					totalValue += useChance * knowledge.getServiceUsageChance(description) * profile.getTableEntry(service).getValue();
 				}
 			}
 		}

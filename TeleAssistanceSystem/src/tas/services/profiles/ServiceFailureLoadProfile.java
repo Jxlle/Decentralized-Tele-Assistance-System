@@ -43,6 +43,19 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		failureRate.put(0.7, 0.60);
 	}
 	
+	public Map.Entry<Double, Double> getTableEntry(ServiceDescription description) {
+		
+		double usePercentage = description.getLoad() / (double) SystemProfileDataHandler.activeProfile.getWorkflowCycles();
+		
+		Map.Entry<Double, Double> entry = failureRate.ceilingEntry(usePercentage);
+		
+		if (entry == null) {
+			entry = failureRate.floorEntry(usePercentage);
+		}
+		
+		return entry;
+	}
+	
 	// TODO Scale with workflow cycles
 	@Override
 	public boolean preInvokeOperation(ServiceDescription description, String operationName, Object... args) {
@@ -54,15 +67,7 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		
 		// Calculate success rate based on the table value and the service load
 		double rate = 1 - (double) description.getCustomProperties().get("FailureRate");
-		double usePercentage = description.getLoad() / SystemProfileDataHandler.activeProfile.getWorkflowCycles();
-		
-		Map.Entry<Double, Double> entry = failureRate.ceilingEntry(usePercentage);
-		
-		if (entry == null) {
-			entry = failureRate.floorEntry(usePercentage);
-		}
-		
-		rate *= entry.getValue();
+		rate *= getTableEntry(description).getValue();
 		
 		Random rand = new Random();
 		
