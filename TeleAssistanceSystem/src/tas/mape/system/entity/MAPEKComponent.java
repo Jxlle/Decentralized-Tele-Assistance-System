@@ -18,6 +18,7 @@ import tas.mape.knowledge.Knowledge;
 import tas.mape.monitor.Monitor;
 import tas.mape.planner.Planner;
 import tas.mape.planner.RatingType;
+import tas.mape.probes.PlannerProbe;
 
 /**
  * Class representing a component that can execute a MAPEK-loop.
@@ -245,6 +246,14 @@ public class MAPEKComponent {
 	}
 	
 	/**
+	 * Return the planner probe
+	 * @return the planner probe
+	 */
+	public PlannerProbe getProbe() {
+		return planner.getProbe();
+	}
+	
+	/**
 	 * Set the planner endpoint to a new given endpoint
 	 * @param endpoint the new planner endpoint
 	 * */
@@ -283,6 +292,15 @@ public class MAPEKComponent {
 	 */
 	public AbstractProtocol<PlannerMessage, Planner> getProtocol() {
 		return planner.getProtocol();
+	}
+	
+	/**
+	 * Set the parent entity name to the given name
+	 * @param parentEntityName the given name
+	 * @throws IllegalStateException throws when this knowledge is already part of a system entity
+	 */
+	public void setParentEntityName(String parentEntityName) {
+		knowledge.setParentEntityName(parentEntityName);
 	}
 	
 	/**

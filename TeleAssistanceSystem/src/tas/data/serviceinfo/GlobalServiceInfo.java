@@ -11,9 +11,7 @@ import service.registry.ServiceRegistry;
 import tas.services.alarm.AlarmService;
 import tas.services.drug.DrugService;
 import tas.services.medical.MedicalAnalysisService;
-import tas.services.profiles.ServiceDelayProfile;
 import tas.services.profiles.ServiceFailureLoadProfile;
-import tas.services.profiles.SimpleServiceFailureProfile;
 
 /**
  * Class used to hold data about the used services and registries in the system.

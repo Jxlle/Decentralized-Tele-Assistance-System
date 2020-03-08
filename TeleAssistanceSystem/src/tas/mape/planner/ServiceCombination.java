@@ -93,8 +93,6 @@ public class ServiceCombination implements Comparable<ServiceCombination> {
 		return serviceEndpointMap;
 	}
 	
-	
-	
 	/**
 	 * Return all service type and operation name keys of this service combination
 	 * @return the service type and operation name keys

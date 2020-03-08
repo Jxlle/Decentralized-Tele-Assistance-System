@@ -192,7 +192,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param property the given property
 	 * @return the total value
 	 */
-	public double getTotalValue(ServiceCombination combination, String property) {
+	public static double getTotalValue(ServiceCombination combination, String property) {
 		
 		double totalValue = 0;
 		
@@ -225,8 +225,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 				
 				if (service.getCustomProperties().containsKey("FailureRate")) {
 					
-					double useChance = combination.get(description).getChance(service);
-									
+					double useChance = combination.get(description).getChance(service);				
 					totalValue += knowledge.getApproximatedTotalServiceFailureRate(service.getServiceEndpoint(), description, useChance);
 				}
 			}

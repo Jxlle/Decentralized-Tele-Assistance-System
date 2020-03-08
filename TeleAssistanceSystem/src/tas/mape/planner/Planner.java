@@ -15,6 +15,7 @@ import tas.mape.communication.message.PlannerMessageContent;
 import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.executor.Executor;
 import tas.mape.knowledge.Knowledge;
+import tas.mape.probes.PlannerProbe;
 
 /**
  * Class that represents the planner component in a MAPE-K component
@@ -28,6 +29,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	// Fields
 	private Executor executor;
 	private Knowledge knowledge;
+	private PlannerProbe probe;
 	private boolean executed, protocolFinished;
 	private AbstractProtocol<PlannerMessage, Planner> protocol;
 	private List<ServiceCombination> availableServiceCombinations;
@@ -44,6 +46,14 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		super(endpoint);
 		this.knowledge = knowledge;
 		this.executor = executor;
+	}
+	
+	/**
+	 * Return the planner probe
+	 * @return the planner probe
+	 */
+	public PlannerProbe getProbe() {
+		return probe;
 	}
 	
 	/**
@@ -80,7 +90,8 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		
 		// If no protocol is used, just use the best service combination
 		if (protocol == null) {
-			makePlan(availableServiceCombinations.get(0));
+			setCurrentServiceCombination(availableServiceCombinations.get(0));
+			finishedProtocol();
 		}
 	}
 	
@@ -126,6 +137,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public void finishedProtocol() {
 		protocolFinished = true;
+		probe.serviceCombinationChosen(currentServiceCombination, knowledge);
 		makePlan(currentServiceCombination);
 	}
 	
@@ -134,7 +146,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * when the protocol is finished when there is one
 	 */
 	public void triggerExecutor() {
-		if (executed && (protocolFinished || protocol == null)) {
+		if (executed && protocolFinished) {
 			executor.execute(plan);
 			executed = false;
 			protocolFinished = false;

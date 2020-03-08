@@ -184,7 +184,12 @@
                            <children>
                               <TabPane layoutX="84.0" layoutY="28.0" prefHeight="255.0" prefWidth="555.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <tabs>
-                                  <Tab text="Reliability">
+                                    <Tab text="System Run Performance">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                      </content>
+                                    </Tab>
+                                  <Tab disable="true" text="Reliability">
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -206,7 +211,7 @@
                                           </AnchorPane>
                                     </content>
                                   </Tab>
-                                    <Tab text="Performance">
+                                    <Tab disable="true" text="Performance">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -224,7 +229,7 @@
                                           </AnchorPane>
                                        </content>
                                     </Tab>
-                                    <Tab text="Cost">
+                                    <Tab disable="true" text="Cost">
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -242,7 +247,7 @@
                                           </AnchorPane>
                                       </content>
                                     </Tab>
-                                    <Tab text="Invocation Cost">
+                                    <Tab disable="true" text="Invocation Cost">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -251,7 +256,7 @@
                                           </AnchorPane>
                                        </content>
                                     </Tab>
-                                    <Tab text="AvgReliability">
+                                    <Tab disable="true" text="AvgReliability">
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -260,7 +265,7 @@
                                           </AnchorPane>
                                       </content>
                                     </Tab>
-                                    <Tab text="AvgPerformance">
+                                    <Tab disable="true" text="AvgPerformance">
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -269,7 +274,7 @@
                                           </AnchorPane>
                                       </content>
                                     </Tab>
-                                    <Tab text="AvgCost">
+                                    <Tab closable="false" disable="true" text="AvgCost">
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -278,7 +283,7 @@
                                           </AnchorPane>
                                       </content>
                                     </Tab>
-                                    <Tab text="Invocation Rate">
+                                    <Tab closable="false" disable="true" text="Invocation Rate">
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>

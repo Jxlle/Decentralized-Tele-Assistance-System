@@ -27,6 +27,9 @@ import tas.mape.planner.PlanComponent;
 
 public class Knowledge {
 	
+	// Name of the system entity where this component is a part of
+	private String parentEntityName;
+	
 	// Delta value used for updating the service failure rate map
 	private int loadFailureDelta;
 	
@@ -117,6 +120,27 @@ public class Knowledge {
 		
 		// Initialize approximated failure rates
 		initializeApproximatedServicesFailureRates();
+	}
+	
+	/**
+	 * Set the parent entity name to the given name
+	 * @param parentEntityName the given name
+	 * @throws IllegalStateException throws when this knowledge is already part of a system entity
+	 */
+	public void setParentEntityName(String parentEntityName) throws IllegalStateException {
+		if (this.parentEntityName != null) {
+			throw new IllegalStateException("This knowledge is already part of a system entity!");
+		}
+		
+		this.parentEntityName = parentEntityName;
+	}
+	
+	/**
+	 * Return the parent entity name
+	 * @return the parent entity name
+	 */
+	public String getParentEntityName() {
+		return parentEntityName;
 	}
 	
 	/**
@@ -355,6 +379,15 @@ public class Knowledge {
 	 */
 	public int getServiceLoad(Description description, double usePercentage) {
 		return (int) (servicesUsageChance.get(description) * usePercentage * SystemProfileDataHandler.activeProfile.getWorkflowCycles());
+	}
+	
+	/**
+	 * Return the service usage chance of the given service description
+	 * @param description the given service decsription
+	 * @return the service usage chance 
+	 */
+	public Double getServiceUsageChance(Description description) {
+		return servicesUsageChance.get(description);
 	}
 	
 	/**

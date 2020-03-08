@@ -134,6 +134,7 @@ public class SystemEntityController implements Initializable {
 		initializeAddButton();
 		setTooltips();
 		addPropertyTableEntries();
+		addRegistryChoices();
 	}
 	
 	public void setStage(Stage dialogStage) {
@@ -150,6 +151,8 @@ public class SystemEntityController implements Initializable {
 		List<ServiceRegistry> registries = GlobalServiceInfo.getServiceRegistries();
 		AnchorPane registryPane;
 		Label registryLabel;
+		
+		System.err.print(registries.size());
 		
 		for (ServiceRegistry registry : registries) {
 			registryPane = new AnchorPane();

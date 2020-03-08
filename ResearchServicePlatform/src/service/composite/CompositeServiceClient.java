@@ -1,7 +1,4 @@
 package service.composite;
-
-import java.util.List;
-
 import service.client.AbstractServiceClient;
 
 /**
