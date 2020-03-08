@@ -7,6 +7,7 @@ import javafx.util.Pair;
 import service.atomic.ServiceProfile;
 import service.atomic.ServiceProfileAttribute;
 import service.auxiliary.ServiceDescription;
+import tas.data.systemprofile.SystemProfileDataHandler;
 
 /**
  * A class used for letting services fail depending on their future load.
@@ -19,7 +20,7 @@ import service.auxiliary.ServiceDescription;
 public class ServiceFailureLoadProfile extends ServiceProfile {
 	
 	@ServiceProfileAttribute()
-	public TreeMap<Integer, Double> failureRate;
+	public TreeMap<Double, Double> failureRate;
 	
 	/**
 	 * Create a new service failure load profile.
@@ -34,12 +35,12 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 	// Construct default fail rate table
 	private void constructFailRates() {
 		failureRate = new TreeMap<>();
-		failureRate.put(0, 1.0);
-		failureRate.put(50, 0.95);
-		failureRate.put(75, 0.90);
-		failureRate.put(100, 0.85);
-		failureRate.put(125, 0.70);
-		failureRate.put(180, 0.60);
+		failureRate.put(0.0, 1.0);
+		failureRate.put(0.2, 0.95);
+		failureRate.put(0.35, 0.90);
+		failureRate.put(0.50, 0.85);
+		failureRate.put(0.65, 0.70);
+		failureRate.put(0.7, 0.60);
 	}
 	
 	// TODO Scale with workflow cycles
@@ -53,10 +54,12 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		
 		// Calculate success rate based on the table value and the service load
 		double rate = 1 - (double) description.getCustomProperties().get("FailureRate");
-		Map.Entry<Integer, Double> entry = failureRate.ceilingEntry(description.getLoad());
+		double usePercentage = description.getLoad() / SystemProfileDataHandler.activeProfile.getWorkflowCycles();
+		
+		Map.Entry<Double, Double> entry = failureRate.ceilingEntry(usePercentage);
 		
 		if (entry == null) {
-			entry = failureRate.floorEntry(description.getLoad());
+			entry = failureRate.floorEntry(usePercentage);
 		}
 		
 		rate *= entry.getValue();
