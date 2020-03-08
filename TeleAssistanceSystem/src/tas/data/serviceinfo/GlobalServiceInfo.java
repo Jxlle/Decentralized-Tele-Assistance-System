@@ -27,8 +27,8 @@ public class GlobalServiceInfo {
     private static List<ServiceRegistry> serviceRegistries = new ArrayList<>();
     private static LinkedHashMap<String, String> serviceTypes = new LinkedHashMap<>();
     private static List<Class<?>> serviceProfileClasses = Arrays.asList(
-    	ServiceDelayProfile.class,
-    	SimpleServiceFailureProfile.class,
+    	//ServiceDelayProfile.class,
+    	//SimpleServiceFailureProfile.class,
     	ServiceFailureLoadProfile.class
     );
     
