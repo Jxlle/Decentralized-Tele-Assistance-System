@@ -281,6 +281,18 @@ public class Knowledge {
 	}
 	
 	/**
+	 * Calculate the approximated total failure rate for a given service endpoint, description and usage chance
+	 * @param serviceEndpoint the given service endpoint
+	 * @param description the given service description
+	 * @param useChance the given usage chance
+	 * @return the approximated total failure rate
+	 */
+	public double getApproximatedTotalServiceFailureRate(String serviceEndpoint, Description description, double useChance) {
+		return useChance * getApproximatedServiceFailureRate(serviceEndpoint, getServiceLoad(description, useChance)) 
+				* servicesUsageChance.get(description);
+	}
+	
+	/**
 	 * Reset all approximated service failure rates to the default values
 	 */
 	public void resetApproximatedServiceFailureRates() {

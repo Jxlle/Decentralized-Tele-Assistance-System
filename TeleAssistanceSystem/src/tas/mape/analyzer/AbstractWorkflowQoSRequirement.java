@@ -227,8 +227,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 					
 					double useChance = combination.get(description).getChance(service);
 									
-					totalValue += useChance * 
-							knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), knowledge.getServiceLoad(description, useChance));
+					totalValue += knowledge.getApproximatedTotalServiceFailureRate(service.getServiceEndpoint(), description, useChance);
 				}
 			}
 		}
