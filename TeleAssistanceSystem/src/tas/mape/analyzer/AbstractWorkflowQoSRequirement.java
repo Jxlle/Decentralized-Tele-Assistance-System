@@ -244,6 +244,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 */
 	public double getTotalApproximatedFailureRateValue(ServiceCombination combination, Map<String, Double> values, Knowledge knowledge) {
 		
+		// TODO MAYBE WRONG CHECK LATER!!!
 		double totalValue = 0;
 		
 		for (Description description : combination.getDescriptions()) {
@@ -298,7 +299,6 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param goals the given system goals
 	 * @param property the given name of the custom service property
 	 * @return the service combination rating
-	 * @throws IllegalStateException throw when list of goals doesn't include the right goal type
 	 */
 	protected int getClassRating(List<Goal> goals, double totalValue, String property) throws IllegalStateException {
 		
@@ -315,7 +315,8 @@ public abstract class AbstractWorkflowQoSRequirement {
 			}
 		}
 		
-		throw new IllegalStateException("List of goals doesn't include the right goal type! Called wrong method?");
+		// No goal set
+		return 1;
 	}
 	
 	/**
