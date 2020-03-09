@@ -30,7 +30,6 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.CommonTree;
 
-import profile.SystemRequirementType;
 import service.atomic.AtomicService;
 import service.atomic.ServiceProfile;
 import service.auxiliary.Description;
@@ -51,7 +50,6 @@ import tas.mape.system.structure.AbstractSystem;
 import tas.mape.system.structure.DoubleLoopSystem;
 import tas.mape.system.structure.SoloLoopSystem;
 import tas.mape.system.entity.MAPEKComponent.Builder;
-import tas.services.assistance.AssistanceServiceCostProbe;
 import application.MainGui;
 import application.model.CostEntry;
 import application.model.PerformanceEntry;
@@ -100,7 +98,7 @@ public class ApplicationController implements Initializable {
     Stage primaryStage;
     
     // for generating kinds of charts
-    ChartController chartController;
+    SystemRunChartController chartController;
     
     // for generating kinds of table views
     TableViewController tableViewController;
@@ -126,8 +124,6 @@ public class ApplicationController implements Initializable {
 
     List<ServiceRegistry> serviceRegistries;
     
-    // TODO FIX PROBE STUFF
-    AssistanceServiceCostProbe probe = new AssistanceServiceCostProbe();
     SystemEntity selectedEntity;
     List<SystemEntity> entities = new ArrayList<>();
     Map<String, Boolean> workflowAnalyzed = new HashMap<>(); 
@@ -191,6 +187,9 @@ public class ApplicationController implements Initializable {
     
     @FXML
     AnchorPane avgReliabilityChartPane;
+    
+    @FXML
+    AnchorPane systemRunChartPane;
     
     @FXML
     AnchorPane avgCostChartPane;
@@ -271,6 +270,7 @@ public class ApplicationController implements Initializable {
     public void initialize(URL arg0, ResourceBundle arg1) {
 
     	GlobalServiceInfo.loadData(new File(defaultServiceDataPath));
+    	this.initChartController();
     	this.addServicesProfiles();
     	this.addItems();
     	this.fillSystemProfiles();
@@ -397,13 +397,11 @@ public class ApplicationController implements Initializable {
     public void setPrimaryStage(Stage primaryStage) {
     	this.primaryStage = primaryStage;
     }
-
-    // TODO PROBE
-    /*public void setProbe(AssistanceServiceCostProbe probe) {
-    	this.probe = probe;
-    }*/
     
-    // TODO CHARTS
+    private void initChartController() {
+    	chartController = new SystemRunChartController(systemRunChartPane);
+    }
+    
    /* public void setTasStart(TASStart tasStart) {
       	chartController = new ChartController(reliabilityChartPane, costChartPane,performanceChartPane,invCostChartPane,
     			avgReliabilityChartPane, avgCostChartPane, avgPerformanceChartPane, invRateChartPane, tasStart.getServiceTypes());
@@ -638,9 +636,9 @@ public class ApplicationController implements Initializable {
     			//chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
     			//chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(),Integer.parseInt(sliceTextField.getText()));
     			
-    			tableViewController.fillReliabilityDate(file.getPath());
+    			/*tableViewController.fillReliabilityDate(file.getPath());
     			tableViewController.fillCostData(file.getPath());
-    			tableViewController.fillPerformanceData(file.getPath());
+    			tableViewController.fillPerformanceData(file.getPath());*/
     		    } catch (Exception e) {
     			e.printStackTrace();
     		    }
@@ -677,7 +675,8 @@ public class ApplicationController implements Initializable {
     			try {
     			    SnapshotParameters param = new SnapshotParameters();
     			    param.setDepthBuffer(true);
-    			    WritableImage snapshot = chartController.reliabilityChart.snapshot(param, null);
+    			    // TODO
+    			    WritableImage snapshot = null;//chartController.reliabilityChart.snapshot(param, null);
     			    BufferedImage tempImg = SwingFXUtils.fromFXImage(snapshot, null);
 
     			    File outputfile = new File(file.getPath() + ".png");
@@ -705,7 +704,8 @@ public class ApplicationController implements Initializable {
     			try {
     			    SnapshotParameters param = new SnapshotParameters();
     			    param.setDepthBuffer(true);
-    			    WritableImage snapshot = chartController.costChart.snapshot(param, null);
+    			    // TODO
+    			    WritableImage snapshot = null; //chartController.costChart.snapshot(param, null);
     			    BufferedImage tempImg = SwingFXUtils.fromFXImage(snapshot, null);
 
     			    File outputfile = new File(file.getPath() + ".png");
@@ -734,7 +734,8 @@ public class ApplicationController implements Initializable {
     			try {
     			    SnapshotParameters param = new SnapshotParameters();
     			    param.setDepthBuffer(true);
-    			    WritableImage snapshot = chartController.invCostChart.snapshot(param, null);
+    			    // TODO
+    			    WritableImage snapshot = null;//chartController.invCostChart.snapshot(param, null);
     			    BufferedImage tempImg = SwingFXUtils.fromFXImage(snapshot, null);
 
     			    File outputfile = new File(file.getPath() + ".png");
@@ -760,7 +761,8 @@ public class ApplicationController implements Initializable {
     			try {
     			    SnapshotParameters param = new SnapshotParameters();
     			    param.setDepthBuffer(true);
-    			    WritableImage snapshot = chartController.performanceChart.snapshot(param, null);
+    			    // TODO
+    			    WritableImage snapshot = null;//chartController.performanceChart.snapshot(param, null);
     			    BufferedImage tempImg = SwingFXUtils.fromFXImage(snapshot, null);
 
     			    File outputfile = new File(file.getPath() + ".png");
@@ -1079,14 +1081,14 @@ public class ApplicationController implements Initializable {
 
     	    if (runButton.getId().equals("runButton")) {
 
-    			probe.reset();
+    			chartController.resetProbe();
     			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
     			SystemProfileDataHandler.activeProfile = profile;
     			
     			Task<Void> task = new Task<Void>() {
     			    @Override
-    			    protected Void call() throws Exception {
-    			    	
+    			    protected Void call() throws Exception {			    	
+
     			    	analyzed = false;
     			    	
     			    	// Analyze entity workflows if needed
@@ -1096,6 +1098,8 @@ public class ApplicationController implements Initializable {
     			    		
     			    		SystemEntity entity = entities.stream()
     			    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
+    			    		
+    			    		chartController.addEntityToProbe(entity);
     			    		
     			    		if (!workflowAnalyzed.get(entity.getEntityName())) {
     	    			    	System.err.print("analyzing \n");
@@ -1112,21 +1116,20 @@ public class ApplicationController implements Initializable {
     			    	// Execute system
     			    	SystemProfileExecutor.execute(entities);
 					    
-    			    	//TODO CHARTS
     				    Platform.runLater(new Runnable() {
         					@Override
         					public void run() {
         					    runButton.setId("runButton");
         						chartController.clear();
-        						tableViewController.clear();
+        						//tableViewController.clear();
         						
-        						
+        						chartController.generateSystemRunChart();
         						//chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
         						//chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(),Integer.parseInt(sliceTextField.getText()));
 
-        					    tableViewController.fillReliabilityDate(resultFilePath);
+        					    /*tableViewController.fillReliabilityDate(resultFilePath);
         					    tableViewController.fillCostData(resultFilePath);
-        						tableViewController.fillPerformanceData(resultFilePath);
+        						tableViewController.fillPerformanceData(resultFilePath);*/
         					}
     				    });
     				
@@ -1244,7 +1247,7 @@ public class ApplicationController implements Initializable {
     	profileListView.getItems().add(itemPane);
     }
 
-    private void fillProfiles() {
+    /*private void fillProfiles() {
 	File folder = new File(profileFilePath);
 	File[] files = folder.listFiles();
 
@@ -1261,7 +1264,7 @@ public class ApplicationController implements Initializable {
 	}
 	// this.addProfile("resources/files/inputProfile1.xml");
 	// this.addProfile("/inputProfile2.xml");
-    }
+    }*/
 
     private void addProfile(String profilePath) {
 

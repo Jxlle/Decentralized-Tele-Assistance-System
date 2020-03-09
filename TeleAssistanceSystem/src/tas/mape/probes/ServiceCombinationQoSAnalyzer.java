@@ -51,7 +51,8 @@ public class ServiceCombinationQoSAnalyzer {
 					
 					// Calculate current service failure rate value and add to the current value
 					double useChance = combination.getAllServices(description).getChance(service);	
-					totalValue += useChance * knowledge.getServiceUsageChance(description) * profile.getTableEntry(service).getValue();
+					totalValue += useChance * knowledge.getServiceUsageChance(description) 
+							* profile.getTableEntry(service).getValue() * (double) service.getCustomProperties().get("FailureRate");
 				}
 			}
 		}

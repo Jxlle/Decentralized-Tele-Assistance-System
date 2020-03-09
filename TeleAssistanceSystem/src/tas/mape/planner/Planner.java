@@ -46,6 +46,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		super(endpoint);
 		this.knowledge = knowledge;
 		this.executor = executor;
+		probe = new PlannerProbe();
 	}
 	
 	/**

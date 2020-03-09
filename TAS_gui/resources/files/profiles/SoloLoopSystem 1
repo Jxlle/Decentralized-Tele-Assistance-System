@@ -1,6 +1,6 @@
 <tas.data.systemprofile.SystemProfile>
-  <executionCycles>10</executionCycles>
-  <workflowCycles>2000</workflowCycles>
+  <executionCycles>100</executionCycles>
+  <workflowCycles>100</workflowCycles>
   <maxProtocolIterations>0</maxProtocolIterations>
   <systemType>SOLO_LOOP</systemType>
   <ratingType>SCORE</ratingType>
