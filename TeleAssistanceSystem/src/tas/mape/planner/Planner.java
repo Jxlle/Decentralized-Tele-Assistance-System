@@ -130,7 +130,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public List<ServiceCombination> calculateNewServiceCombinations(PlannerMessageContent content) {
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(knowledge.getSystemRequirement());
-		return requirementClass.getNewServiceCombinations(availableServiceCombinations, getFailureRates(content), knowledge);
+		return requirementClass.getNewServiceCombinations(availableServiceCombinations, content.getPublicServiceUsage(), knowledge);
 	}
 	
 	/**
@@ -182,22 +182,6 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
-	 * Unpack the given content of a planner message and return the calculated failure rates
-	 * @param content the given planner message content
-	 * @return the calculated failure rates map
-	 */
-	public Map<String, Double> getFailureRates(PlannerMessageContent content) {
-		
-		Map<String, Double> failureRates = new HashMap<String, Double>();
-		
-		for (Map.Entry<String, Integer> entry : content.getPublicServiceUsage().entrySet()) {
-			failureRates.put(entry.getKey(), knowledge.getApproximatedServiceFailureRate(entry.getKey(), entry.getValue()));
-		}
-		
-		return failureRates;
-	}
-	
-	/**
 	 * Return the currently stored registry endpoints in the knowledge component
 	 * @return the currently stored registry endpoints in the knowledge component
 	 */
@@ -238,7 +222,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * registry endpoint present in a given list of registry endpoints
 	 * @param serviceCombination the given service combination 
 	 * @param registryEndpoints the given registry endpoints
-	 * @return the calculated service loads map
+	 * @return the calculated service loads map containing endpoint (key), load (value) data
 	 */
 	private Map<String, Integer> getServiceLoads(ServiceCombination serviceCombination, List<String> registryEndpoints) {
 		
@@ -252,7 +236,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 				
 				if (registryEndpoints.contains(service.getServiceRegistryEndpoint())) {
 					int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(service));
-					serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? 1 : v + serviceLoad);
+					serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? serviceLoad : v + serviceLoad);
 				}		
 			}
 		}

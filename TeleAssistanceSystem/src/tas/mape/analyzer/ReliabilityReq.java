@@ -67,9 +67,9 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 	}
 
 	/**
-	 * Re-rank the given service combinations with a given map of service failure rates and given knowledge
+	 * Re-rank the given service combinations with a given map of service loads and given knowledge
 	 * @param serviceCombinations the given service combinations
-	 * @param serviceFailureRates the given map of service failure rates
+	 * @param serviceLoads the given map of service loads
 	 * @param knowledge the given knowledge
 	 * @return the new service combinations
 	 * @throws IllegalArgumentException the given service combination rating type has no implementation 
@@ -77,7 +77,7 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 	 */
 	@Override
 	public List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
-			Map<String, Double> serviceFailureRates, Knowledge knowledge) {
+			Map<String, Integer> serviceLoads, Knowledge knowledge) {
 		
 		List<Comparable<?>> scoreList = new ArrayList<>();
 		
@@ -85,7 +85,7 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 		
 		case SCORE:	
 			for (int i = 0; i < serviceCombinations.size(); i++) {
-				scoreList.add(GetNumberRatingDouble(getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceFailureRates, knowledge)));
+				scoreList.add(GetNumberRatingDouble(getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceLoads, knowledge)));
 			}
 			
 			break;
@@ -93,7 +93,7 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 		case CLASS:	
 			for (int i = 0; i < serviceCombinations.size(); i++) {
 				scoreList.add(getClassRating(knowledge.getGoals(), 
-						getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceFailureRates, knowledge), usedProperty));	
+						getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceLoads, knowledge), usedProperty));	
 			}
 			
 			break;

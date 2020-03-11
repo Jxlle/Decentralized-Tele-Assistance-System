@@ -66,15 +66,15 @@ public class CostReq extends AbstractWorkflowQoSRequirement {
 	}
 
 	/**
-	 * Re-rank the given service combinations with a given map of service failure rates and given knowledge
+	 * Re-rank the given service combinations with a given map of service loads and given knowledge
 	 * @param serviceCombinations the given service combinations
-	 * @param serviceFailureRates the given map of service failure rates
+	 * @param serviceLoads the given map of service loads
 	 * @param knowledge the given knowledge
 	 * @return the new service combinations
 	 */
 	@Override
 	public List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
-			Map<String, Double> serviceFailureRates, Knowledge knowledge) {
+			Map<String, Integer> serviceLoads, Knowledge knowledge) {
 		
 		return serviceCombinations;
 	}

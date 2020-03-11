@@ -124,9 +124,9 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 	}
 
 	/**
-	 * Re-rank the given service combinations with a given map of service failure rates and given knowledge
+	 * Re-rank the given service combinations with a given map of service loads and given knowledge
 	 * @param serviceCombinations the given service combinations
-	 * @param serviceFailureRates the given map of service failure rates
+	 * @param serviceLoads the given map of service loads
 	 * @param knowledge the given knowledge
 	 * @return the new service combinations
 	 * @throws IllegalArgumentException the given service combination rating type has no implementation 
@@ -134,7 +134,7 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 	 */
 	@Override
 	public List<ServiceCombination> getNewServiceCombinations(List<ServiceCombination> serviceCombinations, 
-			Map<String, Double> serviceFailureRates, Knowledge knowledge) throws IllegalArgumentException {
+			Map<String, Integer> serviceLoads, Knowledge knowledge) throws IllegalArgumentException {
 		
 		List<Comparable<?>> scoreListCost = new ArrayList<>();
 		List<Comparable<?>> scoreListFailureRate = new ArrayList<>();
@@ -147,7 +147,8 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			// Calculate requirement scores
 			for (int i = 0; i < serviceCombinations.size(); i++) {
 				scoreListCost.add((double) GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), "Cost")));
-				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceFailureRates, knowledge)));
+				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalApproximatedFailureRateValue(serviceCombinations.get(i), 
+						serviceLoads, knowledge)));
 			}
 			
 			// Initialize lists
@@ -205,7 +206,8 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			// Calculate requirement scores
 			for (int i = 0; i < serviceCombinations.size(); i++) {
 				scoreListCost.add(getClassRating(knowledge.getGoals(), getTotalValue(serviceCombinations.get(i), "Cost"), "Cost"));
-				scoreListFailureRate.add(getClassRating(knowledge.getGoals(), getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceFailureRates, knowledge), "FailureRate"));
+				scoreListFailureRate.add(getClassRating(knowledge.getGoals(), getTotalApproximatedFailureRateValue(serviceCombinations.get(i), 
+						serviceLoads, knowledge), "FailureRate"));
 			}
 			
 			// Calculate total class for each service combination
