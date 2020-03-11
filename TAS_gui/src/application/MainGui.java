@@ -2,7 +2,6 @@ package application;
 	
 import java.io.File;
 
-import tas.adaptation.TASStart;
 import tas.services.log.Log;
 import application.utility.Utility;
 import application.view.controller.ApplicationController;

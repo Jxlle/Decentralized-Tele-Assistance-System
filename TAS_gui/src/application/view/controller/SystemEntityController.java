@@ -4,9 +4,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -49,7 +47,6 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CombinationStrategy;
 import tas.mape.knowledge.Goal;
-import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.MAPEKComponent.Builder;
 import tas.mape.system.entity.SystemEntity;
@@ -260,10 +257,6 @@ public class SystemEntityController implements Initializable {
                     		else {
 
                     			switch (attribute.getName()) {
-                    			
-                    				case "Planner Endpoint":
-                    					plannerEndpoint = (String) realValue;
-                    					break;
                     					
                     				case "Entity Name":
                     					entityName = (String) realValue;
@@ -290,7 +283,6 @@ public class SystemEntityController implements Initializable {
                 }
         );
 		
-		entityData.add(new SystemEntityPropertyEntry("Planner Endpoint", "String", ""));
 		entityData.add(new SystemEntityPropertyEntry("Entity Name", "String", ""));
 		entityData.add(new SystemEntityPropertyEntry("Load Failure Delta", "Integer", ""));
 		entityData.add(new SystemEntityPropertyEntry("Combination Limit", "Integer", ""));
@@ -311,10 +303,6 @@ public class SystemEntityController implements Initializable {
                 } 
                 else {
                 	switch(entry.getName()) {
-                		case "Planner Endpoint":
-                			tooltip.setText("The unique planner component identifier\n"
-                					+ "used for communication");
-                			break;
                 			
                 		case "Entity Name":
                 			tooltip.setText("The unique system entity name");
@@ -495,18 +483,6 @@ public class SystemEntityController implements Initializable {
 		deleteColumn.setCellFactory(cellFactoryDelete);
 	}
 	
-	private boolean hasAllGoalTypes() {
-		
-		HashSet<GoalType> goalTypes = new HashSet<>();
-		HashSet<GoalType> allGoalTypes = new HashSet<>(Arrays.asList(GoalType.values()));
-		
-		for (Goal goal : goals) {
-			goalTypes.add(goal.getType());
-		}
-		 
-		return goalTypes.equals(allGoalTypes);
-	}
-	
 	private void initializeAddButton() {
 		
 		addBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -523,13 +499,6 @@ public class SystemEntityController implements Initializable {
 		    		Alert fail = new Alert(AlertType.WARNING);
 		            fail.setHeaderText("MISSING CONTENT");
 		            fail.setContentText("No Service registry selected.");
-		            fail.showAndWait();	
-		    	}
-		    	else if (!hasAllGoalTypes()) {
-		    		Alert fail = new Alert(AlertType.WARNING);
-		            fail.setHeaderText("MISSING CONTENT");
-		            fail.setContentText("There needs to be atleast one threshold goal of each type to work with all possible system requirements."
-		            		+ "These goals are only used in CLASS type system runs.");
 		            fail.showAndWait();	
 		    	}
 		    	else if (generationStrategyComboBox.getValue() == null) {
@@ -559,7 +528,7 @@ public class SystemEntityController implements Initializable {
 		    		
 		    		try {
 						builder.initializeKnowledge(loadFailureDelta, registryEndpoints)
-						 	   .initializePlanner(plannerEndpoint)
+						 	   .initializePlanner()
 							   .initializeAnalyzer(combinationLimit, generationStrategyComboBox.getValue().getStrategy())
 							   .initializeMonitor(minFailureDelta, failureChange);
 					} catch (InstantiationException e) {

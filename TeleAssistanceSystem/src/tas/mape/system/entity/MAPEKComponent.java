@@ -62,12 +62,11 @@ public class MAPEKComponent {
 		
 		/**
 		 * Creates a new builder where the planner component with its given parameters has been initialized.
-		 * @param plannerEndpoint the given planner end point
 		 * @return the new Builder object with initialized planner
 		 * @throws InstantiationException throw when the knowledge field is null
 		 * @throws InstantiationException throw when the executor field is null
 		 */
-		public Builder initializePlanner(String plannerEndpoint) throws InstantiationException {
+		public Builder initializePlanner() throws InstantiationException {
 			
 			if (knowledge == null) {
 				throw new InstantiationException("Knowledge field is null!");
@@ -77,7 +76,7 @@ public class MAPEKComponent {
 				throw new InstantiationException("Executor field is null!");
 			}
 			
-			planner = new Planner(plannerEndpoint, knowledge, executor);
+			planner = new Planner(knowledge, executor);
 			return this;
 		}
 		
@@ -251,14 +250,6 @@ public class MAPEKComponent {
 	 */
 	public PlannerProbe getProbe() {
 		return planner.getProbe();
-	}
-	
-	/**
-	 * Set the planner endpoint to a new given endpoint
-	 * @param endpoint the new planner endpoint
-	 * */
-	public void setEndpoint(String endpoint) {
-		planner.setEndpoint(endpoint);
 	}
 	
 	/**

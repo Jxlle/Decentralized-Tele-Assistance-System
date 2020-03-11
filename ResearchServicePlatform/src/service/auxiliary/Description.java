@@ -16,12 +16,12 @@ public class Description {
 	}
 	
 	@Override
-	public boolean equals(Object obj){
+	public boolean equals(Object obj) {
 		
 		if (obj == null) return false;
 		if (obj == this) return true;
 		
-		if(obj instanceof Description){
+		if (obj instanceof Description) {
 			Description description=(Description)obj;
 			if(description.serviceType.equals(serviceType) && description.opName.equals(opName))
 				return true;
@@ -31,7 +31,7 @@ public class Description {
 	}
 	
 	@Override
-	public String toString(){
+	public String toString() {
 	    return serviceType + "." + opName;
 	}
 }

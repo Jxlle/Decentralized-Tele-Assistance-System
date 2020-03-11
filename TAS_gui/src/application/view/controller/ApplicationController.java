@@ -42,13 +42,13 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.data.systemprofile.SystemProfile;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.data.systemprofile.SystemProfileExecutor;
-import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.entity.WorkflowExecutor;
 import tas.mape.system.structure.AbstractSystem;
 import tas.mape.system.structure.DoubleLoopSystem;
 import tas.mape.system.structure.SoloLoopSystem;
+import tas.workflowAnalyzer.WorkflowAnalyzer;
 import tas.mape.system.entity.MAPEKComponent.Builder;
 import application.MainGui;
 import application.model.CostEntry;
@@ -416,7 +416,7 @@ public class ApplicationController implements Initializable {
 		
 		try {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("se.lnu.service.registry")))
-			 	   .initializePlanner("planner")
+			 	   .initializePlanner()
 				   .initializeAnalyzer(100, 1)
 				   .initializeMonitor(0.05, 0.05);
 		} catch (InstantiationException e) {
@@ -435,7 +435,7 @@ public class ApplicationController implements Initializable {
 		
 		try {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("se.lnu.service.registry", "se.lnu.service.registry2")))
-			 	   .initializePlanner("planner")
+			 	   .initializePlanner()
 				   .initializeAnalyzer(100, 1)
 				   .initializeMonitor(0.05, 0.05);
 		} catch (InstantiationException e) {

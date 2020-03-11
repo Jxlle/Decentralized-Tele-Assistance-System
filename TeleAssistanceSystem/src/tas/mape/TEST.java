@@ -30,7 +30,6 @@ import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.communication.message.ComponentMessageHost;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.executor.Executor;
-import tas.mape.knowledge.WorkflowAnalyzer;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalRelation;
 import tas.mape.knowledge.Goal.GoalType;
@@ -50,6 +49,7 @@ import tas.services.medical.MedicalAnalysisService;
 import tas.services.qos.MinCostQoS;
 import tas.services.qos.PreferencesQoS;
 import tas.services.qos.ReliabilityQoS;
+import tas.workflowAnalyzer.WorkflowAnalyzer;
 
 @SuppressWarnings("unused")
 public class TEST {

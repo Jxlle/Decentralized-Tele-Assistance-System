@@ -27,6 +27,7 @@ import tas.mape.probes.PlannerProbe;
 public class Planner extends CommunicationComponent<PlannerMessage> {
 
 	// Fields
+	private static int id;
 	private Executor executor;
 	private Knowledge knowledge;
 	private PlannerProbe probe;
@@ -37,16 +38,16 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private List<PlanComponent> plan;
 	
 	/**
-	 * Create a planner with a given endpoint, knowledge and executor
-	 * @param endpoint the given endpoint (identifier)
+	 * Create a planner with a given knowledge and executor
 	 * @param knowledge the given knowledge
 	 * @param executor the given executor
 	 */
-	public Planner(String endpoint, Knowledge knowledge, Executor executor) {
-		super(endpoint);
+	public Planner(Knowledge knowledge, Executor executor) {
+		super("planner_" + id);
 		this.knowledge = knowledge;
 		this.executor = executor;
 		probe = new PlannerProbe();
+		id++;
 	}
 	
 	/**
