@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
+import tas.mape.knowledge.Goal;
+import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.probes.SystemRunProbe;
 import tas.mape.system.entity.SystemEntity;
 
@@ -42,7 +44,7 @@ public class SystemRunChartController {
 		NumberAxis yAxis = new NumberAxis("Total Service Combination Cost", 0, (probe.getMaxCost() + maximumDelta), 1);
 		
 		// Set chart position & size
-		ScatterChart<Number, Number> systemRunChart = new ScatterChart<Number, Number>(xAxis, yAxis); 
+		ScatterLineChart<Number, Number> systemRunChart = new ScatterLineChart<Number, Number>(xAxis, yAxis); 
 		systemRunChartPane.getChildren().add(systemRunChart);
 		systemRunChart.prefWidthProperty().bind(systemRunChartPane.widthProperty());
 		systemRunChart.prefHeightProperty().bind(systemRunChartPane.heightProperty());
@@ -51,6 +53,7 @@ public class SystemRunChartController {
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = probe.getDataPoints();
 		
 		for (String entity : dataPoints.keySet()) {
+			
 			XYChart.Series<Number, Number> series = new Series<Number, Number>();
 			series.setName(entity);
 			
@@ -60,6 +63,18 @@ public class SystemRunChartController {
 			}
 			
 			systemRunChart.getData().add(series);
+			
+			List<Goal> goals = probe.getConnectedEntity(entity).getManagingSystem().getGoals();
+			
+			for (Goal goal : goals) {
+				if (goal.getType().equals(GoalType.COST)) {
+					systemRunChart.addHorizontalValueMarker(new Data<>(0, goal.getValue()));
+				}
+				else if (goal.getType().equals(GoalType.FAILURE_RATE)) {
+					systemRunChart.addVerticalValueMarker(new Data<>(goal.getValue(), 0));
+				}
+			}
+			
 		}
 	}
 }

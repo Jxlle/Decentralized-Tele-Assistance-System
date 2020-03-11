@@ -42,6 +42,9 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.data.systemprofile.SystemProfile;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.data.systemprofile.SystemProfileExecutor;
+import tas.mape.knowledge.Goal;
+import tas.mape.knowledge.Goal.GoalRelation;
+import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.entity.WorkflowExecutor;
@@ -426,6 +429,8 @@ public class ApplicationController implements Initializable {
 		
 		MAPEKComponent component = builder.build();
 		SystemEntity systemEntity = new SystemEntity("Test Entity", workflowExecutor, component);
+		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.HIGHER_OR_EQUAL_TO, 10));
+		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.HIGHER_OR_EQUAL_TO, 0.25));
 		addEntityToList(systemEntity);
 		
 		workflowExecutor = new WorkflowExecutor(Arrays.asList(GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry"), 

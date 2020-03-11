@@ -52,6 +52,15 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	}
 	
 	/**
+	 * Return the connected entity with the given entity name
+	 * @param entityName
+	 * @return the connected entity with the given entity name
+	 */
+	public SystemEntity getConnectedEntity(String entityName) {
+		return connectedEntities.stream().filter(x -> x.getEntityName().equals(entityName)).findFirst().orElse(null);
+	}
+	
+	/**
 	 * Return the maximum cost value in the probe data
 	 * @return the maximum cost value in the probe data
 	 */
