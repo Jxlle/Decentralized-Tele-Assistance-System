@@ -1,8 +1,12 @@
-package tas.mape.knowledge;
+package tas.workflowAnalyzer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import service.adaptation.probes.interfaces.WorkflowProbeInterface;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import service.auxiliary.StaticTree;
 import service.auxiliary.WeightedCollection;
 
 /**
@@ -14,12 +18,16 @@ public class WorkflowAnalyzerProbe implements WorkflowProbeInterface {
 
 	// Workflow description data
 	private WeightedCollection<Description> usedDescriptions = new WeightedCollection<Description>();
+	private List<Description> currentWorkflowServices = new ArrayList<>();
+	private StaticTree<Description> workflowServiceTree = new StaticTree<>();
 	
 	/**
 	 * Reset probe
 	 */
 	public void reset() {
 		usedDescriptions = new WeightedCollection<Description>();
+		currentWorkflowServices = new ArrayList<>();
+		workflowServiceTree = new StaticTree<>();
 	}
 	
 	/**
@@ -29,10 +37,18 @@ public class WorkflowAnalyzerProbe implements WorkflowProbeInterface {
 	public WeightedCollection<Description> getUsedDescriptions() {
 		return usedDescriptions;
 	}
+	
+	/**
+	 * Return the workflow service tree
+	 * @return the workflow service tree
+	 */
+	public StaticTree<Description> getServiceTree() {
+		return workflowServiceTree;
+	}
 
 	/**
 	 * Gets called when a workflow service is invoked.
-	 * The description collection is changed accordingly.
+	 * The description collection and workflow service tree is changed accordingly.
 	 */
 	@Override
 	public void serviceOperationInvoked(ServiceDescription description, String opName, Object[] params) {
@@ -45,6 +61,18 @@ public class WorkflowAnalyzerProbe implements WorkflowProbeInterface {
 		else {
 			usedDescriptions.add(typeAndOperation, 1);
 		}
+		
+		currentWorkflowServices.add(typeAndOperation);
+	}
+
+	/**
+	 * Gets called when the workflow ended.
+	 * The workflow service tree is updated
+	 */
+	@Override
+	public void workflowEnded(Object result, Object[] params) {
+		workflowServiceTree.addNodes(currentWorkflowServices);
+		currentWorkflowServices = new ArrayList<>();
 	}
 	
 	/**
@@ -79,12 +107,4 @@ public class WorkflowAnalyzerProbe implements WorkflowProbeInterface {
 	@Override
 	public void workflowStarted(Object[] params) {
 	}
-
-	/**
-	 * Not used
-	 */
-	@Override
-	public void workflowEnded(Object result, Object[] params) {
-	}
-
 }

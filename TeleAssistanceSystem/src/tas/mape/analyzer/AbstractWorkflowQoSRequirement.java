@@ -11,12 +11,15 @@ import java.util.Map;
 
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import service.auxiliary.StaticTree;
 import service.auxiliary.WeightedCollection;
+import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
+import tas.services.profiles.ServiceFailureLoadProfile;
 
 /**
  * An abstract class for choosing service combinations in the analyzer step of the MAPE-K loop 
@@ -25,6 +28,9 @@ import tas.mape.planner.ServiceCombination;
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public abstract class AbstractWorkflowQoSRequirement {
+	
+	// Local map used for storing failure rates
+	private HashMap<Description, Double> failureRates;
 	
 	/**
 	 * Generate usable service combinations with a given generation strategy, combination limit, rating type and knowledge 
@@ -217,21 +223,67 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 */
 	public double getTotalApproximatedFailureRateValue(Map<Description, WeightedCollection<ServiceDescription>> combination, Knowledge knowledge) {
 		
+		failureRates = new HashMap<>();
 		double totalValue = 0;
 		
-		for (Description description : combination.keySet()) {
+		// Get workflow service tree from knowlegde
+		StaticTree<Description> tree = knowledge.getWorkflowServiceTree();
+		
+		// Init simple failure rates per description
+		for (Description description : combination.keySet()) {	
+			setSimpleServiceFailureRate(combination, description, knowledge);
+		}
+		
+		// Calculate full failure rate
+		for (Description description : combination.keySet()) {	
+			double subValue = failureRates.get(description) * knowledge.getServiceUsageChance(description);
+			List<Description> workflowServiceFlow = tree.findNodePath(description);
 			
-			for (ServiceDescription service : combination.get(description).getItems()) {
+			for (Description desc : workflowServiceFlow) {
 				
-				if (service.getCustomProperties().containsKey("FailureRate")) {
-					
-					double useChance = combination.get(description).getChance(service);				
-					totalValue += knowledge.getApproximatedTotalServiceFailureRate(service.getServiceEndpoint(), description, useChance);
+				if (!description.equals(desc)) {
+					subValue *= 1 - failureRates.get(description);
 				}
 			}
+			
+			totalValue += subValue;
 		}
 		
 		return totalValue;
+	}
+	
+	/**
+	 * Calculate and set the simple service failure rate for a given description (= service type & operation name) with a given service combination,
+	 * description and knowledge. This failure rate does not take the service flow of the workflow into account. The full accurate failure rate 
+	 * is calculated above. 
+	 * @param combination the given service combination
+	 * @param description the given description
+	 * @param Knowledge the given knowledge
+	 * @throws IllegalStateException throws when the failure rate map already contains description data
+	 */
+	private void setSimpleServiceFailureRate(Map<Description, WeightedCollection<ServiceDescription>> combination, Description description, 
+			Knowledge knowledge) throws IllegalStateException {
+		
+		if (failureRates.containsKey(description)) {
+			throw new IllegalStateException("The failure rate map already contains description data!");
+		}
+		
+		double totalValue = 0;
+		
+		for (ServiceDescription service : combination.get(description).getItems()) {
+			if (service.getCustomProperties().containsKey("FailureRate")) {
+				
+				// The failure rate (not taking services that activate this service in count) is calculated as follows:
+				//
+				// failrate = chance that this service for this service type is used 
+				//            * approximated fail rate
+				double useChance = combination.get(description).getChance(service);	
+				totalValue += useChance * knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), 
+						knowledge.getServiceLoad(description, useChance));
+			}
+		}
+		
+		failureRates.put(description, totalValue);
 	}
 	
 	/**
@@ -263,6 +315,40 @@ public abstract class AbstractWorkflowQoSRequirement {
 		}
 		
 		return totalValue;
+	}
+	
+	/**
+	 * Calculate and set the simple service failure rate for a given description (= service type & operation name) with a given service combination,
+	 * description, knowledge and load. This failure rate does not take the service flow of the workflow into account. The full accurate failure rate 
+	 * is calculated above. 
+	 * @param combination the given service combination
+	 * @param description the given description
+	 * @param Knowledge the given knowledge
+	 * @param load the given load
+	 * @throws IllegalStateException throws when the failure rate map already contains description data
+	 */
+	private void setSimpleServiceFailureRate(Map<Description, WeightedCollection<ServiceDescription>> combination, Description description, 
+			Knowledge knowledge, int load) throws IllegalStateException {
+		
+		if (failureRates.containsKey(description)) {
+			throw new IllegalStateException("The failure rate map already contains description data!");
+		}
+		
+		double totalValue = 0;
+		
+		for (ServiceDescription service : combination.get(description).getItems()) {
+			if (service.getCustomProperties().containsKey("FailureRate")) {
+				
+				// The failure rate (not taking services that activate this service in count) is calculated as follows:
+				//
+				// failrate = chance that this service for this service type is used 
+				//            * approximated fail rate
+				double useChance = combination.get(description).getChance(service);	
+				totalValue += useChance * knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), load);
+			}
+		}
+		
+		failureRates.put(description, totalValue);
 	}
 	
 	/**

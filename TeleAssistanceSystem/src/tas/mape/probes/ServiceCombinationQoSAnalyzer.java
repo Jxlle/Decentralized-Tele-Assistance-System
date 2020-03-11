@@ -1,7 +1,11 @@
 package tas.mape.probes;
 
+import java.util.HashMap;
+import java.util.List;
+
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import service.auxiliary.StaticTree;
 import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.knowledge.Knowledge;
@@ -14,6 +18,9 @@ import tas.services.profiles.ServiceFailureLoadProfile;
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
 public class ServiceCombinationQoSAnalyzer {
+	
+	// Local map used for storing failure rates
+	private HashMap<Description, Double> failureRates;
 	
 	/**
 	 * Calculate and return the total cost of the given service combination
@@ -32,32 +39,75 @@ public class ServiceCombinationQoSAnalyzer {
 	 * @throws IllegalStateException throws when the required profile 'ServiceFailureLoadProfile' was not found
 	 */
 	public double getRealServiceCombinationFailureRate(ServiceCombination combination, Knowledge knowledge) throws IllegalStateException {
+		
+		failureRates = new HashMap<>();
 		double totalValue = 0;
 		
-		for (Description description : combination.getDescriptions()) {
+		// Get workflow service tree from knowlegde
+		StaticTree<Description> tree = knowledge.getWorkflowServiceTree();
+		
+		// Init simple failure rates per description
+		for (Description description : combination.getDescriptions()) {	
+			setSimpleServiceFailureRate(combination, description);
+		}
+		
+		// Calculate full failure rate
+		for (Description description : combination.getDescriptions()) {	
+			double subValue = failureRates.get(description) * knowledge.getServiceUsageChance(description);
+			List<Description> workflowServiceFlow = tree.findNodePath(description);
 			
-			for (ServiceDescription service : combination.getAllServices(description).getItems()) {
+			for (Description desc : workflowServiceFlow) {
 				
-				if (service.getCustomProperties().containsKey("FailureRate")) {
-					
-					// Find service failure load profile to get the real failure rate
-					ServiceFailureLoadProfile profile = 
-							(ServiceFailureLoadProfile) GlobalServiceInfo.getService(service.getServiceName())
-					.getServiceProfiles().stream().filter(x -> x.getClass().equals(ServiceFailureLoadProfile.class)).findAny().orElse(null);
-					
-					if (profile == null) {
-						throw new IllegalStateException("The required profile 'ServiceFailureLoadProfile' was not found!");
-					}
-					
-					// Calculate current service failure rate value and add to the current value
-					double useChance = combination.getAllServices(description).getChance(service);	
-					totalValue += useChance * knowledge.getServiceUsageChance(description) 
-							* profile.getTableEntry(service).getValue() * (double) service.getCustomProperties().get("FailureRate");
+				if (!description.equals(desc)) {
+					subValue *= 1 - failureRates.get(description);
 				}
 			}
+			
+			totalValue += subValue;
 		}
 		
 		return totalValue;
+	}
+	
+	/**
+	 * Calculate and set the simple service failure rate for a given description (= service type & operation name) with a given service combination
+	 * and description. This failure rate does not take the service flow of the workflow into account. The full accurate failure rate is calculated above. 
+	 * @param combination the given service combination
+	 * @param description the given description
+	 * @throws IllegalStateException throws when the failure rate map already contains description data
+	 * @throws IllegalStateException throws when the required profile 'ServiceFailureLoadProfile' was not found
+	 */
+	private void setSimpleServiceFailureRate(ServiceCombination combination, Description description) throws IllegalStateException {
+		
+		if (failureRates.containsKey(description)) {
+			throw new IllegalStateException("The failure rate map already contains description data!");
+		}
+		
+		double totalValue = 0;
+		
+		for (ServiceDescription service : combination.getAllServices(description).getItems()) {
+			if (service.getCustomProperties().containsKey("FailureRate")) {
+				
+				// Find service failure load profile to get the real failure rate
+				ServiceFailureLoadProfile profile = 
+						(ServiceFailureLoadProfile) GlobalServiceInfo.getService(service.getServiceName())
+				.getServiceProfiles().stream().filter(x -> x.getClass().equals(ServiceFailureLoadProfile.class)).findAny().orElse(null);
+				
+				if (profile == null) {
+					throw new IllegalStateException("The required profile 'ServiceFailureLoadProfile' was not found!");
+				}
+				
+				// Failure rate not present in the hashmap.
+				// The failure rate (not taking services that activate this service in count) is calulcated as follows:
+				//
+				// failrate = chance that this service for this service type is used 
+				//            * actual fail rate (= default fail rate * profile additional fail rate multiplier (depends on the service load))
+				double useChance = combination.getAllServices(description).getChance(service);	
+				totalValue += useChance * profile.getTableEntry(service).getValue() * (double) service.getCustomProperties().get("FailureRate");
+			}
+		}
+		
+		failureRates.put(description, totalValue);
 	}
 
 }

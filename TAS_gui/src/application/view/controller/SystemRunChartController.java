@@ -2,12 +2,10 @@ package application.view.controller;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
@@ -40,7 +38,7 @@ public class SystemRunChartController {
 	public void generateSystemRunChart() {
 		
 		// Define chart axis
-		NumberAxis xAxis = new NumberAxis("Total Service Combination Failure Rate", 0, 2, 1);
+		NumberAxis xAxis = new NumberAxis("Total Service Combination Failure Rate (approximated by test runs)", 0, 1, 1);
 		NumberAxis yAxis = new NumberAxis("Total Service Combination Cost", 0, (probe.getMaxCost() + maximumDelta), 1);
 		
 		// Set chart position & size

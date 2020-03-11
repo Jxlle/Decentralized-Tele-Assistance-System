@@ -151,7 +151,8 @@ public class GlobalServiceInfo {
      * @param file the given file
      */
     public static void loadData(File file) {
-    	GlobalServiceInfoLoader.loadFromXml(file);
+    	ChangeToDefaultServices();
+    	//GlobalServiceInfoLoader.loadFromXml(file);
     }
     
     /**
@@ -241,6 +242,7 @@ public class GlobalServiceInfo {
 		drugService.getServiceDescription().getCustomProperties().put("Cost", 2.0);
 		drugService.getServiceDescription().setOperationCost("changeDoses", 5.0);
 		drugService.getServiceDescription().setOperationCost("changeDrug", 5.0);
+		drugService.getServiceDescription().getCustomProperties().put("FailureRate", 0.25);
 		drugService.startService();
 		drugService.register(serviceRegistry);
 		

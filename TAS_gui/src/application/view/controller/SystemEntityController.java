@@ -113,7 +113,7 @@ public class SystemEntityController implements Initializable {
 	
 	private int loadFailureDelta, combinationLimit;
 	private double minFailureDelta, failureChange;
-	private String workflowPath, plannerEndpoint, entityName;
+	private String workflowPath, entityName;
 	private String workflowFilePath = "resources" + File.separator + "files" + File.separator + "workflow" + File.separator;
 	private Stage stage;
 	private ApplicationController parent;

@@ -1,4 +1,4 @@
-package tas.mape;
+package tas.mape.test;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -15,6 +15,7 @@ import profile.SystemRequirementType;
 import service.adaptation.effectors.WorkflowEffector;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import service.auxiliary.StaticTree;
 import service.auxiliary.WeightedCollection;
 import service.registry.ServiceRegistry;
 import tas.data.serviceinfo.GlobalServiceInfo;
@@ -330,6 +331,23 @@ public class TEST {
 		profile.addVariable(pick);
 		
 		SystemProfileDataHandler.writeToXml(profile, "test");
+		
+		
+		
+		StaticTree tree = new StaticTree();
+		Description d1 = new Description("test", "test");
+		Description d2 = new Description("test", "test");
+		Description d3 = new Description("test2", "test1");
+		Description d4 = new Description("test3", "test4");
+		
+		tree.addNodes(Arrays.asList(d1, d3));
+		System.out.println("----------------------");
+		tree.addNodes(Arrays.asList(d1, d3));
+		System.out.println("----------------------");
+		tree.addNodes(Arrays.asList(d4, d2));
+		System.out.println("----------------------");
+		
+		System.out.println("TREE SIZE: " + tree.getTreeSize());
 
 	}
 }

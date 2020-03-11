@@ -10,6 +10,7 @@ import javafx.util.Pair;
 import profile.SystemRequirementType;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import service.auxiliary.StaticTree;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CostAndReliabilityReq;
@@ -29,6 +30,9 @@ public class Knowledge {
 	
 	// Name of the system entity where this component is a part of
 	private String parentEntityName;
+	
+	// Tree structure of the workflow, used to calculate total service combination failure rate
+	private StaticTree<Description> workflowServiceTree;
 	
 	// Delta value used for updating the service failure rate map
 	private int loadFailureDelta;
@@ -133,6 +137,22 @@ public class Knowledge {
 		}
 		
 		this.parentEntityName = parentEntityName;
+	}
+	
+	/**
+	 * Return the stored workflow service tree
+	 * @return the stored workflow service tree
+	 */
+	public StaticTree<Description> getWorkflowServiceTree() {
+		return workflowServiceTree;
+	}
+	
+	/**
+	 * Set the current workflow service tree to the given tree
+	 * @param workflowServiceTree the given tree
+	 */
+	public void setWorkflowServiceTree(StaticTree<Description> workflowServiceTree) {
+		this.workflowServiceTree = workflowServiceTree;
 	}
 	
 	/**
@@ -312,8 +332,19 @@ public class Knowledge {
 	 * @return the approximated total failure rate
 	 */
 	public double getApproximatedTotalServiceFailureRate(String serviceEndpoint, Description description, double useChance) {
-		return useChance * getApproximatedServiceFailureRate(serviceEndpoint, getServiceLoad(description, useChance)) 
-				* servicesUsageChance.get(description);
+		return useChance * getApproximatedServiceFailureRate(serviceEndpoint, getServiceLoad(description, useChance));
+	}
+	
+	/**
+	 * Calculate the approximated total failure rate for a given service endpoint, description, usage chance and load
+	 * @param serviceEndpoint the given service endpoint
+	 * @param description the given service description
+	 * @param useChance the given usage chance
+	 * @param load the given service load
+	 * @return the approximated total failure rate
+	 */
+	public double getApproximatedTotalServiceFailureRate(String serviceEndpoint, Description description, double useChance, int load) {
+		return useChance * getApproximatedServiceFailureRate(serviceEndpoint, load);
 	}
 	
 	/**

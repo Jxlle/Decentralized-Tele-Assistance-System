@@ -1,4 +1,4 @@
-package tas.mape.knowledge;
+package tas.workflowAnalyzer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +10,7 @@ import profile.SystemProfileValue;
 import profile.SystemProfileVariable;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import service.auxiliary.StaticTree;
 import service.auxiliary.WeightedCollection;
 import service.composite.CompositeService;
 import service.composite.CompositeServiceClient;
@@ -29,6 +30,8 @@ public class WorkflowAnalyzer {
 	private static int currentSteps;
 	private static boolean isStopped, hasBeenStopped;
 	private static WorkflowAnalyzerProbe workflowAnalyzerProbe = new WorkflowAnalyzerProbe();
+	private static Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance;
+	private static StaticTree<Description> workflowServiceTree;
 	
 	/**
 	 * Private constructor
@@ -58,12 +61,33 @@ public class WorkflowAnalyzer {
     }
     
     /**
+     * Return the usable services and chance map
+     * @return the usable services and chance map. 
+     *         A map containing a usage chance and list of used services 
+     *         for each used service type & operation combination.
+     */
+    public static Map<Description, Pair<List<ServiceDescription>, Double>> getUsableServicesAndChance() {
+    	return usableServicesAndChance;
+    }
+    
+    /**
+     * Return the workflow service tree
+     * @return the workflow service tree. 
+     *         A structure containing the workflow service type info needed to calculate the total
+     *         failure rate of a service combination.
+     */
+    public static StaticTree<Description> getWorkflowServiceTree() {
+    	StaticTree<Description> result = workflowServiceTree;
+    	workflowServiceTree = null;
+    	return result;
+    }
+    
+    /**
      * Analyze a given workflow and return a result used in the knowledge component
      * @param workflowPath the workflow path
      * @param compositeService the composite service
-     * @return a map containing a usage chance and list of used services for each used service type & operation combination
      */
-    public static Map<Description, Pair<List<ServiceDescription>, Double>> analyzeWorkflow(CompositeService compositeService) { 
+    public static void analyzeWorkflow(CompositeService compositeService) { 
     	
     	// Initialize workflow probe
     	workflowAnalyzerProbe.reset();
@@ -78,15 +102,17 @@ public class WorkflowAnalyzer {
 		compositeService.setTestMode(false);
 		compositeService.getWorkflowProbe().unRegister(workflowAnalyzerProbe);
 		
-		// Return null if the analyzer has been stopped early
+		// Return if the analyzer has been stopped early
 		if (hasBeenStopped) {
 			hasBeenStopped = false;
-			return null;
+			usableServicesAndChance = null;
+			workflowServiceTree = null;
+			return;
 		}
 		
 		// Calculate and return result
 		WeightedCollection<Description> usedDescriptions = workflowAnalyzerProbe.getUsedDescriptions();
-		Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance = new HashMap<>();
+		usableServicesAndChance = new HashMap<>();
 		
 		for (Description description : usedDescriptions.getItems()) {
 			
@@ -95,8 +121,10 @@ public class WorkflowAnalyzer {
 			usableServicesAndChance.put(description, pair);
 		}
 		
-		return usableServicesAndChance;
+		workflowServiceTree = workflowAnalyzerProbe.getServiceTree();
 		
+		
+		System.err.print("TREE: " + workflowServiceTree.getTreeSize() + " \n");
 		// TODO 
 		// - in new invokeservice compositeservice method, add all services in cache to list first, or a certain amount
 		// - do not reset cache when disabling services in registry in gui to aquire correct chance values

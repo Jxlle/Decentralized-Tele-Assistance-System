@@ -7,6 +7,7 @@ import javafx.util.Pair;
 import profile.SystemRequirementType;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
+import service.auxiliary.StaticTree;
 import service.composite.CompositeService;
 import tas.mape.analyzer.Analyzer;
 import tas.mape.communication.message.ComponentMessageHost;
@@ -283,6 +284,22 @@ public class MAPEKComponent {
 	 */
 	public AbstractProtocol<PlannerMessage, Planner> getProtocol() {
 		return planner.getProtocol();
+	}
+	
+	/**
+	 * Return the stored workflow service tree
+	 * @return the stored workflow service tree
+	 */
+	public StaticTree<Description> getWorkflowServiceTree() {
+		return knowledge.getWorkflowServiceTree();
+	}
+	
+	/**
+	 * Set the current workflow service tree to the given tree
+	 * @param workflowServiceTree the given tree
+	 */
+	public void setWorkflowServiceTree(StaticTree<Description> workflowServiceTree) {
+		knowledge.setWorkflowServiceTree(workflowServiceTree);
 	}
 	
 	/**
