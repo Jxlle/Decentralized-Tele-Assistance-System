@@ -40,7 +40,7 @@ public class SystemRunChartController {
 	public void generateSystemRunChart() {
 		
 		// Define chart axis
-		NumberAxis xAxis = new NumberAxis("Total Service Combination Failure Rate (approximated by test runs)", 0, 1, 1);
+		NumberAxis xAxis = new NumberAxis("Total Service Combination Failure Rate (approximated by test runs)", 0, 1, 0.1);
 		NumberAxis yAxis = new NumberAxis("Total Service Combination Cost", 0, (probe.getMaxCost() + maximumDelta), 1);
 		
 		// Set chart position & size

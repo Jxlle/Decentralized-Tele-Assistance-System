@@ -25,6 +25,7 @@ public abstract class ComponentMessage<T extends ComponentMessageContent> extend
 	protected ComponentMessage(int id, String receiverEndpoint, String senderEndpoint, String msgType, T content) {
 		super(id, receiverEndpoint, msgType);
 		this.senderEndpoint = senderEndpoint;
+		this.content = content;
 	}
 	
 	/**

@@ -166,6 +166,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			throw new NullPointerException("Planner can't handle message message receivement, no protocol selected.");
 		}
 		
+		System.err.println("MESSAGE "  + message);
 		protocol.receiveAndHandleMessage(message, this);
 	}
 	

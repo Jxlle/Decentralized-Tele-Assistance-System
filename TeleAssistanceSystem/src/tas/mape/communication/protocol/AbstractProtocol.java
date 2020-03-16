@@ -62,7 +62,7 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	 * @return the index of the chosen component
 	 */
 	protected int getRandomComponentIndex() {
-		return ThreadLocalRandom.current().nextInt(0, getNeededAmountOfComponents() + 1);
+		return ThreadLocalRandom.current().nextInt(0, getNeededAmountOfComponents());
 	}
 	
 	/**

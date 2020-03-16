@@ -25,7 +25,7 @@ public abstract class PlannerTwoComponentProtocol extends AbstractTwoComponentPr
 	@Override
 	protected void InitializeAndSendFirstMessage(int startIndex, int... receiverIndices) {
 	
-		List<String> sharedRegistryEndpoints = components.get(0).getRegistryEndpoints();
+		sharedRegistryEndpoints = components.get(0).getRegistryEndpoints();
 		List<String> registryEndpointsOther = components.get(1).getRegistryEndpoints();
 		Planner sender = components.get(startIndex);
 		Planner receiver = components.get(receiverIndices[0]);
