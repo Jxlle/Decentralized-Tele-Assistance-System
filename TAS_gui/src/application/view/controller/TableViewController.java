@@ -201,10 +201,6 @@ public class TableViewController {
 		
 	}
 	
-	public void generateMockCostData(){
-		
-	}
-	
 	public void fillCostData(String resultFilePath){
 		
 		//costData.clear();

@@ -76,9 +76,17 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 			GlobalServiceInfo.resetServiceLoads();
 		}
 		
+		// Reset system protocol
+		entity1.getManagingSystem().setProtocol(null);
+		entity2.getManagingSystem().setProtocol(null);
+		
 		// Reset approximated failure rates table after the run
 		entity1.getManagingSystem().resetApproximatedServiceFailureRates();
 		entity2.getManagingSystem().resetApproximatedServiceFailureRates();
+		
+		// Reset system cycles
+		entity1.getManagingSystem().resetSystemCycle();
+		entity2.getManagingSystem().resetSystemCycle();
 	}
 
 	/**

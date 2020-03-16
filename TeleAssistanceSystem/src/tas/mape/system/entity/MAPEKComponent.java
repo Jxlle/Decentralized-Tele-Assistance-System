@@ -406,6 +406,21 @@ public class MAPEKComponent {
 		knowledge.setRequirementType(requirementType);
 	}
 	
+	/**
+	 * Return the current system cycle.
+	 * @return the current system cycle.
+	 */
+	public int getSystemCycle() {
+		return knowledge.getSystemCycle();
+	}
+	
+	/**
+	 * Reset the current system cycle
+	 */
+	public void resetSystemCycle() {
+		knowledge.resetSystemCycle();
+	}
+	
 	// The methods below are used to simulate the mape loop for multiple workflow entities 'concurrently'
 	// instead of using multiple threads. Using multiple threads is possible, but can introduce race conditions.
 	

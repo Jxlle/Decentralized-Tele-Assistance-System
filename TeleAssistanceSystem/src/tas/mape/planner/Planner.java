@@ -70,7 +70,10 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			this.protocol.removeComponent(this);
 		}
 		
-		protocol.addComponent(this);
+		if (protocol != null) {
+			protocol.addComponent(this);
+		}
+		
 		this.protocol = protocol;
 	}
 	

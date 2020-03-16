@@ -68,7 +68,7 @@ public abstract class CommunicationComponent<T extends ComponentMessage<?>> {
 			throw new IllegalArgumentException("Can't change message host directly!");
 		}
 		
-		if (messageHost.getListeners().get(endpoint) == null) {
+		if (messageHost != null && messageHost.getListeners().get(endpoint) == null) {
 			throw new IllegalArgumentException("Can't change message host directly!");
 		}
 		

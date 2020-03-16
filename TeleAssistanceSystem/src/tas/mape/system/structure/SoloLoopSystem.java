@@ -49,6 +49,7 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 		
 		// Reset approximated failure rates table after the run
 		entity.getManagingSystem().resetApproximatedServiceFailureRates();
+		entity.getManagingSystem().resetSystemCycle();
 		
 		System.err.print("--------------------CYCLES ENDED--------------------\n");
 	}

@@ -28,6 +28,9 @@ import tas.mape.planner.PlanComponent;
 
 public class Knowledge {
 	
+	// System cycle
+	private int cycle;
+	
 	// Name of the system entity where this component is a part of
 	private String parentEntityName;
 	
@@ -137,6 +140,28 @@ public class Knowledge {
 		}
 		
 		this.parentEntityName = parentEntityName;
+	}
+		
+	/**
+	 * Return the current system cycle.
+	 * @return the current system cycle.
+	 */
+	public int getSystemCycle() {
+		return cycle;
+	}
+	
+	/**
+	 * Increase the current system cycle.
+	 */
+	public void increaseSystemCycle() {
+		cycle++;
+	}
+	
+	/**
+	 * Reset the current system cycle
+	 */
+	public void resetSystemCycle() {
+		cycle = 0;
 	}
 	
 	/**

@@ -116,6 +116,7 @@ public class Monitor {
 		// Extra: Update cache when registry changes
 		collectAndProcessRegistryData();
 		
+		knowledge.increaseSystemCycle();
 		workflowProbe.reset();
 		executed = true;
 		executions++;

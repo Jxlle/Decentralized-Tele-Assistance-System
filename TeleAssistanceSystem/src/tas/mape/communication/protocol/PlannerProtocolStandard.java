@@ -108,6 +108,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		
 		// Protocol responds
 		case "ACCEPTED_OFFER":
+			System.err.println("PROTOCOL STEP AMOUNT: " + messageID);
 			receiver.finishedProtocol();
 			resetProtocol();
 			break;

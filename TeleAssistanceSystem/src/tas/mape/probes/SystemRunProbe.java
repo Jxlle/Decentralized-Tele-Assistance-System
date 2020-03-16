@@ -17,7 +17,9 @@ import tas.mape.system.entity.SystemEntity;
 public class SystemRunProbe implements PlannerProbeInterface {
 	
 	private ServiceCombinationQoSAnalyzer sca = new ServiceCombinationQoSAnalyzer();
+	private HashMap<String, List<ServiceCombination>> chosenCombinations = new HashMap<>();
 	private HashMap<String, List<Pair<Double, Double>>> dataPoints = new HashMap<>();
+	private HashMap<String, List<Integer>> systemCycles = new HashMap<>();
 	private List<SystemEntity> connectedEntities = new ArrayList<>();
 	
 	/**
@@ -28,6 +30,8 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		entity.getManagingSystem().getProbe().register(this);
 		connectedEntities.add(entity);
 		dataPoints.put(entity.getEntityName(), new ArrayList<>());
+		chosenCombinations.put(entity.getEntityName(), new ArrayList<>());
+		systemCycles.put(entity.getEntityName(), new ArrayList<>());
 	}
 	
 	/**
@@ -36,11 +40,15 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	public void reset() {
 		
 		dataPoints.clear();
+		chosenCombinations.clear();
+		systemCycles.clear();
 		
 		// Unregister from connected entities
 		for (SystemEntity entity : connectedEntities) {
 			entity.getManagingSystem().getProbe().unRegister(this);
 		}
+		
+		connectedEntities.clear();
 	}
 	
 	/**
@@ -49,6 +57,22 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	 */
 	public HashMap<String, List<Pair<Double, Double>>> getDataPoints() {
 		return dataPoints;
+	}
+	
+	/**
+	 * Return the probe chosen service combinations data
+	 * @return the probe chosen service combinations data
+	 */
+	public HashMap<String, List<ServiceCombination>> getChosenCombinations() {
+		return chosenCombinations;
+	}
+	
+	/**
+	 * Return the probe system cycles data
+	 * @return the probe system cycles data
+	 */
+	public HashMap<String, List<Integer>> getSystemCycles() {
+		return systemCycles;
 	}
 	
 	/**
@@ -82,7 +106,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	}
 
 	/**
-	 * Update the current service combination data with the given
+	 * Update the current service combination data with the given service combination, knowledge
 	 * @param serviceCombination the chosen service combination
 	 * @param knowledge the knowledge used to choose the service combination
 	 */
@@ -92,7 +116,16 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		Double combinationCost = sca.getRealServiceCombinationCost(serviceCombination);
 		Double combinationFailureRate = sca.getRealServiceCombinationFailureRate(serviceCombination, knowledge);
 		
+		// Add data points to the data
 		List<Pair<Double, Double>> entityDataPoints = dataPoints.get(knowledge.getParentEntityName());
 		entityDataPoints.add(new Pair<Double, Double>(combinationFailureRate, combinationCost));
+		
+		// Add chosen service combination to the data
+		List<ServiceCombination> EntityChosenCombinations = chosenCombinations.get(knowledge.getParentEntityName());
+		EntityChosenCombinations.add(serviceCombination);
+		
+		// Add system cycle information to the data
+		List<Integer> systemCyclesData = systemCycles.get(knowledge.getParentEntityName());
+		systemCyclesData.add(knowledge.getSystemCycle());
 	}
 }

@@ -1,4 +1,4 @@
-package application.view.controller;
+package application.utility;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +15,7 @@ import javafx.scene.shape.Line;
 
 /**
  * Scatter chart with horizontal/vertical line functionality
- * Source: https://stackoverflow.com/questions/24232931/adding-a-line-in-a-javafx-chart
+ * Part of the source: https://stackoverflow.com/questions/24232931/adding-a-line-in-a-javafx-chart
  *
  * @param <X> generic value parameter
  * @param <Y> generic value parameter

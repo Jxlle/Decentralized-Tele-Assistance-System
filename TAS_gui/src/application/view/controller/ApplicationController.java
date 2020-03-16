@@ -59,8 +59,6 @@ import application.model.PerformanceEntry;
 import application.model.ReliabilityEntry;
 import application.utility.NodeVisitor;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -80,12 +78,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -101,7 +96,7 @@ public class ApplicationController implements Initializable {
     Stage primaryStage;
     
     // for generating kinds of charts
-    SystemRunChartController chartController;
+    SystemRunResultController chartController;
     
     // for generating kinds of table views
     TableViewController tableViewController;
@@ -255,9 +250,6 @@ public class ApplicationController implements Initializable {
     AnchorPane canvasPane;
     
     @FXML
-    TextField sliceTextField;
-    
-    @FXML
     MenuItem saveInvMenuItem;
     
     @FXML
@@ -265,6 +257,9 @@ public class ApplicationController implements Initializable {
     
     @FXML
     TitledPane serviceTitledPane;
+    
+    @FXML
+    Accordion entityResultTableAccordion;
     
     ProgressBar progressBar;
     Label invocationLabel;
@@ -403,7 +398,7 @@ public class ApplicationController implements Initializable {
     }
     
     private void initChartController() {
-    	chartController = new SystemRunChartController(systemRunChartPane);
+    	chartController = new SystemRunResultController(systemRunChartPane, entityResultTableAccordion);
     }
     
    /* public void setTasStart(TASStart tasStart) {
@@ -489,7 +484,7 @@ public class ApplicationController implements Initializable {
     
     private void setButton() {
     	
-    	sliceTextField.textProperty().addListener(new ChangeListener<String>() {
+    	/*sliceTextField.textProperty().addListener(new ChangeListener<String>() {
     	    @Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
     	        if (newValue.matches("\\d*")) {
     	        	//System.out.println(newValue);
@@ -508,7 +503,7 @@ public class ApplicationController implements Initializable {
 					//chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(),Integer.parseInt(sliceTextField.getText()));
     		    }
     		 }
-    	});
+    	});*/
 
     	openServicesMenuItem.setOnAction(new EventHandler<ActionEvent>() {
     	    @Override
@@ -1127,9 +1122,9 @@ public class ApplicationController implements Initializable {
         					public void run() {
         					    runButton.setId("runButton");
         						chartController.clear();
-        						//tableViewController.clear();
         						
         						chartController.generateSystemRunChart();
+        						chartController.generateSystemRunTables();
         						//chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
         						//chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(),Integer.parseInt(sliceTextField.getText()));
 
@@ -1620,7 +1615,6 @@ public class ApplicationController implements Initializable {
     	label.setLayoutY(15);
     	label.setText(serviceName);
     	
-    	// TODO Check if this works with new system
     	Circle circle = new Circle();
     	circle.setOnMouseClicked(event -> {
     		if(circle.getFill().equals(Color.DARKRED)) {
