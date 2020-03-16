@@ -424,8 +424,8 @@ public class ApplicationController implements Initializable {
 		
 		MAPEKComponent component = builder.build();
 		SystemEntity systemEntity = new SystemEntity("Test Entity", workflowExecutor, component);
-		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_OR_EQUAL_TO, 10));
-		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_OR_EQUAL_TO, 0.25));
+		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 10));
+		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.15));
 		addEntityToList(systemEntity);
 		
 		workflowExecutor = new WorkflowExecutor(Arrays.asList(GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry"), 
@@ -445,8 +445,8 @@ public class ApplicationController implements Initializable {
 		
 		component = builder.build();
 		systemEntity = new SystemEntity("Test Entity 2", workflowExecutor, component);
-		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_OR_EQUAL_TO, 25));
-		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_OR_EQUAL_TO, 0.15));
+		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 10));
+		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.15));
 		addEntityToList(systemEntity);
     }
     

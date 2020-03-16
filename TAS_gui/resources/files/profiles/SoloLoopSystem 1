@@ -1,9 +1,9 @@
 <tas.data.systemprofile.SystemProfile>
-  <executionCycles>100</executionCycles>
-  <workflowCycles>10</workflowCycles>
+  <executionCycles>10</executionCycles>
+  <workflowCycles>100</workflowCycles>
   <maxProtocolIterations>0</maxProtocolIterations>
   <systemType>SOLO_LOOP</systemType>
-  <ratingType>SCORE</ratingType>
+  <ratingType>CLASS</ratingType>
   <entityRequirementTypes>
     <entry>
       <string>Test Entity</string>

@@ -121,6 +121,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * @param serviceCombination the given service combination
 	 */
 	public void setCurrentServiceCombination(ServiceCombination serviceCombination) {
+		System.out.println(serviceCombination);
 		currentServiceCombination = serviceCombination;
 	}
 	

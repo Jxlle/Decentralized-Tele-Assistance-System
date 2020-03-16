@@ -55,15 +55,21 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		
 		// First offer has been received
 		case "FIRST_OFFER":
+			System.err.println("\t> FIRST_OFFER");
 			receiver.setAvailableServiceCombinations(receiver.calculateNewServiceCombinations(message.getContent()));
 			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints);
 			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "NEW_OFFER", content);
 			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
-			receiver.sendMessage(response);
+			
+			// Increase message ID
+			messageID++;
+			receiver.sendMessage(response);	
+			
 			break;
 		
 		// New offer has been received
 		case "NEW_OFFER":
+			System.err.println("\t> NEW_OFFER");
 			List<ServiceCombination> newServiceCombinations = receiver.calculateNewServiceCombinations(message.getContent());
 			String responseType;
 			
@@ -103,12 +109,15 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 				receiver.finishedProtocol();
 			}
 			
+			// Increase message ID
+			messageID++;
 			receiver.sendMessage(response);	
+			
 			break;
 		
-		// Protocol responds
+		// Offer has been accepted, stop protocol
 		case "ACCEPTED_OFFER":
-			System.err.println("PROTOCOL STEP AMOUNT: " + messageID);
+			System.err.println("\t> ACCEPTED_OFFER - message ID: " + messageID);
 			receiver.finishedProtocol();
 			resetProtocol();
 			break;
@@ -117,8 +126,5 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		default:
 			throw new IllegalStateException("The received message has a type that cannot be processed! Type: " + messageType);
 		}
-		
-		// Increase message ID
-		messageID++;
 	}
 }
