@@ -1,5 +1,7 @@
 package application.view.controller;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import javafx.beans.InvalidationListener;
@@ -19,6 +21,9 @@ import javafx.scene.shape.Line;
  * @param <Y> generic value parameter
  */
 public class ScatterLineChart<X, Y> extends ScatterChart<X, Y> {
+	
+	// Available colors
+	public static List<String> colors = Arrays.asList("red", "blue", "yellow", "green");
 
     // data defining horizontal markers, xValues are ignored
     private ObservableList<Data<X, Y>> horizontalMarkers;
@@ -47,14 +52,14 @@ public class ScatterLineChart<X, Y> extends ScatterChart<X, Y> {
      * horizontal line across the plot area, its X value is ignored.
      * 
      * @param marker must not be null.
+     * @param colorIndex the index of the used color for the line
      */
-    public void addHorizontalValueMarker(Data<X, Y> marker) {
+    public void addHorizontalValueMarker(Data<X, Y> marker, int colorIndex) {
         Objects.requireNonNull(marker, "the marker must not be null");
         if (horizontalMarkers.contains(marker)) return;
         Line line = new Line();
         line.getStrokeDashArray().addAll(25d, 10d);
-        // TODO color
-        //line.setStroke(value);
+        line.setStyle("-fx-stroke: " + colors.get(colorIndex) + ";");
         marker.setNode(line);
         getPlotChildren().add(line);
         horizontalMarkers.add(marker);
@@ -65,14 +70,14 @@ public class ScatterLineChart<X, Y> extends ScatterChart<X, Y> {
      * vertical line across the plot area, its Y value is ignored.
      * 
      * @param marker must not be null.
+     * @param colorIndex the index of the used color for the line
      */
-    public void addVerticalValueMarker(Data<X, Y> marker) {
+    public void addVerticalValueMarker(Data<X, Y> marker, int colorIndex) {
         Objects.requireNonNull(marker, "the marker must not be null");
         if (verticalMarkers.contains(marker)) return;
         Line line = new Line();
         line.getStrokeDashArray().addAll(25d, 10d);
-        // TODO color
-        //line.setStroke(value);
+        line.setStyle("-fx-stroke: " + colors.get(colorIndex) + ";");
         marker.setNode(line);
         getPlotChildren().add(line);
         verticalMarkers.add(marker);

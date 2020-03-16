@@ -1,12 +1,16 @@
 package application.view.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
+import javafx.scene.Node;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
 import tas.mape.knowledge.Goal;
@@ -51,6 +55,8 @@ public class SystemRunChartController {
 		
 		// Set data points
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = probe.getDataPoints();
+		ArrayList<Node> seriesNodes = new ArrayList<Node>();
+		int seriesIndex = 0;
 		
 		for (String entity : dataPoints.keySet()) {
 			
@@ -64,17 +70,40 @@ public class SystemRunChartController {
 			
 			systemRunChart.getData().add(series);
 			
+			Set<Node> nodes = systemRunChart.lookupAll(".series" + seriesIndex);
+            int flag=0;
+            for (Node n : nodes) {
+			    n.setStyle("-fx-background-color:" + ScatterLineChart.colors.get(seriesIndex) + ", white;\n"
+			            + "    -fx-background-insets: 0, 2;\n"
+			            + "    -fx-background-radius: 5px;\n"
+			            + "    -fx-padding: 5px;");
+                 if(flag==0){
+                	 System.err.println("ADDED DATA VALUE");
+                     seriesNodes.add(n);
+                 }
+                 flag++;
+            }
+			
 			List<Goal> goals = probe.getConnectedEntity(entity).getManagingSystem().getGoals();
 			
 			for (Goal goal : goals) {
 				if (goal.getType().equals(GoalType.COST)) {
-					systemRunChart.addHorizontalValueMarker(new Data<>(0, goal.getValue()));
+					systemRunChart.addHorizontalValueMarker(new Data<>(0, goal.getValue()), seriesIndex);
 				}
 				else if (goal.getType().equals(GoalType.FAILURE_RATE)) {
-					systemRunChart.addVerticalValueMarker(new Data<>(goal.getValue(), 0));
+					systemRunChart.addVerticalValueMarker(new Data<>(goal.getValue(), 0), seriesIndex);
 				}
 			}
 			
+			seriesIndex++;
 		}
+		
+		Set<Node> items = systemRunChart.lookupAll("Label.chart-legend-item");
+        int it=0;
+        for (Node item : items) {
+             Label label = (Label) item;
+             label.setGraphic(seriesNodes.get(it));
+             it++;
+        }
 	}
 }
