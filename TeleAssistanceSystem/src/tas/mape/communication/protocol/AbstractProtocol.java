@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.ComponentMessage;
+import tas.mape.communication.message.ComponentMessageHost;
 
 /**
  * Abstract class representing the structure of a protocol.
@@ -29,6 +30,9 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	
 	// The list of components that are using this protocol
 	protected List<E> components = new ArrayList<>();
+	
+	// The message host of the components using this protocol
+	private ComponentMessageHost<T> messageHost = new ComponentMessageHost<T>();
 	
 	/**
 	 * Execute the protocol with the currently used communication components that will communicate and a 
@@ -69,19 +73,23 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	}
 	
 	/**
-	 * Add a given component to the components list
+	 * Add a given component to the components list and register the
+	 * component to the protocol message host.
 	 * @param component the given component
 	 */
 	public void addComponent(E component) {
 		components.add(component);
+		messageHost.register(component);
 	}
 	
 	/**
-	 * Remove a given component from the components list
+	 * Remove a given component from the components list and unregister the
+	 * component from the protocol message host.
 	 * @param component the given component to be removed
 	 */
 	public void removeComponent(E component) {
 		components.remove(component);
+		messageHost.unRegister(component);
 	}
 	
 	/**

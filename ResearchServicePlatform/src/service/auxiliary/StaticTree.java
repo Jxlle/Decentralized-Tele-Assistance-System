@@ -56,7 +56,8 @@ public class StaticTree<C> {
 		StaticTreeNode<C> currentNode = startNode.getNext();
 		
 		while (currentNode != null) {
-			if (currentNode.getContent().equals(content)) {
+			System.err.println(currentNode.getContent() + " " + content);
+			if (!currentNode.equals(startNode) && currentNode.getContent().equals(content)) {
 				resetVisited();
 				return currentNode;
 			}

@@ -108,12 +108,14 @@ public class SystemProfileExecutor {
 			SystemEntity[] entities = new SystemEntity[profile.getAmountOfParticipatingEntities()];
 			
 			for (int i = 0; i < profile.getAmountOfParticipatingEntities(); i++) {
-				SystemEntity entity = entityList.stream().filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(0))).findFirst().orElse(null);
+				int i2 = i;
+				SystemEntity entity = entityList.stream().filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(i2))).findFirst().orElse(null);
 				
 				if (entity == null) {
 					throw new IllegalArgumentException("The given list of entities doesn't contain the participating system entities!");
 				}
 				
+				System.err.println(entity.getEntityName() + " <- ENTITY NAME");
 				entities[i] = entity;
 			}
 			

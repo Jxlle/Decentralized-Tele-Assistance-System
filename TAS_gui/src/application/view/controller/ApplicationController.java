@@ -278,7 +278,7 @@ public class ApplicationController implements Initializable {
     	this.addItems();
     	this.fillSystemProfiles();
     	this.setButton();
-    	this.addTestEntities();
+    	this.addDefaultEntities();
 
     	/*scheduExec.scheduleAtFixedRate(new Runnable() {
     	    @Override
@@ -380,7 +380,7 @@ public class ApplicationController implements Initializable {
 		
 		entity.getManagingSystem().resetMonitorProbes();
 		
-		for (Description d : usableServices.keySet()) {
+		/*for (Description d : usableServices.keySet()) {
 			System.err.print("------------------------------------------------------------ \n");
 			
 			for (ServiceDescription sd : usableServices.get(d).getKey()) {
@@ -390,7 +390,7 @@ public class ApplicationController implements Initializable {
 			System.err.print("=== \n");
 			System.err.print("description usage chance :" + usableServices.get(d).getValue() + " \n");
 			System.err.print("------------------------------------------------------------ \n");
-		}
+		}*/
 		
 		System.err.print("done analyzing\n");
 		entity.getManagingSystem().setWorkflowServiceTree(WorkflowAnalyzer.getWorkflowServiceTree());
@@ -412,7 +412,7 @@ public class ApplicationController implements Initializable {
     	tableViewController = new TableViewController(reliabilityTableView, costTableView,performanceTableView);
     }*/
     
-    private void addTestEntities() {
+    private void addDefaultEntities() {
     	
 		WorkflowExecutor workflowExecutor = new WorkflowExecutor(Arrays.asList(GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");		
@@ -435,7 +435,7 @@ public class ApplicationController implements Initializable {
 		
 		workflowExecutor = new WorkflowExecutor(Arrays.asList(GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry"), 
 				GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry2")));	
-		workflowExecutor.setWorkflowPath(workflowFilePath + "workflow_test1.txt");
+		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");
 		
 		builder = new Builder();
 		
@@ -1109,8 +1109,6 @@ public class ApplicationController implements Initializable {
 		    			analyzeEntity(entity);
 		    		}
 		    	}
-		    	
-		    	System.err.print("test2 \n");
 		    	
 		    	analyzed = true;
 		    	entityBeingAnalyzed = "";
