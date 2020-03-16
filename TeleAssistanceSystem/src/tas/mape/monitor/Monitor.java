@@ -148,13 +148,13 @@ public class Monitor {
 		// Loop over each service endpoint in the service invocations map
 		for (String serviceEndpoint : serviceInvocations.keySet()) {
 			
-			System.err.print("System invocations: " + serviceInvocations.get(serviceEndpoint) + ", service failures: " + serviceFailures.get(serviceEndpoint));
+			//System.err.print("System invocations: " + serviceInvocations.get(serviceEndpoint) + ", service failures: " + serviceFailures.get(serviceEndpoint));
 			
 			double approximatedServiceFailureRate = serviceFailures.get(serviceEndpoint) / (double) serviceInvocations.get(serviceEndpoint);
 			double currentServiceFailureRate = knowledge.getApproximatedServiceFailureRate(serviceEndpoint, serviceInvocations.get(serviceEndpoint));
 			double newServiceFailureRate = getNewFailureRate(approximatedServiceFailureRate, currentServiceFailureRate);
 			
-			System.err.print(serviceEndpoint + " " + approximatedServiceFailureRate + " " + newServiceFailureRate + " " + currentServiceFailureRate + "\n");
+			//System.err.print(serviceEndpoint + " " + approximatedServiceFailureRate + " " + newServiceFailureRate + " " + currentServiceFailureRate + "\n");
 			
 			if (newServiceFailureRate != currentServiceFailureRate) {
 				
@@ -227,7 +227,7 @@ public class Monitor {
 		double failureDelta = approximatedFailureRate - currentFailureRate;
 		double newFailureRate = currentFailureRate;
 		
-		System.err.print("FAILURE DELTA " + failureDelta + " " + minFailureDelta + "\n");
+		//System.err.print("FAILURE DELTA " + failureDelta + " " + minFailureDelta + "\n");
 		
 		if (Math.abs(failureDelta) >= minFailureDelta) {
 			

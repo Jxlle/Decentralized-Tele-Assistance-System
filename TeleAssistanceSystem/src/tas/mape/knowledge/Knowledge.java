@@ -283,7 +283,7 @@ public class Knowledge {
 		
 		int loadKeyHigh = (load / loadFailureDelta) + ((load % loadFailureDelta == 0) ? 0 : 1);
 		
-		System.err.print("UPDATE FAIL TABLE: " + serviceEndpoint + ", KEY " + loadKeyHigh + ", NEW FAIL RATE: " + failureRate + "\n");
+		//System.err.print("UPDATE FAIL TABLE: " + serviceEndpoint + ", KEY " + loadKeyHigh + ", NEW FAIL RATE: " + failureRate + "\n");
 		approximatedServiceFailureRates.get(serviceEndpoint).put(loadKeyHigh, failureRate);
 	}
 	
@@ -309,17 +309,17 @@ public class Knowledge {
 			// Find nearest entry
 			if (serviceFailureTable.higherEntry(loadKey) != null) {
 				
-				System.err.print("FAIL TABLE GET: " + serviceEndpoint + ", LOAD: " + load + ", KEY: " + loadKey + ", VALUE: " + serviceFailureTable.get(getNearestKey(serviceFailureTable, loadKey)) + "\n");
+				//System.err.print("FAIL TABLE GET: " + serviceEndpoint + ", LOAD: " + load + ", KEY: " + loadKey + ", VALUE: " + serviceFailureTable.get(getNearestKey(serviceFailureTable, loadKey)) + "\n");
 				return serviceFailureTable.get(getNearestKey(serviceFailureTable, loadKey));
 			}
 			
-			System.err.print("FAIL TABLE GET: " + serviceEndpoint + ", LOAD: " + load + ", KEY: " + loadKey + ", VALUE: " + serviceFailureTable.lowerEntry(loadKey).getValue() + "\n");
+			//System.err.print("FAIL TABLE GET: " + serviceEndpoint + ", LOAD: " + load + ", KEY: " + loadKey + ", VALUE: " + serviceFailureTable.lowerEntry(loadKey).getValue() + "\n");
 			
 			// Lower key will always exist
 			return serviceFailureTable.lowerEntry(loadKey).getValue();
 		}
 		
-		System.err.print("FAIL TABLE GET: " + serviceEndpoint + ", LOAD: " + load + ", KEY: " + loadKey + ", VALUE: " + serviceFailureTable.get(loadKey) + "\n");
+		//System.err.print("FAIL TABLE GET: " + serviceEndpoint + ", LOAD: " + load + ", KEY: " + loadKey + ", VALUE: " + serviceFailureTable.get(loadKey) + "\n");
 				
 		return serviceFailureTable.get(loadKey);
 	}

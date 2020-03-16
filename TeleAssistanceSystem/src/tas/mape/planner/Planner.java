@@ -166,7 +166,6 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			throw new NullPointerException("Planner can't handle message message receivement, no protocol selected.");
 		}
 		
-		System.err.println("MESSAGE "  + message);
 		protocol.receiveAndHandleMessage(message, this);
 	}
 	
@@ -259,7 +258,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			WeightedCollection<ServiceDescription> serviceUsage = serviceCombination.getAllServices(description);
 			
 			for (ServiceDescription service : serviceUsage.getItems()) {
-				System.err.print("LOAD " + knowledge.getServiceLoad(description, serviceUsage.getChance(service)) + " " + service.getServiceEndpoint() +"\n");
+				//System.err.print("LOAD " + knowledge.getServiceLoad(description, serviceUsage.getChance(service)) + " " + service.getServiceEndpoint() +"\n");
 				int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(service));
 				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? serviceLoad : v + serviceLoad);		
 			}

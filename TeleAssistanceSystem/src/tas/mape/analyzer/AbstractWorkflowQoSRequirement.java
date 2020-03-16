@@ -200,7 +200,6 @@ public abstract class AbstractWorkflowQoSRequirement {
 		
 		double totalValue = 0;
 		
-		System.err.println("COMBINATIONS " + combination);
 		for (Description description : combination.getDescriptions()) {
 			
 			for (ServiceDescription service : combination.getAllServices(description).getItems()) {

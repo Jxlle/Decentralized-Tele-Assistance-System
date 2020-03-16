@@ -55,7 +55,6 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		
 		// First offer has been received
 		case "FIRST_OFFER":
-			System.err.println("SHARED REGISTRIES " + sharedRegistryEndpoints);
 			receiver.setAvailableServiceCombinations(receiver.calculateNewServiceCombinations(message.getContent()));
 			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints);
 			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "NEW_OFFER", content);
