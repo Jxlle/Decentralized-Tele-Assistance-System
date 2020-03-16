@@ -9,21 +9,28 @@ import application.model.ServiceCombinationEntry;
 import application.utility.ScatterLineChart;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.Callback;
 import javafx.util.Pair;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalType;
+import tas.mape.planner.ServiceCombination;
 import tas.mape.probes.SystemRunProbe;
 import tas.mape.system.entity.SystemEntity;
 
@@ -73,30 +80,76 @@ public class SystemRunResultController {
 			TableColumn<ServiceCombinationEntry, Integer> cycleColumn = new TableColumn<ServiceCombinationEntry,Integer>("Cycle");
 			cycleColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Integer>("cycle"));
 			cycleColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(4));
-	    	
-			TableColumn<ServiceCombinationEntry, String> servicesColumn = new TableColumn<ServiceCombinationEntry,String>("Services");
-			servicesColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, String>("services"));
-			servicesColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(4));
+			cycleColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 			
 			TableColumn<ServiceCombinationEntry, Double> totalCostColumn = new TableColumn<ServiceCombinationEntry,Double>("Total Cost");
 			totalCostColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("totalCost"));
 			totalCostColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(4));
+			totalCostColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 
 			TableColumn<ServiceCombinationEntry, Double> totalFailRateColumn = new TableColumn<ServiceCombinationEntry,Double>("Total FailRate");
 			totalFailRateColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("totalFailRate"));
 			totalFailRateColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(4));
+			totalFailRateColumn.setStyle("-fx-alignment: CENTER-LEFT;");
+			
+			TableColumn<ServiceCombinationEntry, String> servicesColumn = new TableColumn<>("Services");
+			servicesColumn.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
+			servicesColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(4));
+			servicesColumn.setSortable(false);
+			
+			Callback<TableColumn<ServiceCombinationEntry, String>, TableCell<ServiceCombinationEntry, String>> cellFactoryShow
+	        =
+	        new Callback<TableColumn<ServiceCombinationEntry, String>, TableCell<ServiceCombinationEntry, String>>() {
+			    @Override
+			    public TableCell<ServiceCombinationEntry, String> call(final TableColumn<ServiceCombinationEntry, String> param) {
+			        final TableCell<ServiceCombinationEntry, String> cell = new TableCell<ServiceCombinationEntry, String>() {
+			
+			            final Button btn = new Button("Show Info");
+			
+			            @Override
+			            public void updateItem(String item, boolean empty) {
+			            	
+			            	ServiceCombinationEntry attribute = (ServiceCombinationEntry) this.getTableRow().getItem();
+			                super.updateItem(item, empty);
+			                
+			                if (empty) {
+			                    setGraphic(null);
+			                    setText(null);
+			                } 
+			                else {
+			                    btn.setOnAction(event -> {
+			        	    		Alert fail = new Alert(AlertType.INFORMATION);
+			        	            fail.setHeaderText("SERVICE COMBINATION INFORMATION");
+			        	            fail.setContentText(attribute.getUsedServicesInfo());
+			        	            fail.showAndWait();
+			                    });
+			                    
+			                    setGraphic(btn);
+			                    setText(null);
+			                }
+			            }
+			        };
+			        
+			        cell.setAlignment(Pos.CENTER);
+			        return cell;
+			    }
+			};
+			
+			servicesColumn.setCellFactory(cellFactoryShow);
 			
 			// Extract table data
 			ObservableList<ServiceCombinationEntry> serviceCombinationData = FXCollections.observableArrayList();
 			
 			for (int i = 0; i < dataPoints.get(entity).size(); i++) {	
 				Pair<Double, Double> dataPoint = dataPoints.get(entity).get(i);
-				serviceCombinationData.add(new ServiceCombinationEntry(probe.getSystemCycles().get(entity).get(i), dataPoint.getValue(), dataPoint.getKey()));
+				int cycle = probe.getSystemCycles().get(entity).get(i);
+				ServiceCombination combination = probe.getChosenCombinations().get(entity).get(i);
+				serviceCombinationData.add(new ServiceCombinationEntry(cycle, dataPoint.getValue(), dataPoint.getKey(), combination));
 			}
 			
 			// Set table data
 			entityResultTable.setItems(serviceCombinationData);
-			entityResultTable.getColumns().addAll(cycleColumn, servicesColumn, totalCostColumn, totalFailRateColumn);
+			entityResultTable.getColumns().addAll(cycleColumn, totalCostColumn, totalFailRateColumn, servicesColumn);
 			entityPane.setContent(entityResultTable);
 		}
 	}
