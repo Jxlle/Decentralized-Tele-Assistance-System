@@ -47,6 +47,10 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 		SystemEntity entity1 = getSystemEntity(0);
 		SystemEntity entity2 = getSystemEntity(1);
 		
+		// Set system protocol
+		entity1.getManagingSystem().setProtocol(protocol);
+		entity2.getManagingSystem().setProtocol(protocol);
+		
 		for (int i = 0; i < executionCycles; i++) {
 			
 			// Execute MAPE-K loop until the communication step
