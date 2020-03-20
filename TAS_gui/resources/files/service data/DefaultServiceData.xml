@@ -138,13 +138,18 @@
 <Type>Boolean</Type>
 <Value>true</Value>
 </Property>
+<Property>
+<Name>FailureRate</Name>
+<Type>Double</Type>
+<Value>0.25</Value>
+</Property>
 </Properties>
 </Service>
 </Services>
 <Registries>
 <Registry>
-<Endpoint>se.lnu.service.registry</Endpoint>
-<Name>ServiceRegistry</Name>
+<Endpoint>service.registry.individual1</Endpoint>
+<Name>Individual Service Registry 1</Name>
 <ServiceList>
 <Endpoint>service.alarmService2</Endpoint>
 <Endpoint>service.alarmService3</Endpoint>
@@ -155,11 +160,16 @@
 </ServiceList>
 </Registry>
 <Registry>
-<Endpoint>se.lnu.service.registry2</Endpoint>
-<Name>ServiceRegistry2</Name>
+<Endpoint>service.registry.individual2</Endpoint>
+<Name>Individual Service Registry 2</Name>
 <ServiceList>
 <Endpoint>service.alarmService1</Endpoint>
 </ServiceList>
+</Registry>
+<Registry>
+<Endpoint>service.registry.shared</Endpoint>
+<Name>Shared Service Registry</Name>
+<ServiceList/>
 </Registry>
 </Registries>
 </ServiceInfo>

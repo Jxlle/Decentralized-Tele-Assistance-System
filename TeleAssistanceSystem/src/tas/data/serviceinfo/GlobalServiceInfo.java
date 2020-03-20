@@ -3,7 +3,6 @@ package tas.data.serviceinfo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import service.atomic.AtomicService;
@@ -17,13 +16,12 @@ import tas.services.profiles.ServiceFailureLoadProfile;
  * Class used to hold data about the used services and registries in the system.
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ * @note Service operation costs are currently not used, only the custom cost property
  */
 public class GlobalServiceInfo {
-    
-	// TODO Look what types do in GUI
+	
     private static List<AtomicService> services = new ArrayList<>();
     private static List<ServiceRegistry> serviceRegistries = new ArrayList<>();
-    private static LinkedHashMap<String, String> serviceTypes = new LinkedHashMap<>();
     private static List<Class<?>> serviceProfileClasses = Arrays.asList(
     	//ServiceDelayProfile.class,
     	//SimpleServiceFailureProfile.class,
@@ -115,14 +113,6 @@ public class GlobalServiceInfo {
     }
     
     /**
-     * Return a linked hash map of all service types
-     * @return a linked hash map of all service types
-     */
-    public static LinkedHashMap<String,String> getServiceTypes() {
-    	return serviceTypes;
-    }
-    
-    /**
      * Return the service profile classes list
      * @return the service profile classes list
      */
@@ -151,8 +141,8 @@ public class GlobalServiceInfo {
      * @param file the given file
      */
     public static void loadData(File file) {
-    	//ChangeToDefaultServices();
-    	GlobalServiceInfoLoader.loadFromXml(file);
+    	ChangeToDefaultServices();
+    	saveData(file);
     }
     
     /**
@@ -165,18 +155,20 @@ public class GlobalServiceInfo {
     	// Reset data
     	services = new ArrayList<>();
     	serviceRegistries = new ArrayList<>();
-    	serviceTypes = new LinkedHashMap<>();
     	
     	// Service registries
-		ServiceRegistry serviceRegistry = new ServiceRegistry("ServiceRegistry", "se.lnu.service.registry");
+		ServiceRegistry serviceRegistry = new ServiceRegistry("Individual Service Registry 1", "service.registry.individual1");
 		serviceRegistry.startService();
 		
-		ServiceRegistry serviceRegistry2 = new ServiceRegistry("ServiceRegistry2", "se.lnu.service.registry2");
+		ServiceRegistry serviceRegistry2 = new ServiceRegistry("Individual Service Registry 2", "service.registry.individual2");
 		serviceRegistry2.startService();
+		
+		ServiceRegistry serviceRegistry3 = new ServiceRegistry("Shared Service Registry", "service.registry.shared");
+		serviceRegistry3.startService();
 		
 		serviceRegistries.add(serviceRegistry);
 		serviceRegistries.add(serviceRegistry2);
-	
+		serviceRegistries.add(serviceRegistry3);
 		
 		// Alarm Services
 		AlarmService alarm1 = new AlarmService("AlarmService1", "service.alarmService1");

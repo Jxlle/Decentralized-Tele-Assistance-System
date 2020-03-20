@@ -6,12 +6,16 @@
   <ratingType>CLASS</ratingType>
   <entityRequirementTypes>
     <entry>
+      <string>Default System Entity</string>
+      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
+    </entry>
+    <entry>
       <string>Test Entity</string>
       <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
     </entry>
   </entityRequirementTypes>
   <participatingEntities>
-    <string>Test Entity</string>
+    <string>Default System Entity</string>
   </participatingEntities>
   <variables>
     <variable>

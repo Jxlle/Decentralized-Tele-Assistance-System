@@ -28,7 +28,7 @@
                <top>
                   <ToolBar BorderPane.alignment="CENTER">
                     <items>
-                        <Label text="TAS Configuration">
+                        <Label text="DTAS Configuration">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
@@ -135,13 +135,13 @@
                <top>
                   <ToolBar fx:id="toolBar" BorderPane.alignment="CENTER">
                      <items>
-                        <Label text="TAS Experimentation" />
+                        <Label text="DTAS Experimentation" />
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
-                        <MenuButton disable="true" mnemonicParsing="false" text="Open">
+                        <MenuButton mnemonicParsing="false" text="Open">
                            <items>
                               <MenuItem fx:id="openProfileMenuItem" mnemonicParsing="false" text="Open Profile" />
-                              <MenuItem fx:id="openRunMenuItem" mnemonicParsing="false" text="Open Run" />
-                              <MenuItem fx:id="openLogMenuItem" mnemonicParsing="false" text="Open Log" />
+                              <MenuItem fx:id="openRunMenuItem" disable="true" mnemonicParsing="false" text="Open Run" visible="false" />
+                              <MenuItem fx:id="openLogMenuItem" disable="true" mnemonicParsing="false" text="Open Log" visible="false" />
                            </items>
                         </MenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
@@ -165,7 +165,7 @@
                     <items>
                       <AnchorPane maxWidth="400.0" minWidth="350.0" prefWidth="400.0">
                            <children>
-                              <TitledPane animated="false" collapsible="false" layoutX="16.0" prefHeight="255.0" prefWidth="233.0" text="System Profiles" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TitledPane animated="false" collapsible="false" layoutX="16.0" prefHeight="255.0" prefWidth="233.0" text="Input Profiles" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
