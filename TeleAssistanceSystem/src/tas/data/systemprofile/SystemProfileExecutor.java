@@ -24,6 +24,11 @@ public class SystemProfileExecutor {
 	private SystemProfileExecutor() {}
 	
 	/**
+	 * Current system instance (for gui data)
+	 */
+	private static AbstractSystem<?> systemInstance;
+	
+	/**
 	 * Execute the current active system profile
 	 * @param entityList The given list of participating entities
 	 */
@@ -90,6 +95,9 @@ public class SystemProfileExecutor {
 				e.printStackTrace();
 			}
 			
+			// Set current system instance
+			systemInstance = system;
+			
 			// Execute system
 			system.executeSystem(profile.getExecutionCycles());
 		}
@@ -127,8 +135,19 @@ public class SystemProfileExecutor {
 				e.printStackTrace();
 			}
 			
+			// Set current system instance
+			systemInstance = system;
+			
 			// Execute system
 			system.executeSystem(profile.getExecutionCycles(), protocol, profile.getMaxProtocolIterations());
 		}
+	}
+	
+	/**
+	 * Return the current system execution cycle
+	 * @return the current system execution cycle
+	 */
+	public static int getCurrentExecutionCycle() {
+		return systemInstance.getCurrentExecutionCycle();
 	}
 }

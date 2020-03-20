@@ -14,6 +14,9 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	// Array containing the entities of this system
 	private T[] systemEntities;
 	
+	// Variable representing the current execution cycle
+	protected int currentExecutionCycle;
+	
 	/**
 	 * Create a new abstract system with given system entities
 	 * @param systemEntities the given system entities
@@ -28,6 +31,14 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 		}
 		
 		this.systemEntities = systemEntities;
+	}
+	
+	/**
+	 * Return the current execution cycle
+	 * @return the current execution cycle
+	 */
+	public int getCurrentExecutionCycle() {
+		return currentExecutionCycle;
 	}
 	
 	/**

@@ -133,7 +133,7 @@ public class ApplicationController implements Initializable {
     Map<String, ListView<AnchorPane>> serviceRegistryPanes = new ConcurrentHashMap<>();
     int maxSteps;
     String entityBeingAnalyzed;
-    boolean analyzed;
+    boolean analyzed, done;
     
     @FXML
     ListView<AnchorPane> profileListView;
@@ -1083,39 +1083,41 @@ public class ApplicationController implements Initializable {
     	    public void handle(ActionEvent event) {
 
     	    if (runButton.getId().equals("runButton")) {
-
-    			chartController.resetProbe();
-    			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
-    			SystemProfileDataHandler.activeProfile = profile;
-    			
-		    	analyzed = false;
-		    	
-		    	// Analyze entity workflows if needed
-		    	for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
-		    		
-		    		final int index = i;
-		    		
-		    		SystemEntity entity = entities.stream()
-		    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
-		    		
-		    		chartController.addEntityToProbe(entity);
-		    		
-		    		if (!workflowAnalyzed.get(entity.getEntityName())) {
-    			    	System.err.print("analyzing \n");
-    			    	entityBeingAnalyzed = entity.getEntityName();
-		    			analyzeEntity(entity);
-		    		}
-		    	}
-		    	
-		    	analyzed = true;
-		    	entityBeingAnalyzed = "";
-
-		    	// Execute system
-		    	SystemProfileExecutor.execute(entities);
     			
     			Task<Void> task = new Task<Void>() {
     			    @Override
-    			    protected Void call() throws Exception {			    	
+    			    protected Void call() throws Exception {	
+    			    	
+    	    			chartController.resetProbe();
+    	    			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
+    	    			SystemProfileDataHandler.activeProfile = profile;
+    	    			
+    	    			done = false;
+    			    	analyzed = false;
+    			    	
+    			    	// Analyze entity workflows if needed
+    			    	for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
+    			    		
+    			    		final int index = i;
+    			    		
+    			    		SystemEntity entity = entities.stream()
+    			    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
+    			    		
+    			    		chartController.addEntityToProbe(entity);
+    			    		
+    			    		if (!workflowAnalyzed.get(entity.getEntityName())) {
+    	    			    	System.err.print("analyzing \n");
+    	    			    	entityBeingAnalyzed = entity.getEntityName();
+    			    			analyzeEntity(entity);
+    			    		}
+    			    	}
+    			    	
+    			    	analyzed = true;
+    			    	entityBeingAnalyzed = "";
+
+    			    	// Execute system
+    			    	SystemProfileExecutor.execute(entities);
+    			    	done = true;
 					    
     				    Platform.runLater(new Runnable() {
         					@Override
@@ -1152,8 +1154,8 @@ public class ApplicationController implements Initializable {
         				    Platform.runLater(new Runnable() {
             					@Override
             					public void run() {	
-        							invocationLabel.setText("Analyzing the workflows: Analyzing the workflow of " + entityBeingAnalyzed
-        									+ " | PROGRESS: "+ WorkflowAnalyzer.getCurrentSteps() + " / " + WorkflowAnalyzer.analyzerCycles);
+        							invocationLabel.setText("[ANALYZING] Analyzing the workflow of " + entityBeingAnalyzed
+        									+ ", [PROGRESS: "+ WorkflowAnalyzer.getCurrentSteps() + "/" + WorkflowAnalyzer.analyzerCycles + "]");
             					}
         				    });
         				    
@@ -1161,46 +1163,33 @@ public class ApplicationController implements Initializable {
         				    Thread.sleep(100);
     			    	}
     			    	
-    			    	while (analyzed) {
+    			    	while (analyzed && !done) {
         				    Platform.runLater(new Runnable() {
             					@Override
             					public void run() {	
-        							invocationLabel.setText("Executing system run...");
+        							invocationLabel.setText("Executing system run ["
+            					+ SystemProfileExecutor.getCurrentExecutionCycle() + "/" + SystemProfileDataHandler.activeProfile.getExecutionCycles() 
+            					+ "], [PROGRESS: " + entities.stream()
+			    				.filter(x -> x.getEntityName().equals(SystemProfileDataHandler.activeProfile
+			    						.getParticipatingEntity(0))).findFirst().get().getManagedSystem().getCurrentSteps() + "/" + SystemProfileDataHandler.activeProfile.getWorkflowCycles() + "]");
             					}
         				    });
         				    
-        				    //updateProgress(WorkflowAnalyzer.getCurrentSteps(), WorkflowAnalyzer.analyzerCycles);
+        				    updateProgress(SystemProfileExecutor.getCurrentExecutionCycle(), SystemProfileDataHandler.activeProfile.getExecutionCycles());
         				    Thread.sleep(100);
     			    	}
     			    	
-        				/*while (probe.workflowInvocationCount < maxSteps) {
-        					
+    			    	if (done) {
         				    Platform.runLater(new Runnable() {
             					@Override
-            					public void run() {
-            						
-            						if (!analyzed) {
-            							invocationLabel.setText("Analyzing the workflows...");
-            						}
-            						else {	
-                					    invocationLabel.setText(" " + probe.workflowInvocationCount + " / " + maxSteps);
-            						}
+            					public void run() {	
+                			    	invocationLabel.setText("");
+                				    updateProgress(0, 0);
+                				    done = false;
             					}
         				    });
-        				    
-        				    updateProgress(probe.workflowInvocationCount, maxSteps);
-        				    Thread.sleep(1000);
-        				}*/
-        				
-        				Platform.runLater(new Runnable() {
-        				    @Override
-        				    public void run() {
-        				    	invocationLabel.setText("Analyzing the workflows...");
-        				    }
-        				});
-        				
-        				//updateProgress(probe.workflowInvocationCount, maxSteps);
-        				System.out.println("stop task!!");
+    			    	}
+    			    	
         				return null;
     			    }
     			};

@@ -33,6 +33,9 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 		for (int i = 0; i < executionCycles; i++) {
 			System.err.print("--------------------CYCLE START [" + (i + 1) + "]--------------------\n");
 			
+			// Update current execution cycle
+			currentExecutionCycle = i;
+			
 			// Execute MAPE-K loop
 			entity.getManagingSystem().executeMonitor();
 			entity.getManagingSystem().executeAnalyzer();
@@ -50,6 +53,9 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 		// Reset approximated failure rates table after the run
 		entity.getManagingSystem().resetApproximatedServiceFailureRates();
 		entity.getManagingSystem().resetSystemCycle();
+		
+		// Reset current execution cycle
+		currentExecutionCycle = 0;
 		
 		System.err.print("--------------------CYCLES ENDED--------------------\n");
 	}
