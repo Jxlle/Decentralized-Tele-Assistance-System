@@ -18,16 +18,14 @@ import tas.mape.planner.PlanComponentType;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-// TODO Sometimes, the load resets but the monitor doesn't execute, RESET LOAD ONLY WHEN NEEDED
 public class Monitor {
 	
 	// Fields
 	private Knowledge knowledge;
 	private Analyzer analyzer;
 	private MonitorWorkflowProbe workflowProbe;
-	private boolean analyzerRequired, executed;
+	private boolean executed;
 	private double minFailureDelta, failureChange;
-	private int executions;
 	
 	/**
 	 * Create a new monitor with a given knowledge, analyzer, minimum failure delta and failure change
@@ -119,22 +117,16 @@ public class Monitor {
 		knowledge.increaseSystemCycle();
 		workflowProbe.reset();
 		executed = true;
-		executions++;
-		
-		if (executions == 1) {
-			analyzerRequired = true;
-		}
 	}
 	
 	/**
 	 * Trigger the analyzer when the monitor has been executed and when the analyzer is needed.
 	 */
 	public void triggerAnalyzer() {	
-		if (analyzerRequired && executed) {
+		if (executed) {
 			System.err.print("Executing analyzer...\n");
 			analyzer.execute();
 			executed = false;
-			analyzerRequired = false;
 		}
 	}
 	
@@ -157,13 +149,7 @@ public class Monitor {
 			
 			//System.err.print(serviceEndpoint + " " + approximatedServiceFailureRate + " " + newServiceFailureRate + " " + currentServiceFailureRate + "\n");
 			
-			if (newServiceFailureRate != currentServiceFailureRate) {
-				
-				// Update if analyzer is required
-				if (!analyzerRequired) {
-					analyzerRequired = true;
-				}
-				
+			if (newServiceFailureRate != currentServiceFailureRate) {			
 				knowledge.setApproximatedServiceFailureRate(serviceEndpoint, serviceInvocations.get(serviceEndpoint), newServiceFailureRate);
 			}
 		}

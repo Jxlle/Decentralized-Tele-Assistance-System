@@ -18,7 +18,7 @@ public class Analyzer {
 	// Fields
 	private Knowledge knowledge;
 	private Planner planner;
-	private boolean plannerRequired, executed;
+	private boolean executed;
 	private int combinationLimit;
 	private RatingType ratingType;
 	private int serviceGenerationStrategy;
@@ -64,29 +64,29 @@ public class Analyzer {
 
 	/**
 	 * Execute the analyzer
+	 * @throws IllegalStateException throws when no service combinations are found
 	 */
-	public void execute() {	
+	public void execute() throws IllegalStateException {	
 		
 		// Choose service combinations
 		chosenServicesList = chooseServices();
 		
-		// Check if planner is required
-		if (chosenServicesList.size() > 0) {
-			plannerRequired = true;
+		// throw exception when no service combinations are found
+		if (chosenServicesList.size() == 0) {
+			throw new IllegalStateException("No service combinations are found!");
 		}
 		
 		executed = true;
 	}
 	
 	/**
-	 * Trigger the planner when the analyzer has been executed and when the planner is needed.
+	 * Trigger the planner when the analyzer has been executed.
 	 */
 	public void triggerPlanner() {
-		if (plannerRequired && executed) {
+		if (executed) {
 			System.err.print("Executing planner...\n");
 			planner.execute(chosenServicesList);
 			executed = false;
-			plannerRequired = false;
 		}
 	}
 	
