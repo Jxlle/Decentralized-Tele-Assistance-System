@@ -106,7 +106,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
 			
 			if (responseType == "ACCEPTED_OFFER") {
-				receiver.finishedProtocol();
+				receiver.finishedProtocol(messageID + 1);
 			}
 			
 			// Increase message ID
@@ -118,7 +118,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		// Offer has been accepted, stop protocol
 		case "ACCEPTED_OFFER":
 			System.err.println("\t> ACCEPTED_OFFER - message ID: " + messageID);
-			receiver.finishedProtocol();
+			receiver.finishedProtocol(messageID);
 			resetProtocol();
 			break;
 		

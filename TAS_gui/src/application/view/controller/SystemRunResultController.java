@@ -79,22 +79,27 @@ public class SystemRunResultController {
 			// Table column data
 			TableColumn<ServiceCombinationEntry, Integer> cycleColumn = new TableColumn<ServiceCombinationEntry,Integer>("Cycle");
 			cycleColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Integer>("cycle"));
-			cycleColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(4));
+			cycleColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
 			cycleColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 			
 			TableColumn<ServiceCombinationEntry, Double> totalCostColumn = new TableColumn<ServiceCombinationEntry,Double>("Total Cost");
 			totalCostColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("totalCost"));
-			totalCostColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(4));
+			totalCostColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
 			totalCostColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 
 			TableColumn<ServiceCombinationEntry, Double> totalFailRateColumn = new TableColumn<ServiceCombinationEntry,Double>("Total FailRate");
 			totalFailRateColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("totalFailRate"));
-			totalFailRateColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(4));
+			totalFailRateColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
 			totalFailRateColumn.setStyle("-fx-alignment: CENTER-LEFT;");
+			
+			TableColumn<ServiceCombinationEntry, Double> protocolMessageCountColumn = new TableColumn<ServiceCombinationEntry,Double>("Messages sent during protocol");
+			protocolMessageCountColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("protocolMessageCount"));
+			protocolMessageCountColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
+			protocolMessageCountColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 			
 			TableColumn<ServiceCombinationEntry, String> servicesColumn = new TableColumn<>("Services");
 			servicesColumn.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
-			servicesColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(4));
+			servicesColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
 			servicesColumn.setSortable(false);
 			
 			Callback<TableColumn<ServiceCombinationEntry, String>, TableCell<ServiceCombinationEntry, String>> cellFactoryShow
@@ -143,13 +148,14 @@ public class SystemRunResultController {
 			for (int i = 0; i < dataPoints.get(entity).size(); i++) {	
 				Pair<Double, Double> dataPoint = dataPoints.get(entity).get(i);
 				int cycle = probe.getSystemCycles().get(entity).get(i);
+				int protocolMessageCount = probe.getProtocolMessageCount().get(entity).get(i);
 				ServiceCombination combination = probe.getChosenCombinations().get(entity).get(i);
-				serviceCombinationData.add(new ServiceCombinationEntry(cycle, dataPoint.getValue(), dataPoint.getKey(), combination));
+				serviceCombinationData.add(new ServiceCombinationEntry(cycle, dataPoint.getValue(), dataPoint.getKey(), protocolMessageCount, combination));
 			}
 			
 			// Set table data
 			entityResultTable.setItems(serviceCombinationData);
-			entityResultTable.getColumns().addAll(cycleColumn, totalCostColumn, totalFailRateColumn, servicesColumn);
+			entityResultTable.getColumns().addAll(cycleColumn, totalCostColumn, totalFailRateColumn, protocolMessageCountColumn, servicesColumn);
 			entityPane.setContent(entityResultTable);
 		}
 	}
@@ -157,7 +163,7 @@ public class SystemRunResultController {
 	public void generateSystemRunChart() {
 		
 		// Define chart axis
-		NumberAxis xAxis = new NumberAxis("Total Service Combination Failure Rate (approximated by test runs)", 0, 1, 0.1);
+		NumberAxis xAxis = new NumberAxis("Total Service Combination Failure Rate (approximated by workflow analyzer)", 0, 1, 0.1);
 		NumberAxis yAxis = new NumberAxis("Total Service Combination Cost", 0, (probe.getMaxCost() + maximumDelta), 1);
 		
 		// Set chart position & size

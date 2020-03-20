@@ -14,12 +14,14 @@ public class ServiceCombinationEntry {
     private SimpleIntegerProperty cycle;
     private SimpleDoubleProperty totalCost;
     private SimpleDoubleProperty totalFailRate;
+    private SimpleIntegerProperty protocolMessageCount;
     private String usedServicesInfo;
     
-	public ServiceCombinationEntry(int cycle, double totalCost, double totalFailRate, ServiceCombination serviceCombination) {
+	public ServiceCombinationEntry(int cycle, double totalCost, double totalFailRate, int protocolMessageCount, ServiceCombination serviceCombination) {
 		this.cycle = new SimpleIntegerProperty(cycle);
 		this.totalCost = new SimpleDoubleProperty(totalCost);
 		this.totalFailRate = new SimpleDoubleProperty(totalFailRate);
+		this.protocolMessageCount = new SimpleIntegerProperty(protocolMessageCount);
 		generateServiceCombinationInfo(serviceCombination);
 	}
 	
@@ -33,6 +35,10 @@ public class ServiceCombinationEntry {
 	
 	public double getTotalFailRate() {
 		return totalFailRate.get();
+	}
+	
+	public int getProtocolMessageCount() {
+		return protocolMessageCount.get();
 	}
 	
 	public String getUsedServicesInfo() {

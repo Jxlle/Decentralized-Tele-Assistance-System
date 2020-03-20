@@ -20,6 +20,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	private HashMap<String, List<ServiceCombination>> chosenCombinations = new HashMap<>();
 	private HashMap<String, List<Pair<Double, Double>>> dataPoints = new HashMap<>();
 	private HashMap<String, List<Integer>> systemCycles = new HashMap<>();
+	private HashMap<String, List<Integer>> protocolMessagesCount = new HashMap<>();
 	private List<SystemEntity> connectedEntities = new ArrayList<>();
 	
 	/**
@@ -32,6 +33,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		dataPoints.put(entity.getEntityName(), new ArrayList<>());
 		chosenCombinations.put(entity.getEntityName(), new ArrayList<>());
 		systemCycles.put(entity.getEntityName(), new ArrayList<>());
+		protocolMessagesCount.put(entity.getEntityName(), new ArrayList<>());
 	}
 	
 	/**
@@ -49,6 +51,14 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		}
 		
 		connectedEntities.clear();
+	}
+	
+	/**
+	 * Return the probe protocol message count data
+	 * @return the probe protocol message count data
+	 */
+	public HashMap<String, List<Integer>> getProtocolMessageCount() {
+		return protocolMessagesCount;
 	}
 	
 	/**
@@ -109,9 +119,10 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	 * Update the current service combination data with the given service combination, knowledge
 	 * @param serviceCombination the chosen service combination
 	 * @param knowledge the knowledge used to choose the service combination
+	 * @param protocolMessages the amount of messages that were sent during the protocol
 	 */
 	@Override
-	public void serviceCombinationChosen(ServiceCombination serviceCombination, Knowledge knowledge) {
+	public void serviceCombinationChosen(ServiceCombination serviceCombination, Knowledge knowledge, int protocolMessages) {
 		
 		Double combinationCost = sca.getRealServiceCombinationCost(serviceCombination);
 		Double combinationFailureRate = sca.getRealServiceCombinationFailureRate(serviceCombination, knowledge);
@@ -127,5 +138,9 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		// Add system cycle information to the data
 		List<Integer> systemCyclesData = systemCycles.get(knowledge.getParentEntityName());
 		systemCyclesData.add(knowledge.getSystemCycle());
+		
+		// Add protocol message count to the data
+		List<Integer> protocolMessageCount = protocolMessagesCount.get(knowledge.getParentEntityName());
+		protocolMessageCount.add(protocolMessages);
 	}
 }

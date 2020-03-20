@@ -25,7 +25,7 @@ public class PlannerProtocolDoNothing extends PlannerTwoComponentProtocol {
 			case "FIRST_OFFER":
 				PlannerMessage response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "ACCEPTED_OFFER", null);
 				receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
-				receiver.finishedProtocol();
+				receiver.finishedProtocol(messageID + 1);
 				
 				// Increase message ID
 				messageID++;
@@ -34,7 +34,7 @@ public class PlannerProtocolDoNothing extends PlannerTwoComponentProtocol {
 			// Offer has been accepted, stop protocol
 			case "ACCEPTED_OFFER":
 				receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
-				receiver.finishedProtocol();
+				receiver.finishedProtocol(messageID);
 				resetProtocol();
 				break;
 				

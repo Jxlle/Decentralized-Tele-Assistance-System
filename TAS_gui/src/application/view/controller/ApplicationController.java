@@ -410,13 +410,13 @@ public class ApplicationController implements Initializable {
     private void addDefaultEntities() {
     	
 		WorkflowExecutor workflowExecutor = new WorkflowExecutor(
-				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.registry.shared"), 
-						GlobalServiceInfo.getServiceRegistry("service.registry.individual1")));	
+				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.shared.registry"), 
+						GlobalServiceInfo.getServiceRegistry("service.individual1.registry")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");		
 		MAPEKComponent.Builder builder = new Builder();
 		
 		try {
-			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.registry.shared", "service.registry.individual1")))
+			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.shared.registry", "service.individual1.registry")))
 			 	   .initializePlanner()
 				   .initializeAnalyzer(100, 1)
 				   .initializeMonitor(0.05, 0.05);
@@ -431,14 +431,14 @@ public class ApplicationController implements Initializable {
 		addEntityToList(systemEntity);
 		
 		workflowExecutor = new WorkflowExecutor(
-				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.registry.shared"), 
-						GlobalServiceInfo.getServiceRegistry("service.registry.individual2")));	
+				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.shared.registry"), 
+						GlobalServiceInfo.getServiceRegistry("service.individual2.registry")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");
 		
 		builder = new Builder();
 		
 		try {
-			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.registry.shared", "service.registry.individual2")))
+			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.shared.registry", "service.individual2.registry")))
 			 	   .initializePlanner()
 				   .initializeAnalyzer(100, 1)
 				   .initializeMonitor(0.05, 0.05);

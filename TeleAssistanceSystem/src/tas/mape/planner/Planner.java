@@ -96,7 +96,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		// If no protocol is used, just use the best service combination
 		if (protocol == null) {
 			setCurrentServiceCombination(availableServiceCombinations.get(0));
-			finishedProtocol();
+			finishedProtocol(0);
 		}
 	}
 	
@@ -138,12 +138,13 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
-	 * Method that is called when the protocol is finished.
+	 * Method that is called when the protocol is finished, given protocol data.
 	 * This method indicates that the protocol is finished.
+	 * @param protocolMessages the amount of messages that were sent during the protocol
 	 */
-	public void finishedProtocol() {
+	public void finishedProtocol(int protocolMessages) {
 		protocolFinished = true;
-		probe.serviceCombinationChosen(currentServiceCombination, knowledge);
+		probe.serviceCombinationChosen(currentServiceCombination, knowledge, protocolMessages);
 		makePlan(currentServiceCombination);
 	}
 	

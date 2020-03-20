@@ -15,5 +15,5 @@ public interface PlannerProbeInterface {
 	 * @param serviceCombination the chosen service combination
 	 * @param knowledge the knowledge used to choose the service combination
 	 */
-	public void serviceCombinationChosen(ServiceCombination serviceCombination, Knowledge knowledge);
+	public void serviceCombinationChosen(ServiceCombination serviceCombination, Knowledge knowledge, int protocolMessages);
 }
