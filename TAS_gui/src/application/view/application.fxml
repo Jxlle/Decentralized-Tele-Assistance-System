@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.4670487106017192" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.ApplicationController">
+<SplitPane dividerPositions="0.4670487106017192" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.ApplicationController">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
          <children>
@@ -137,7 +137,7 @@
                      <items>
                         <Label text="TAS Experimentation" />
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
-                        <MenuButton mnemonicParsing="false" text="Open">
+                        <MenuButton disable="true" mnemonicParsing="false" text="Open">
                            <items>
                               <MenuItem fx:id="openProfileMenuItem" mnemonicParsing="false" text="Open Profile" />
                               <MenuItem fx:id="openRunMenuItem" mnemonicParsing="false" text="Open Run" />
@@ -145,7 +145,7 @@
                            </items>
                         </MenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
-                        <MenuButton mnemonicParsing="false" text="Save">
+                        <MenuButton disable="true" mnemonicParsing="false" text="Save">
                            <items>
                               <MenuItem fx:id="saveRunMenuItem" mnemonicParsing="false" text="Save Run" />
                               <MenuItem fx:id="saveLogMenuItem" mnemonicParsing="false" text="Save Log" />

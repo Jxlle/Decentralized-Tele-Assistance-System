@@ -409,12 +409,14 @@ public class ApplicationController implements Initializable {
     
     private void addDefaultEntities() {
     	
-		WorkflowExecutor workflowExecutor = new WorkflowExecutor(Arrays.asList(GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry")));	
+		WorkflowExecutor workflowExecutor = new WorkflowExecutor(
+				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.registry.shared"), 
+						GlobalServiceInfo.getServiceRegistry("service.registry.individual1")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");		
 		MAPEKComponent.Builder builder = new Builder();
 		
 		try {
-			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("se.lnu.service.registry")))
+			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.registry.shared", "service.registry.individual1")))
 			 	   .initializePlanner()
 				   .initializeAnalyzer(100, 1)
 				   .initializeMonitor(0.05, 0.05);
@@ -423,19 +425,20 @@ public class ApplicationController implements Initializable {
 		}
 		
 		MAPEKComponent component = builder.build();
-		SystemEntity systemEntity = new SystemEntity("Test Entity", workflowExecutor, component);
+		SystemEntity systemEntity = new SystemEntity("Default System Entity", workflowExecutor, component);
 		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 10));
 		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.15));
 		addEntityToList(systemEntity);
 		
-		workflowExecutor = new WorkflowExecutor(Arrays.asList(GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry"), 
-				GlobalServiceInfo.getServiceRegistry("se.lnu.service.registry2")));	
+		workflowExecutor = new WorkflowExecutor(
+				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.registry.shared"), 
+						GlobalServiceInfo.getServiceRegistry("service.registry.individual2")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");
 		
 		builder = new Builder();
 		
 		try {
-			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("se.lnu.service.registry", "se.lnu.service.registry2")))
+			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.registry.shared", "service.registry.individual2")))
 			 	   .initializePlanner()
 				   .initializeAnalyzer(100, 1)
 				   .initializeMonitor(0.05, 0.05);
@@ -444,7 +447,7 @@ public class ApplicationController implements Initializable {
 		}
 		
 		component = builder.build();
-		systemEntity = new SystemEntity("Test Entity 2", workflowExecutor, component);
+		systemEntity = new SystemEntity("Default System Entity 2", workflowExecutor, component);
 		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 10));
 		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.15));
 		addEntityToList(systemEntity);
