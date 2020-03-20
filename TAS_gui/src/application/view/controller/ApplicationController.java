@@ -133,7 +133,7 @@ public class ApplicationController implements Initializable {
     Map<String, ListView<AnchorPane>> serviceRegistryPanes = new ConcurrentHashMap<>();
     int maxSteps;
     String entityBeingAnalyzed;
-    boolean analyzed, done;
+    boolean analyzed, done, forceQuit;
     
     @FXML
     ListView<AnchorPane> profileListView;
@@ -1081,6 +1081,9 @@ public class ApplicationController implements Initializable {
     	runButton.setOnAction(new EventHandler<ActionEvent>() {
     	    @Override
     	    public void handle(ActionEvent event) {
+    	    	
+    		done = false;
+		    analyzed = false;
 
     	    if (runButton.getId().equals("runButton")) {
     			
@@ -1098,9 +1101,6 @@ public class ApplicationController implements Initializable {
     	    			chartController.resetProbe();
     	    			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
     	    			SystemProfileDataHandler.activeProfile = profile;
-    	    			
-    	    			done = false;
-    			    	analyzed = false;
     			    	
     			    	// Analyze entity workflows if needed
     			    	for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
@@ -1157,7 +1157,9 @@ public class ApplicationController implements Initializable {
     			Task<Void> progressTask = new Task<Void>() {
     			    @Override
     			    protected Void call() throws Exception {
-    			    	while (WorkflowAnalyzer.getCurrentSteps() < WorkflowAnalyzer.analyzerCycles && !analyzed) {
+						System.err.println("ANALYZED: " + analyzed + " , DONE: " + done);
+    			    	
+    			    	while (WorkflowAnalyzer.getCurrentSteps() < WorkflowAnalyzer.analyzerCycles && !analyzed && !forceQuit) {
         				    Platform.runLater(new Runnable() {
             					@Override
             					public void run() {	
@@ -1170,7 +1172,7 @@ public class ApplicationController implements Initializable {
         				    Thread.sleep(100);
     			    	}
     			    	
-    			    	while (analyzed && !done) {
+    			    	while (analyzed && !done && !forceQuit) {
         				    Platform.runLater(new Runnable() {
             					@Override
             					public void run() {	
@@ -1186,13 +1188,15 @@ public class ApplicationController implements Initializable {
         				    Thread.sleep(100);
     			    	}
     			    	
-    			    	if (done) {
+    			    	if (done || forceQuit) {
         				    Platform.runLater(new Runnable() {
             					@Override
             					public void run() {	
                 			    	invocationLabel.setText("");
                 				    updateProgress(0, 0);
                 				    done = false;
+                				    analyzed = false;
+                				    forceQuit = false;
             					}
         				    });
     			    	}
@@ -1204,39 +1208,26 @@ public class ApplicationController implements Initializable {
     			progressBar.progressProperty().bind(progressTask.progressProperty());
     			new Thread(progressTask).start();
     	    }   
-    	    else {    	    	
-    		    Platform.runLater(new Runnable() {
-    			@Override
-    			public void run() {
+    	    else {    	
+    	    	
+				if (analyzed) {
+    				// Stop system
+    				SystemProfileExecutor.stopSystemExecution();	
     				
-    				if (analyzed) {
-        				// Stop system
-        				SystemProfileExecutor.stopSystemExecution();	
-        				
-        				// Plot current graphs
-    					chartController.generateSystemRunChart();
-    					chartController.generateSystemRunTables();
-    				}
-    				else {
-    					// Stop analyzer
-    					WorkflowAnalyzer.stop();
-    				}
-    				
-    			    runButton.setId("runButton");
-    				chartController.clear();
-    				
-    				// Reset progress bar
-    				analyzed = true;
-				    done = true;
-    				
-    				/*chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
-    				//chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(), Integer.parseInt(sliceTextField.getText()));
-
-    			    tableViewController.fillReliabilityDate(resultFilePath);
-    			    tableViewController.fillCostData(resultFilePath);
-    				tableViewController.fillPerformanceData(resultFilePath);*/
-    			}
-    		    });
+    				// Plot current graphs
+					chartController.generateSystemRunChart();
+					chartController.generateSystemRunTables();
+				}
+				else {
+					// Stop analyzer
+					WorkflowAnalyzer.stop();
+				}
+				
+				chartController.clear();
+			    runButton.setId("runButton");
+			    
+				// Reset progress bar
+			    forceQuit = true;
     	    }
     	    }
     	});

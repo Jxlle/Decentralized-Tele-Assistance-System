@@ -39,10 +39,11 @@ public class WorkflowAnalyzer {
 	private WorkflowAnalyzer() {}
 	
     /**
-     * Indicate that the analyzer has been stopped
+     * Indicate that the analyzer has been stopped and reset the current steps
      */
     public synchronized static void stop() {
     	isStopped = true;
+    	currentSteps = 0;
     }
     
     /**
