@@ -49,7 +49,6 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 			
 			// Stop execution if forced
 			if (isStopped) {
-				System.err.println("STOPPED");
 				entity.getManagedSystem().stop();
 				break;
 			}
