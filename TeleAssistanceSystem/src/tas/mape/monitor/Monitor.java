@@ -124,7 +124,7 @@ public class Monitor {
 	 */
 	public void triggerAnalyzer() {	
 		if (executed) {
-			System.err.print("Executing analyzer...\n");
+			//System.err.print("Executing analyzer...\n");
 			analyzer.execute();
 			executed = false;
 		}

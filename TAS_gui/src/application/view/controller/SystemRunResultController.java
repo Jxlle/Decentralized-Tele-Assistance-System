@@ -42,13 +42,11 @@ public class SystemRunResultController {
 	private int maximumDelta = 10;
 	
 	public void addEntityToProbe(SystemEntity entity) {
-		System.out.println("ADDED: " + entity.getEntityName());
 		probe.connect(entity);
 	}
 	
 	public void resetProbe() {
 		probe.reset();
-		//probe = new SystemRunProbe();
 	}
 	
 	public SystemRunResultController(AnchorPane systemRunChartPane, Accordion entityResultTableAccordion) {
@@ -79,27 +77,27 @@ public class SystemRunResultController {
 			// Table column data
 			TableColumn<ServiceCombinationEntry, Integer> cycleColumn = new TableColumn<ServiceCombinationEntry,Integer>("Cycle");
 			cycleColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Integer>("cycle"));
-			cycleColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
+			cycleColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(6));
 			cycleColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 			
 			TableColumn<ServiceCombinationEntry, Double> totalCostColumn = new TableColumn<ServiceCombinationEntry,Double>("Total Cost");
 			totalCostColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("totalCost"));
-			totalCostColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
+			totalCostColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(6));
 			totalCostColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 
 			TableColumn<ServiceCombinationEntry, Double> totalFailRateColumn = new TableColumn<ServiceCombinationEntry,Double>("Total FailRate");
 			totalFailRateColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("totalFailRate"));
-			totalFailRateColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
+			totalFailRateColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(6));
 			totalFailRateColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 			
 			TableColumn<ServiceCombinationEntry, Double> protocolMessageCountColumn = new TableColumn<ServiceCombinationEntry,Double>("Messages sent during protocol");
 			protocolMessageCountColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("protocolMessageCount"));
-			protocolMessageCountColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
+			protocolMessageCountColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(3));
 			protocolMessageCountColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 			
 			TableColumn<ServiceCombinationEntry, String> servicesColumn = new TableColumn<>("Services");
 			servicesColumn.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
-			servicesColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
+			servicesColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(6));
 			servicesColumn.setSortable(false);
 			
 			Callback<TableColumn<ServiceCombinationEntry, String>, TableCell<ServiceCombinationEntry, String>> cellFactoryShow
@@ -154,7 +152,7 @@ public class SystemRunResultController {
 			}
 			
 			// Set table data
-			entityResultTable.setItems(serviceCombinationData);
+			entityResultTable.setItems(serviceCombinationData);			
 			entityResultTable.getColumns().addAll(cycleColumn, totalCostColumn, totalFailRateColumn, protocolMessageCountColumn, servicesColumn);
 			entityPane.setContent(entityResultTable);
 		}

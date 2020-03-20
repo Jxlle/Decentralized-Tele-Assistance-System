@@ -369,7 +369,6 @@ public class ApplicationController implements Initializable {
 	
 	public void analyzeEntity(SystemEntity entity) {
 		
-		System.err.print("starting analyzing for " + entity.getEntityName() + "\n");
 		WorkflowAnalyzer.analyzeWorkflow(entity.getManagedSystem().getAssistanceService());
 		Map<Description, Pair<List<ServiceDescription>, Double>> usableServices = WorkflowAnalyzer.getUsableServicesAndChance();
 		
@@ -385,9 +384,10 @@ public class ApplicationController implements Initializable {
 			System.err.print("=== \n");
 			System.err.print("description usage chance :" + usableServices.get(d).getValue() + " \n");
 			System.err.print("------------------------------------------------------------ \n");
-		}*/
+		}
 		
-		System.err.print("done analyzing\n");
+		System.err.print("done analyzing\n");*/
+		
 		entity.getManagingSystem().setWorkflowServiceTree(WorkflowAnalyzer.getWorkflowServiceTree());
 		entity.getManagingSystem().setUsedServicesAndChances(usableServices);
 		workflowAnalyzed.put(entity.getEntityName(), true);
@@ -1086,7 +1086,6 @@ public class ApplicationController implements Initializable {
     	    public void handle(ActionEvent event) {
     	    	
     		done = false;
-		    analyzed = false;
 
     	    if (runButton.getId().equals("runButton")) {
     			
@@ -1104,7 +1103,8 @@ public class ApplicationController implements Initializable {
     	    			chartController.resetProbe();
     	    			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
     	    			SystemProfileDataHandler.activeProfile = profile;
-    			    	
+    	    		    analyzed = false;
+    	    		    
     			    	// Analyze entity workflows if needed
     			    	for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
     			    		
@@ -1116,7 +1116,6 @@ public class ApplicationController implements Initializable {
     			    		chartController.addEntityToProbe(entity);
     			    		
     			    		if (!workflowAnalyzed.get(entity.getEntityName())) {
-    	    			    	System.err.print("analyzing \n");
     	    			    	entityBeingAnalyzed = entity.getEntityName();
     			    			analyzeEntity(entity);
     			    		}
@@ -1154,20 +1153,17 @@ public class ApplicationController implements Initializable {
     			ExecutionThread thread = new ExecutionThread("main", task);
     			thread.setDaemon(true);
     			thread.start();
-
-    			System.out.println("Start task!!");
     			
     			Task<Void> progressTask = new Task<Void>() {
     			    @Override
     			    protected Void call() throws Exception {
-						System.err.println("ANALYZED: " + analyzed + " , DONE: " + done);
     			    	
     			    	while (WorkflowAnalyzer.getCurrentSteps() < WorkflowAnalyzer.analyzerCycles && !analyzed && !forceQuit) {
         				    Platform.runLater(new Runnable() {
             					@Override
             					public void run() {	
-        							invocationLabel.setText("[ANALYZING] Analyzing the workflow of " + entityBeingAnalyzed
-        									+ ", [PROGRESS: "+ WorkflowAnalyzer.getCurrentSteps() + "/" + WorkflowAnalyzer.analyzerCycles + "]");
+        							invocationLabel.setText("[ANALYZING] Analyzing the workflow of \"" + entityBeingAnalyzed
+        									+ "\", [PROGRESS: "+ WorkflowAnalyzer.getCurrentSteps() + "/" + WorkflowAnalyzer.analyzerCycles + "]");
             					}
         				    });
         				    
@@ -1198,7 +1194,7 @@ public class ApplicationController implements Initializable {
                 			    	invocationLabel.setText("");
                 				    updateProgress(0, 0);
                 				    done = false;
-                				    analyzed = false;
+                				    //analyzed = false;
                 				    forceQuit = false;
             					}
         				    });
@@ -1213,24 +1209,29 @@ public class ApplicationController implements Initializable {
     	    }   
     	    else {    	
     	    	
-				if (analyzed) {
-    				// Stop system
-    				SystemProfileExecutor.stopSystemExecution();	
-    				
-    				// Plot current graphs
-					chartController.generateSystemRunChart();
-					chartController.generateSystemRunTables();
-				}
-				else {
-					// Stop analyzer
-					WorkflowAnalyzer.stop();
-				}
-				
-				chartController.clear();
-			    runButton.setId("runButton");
-			    
-				// Reset progress bar
-			    forceQuit = true;
+			    Platform.runLater(new Runnable() {
+					@Override
+					public void run() {	
+						if (analyzed) {
+		    				// Stop system
+		    				SystemProfileExecutor.stopSystemExecution();	
+		    				
+		    				// Plot current graphs
+							chartController.generateSystemRunChart();
+							chartController.generateSystemRunTables();
+						}
+						else {
+							// Stop analyzer
+							WorkflowAnalyzer.stop();
+						}
+						
+						chartController.clear();
+					    runButton.setId("runButton");
+					    
+						// Reset progress bar
+					    forceQuit = true;
+					}
+			    });
     	    }
     	    }
     	});

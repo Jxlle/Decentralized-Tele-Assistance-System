@@ -80,6 +80,8 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 			
 			// Stop execution if forced
 			if (isStopped) {
+				entity1.getManagedSystem().stop();
+				entity2.getManagedSystem().stop();
 				break;
 			}
 		}

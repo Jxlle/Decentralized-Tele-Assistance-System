@@ -31,7 +31,6 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 		SystemEntity entity = getSystemEntity(0);
 		
 		for (int i = 0; i < executionCycles; i++) {
-			System.err.print("--------------------CYCLE START [" + (i + 1) + "]--------------------\n");
 			
 			// Update current execution cycle
 			currentExecutionCycle = i;
@@ -43,7 +42,6 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 			entity.getManagingSystem().executeExecutor();
 			
 			// Execute workflow
-			System.err.print("Executing workflow...\n");
 			entity.getManagedSystem().executeWorkflow();
 			
 			// Reset all service loads after each execution cycle
@@ -51,6 +49,8 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 			
 			// Stop execution if forced
 			if (isStopped) {
+				System.err.println("STOPPED");
+				entity.getManagedSystem().stop();
 				break;
 			}
 		}
@@ -61,8 +61,6 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 		
 		// Reset current execution cycle
 		currentExecutionCycle = 0;
-		
-		System.err.print("--------------------CYCLES ENDED--------------------\n");
 	}
 
 	/**

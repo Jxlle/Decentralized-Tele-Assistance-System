@@ -48,7 +48,7 @@ public class SystemProfileDataHandler {
 	
 	/**
 	 * Write profile object to xml file
-	 * @param xmlPath the xml file path
+	 * @param xmlPath the xml file pathHH
 	 */
 	public static void writeToXml(SystemProfile profile, String xmlPath) {
 		

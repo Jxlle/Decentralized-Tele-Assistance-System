@@ -157,74 +157,86 @@ public class GlobalServiceInfo {
     	serviceRegistries = new ArrayList<>();
     	
     	// Service registries
-		ServiceRegistry serviceRegistry = new ServiceRegistry("Individual Service Registry 1", "service.registry.individual1");
+		ServiceRegistry serviceRegistry = new ServiceRegistry("Individual Service Registry 1", "service.individual1.registry");
 		serviceRegistry.startService();
-		
-		ServiceRegistry serviceRegistry2 = new ServiceRegistry("Individual Service Registry 2", "service.registry.individual2");
-		serviceRegistry2.startService();
-		
-		ServiceRegistry serviceRegistry3 = new ServiceRegistry("Shared Service Registry", "service.registry.shared");
-		serviceRegistry3.startService();
-		
 		serviceRegistries.add(serviceRegistry);
+		
+		ServiceRegistry serviceRegistry2 = new ServiceRegistry("Individual Service Registry 2", "service.individual2.registry");
+		serviceRegistry2.startService();
 		serviceRegistries.add(serviceRegistry2);
+		
+		ServiceRegistry serviceRegistry3 = new ServiceRegistry("Shared Service Registry", "service.shared.registry");
+		serviceRegistry3.startService();
 		serviceRegistries.add(serviceRegistry3);
+		
 		
 		// Alarm Services
 		AlarmService alarm1 = new AlarmService("AlarmService1", "service.alarmService1");
 		alarm1.getServiceDescription().getCustomProperties().put("Cost", 4.0);
-		alarm1.getServiceDescription().setOperationCost("triggerAlarm", 4.0);
 		alarm1.getServiceDescription().getCustomProperties().put("FailureRate", 0.11);
 		alarm1.startService();
 		alarm1.register(serviceRegistry2);
+		services.add(alarm1);
 	
 		AlarmService alarm2 = new AlarmService("AlarmService2", "service.alarmService2");
-		alarm2.getServiceDescription().getCustomProperties().put("Cost", 12.0);
+		alarm2.getServiceDescription().getCustomProperties().put("Cost", 5.0);
 		alarm2.getServiceDescription().getCustomProperties().put("preferred", true);
-		alarm2.getServiceDescription().setOperationCost("triggerAlarm", 12.0);
-		alarm2.getServiceDescription().getCustomProperties().put("FailureRate", 0.04);
+		alarm2.getServiceDescription().getCustomProperties().put("FailureRate", 0.05);
 		alarm2.startService();
-		alarm2.register(serviceRegistry);
+		alarm2.register(serviceRegistry3);
+		services.add(alarm2);
 	
 		AlarmService alarm3 = new AlarmService("AlarmService3", "service.alarmService3");
-		alarm3.getServiceDescription().getCustomProperties().put("Cost", 2.0);
-		alarm3.getServiceDescription().setOperationCost("triggerAlarm", 2.0);
-		alarm3.getServiceDescription().getCustomProperties().put("FailureRate", 0.18);
+		alarm3.getServiceDescription().getCustomProperties().put("Cost", 8.0);
+		alarm3.getServiceDescription().getCustomProperties().put("FailureRate", 0.04);
 		alarm3.startService();
 		alarm3.register(serviceRegistry);
-		
-		services.add(alarm1);
-		services.add(alarm2);
 		services.add(alarm3);
+		
+		AlarmService alarm4 = new AlarmService("AlarmService4", "service.alarmService4");
+		alarm4.getServiceDescription().getCustomProperties().put("Cost", 3.0);
+		alarm4.getServiceDescription().getCustomProperties().put("FailureRate", 0.15);
+		alarm4.startService();	
+		alarm4.register(serviceRegistry2);
+		services.add(alarm4);
+		
+		AlarmService alarm5 = new AlarmService("AlarmService5", "service.alarmService5");
+		alarm5.getServiceDescription().getCustomProperties().put("Cost", 2.0);
+		alarm5.getServiceDescription().getCustomProperties().put("FailureRate", 0.18);
+		alarm5.startService();
+		services.add(alarm5);
+		
+		AlarmService alarm6 = new AlarmService("AlarmService6", "service.alarmService6");
+		alarm6.getServiceDescription().getCustomProperties().put("Cost", 8.0);
+		alarm6.getServiceDescription().getCustomProperties().put("FailureRate", 0.04);
+		alarm6.startService();
+		alarm6.register(serviceRegistry);
+		services.add(alarm6);
 	
 		
 		// Medical Analysis Services
 		MedicalAnalysisService medicalAnalysis1 = new MedicalAnalysisService("MedicalService1", "service.medical1");
 		medicalAnalysis1.getServiceDescription().getCustomProperties().put("preferred", false);
 		medicalAnalysis1.getServiceDescription().getCustomProperties().put("Cost", 4.0);
-		medicalAnalysis1.getServiceDescription().setOperationCost("analyzeData", 4.0);
 		medicalAnalysis1.getServiceDescription().getCustomProperties().put("FailureRate", 0.12);
 		medicalAnalysis1.startService();
 		medicalAnalysis1.register(serviceRegistry);
+		services.add(medicalAnalysis1);
 	
 		MedicalAnalysisService medicalAnalysis2 = new MedicalAnalysisService("MedicalService2", "service.medical2");
 		medicalAnalysis2.getServiceDescription().getCustomProperties().put("preferred", true);
 		medicalAnalysis2.getServiceDescription().getCustomProperties().put("Cost", 14.0);
-		medicalAnalysis2.getServiceDescription().setOperationCost("analyzeData", 14.0);
 		medicalAnalysis2.getServiceDescription().getCustomProperties().put("FailureRate", 0.07);
 		medicalAnalysis2.startService();
 		medicalAnalysis2.register(serviceRegistry);
+		services.add(medicalAnalysis2);
 	
 		MedicalAnalysisService medicalAnalysis3 = new MedicalAnalysisService("MedicalService3", "service.medical3");
 		medicalAnalysis3.getServiceDescription().getCustomProperties().put("preferred", false);
 		medicalAnalysis3.getServiceDescription().getCustomProperties().put("Cost", 2.15);
-		medicalAnalysis3.getServiceDescription().setOperationCost("analyzeData", 2.15);
 		medicalAnalysis3.getServiceDescription().getCustomProperties().put("FailureRate", 0.18);
 		medicalAnalysis3.startService();
 		medicalAnalysis3.register(serviceRegistry);
-		
-		services.add(medicalAnalysis1);
-		services.add(medicalAnalysis2);
 		services.add(medicalAnalysis3);
 	
 		
@@ -232,8 +244,6 @@ public class GlobalServiceInfo {
 		DrugService drugService = new DrugService("DrugService", "service.drug");
 		drugService.getServiceDescription().getCustomProperties().put("preferred", true);
 		drugService.getServiceDescription().getCustomProperties().put("Cost", 2.0);
-		drugService.getServiceDescription().setOperationCost("changeDoses", 5.0);
-		drugService.getServiceDescription().setOperationCost("changeDrug", 5.0);
 		drugService.getServiceDescription().getCustomProperties().put("FailureRate", 0.25);
 		drugService.startService();
 		drugService.register(serviceRegistry);
