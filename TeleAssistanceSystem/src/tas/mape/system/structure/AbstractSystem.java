@@ -17,6 +17,9 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	// Variable representing the current execution cycle
 	protected int currentExecutionCycle;
 	
+	// Boolean indicating that execution has been stopped
+	protected boolean isStopped;
+	
 	/**
 	 * Create a new abstract system with given system entities
 	 * @param systemEntities the given system entities
@@ -31,6 +34,13 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 		}
 		
 		this.systemEntities = systemEntities;
+	}
+	
+	/**
+	 * Stop execution
+	 */
+	public void stop() {
+		isStopped = true;
 	}
 	
 	/**

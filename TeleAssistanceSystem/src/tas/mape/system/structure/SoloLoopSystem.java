@@ -48,6 +48,11 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 			
 			// Reset all service loads after each execution cycle
 			GlobalServiceInfo.resetServiceLoads();
+			
+			// Stop execution if forced
+			if (isStopped) {
+				break;
+			}
 		}
 		
 		// Reset approximated failure rates table after the run

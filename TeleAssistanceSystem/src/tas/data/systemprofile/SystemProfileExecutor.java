@@ -150,4 +150,9 @@ public class SystemProfileExecutor {
 	public static int getCurrentExecutionCycle() {
 		return systemInstance.getCurrentExecutionCycle();
 	}
+	
+	// Stop the current system run execution
+	public static void stopSystemExecution() {
+		systemInstance.stop();
+	}
 }

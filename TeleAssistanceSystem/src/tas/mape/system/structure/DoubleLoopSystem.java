@@ -42,7 +42,7 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 	 */
 	@Override
 	public void executeSystem(int executionCycles, AbstractProtocol<PlannerMessage, Planner> protocol, int maxIterations) {
-		
+				
 		// System entities
 		SystemEntity entity1 = getSystemEntity(0);
 		SystemEntity entity2 = getSystemEntity(1);
@@ -77,6 +77,11 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 			
 			// Reset all service loads after each execution cycle
 			GlobalServiceInfo.resetServiceLoads();
+			
+			// Stop execution if forced
+			if (isStopped) {
+				break;
+			}
 		}
 		
 		// Reset system protocol

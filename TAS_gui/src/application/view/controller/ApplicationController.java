@@ -1088,6 +1088,13 @@ public class ApplicationController implements Initializable {
     			    @Override
     			    protected Void call() throws Exception {	
     			    	
+    				    Platform.runLater(new Runnable() {
+        					@Override
+        					public void run() {
+        					    runButton.setId("stopButton");
+        					}
+    				    });
+    			    	
     	    			chartController.resetProbe();
     	    			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
     	    			SystemProfileDataHandler.activeProfile = profile;
@@ -1196,29 +1203,29 @@ public class ApplicationController implements Initializable {
     			
     			progressBar.progressProperty().bind(progressTask.progressProperty());
     			new Thread(progressTask).start();
-    	    }
-    	    
-    	    else {
-    	    	// TODO Stop needed?
-    	    	//tasStart.stop();
-    	    	
-    	    	// TODO CHARTS
-    		    /*Platform.runLater(new Runnable() {
+    	    }   
+    	    else {    	    	
+    		    Platform.runLater(new Runnable() {
     			@Override
     			public void run() {
+    				
+    				// Stop system
+    				SystemProfileExecutor.stopSystemExecution();
+    				
     			    runButton.setId("runButton");
     				chartController.clear();
-    				tableViewController.clear();
     				
+					chartController.generateSystemRunChart();
+					chartController.generateSystemRunTables();
     				
-    				//chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
+    				/*chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
     				//chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(), Integer.parseInt(sliceTextField.getText()));
 
     			    tableViewController.fillReliabilityDate(resultFilePath);
     			    tableViewController.fillCostData(resultFilePath);
-    				tableViewController.fillPerformanceData(resultFilePath);
+    				tableViewController.fillPerformanceData(resultFilePath);*/
     			}
-    		    });*/
+    		    });
     	    }
     	    }
     	});
