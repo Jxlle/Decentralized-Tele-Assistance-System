@@ -1209,14 +1209,25 @@ public class ApplicationController implements Initializable {
     			@Override
     			public void run() {
     				
-    				// Stop system
-    				SystemProfileExecutor.stopSystemExecution();
+    				if (analyzed) {
+        				// Stop system
+        				SystemProfileExecutor.stopSystemExecution();	
+        				
+        				// Plot current graphs
+    					chartController.generateSystemRunChart();
+    					chartController.generateSystemRunTables();
+    				}
+    				else {
+    					// Stop analyzer
+    					WorkflowAnalyzer.stop();
+    				}
     				
     			    runButton.setId("runButton");
     				chartController.clear();
     				
-					chartController.generateSystemRunChart();
-					chartController.generateSystemRunTables();
+    				// Reset progress bar
+    				analyzed = true;
+				    done = true;
     				
     				/*chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
     				//chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(), Integer.parseInt(sliceTextField.getText()));
