@@ -592,7 +592,6 @@ public class ApplicationController implements Initializable {
     		fileChooser.getExtensionFilters().add(extension);
     		File file = fileChooser.showOpenDialog(primaryStage);
     		if (file != null) {
-    		    System.out.println(file.getPath());
     		    addSystemProfile(file.getPath());
     		}
     	    }
