@@ -55,7 +55,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		
 		// First offer has been received
 		case "FIRST_OFFER":
-			System.err.println("\t> FIRST_OFFER");
+			System.err.println("\t> FIRST_OFFER , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 			receiver.setAvailableServiceCombinations(receiver.calculateNewServiceCombinations(message.getContent()));
 			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints);
 			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "NEW_OFFER", content);
@@ -69,7 +69,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		
 		// New offer has been received
 		case "NEW_OFFER":
-			System.err.println("\t> NEW_OFFER");
+			System.err.println("\t> NEW_OFFER , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 			List<ServiceCombination> newServiceCombinations = receiver.calculateNewServiceCombinations(message.getContent());
 			String responseType;
 			
@@ -117,7 +117,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		
 		// Offer has been accepted, stop protocol
 		case "ACCEPTED_OFFER":
-			System.err.println("\t> ACCEPTED_OFFER - message ID: " + messageID);
+			System.err.println("\t> ACCEPTED_OFFER , receiver:" + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 			receiver.finishedProtocol(messageID);
 			resetProtocol();
 			break;

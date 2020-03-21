@@ -330,7 +330,7 @@
 <Name>Individual Service Registry 2</Name>
 <ServiceList>
 <Endpoint>service.alarmService3</Endpoint>
-<Endpoint>service.alarmService5</Endpoint>
+<Endpoint>service.alarmService4</Endpoint>
 <Endpoint>service.medical3</Endpoint>
 <Endpoint>service.medical4</Endpoint>
 <Endpoint>service.drug3</Endpoint>
@@ -341,7 +341,7 @@
 <Endpoint>service.shared.registry</Endpoint>
 <Name>Shared Service Registry</Name>
 <ServiceList>
-<Endpoint>service.alarmService4</Endpoint>
+<Endpoint>service.alarmService5</Endpoint>
 <Endpoint>service.medical5</Endpoint>
 <Endpoint>service.drug5</Endpoint>
 </ServiceList>

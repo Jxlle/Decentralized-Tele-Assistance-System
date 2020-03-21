@@ -1,26 +1,18 @@
 <tas.data.systemprofile.SystemProfile>
   <executionCycles>20</executionCycles>
-  <workflowCycles>100</workflowCycles>
+  <workflowCycles>5000</workflowCycles>
   <maxProtocolIterations>100</maxProtocolIterations>
   <systemType>DOUBLE_LOOP</systemType>
-  <protocolType>DO_NOTHING_PROTOCOL</protocolType>
+  <protocolType>STANDARD_PROTOCOL</protocolType>
   <ratingType>CLASS</ratingType>
   <entityRequirementTypes>
     <entry>
       <string>Default System Entity</string>
-      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
-    </entry>
-    <entry>
-      <string>Test Entity</string>
-      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
-    </entry>
-    <entry>
-      <string>Test Entity 2</string>
-      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
+      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
     </entry>
     <entry>
       <string>Default System Entity 2</string>
-      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
+      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
     </entry>
   </entityRequirementTypes>
   <participatingEntities>

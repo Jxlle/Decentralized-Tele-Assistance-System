@@ -141,8 +141,7 @@ public class GlobalServiceInfo {
      * @param file the given file
      */
     public static void loadData(File file) {
-    	ChangeToDefaultServices();
-    	saveData(file);
+    	GlobalServiceInfoLoader.loadFromXml(file);
     }
     
     /**
@@ -197,14 +196,14 @@ public class GlobalServiceInfo {
 		alarm4.getServiceDescription().getCustomProperties().put("preferred", true);
 		alarm4.getServiceDescription().getCustomProperties().put("FailureRate", 0.05);
 		alarm4.startService();
-		alarm4.register(serviceRegistry3);
+		alarm4.register(serviceRegistry2);
 		services.add(alarm4);
 		
 		AlarmService alarm5 = new AlarmService("AlarmService5", "service.alarmService5");
 		alarm5.getServiceDescription().getCustomProperties().put("Cost", 3.0);
 		alarm5.getServiceDescription().getCustomProperties().put("FailureRate", 0.15);
 		alarm5.startService();	
-		alarm5.register(serviceRegistry2);
+		alarm5.register(serviceRegistry3);
 		services.add(alarm5);
 	
 		
