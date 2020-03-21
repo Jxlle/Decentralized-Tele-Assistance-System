@@ -43,6 +43,7 @@ public class WorkflowExecutor {
     
     public synchronized void stop(){
     	isStopped = true;
+    	currentSteps = 0;
     }
     
     private synchronized void start(){

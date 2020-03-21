@@ -75,6 +75,12 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	public abstract void executeSystem(int executionCycles);
 	
 	/**
+	 * Return the current amount of finished workflow cycles
+	 * @return the current amount of finished workflow cycles
+	 */
+	public abstract int getTotalFinishedWorkflowCycles();
+	
+	/**
 	 * Return the amount of needed entities in the system
 	 * @return the amount of needed entities in the system
 	 */

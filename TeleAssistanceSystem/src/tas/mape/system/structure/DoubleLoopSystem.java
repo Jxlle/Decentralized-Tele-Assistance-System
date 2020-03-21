@@ -1,6 +1,7 @@
 package tas.mape.system.structure;
 
 import tas.data.serviceinfo.GlobalServiceInfo;
+import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.communication.protocol.PlannerProtocolDoNothing;
@@ -109,5 +110,23 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 	@Override
 	public int getSystemEntityCount() {
 		return 2;
+	}
+
+	/**
+	 * Return the amount of needed entities in the system
+	 * @return the amount of needed entities in the system
+	 */
+	@Override
+	public int getTotalFinishedWorkflowCycles() {
+		
+		// System entities
+		SystemEntity entity1 = getSystemEntity(0);
+		SystemEntity entity2 = getSystemEntity(1);
+		
+		if (entity1.getManagedSystem().getCurrentSteps() > 0) {
+			return entity1.getManagedSystem().getCurrentSteps();
+		}
+
+		return entity2.getManagedSystem().getCurrentSteps() + SystemProfileDataHandler.activeProfile.getWorkflowCycles();
 	}
 }

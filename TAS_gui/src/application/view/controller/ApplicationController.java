@@ -1177,9 +1177,8 @@ public class ApplicationController implements Initializable {
             					public void run() {	
         							invocationLabel.setText("Executing system run ["
             					+ SystemProfileExecutor.getCurrentExecutionCycle() + "/" + SystemProfileDataHandler.activeProfile.getExecutionCycles() 
-            					+ "], [PROGRESS: " + entities.stream()
-			    				.filter(x -> x.getEntityName().equals(SystemProfileDataHandler.activeProfile
-			    						.getParticipatingEntity(0))).findFirst().get().getManagedSystem().getCurrentSteps() + "/" + SystemProfileDataHandler.activeProfile.getWorkflowCycles() + "]");
+            					+ "], [PROGRESS: " + SystemProfileExecutor.getCurrentWorkflowCycle() + "/" + SystemProfileDataHandler.activeProfile.getWorkflowCycles()
+			    						* + SystemProfileDataHandler.activeProfile.getAmountOfParticipatingEntities() + "]");
             					}
         				    });
         				    

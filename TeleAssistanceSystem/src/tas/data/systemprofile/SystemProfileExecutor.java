@@ -151,6 +151,14 @@ public class SystemProfileExecutor {
 		return systemInstance.getCurrentExecutionCycle();
 	}
 	
+	/**
+	 * Return the current workflow cycle
+	 * @return the current workflow cycle
+	 */
+	public static int getCurrentWorkflowCycle() {
+		return systemInstance.getTotalFinishedWorkflowCycles();
+	}
+	
 	// Stop the current system run execution
 	public static void stopSystemExecution() {
 		systemInstance.stop();
