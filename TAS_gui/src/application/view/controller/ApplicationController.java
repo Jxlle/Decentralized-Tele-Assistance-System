@@ -593,7 +593,7 @@ public class ApplicationController implements Initializable {
     		File file = fileChooser.showOpenDialog(primaryStage);
     		if (file != null) {
     		    System.out.println(file.getPath());
-    		    addProfile(file.getPath());
+    		    addSystemProfile(file.getPath());
     		}
     	    }
     	});
