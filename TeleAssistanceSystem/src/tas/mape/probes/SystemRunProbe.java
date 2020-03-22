@@ -21,6 +21,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	private HashMap<String, List<Pair<Double, Double>>> dataPoints = new HashMap<>();
 	private HashMap<String, List<Integer>> systemCycles = new HashMap<>();
 	private HashMap<String, List<Integer>> protocolMessagesCount = new HashMap<>();
+	private HashMap<String, Knowledge> knowledges = new HashMap<>();
 	private List<SystemEntity> connectedEntities = new ArrayList<>();
 	
 	/**
@@ -29,6 +30,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	 */
 	public void connect(SystemEntity entity) {
 		entity.getManagingSystem().getProbe().register(this);
+		
 		connectedEntities.add(entity);
 		dataPoints.put(entity.getEntityName(), new ArrayList<>());
 		chosenCombinations.put(entity.getEntityName(), new ArrayList<>());
@@ -44,6 +46,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		dataPoints.clear();
 		chosenCombinations.clear();
 		systemCycles.clear();
+		knowledges.clear();
 		
 		// Unregister from connected entities
 		for (SystemEntity entity : connectedEntities) {
@@ -124,12 +127,8 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	@Override
 	public void serviceCombinationChosen(ServiceCombination serviceCombination, Knowledge knowledge, int protocolMessages) {
 		
-		Double combinationCost = sca.getRealServiceCombinationCost(serviceCombination);
-		Double combinationFailureRate = sca.getRealServiceCombinationFailureRate(serviceCombination, knowledge);
-		
-		// Add data points to the data
-		List<Pair<Double, Double>> entityDataPoints = dataPoints.get(knowledge.getParentEntityName());
-		entityDataPoints.add(new Pair<Double, Double>(combinationFailureRate, combinationCost));
+		// Add knowledge to data
+		knowledges.put(knowledge.getParentEntityName(), knowledge);
 		
 		// Add chosen service combination to the data
 		List<ServiceCombination> EntityChosenCombinations = chosenCombinations.get(knowledge.getParentEntityName());
@@ -142,5 +141,22 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		// Add protocol message count to the data
 		List<Integer> protocolMessageCount = protocolMessagesCount.get(knowledge.getParentEntityName());
 		protocolMessageCount.add(protocolMessages);
+	}
+
+	/**
+	 * Update the service combination data for all previous received service combinations
+	 */
+	@Override
+	public void systemRunFinished() {	
+		for (String entity : knowledges.keySet()) {
+			
+			int cycle = systemCycles.get(entity).get(systemCycles.get(entity).size() - 1);
+			Double combinationCost = sca.getRealServiceCombinationCost(chosenCombinations.get(entity).get(cycle - 1));
+			Double combinationFailureRate = sca.getRealServiceCombinationFailureRate(chosenCombinations.get(entity).get(cycle - 1), knowledges.get(entity));
+			
+			// Add data points to the data
+			List<Pair<Double, Double>> entityDataPoints = dataPoints.get(entity);
+			entityDataPoints.add(new Pair<Double, Double>(combinationFailureRate, combinationCost));
+		}
 	}
 }

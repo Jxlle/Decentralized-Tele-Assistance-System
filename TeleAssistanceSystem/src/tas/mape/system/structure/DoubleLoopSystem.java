@@ -74,8 +74,13 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 			entity2.getManagingSystem().executeExecutor();
 			
 			// Execute workflow
+			System.err.println("executing workflow 1");
 			entity1.getManagedSystem().executeWorkflow();
+			System.err.println("executing workflow 2");
 			entity2.getManagedSystem().executeWorkflow();
+			
+			// notify the probe that the system run is finished (can be any entity, they contain the same probe)
+			entity1.getManagingSystem().getProbe().systemRunFinished();
 			
 			// Reset all service loads after each execution cycle
 			GlobalServiceInfo.resetServiceLoads();

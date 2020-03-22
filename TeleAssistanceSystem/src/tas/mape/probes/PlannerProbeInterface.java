@@ -16,4 +16,9 @@ public interface PlannerProbeInterface {
 	 * @param knowledge the knowledge used to choose the service combination
 	 */
 	public void serviceCombinationChosen(ServiceCombination serviceCombination, Knowledge knowledge, int protocolMessages);
+	
+	/**
+	 * Probe that a system run is finished
+	 */
+	public void systemRunFinished();
 }

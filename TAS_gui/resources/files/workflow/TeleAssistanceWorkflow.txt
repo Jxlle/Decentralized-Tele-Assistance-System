@@ -19,11 +19,12 @@ START [patientId,pick]
 		else if (analysisResult == changeDoses)
 			DrugService.changeDoses(patientId)
 		else if (analysisResult == sendAlarm)
-			AlarmService.triggerAlarm2(patientId)
+			AlarmService.triggerManualAlarm(patientId)
 	}
 	else if (pick == pButtonMsg) {
-		AlarmService.triggerAlarm(patientId)
+		AlarmService.triggerAutomaticAlarm(patientId)
 	}
 
 RETURN
+
 

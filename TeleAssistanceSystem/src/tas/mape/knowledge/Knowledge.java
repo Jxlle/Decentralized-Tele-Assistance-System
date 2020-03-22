@@ -411,12 +411,12 @@ public class Knowledge {
 	 * @return the service load
 	 */
 	public int getServiceLoad(Description description, double usePercentage) {
-		return (int) (servicesUsageChance.get(description) * usePercentage * SystemProfileDataHandler.activeProfile.getWorkflowCycles());
+		return (int) Math.ceil(servicesUsageChance.get(description) * usePercentage * SystemProfileDataHandler.activeProfile.getWorkflowCycles());
 	}
 	
 	/**
 	 * Return the service usage chance of the given service description
-	 * @param description the given service decsription
+	 * @param description the given service description
 	 * @return the service usage chance 
 	 */
 	public Double getServiceUsageChance(Description description) {

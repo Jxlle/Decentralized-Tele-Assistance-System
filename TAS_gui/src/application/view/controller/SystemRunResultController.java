@@ -143,6 +143,7 @@ public class SystemRunResultController {
 			// Extract table data
 			ObservableList<ServiceCombinationEntry> serviceCombinationData = FXCollections.observableArrayList();
 			
+			System.err.println("ENTITY DATA POINTS SIZE: " + entity + " " + dataPoints.get(entity).size());
 			for (int i = 0; i < dataPoints.get(entity).size(); i++) {	
 				Pair<Double, Double> dataPoint = dataPoints.get(entity).get(i);
 				int cycle = probe.getSystemCycles().get(entity).get(i);

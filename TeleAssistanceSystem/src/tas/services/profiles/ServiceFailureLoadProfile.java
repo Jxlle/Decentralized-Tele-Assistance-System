@@ -36,16 +36,17 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 	private void constructFailRates() {
 		failureRate = new TreeMap<>();
 		failureRate.put(0, 1.0);
-		failureRate.put(20, 0.90);
-		failureRate.put(35, 0.85);
-		failureRate.put(50, 0.70);
-		failureRate.put(65, 0.45);
-		failureRate.put(70, 0.30);
+		failureRate.put(20, 0.98);
+		failureRate.put(35, 0.95);
+		failureRate.put(50, 0.91);
+		failureRate.put(65, 0.85);
+		failureRate.put(70, 0.8);
 	}
 	
 	public Map.Entry<Integer, Double> getTableEntry(ServiceDescription description) {
 		
 		int usePercentage = (int) ((description.getLoad() / (double) (SystemProfileDataHandler.activeProfile.getWorkflowCycles() * SystemProfileDataHandler.activeProfile.getAmountOfParticipatingEntities())) * 100);
+		//System.err.println("percentage for " + description.getServiceEndpoint() + ": " + usePercentage + " " + description.getLoad() + " " + (double) (SystemProfileDataHandler.activeProfile.getWorkflowCycles() * SystemProfileDataHandler.activeProfile.getAmountOfParticipatingEntities()));
 		
 		Map.Entry<Integer, Double> entry = failureRate.ceilingEntry(usePercentage);
 		

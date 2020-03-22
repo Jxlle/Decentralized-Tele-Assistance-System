@@ -23,4 +23,12 @@ public class PlannerProbe extends AbstractProbe<PlannerProbeInterface> {
     	}
 	}
 	
+	/**
+	 * Notify subscribed probes that a system run has finished
+	 */
+	public void systemRunFinished() {
+    	for (PlannerProbeInterface plannerProbeInterface : subscribers) {
+    		plannerProbeInterface.systemRunFinished();
+    	}
+	}	
 }
