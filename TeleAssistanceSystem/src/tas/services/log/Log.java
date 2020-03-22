@@ -35,7 +35,6 @@ public class Log {
 	}
 	
 	public static void addLog(String title,String message){
-		System.out.print("test" + out + " \n");
 		SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();  
         String time=dataFormat.format(date).toString();

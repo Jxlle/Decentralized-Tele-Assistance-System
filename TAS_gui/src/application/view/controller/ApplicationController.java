@@ -1025,7 +1025,6 @@ public class ApplicationController implements Initializable {
     	    for (File file : files) {
         		if (file.isFile()) {
         		    if (file.getName().lastIndexOf('.') > 0)
-        		    	System.err.print("test");
         			this.addSystemProfile(file.getAbsolutePath());
         		}
     	    }

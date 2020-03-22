@@ -65,8 +65,6 @@ public class ServiceCombinationQoSAnalyzer {
 			totalValue += subValue;
 		}
 		
-		
-		System.err.println("TOTAL VALUE " + totalValue);
 		return totalValue;
 	}
 	
