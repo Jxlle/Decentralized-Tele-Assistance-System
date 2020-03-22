@@ -96,7 +96,7 @@ public class ServiceCombinationQoSAnalyzer {
 					throw new IllegalStateException("The required profile 'ServiceFailureLoadProfile' was not found!");
 				}
 				
-				// The failure rate (not taking services that activate this service in count) is calculated as follows:
+				// The failure rate (not taking services that activate this service into account) is calculated as follows:
 				//
 				// failure rate = chance that this service for this service type is used 
 				//            * actual fail rate (= 1 - (success rate * profile success rate multiplier (depends on the service load)))

@@ -266,18 +266,32 @@ public abstract class AbstractWorkflowQoSRequirement {
 			throw new IllegalStateException("The failure rate map already contains description data!");
 		}
 		
+		Map<String, Double> serviceLoads = new HashMap<String, Double>();
+		Map<String, Integer> serviceLoadsInt = new HashMap<String, Integer>();
+		
+		for (ServiceDescription service : combination.get(description).getItems()) {
+			if (service.getCustomProperties().containsKey("FailureRate")) {
+				double useChance = combination.get(description).getChance(service);	
+				double serviceLoad = knowledge.getServiceDescriptionLoad(description, useChance);
+				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? serviceLoad : v + serviceLoad);
+			}
+		}
+		
+		for (Map.Entry<String, Double> entry : serviceLoads.entrySet()) {
+			serviceLoadsInt.put(entry.getKey(), (int) Math.ceil(entry.getValue()));
+		}
+		
 		double totalValue = 0;
 		
 		for (ServiceDescription service : combination.get(description).getItems()) {
 			if (service.getCustomProperties().containsKey("FailureRate")) {
 				
-				// The failure rate (not taking services that activate this service in count) is calculated as follows:
+				// The failure rate (not taking services that activate this service into account) is calculated as follows:
 				//
-				// failrate = chance that this service for this service type is used 
+				// failure rate = chance that this service for this service type is used 
 				//            * approximated fail rate
 				double useChance = combination.get(description).getChance(service);	
-				totalValue += useChance * knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), 
-						knowledge.getServiceLoad(description, useChance));
+				totalValue += useChance * knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), serviceLoadsInt.get(service.getServiceEndpoint()));
 			}
 		}
 		
@@ -354,7 +368,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 			
 			if (service.getCustomProperties().containsKey("FailureRate")) {	
 				
-				load += knowledge.getServiceLoad(description, useChance);
+				load += knowledge.getServiceDescriptionLoad(description, useChance);
 			}
 			
 			if (load != 0) {

@@ -254,7 +254,8 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	private Map<String, Integer> getServiceLoads(ServiceCombination serviceCombination, List<String> registryEndpoints) {
 		
-		Map<String, Integer> serviceLoads = new HashMap<String, Integer>();
+		Map<String, Double> serviceLoads = new HashMap<String, Double>();
+		Map<String, Integer> result = new HashMap<String, Integer>();
 		
 		for (Description description : serviceCombination.getDescriptions()) {
 			
@@ -263,13 +264,17 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			for (ServiceDescription service : serviceUsage.getItems()) {	
 				
 				if (registryEndpoints.contains(service.getServiceRegistryEndpoint())) {
-					int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(service));
+					double serviceLoad = knowledge.getServiceDescriptionLoad(description, serviceUsage.getChance(service));
 					serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? serviceLoad : v + serviceLoad);
 				}		
 			}
 		}
 		
-		return serviceLoads;
+		for (Map.Entry<String, Double> entry : serviceLoads.entrySet()) {
+			result.put(entry.getKey(), (int) Math.ceil(entry.getValue()));
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -279,19 +284,24 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	private Map<String, Integer> getServiceLoads(ServiceCombination serviceCombination) {
 		
-		Map<String, Integer> serviceLoads = new HashMap<String, Integer>();
+		Map<String, Double> serviceLoads = new HashMap<String, Double>();
+		Map<String, Integer> serviceLoadsInt = new HashMap<String, Integer>();
 		
 		for (Description description : serviceCombination.getDescriptions()) {
 			
 			WeightedCollection<ServiceDescription> serviceUsage = serviceCombination.getAllServices(description);
 			
 			for (ServiceDescription service : serviceUsage.getItems()) {
-				System.err.print("LOAD " + knowledge.getServiceLoad(description, serviceUsage.getChance(service)) + " " + service.getServiceEndpoint() +"\n");
-				int serviceLoad = knowledge.getServiceLoad(description, serviceUsage.getChance(service));
+				double serviceLoad = knowledge.getServiceDescriptionLoad(description, serviceUsage.getChance(service));
 				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? serviceLoad : v + serviceLoad);		
 			}
 		}
 		
-		return serviceLoads;
+		for (Map.Entry<String, Double> entry : serviceLoads.entrySet()) {
+			//System.err.println("LOAD " + entry.getKey() + ": " + (int) Math.ceil(entry.getValue()));
+			serviceLoadsInt.put(entry.getKey(), (int) Math.ceil(entry.getValue()));
+		}
+		
+		return serviceLoadsInt;
 	}
 }
