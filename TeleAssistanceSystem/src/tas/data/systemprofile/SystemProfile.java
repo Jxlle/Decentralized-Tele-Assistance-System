@@ -16,6 +16,7 @@ import tas.mape.planner.RatingType;
 public class SystemProfile {
 	
 	private int executionCycles, workflowCycles, maxProtocolIterations;
+	private int messageContentPercentage;
 	private SystemType systemType;
 	private ProtocolType protocolType;
 	private RatingType ratingType;
@@ -191,6 +192,22 @@ public class SystemProfile {
 	 */
 	public int getAmountOfParticipatingEntities() {
 		return participatingEntities.size();
+	}
+	
+	/**
+	 * Return the protocol message content percentage
+	 * @return the protocol message content percentage
+	 */
+	public int getMessageContentPercentage() {
+		return messageContentPercentage;
+	}
+	
+	/**
+	 * Set the protocol message content percentage
+	 * @param messageContentPercentage the protocol message content percentage
+	 */
+	public void setMessageContentPercentage(int messageContentPercentage) {
+		this.messageContentPercentage = messageContentPercentage;
 	}
 	
 	/**

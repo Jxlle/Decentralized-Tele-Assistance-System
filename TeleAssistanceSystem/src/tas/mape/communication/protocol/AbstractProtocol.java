@@ -28,6 +28,9 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	// Maximum amount of iterations before the protocol stops
 	protected int maxIterations;
 	
+	// Percentage indicating how much of the maximum amount of information the protocol uses in its messages
+	protected int messageContentPercentage;
+	
 	// The list of components that are using this protocol
 	protected List<E> components = new ArrayList<>();
 	
@@ -35,18 +38,20 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	private ComponentMessageHost<T> messageHost = new ComponentMessageHost<T>();
 	
 	/**
-	 * Execute the protocol with the currently used communication components that will communicate and a 
-	 * given maximum amount of iterations
+	 * Execute the protocol with the currently used communication components that will communicate, a 
+	 * given maximum amount of iterations and how much information its going to use in its messages
 	 * @param maxIterations the given maximum amount of iterations
+	 * @param messageContentPercentage percentage indicating how much of the maximum amount of information the protocol uses in its messages
 	 * @throws IllegalArgumentException throw when the used protocol doesn't support the given amount of components
 	 */
-	public void executeProtocol(int maxIterations) throws IllegalArgumentException {
+	public void executeProtocol(int maxIterations, int messageContentPercentage) throws IllegalArgumentException {
 		
 		if (components.size() != getNeededAmountOfComponents()) {
 			throw new IllegalArgumentException("The used protocol doesn't support the current amount of components: " + components.size());
 		}
 		
 		this.maxIterations = maxIterations;
+		this.messageContentPercentage = messageContentPercentage;
 		startProtocol();
 	}
 	

@@ -31,7 +31,8 @@ public abstract class AbstractMultiLoopSystem<T extends AbstractSystemEntity<?, 
 	 * @param executionCycles the given amount of execution cycles
 	 * @param protocol the given protocol
 	 * @param maxIterations the given maximum amount of iterations
+	 * @param messageContentPercentage percentage indicating how much of the maximum amount of information the protocol uses in its messages
 	 */
-	public abstract void executeSystem(int executionCycles, AbstractProtocol<P1, P2> protocol, int maxIterations);
+	public abstract void executeSystem(int executionCycles, AbstractProtocol<P1, P2> protocol, int maxIterations, int messageContentPercentage);
 
 }

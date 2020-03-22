@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
@@ -179,9 +180,27 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * the given service combination that has a registry endpoint in the given list of registry endpoints
 	 * @param serviceCombination the given service combination
 	 * @param registryEndpoints the given registry endpoints
+	 * @param messageContentPercentage percentage of information that is given out
 	 * @return the planner message content
 	 */
-	public PlannerMessageContent generateMessageContent(ServiceCombination serviceCombination, List<String> registryEndpoints) {
+	public PlannerMessageContent generateMessageContent(ServiceCombination serviceCombination, List<String> registryEndpoints, int messageContentPercentage) {
+		
+		int registryEndpointsCount = (int) Math.ceil(registryEndpoints.size() * (messageContentPercentage / 100));
+		List<String> registryEndpointsNew = new ArrayList<>();
+		
+		if (registryEndpointsCount == registryEndpoints.size()) {
+			registryEndpointsNew = registryEndpoints;
+		}
+		else {		
+			registryEndpointsNew = new ArrayList<>();
+			
+			for (int i = 0; i < registryEndpointsCount; i++) {				
+				int randomIndex = new Random().nextInt(registryEndpoints.size());
+				registryEndpointsNew.add(registryEndpoints.get(randomIndex));
+				registryEndpoints.remove(randomIndex);
+			}
+		}
+		
 		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination, registryEndpoints);
 		return new PlannerMessageContent(serviceLoads);
 	}

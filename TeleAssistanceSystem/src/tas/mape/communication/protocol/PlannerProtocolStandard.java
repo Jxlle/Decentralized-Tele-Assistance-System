@@ -57,7 +57,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		case "FIRST_OFFER":
 			System.err.println("\t> FIRST_OFFER , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 			receiver.setAvailableServiceCombinations(receiver.calculateNewServiceCombinations(message.getContent()));
-			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints);
+			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints, messageContentPercentage);
 			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "NEW_OFFER", content);
 			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
 			
@@ -101,7 +101,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 			}
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);	
-			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints);
+			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints, messageContentPercentage);
 			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), responseType, content);
 			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
 			

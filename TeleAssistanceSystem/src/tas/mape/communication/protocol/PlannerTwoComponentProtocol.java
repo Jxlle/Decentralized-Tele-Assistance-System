@@ -34,7 +34,7 @@ public abstract class PlannerTwoComponentProtocol extends AbstractTwoComponentPr
 		sharedRegistryEndpoints.retainAll(registryEndpointsOther);
 		
 		// Make message
-		PlannerMessageContent content = sender.generateMessageContent(sender.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints);
+		PlannerMessageContent content = sender.generateMessageContent(sender.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints, messageContentPercentage);
 		PlannerMessage message = new PlannerMessage(messageID, receiver.getEndpoint(), sender.getEndpoint(), "FIRST_OFFER", content);
 		
 		System.out.println("-----------------------------------------------------------\nPROTOCOL STARTED");

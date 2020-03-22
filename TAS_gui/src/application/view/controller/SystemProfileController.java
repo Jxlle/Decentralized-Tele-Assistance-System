@@ -99,6 +99,9 @@ public class SystemProfileController implements Initializable {
 	TextField ratioTextField;
 	
 	@FXML
+	TextField protocolData;
+	
+	@FXML
 	Button addValueButton;
 	
 	@FXML
@@ -112,6 +115,9 @@ public class SystemProfileController implements Initializable {
 	
 	@FXML
 	Label protocolIterationsLabel;
+	
+	@FXML
+	Label protocolDataLabel;
 	
 	@FXML
 	ListView<BorderPane> entityListView;
@@ -147,7 +153,7 @@ public class SystemProfileController implements Initializable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void initializeValueTable(){
+	private void initializeValueTable() {
 		
 		valueTableView.setEditable(true);
            
@@ -320,6 +326,8 @@ public class SystemProfileController implements Initializable {
 		
 		maxProtocolIterations.setTextFormatter(new TextFormatter<Integer>(new IntegerStringConverter(), 0, integerFilter));
 		
+		protocolData.setTextFormatter(new TextFormatter<Integer>(new IntegerStringConverter(), 0, integerFilter));
+		
 		ObservableList<RatingType> ratingTypes = FXCollections.observableArrayList();
 		ratingTypes.addAll(RatingType.values());
 		ratingTypeComboBox.setItems(ratingTypes);
@@ -340,14 +348,18 @@ public class SystemProfileController implements Initializable {
 				if (entityCount > 1) {
 					protocolTypeComboBox.setVisible(true);
 					maxProtocolIterations.setVisible(true);
+					protocolData.setVisible(true);
 					protocolTypeLabel.setVisible(false);
 					protocolIterationsLabel.setVisible(false);
+					protocolDataLabel.setVisible(false);
 				}
 				else {
 					protocolTypeComboBox.setVisible(false);
 					maxProtocolIterations.setVisible(false);
+					protocolData.setVisible(false);
 					protocolTypeLabel.setVisible(true);
 					protocolIterationsLabel.setVisible(true);
+					protocolDataLabel.setVisible(true);
 				}
 				
 				entityListView.getItems().removeAll(entityListView.getItems());
@@ -383,16 +395,20 @@ public class SystemProfileController implements Initializable {
 		if (entityCount > 1) {
 			protocolTypeComboBox.setValue(profile.getProtocolType());
 			maxProtocolIterations.setText(profile.getMaxProtocolIterations() + "");
+			protocolData.setText(profile.getMessageContentPercentage() + "");
 			protocolTypeComboBox.setVisible(true);
 			maxProtocolIterations.setVisible(true);
 			protocolTypeLabel.setVisible(false);
 			protocolIterationsLabel.setVisible(false);
+			protocolDataLabel.setVisible(false);
 		}
 		else {
 			protocolTypeComboBox.setVisible(false);
 			maxProtocolIterations.setVisible(false);
+			protocolData.setVisible(false);
 			protocolTypeLabel.setVisible(true);
 			protocolIterationsLabel.setVisible(true);
+			protocolDataLabel.setVisible(true);
 		}
 		
 		ObservableList<ProtocolType> protocolTypes = FXCollections.observableArrayList();
@@ -483,6 +499,12 @@ public class SystemProfileController implements Initializable {
 	            fail.setContentText("The amount of workflow cycles must be greater than 0.");
 	            fail.showAndWait();
 			}
+			else if (Integer.parseInt(protocolData.getText()) < 0 || Integer.parseInt(protocolData.getText()) > 100) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("INVALID CONTENT");
+	            fail.setContentText("The amount of protocol data must be a value from 0 to 100.");
+	            fail.showAndWait();
+			}
 			else if (maxProtocolIterations.isVisible() && Integer.parseInt(maxProtocolIterations.getText()) <= 0) {
 	    		Alert fail = new Alert(AlertType.WARNING);
 	            fail.setHeaderText("INVALID CONTENT");
@@ -529,6 +551,7 @@ public class SystemProfileController implements Initializable {
 				if (protocolTypeComboBox.isVisible()) {
 					profile.setProtocolType(protocolTypeComboBox.getValue());
 					profile.setMaxProtocolIterations(Integer.valueOf(maxProtocolIterations.getText()));
+					profile.setMessageContentPercentage(Integer.valueOf(protocolData.getText()));
 				}
 				
 				for (BorderPane borderPane : entityListView.getItems()) {

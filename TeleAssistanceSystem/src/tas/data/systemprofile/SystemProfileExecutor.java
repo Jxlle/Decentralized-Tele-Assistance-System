@@ -139,7 +139,7 @@ public class SystemProfileExecutor {
 			systemInstance = system;
 			
 			// Execute system
-			system.executeSystem(profile.getExecutionCycles(), protocol, profile.getMaxProtocolIterations());
+			system.executeSystem(profile.getExecutionCycles(), protocol, profile.getMaxProtocolIterations(), profile.getMessageContentPercentage());
 		}
 	}
 	
