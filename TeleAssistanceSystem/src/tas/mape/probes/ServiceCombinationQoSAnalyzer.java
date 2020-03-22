@@ -43,10 +43,10 @@ public class ServiceCombinationQoSAnalyzer {
 		failureRates = new HashMap<>();
 		double totalValue = 0;
 		
-		// Get workflow service tree from knowlegde
+		// Get workflow service tree from knowledge
 		StaticTree<Description> tree = knowledge.getWorkflowServiceTree();
 		
-		// Init simple failure rates per description
+		// Initialize simple failure rates per description
 		for (Description description : combination.getDescriptions()) {	
 			setSimpleServiceFailureRate(combination, description);
 		}
@@ -56,16 +56,17 @@ public class ServiceCombinationQoSAnalyzer {
 			double subValue = failureRates.get(description) * knowledge.getServiceUsageChance(description);
 			List<Description> workflowServiceFlow = tree.findNodePath(description);
 			
-			for (Description desc : workflowServiceFlow) {
-				
+			for (Description desc : workflowServiceFlow) {			
 				if (!description.equals(desc)) {
-					subValue *= 1 - failureRates.get(description);
+					subValue *= 1 - failureRates.get(desc);
 				}
 			}
 			
 			totalValue += subValue;
 		}
 		
+		
+		System.err.println("TOTAL VALUE " + totalValue);
 		return totalValue;
 	}
 	
@@ -100,9 +101,10 @@ public class ServiceCombinationQoSAnalyzer {
 				// The failure rate (not taking services that activate this service in count) is calculated as follows:
 				//
 				// failrate = chance that this service for this service type is used 
-				//            * actual fail rate (= default fail rate * profile additional fail rate multiplier (depends on the service load))
+				//            * actual fail rate (= 1 - (success rate * profile success rate multiplier (depends on the service load)))
 				double useChance = combination.getAllServices(description).getChance(service);	
-				totalValue += useChance * profile.getTableEntry(service).getValue() * (double) service.getCustomProperties().get("FailureRate");
+				System.err.println("FAIL CALC " + useChance + " " + (1 - (1 - (double) service.getCustomProperties().get("FailureRate")) * profile.getTableEntry(service).getValue()));
+				totalValue += useChance * (1 - (1 - (double) service.getCustomProperties().get("FailureRate")) * profile.getTableEntry(service).getValue());
 			}
 		}
 		

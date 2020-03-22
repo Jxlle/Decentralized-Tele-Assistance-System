@@ -124,8 +124,6 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	@Override
 	public void serviceCombinationChosen(ServiceCombination serviceCombination, Knowledge knowledge, int protocolMessages) {
 		
-		System.err.println("SERVICE COMBO " + knowledge.getParentEntityName() + " " + knowledge.getSystemCycle());
-		
 		Double combinationCost = sca.getRealServiceCombinationCost(serviceCombination);
 		Double combinationFailureRate = sca.getRealServiceCombinationFailureRate(serviceCombination, knowledge);
 		

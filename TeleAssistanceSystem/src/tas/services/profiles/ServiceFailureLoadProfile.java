@@ -70,7 +70,7 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		
 		Random rand = new Random();
 		
-		if (rand.nextDouble() > rate) {
+		if (rand.nextDouble() >= rate) {
 			//System.err.print("failure load profile [FAILURE] " + description.getLoad() + " " + description.getServiceName() + " " + operationName + "\n");
 			return false;
 		}

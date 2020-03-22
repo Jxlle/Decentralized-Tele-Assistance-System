@@ -13,4 +13,9 @@ public class AlarmService extends AtomicService {
 	public void triggerAlarm(int patientId){
 		//System.out.println(this.getServiceDescription().getServiceName() + " is triggered!");
 	}
+	
+	@ServiceOperation
+	public void triggerAlarm2(int patientId){
+		//System.out.println(this.getServiceDescription().getServiceName() + " is triggered!");
+	}
 }

@@ -240,7 +240,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 			for (Description desc : workflowServiceFlow) {
 				
 				if (!description.equals(desc)) {
-					subValue *= 1 - failureRates.get(description);
+					subValue *= 1 - failureRates.get(desc);
 				}
 			}
 			

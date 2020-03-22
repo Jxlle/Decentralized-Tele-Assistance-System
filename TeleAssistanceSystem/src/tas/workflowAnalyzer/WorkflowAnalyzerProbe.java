@@ -54,6 +54,7 @@ public class WorkflowAnalyzerProbe implements WorkflowProbeInterface {
 	public void serviceOperationInvoked(ServiceDescription description, String opName, Object[] params) {
 		
 		Description typeAndOperation = new Description(description.getServiceType(), opName);
+		currentWorkflowServices.add(typeAndOperation);
 		
 		if (usedDescriptions.itemExists(typeAndOperation)) {
 			usedDescriptions.increaseWeight(typeAndOperation, 1);
@@ -61,8 +62,6 @@ public class WorkflowAnalyzerProbe implements WorkflowProbeInterface {
 		else {
 			usedDescriptions.add(typeAndOperation, 1);
 		}
-		
-		currentWorkflowServices.add(typeAndOperation);
 	}
 
 	/**
