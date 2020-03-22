@@ -160,66 +160,69 @@ public class SystemRunResultController {
 	
 	public void generateSystemRunChart() {
 		
-		// Define chart axis
-		NumberAxis xAxis = new NumberAxis("Total Service Combination Failure Rate (approximated by workflow analyzer)", 0, 1, 0.1);
-		NumberAxis yAxis = new NumberAxis("Total Service Combination Cost", 0, (probe.getMaxCost() + maximumDelta), 1);
-		
-		// Set chart position & size
-		ScatterLineChart<Number, Number> systemRunChart = new ScatterLineChart<Number, Number>(xAxis, yAxis); 
-		systemRunChartPane.getChildren().add(systemRunChart);
-		systemRunChart.prefWidthProperty().bind(systemRunChartPane.widthProperty());
-		systemRunChart.prefHeightProperty().bind(systemRunChartPane.heightProperty());
-		
-		// Set data points
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = probe.getDataPoints();
-		ArrayList<Node> seriesNodes = new ArrayList<Node>();
-		int seriesIndex = 0;
 		
-		for (String entity : dataPoints.keySet()) {
+		if (dataPoints.values().stream().anyMatch(x -> x.size() > 0)) {
+			// Define chart axis
+			NumberAxis xAxis = new NumberAxis("Total Service Combination Failure Rate (approximated by workflow analyzer)", 0, 1, 0.1);
+			NumberAxis yAxis = new NumberAxis("Total Service Combination Cost", 0, (probe.getMaxCost() + maximumDelta), 1);
 			
-			XYChart.Series<Number, Number> series = new Series<Number, Number>();
-			series.setName(entity);
+			// Set chart position & size
+			ScatterLineChart<Number, Number> systemRunChart = new ScatterLineChart<Number, Number>(xAxis, yAxis); 
+			systemRunChartPane.getChildren().add(systemRunChart);
+			systemRunChart.prefWidthProperty().bind(systemRunChartPane.widthProperty());
+			systemRunChart.prefHeightProperty().bind(systemRunChartPane.heightProperty());
 			
-			for (Pair<Double, Double> dataPoint : dataPoints.get(entity)) {
-				//System.err.print("CHART DATA POINT ADDED" + dataPoint.getKey() + " " + dataPoint.getValue() + " \n");
-				series.getData().add(new XYChart.Data<Number, Number>(dataPoint.getKey(), dataPoint.getValue()));
+			// Set data points
+			ArrayList<Node> seriesNodes = new ArrayList<Node>();
+			int seriesIndex = 0;
+			
+			for (String entity : dataPoints.keySet()) {
+				
+				XYChart.Series<Number, Number> series = new Series<Number, Number>();
+				series.setName(entity);
+				
+				for (Pair<Double, Double> dataPoint : dataPoints.get(entity)) {
+					//System.err.print("CHART DATA POINT ADDED" + dataPoint.getKey() + " " + dataPoint.getValue() + " \n");
+					series.getData().add(new XYChart.Data<Number, Number>(dataPoint.getKey(), dataPoint.getValue()));
+				}
+				
+				systemRunChart.getData().add(series);
+				
+				Set<Node> nodes = systemRunChart.lookupAll(".series" + seriesIndex);
+	            int flag=0;
+	            for (Node n : nodes) {
+				    n.setStyle("-fx-background-color:" + ScatterLineChart.colors.get(seriesIndex) + ", white;\n"
+				            + "    -fx-background-insets: 0, 2;\n"
+				            + "    -fx-background-radius: 5px;\n"
+				            + "    -fx-padding: 5px;");
+	                 if (flag==0) {
+	                     seriesNodes.add(n);
+	                 }
+	                 flag++;
+	            }
+				
+				List<Goal> goals = probe.getConnectedEntity(entity).getManagingSystem().getGoals();
+				
+				for (Goal goal : goals) {
+					if (goal.getType().equals(GoalType.COST)) {
+						systemRunChart.addHorizontalValueMarker(new Data<>(0, goal.getValue()), seriesIndex);
+					}
+					else if (goal.getType().equals(GoalType.FAILURE_RATE)) {
+						systemRunChart.addVerticalValueMarker(new Data<>(goal.getValue(), 0), seriesIndex);
+					}
+				}
+				
+				seriesIndex++;
 			}
 			
-			systemRunChart.getData().add(series);
-			
-			Set<Node> nodes = systemRunChart.lookupAll(".series" + seriesIndex);
-            int flag=0;
-            for (Node n : nodes) {
-			    n.setStyle("-fx-background-color:" + ScatterLineChart.colors.get(seriesIndex) + ", white;\n"
-			            + "    -fx-background-insets: 0, 2;\n"
-			            + "    -fx-background-radius: 5px;\n"
-			            + "    -fx-padding: 5px;");
-                 if (flag==0) {
-                     seriesNodes.add(n);
-                 }
-                 flag++;
-            }
-			
-			List<Goal> goals = probe.getConnectedEntity(entity).getManagingSystem().getGoals();
-			
-			for (Goal goal : goals) {
-				if (goal.getType().equals(GoalType.COST)) {
-					systemRunChart.addHorizontalValueMarker(new Data<>(0, goal.getValue()), seriesIndex);
-				}
-				else if (goal.getType().equals(GoalType.FAILURE_RATE)) {
-					systemRunChart.addVerticalValueMarker(new Data<>(goal.getValue(), 0), seriesIndex);
-				}
-			}
-			
-			seriesIndex++;
+			Set<Node> items = systemRunChart.lookupAll("Label.chart-legend-item");
+	        int it=0;
+	        for (Node item : items) {
+	             Label label = (Label) item;
+	             label.setGraphic(seriesNodes.get(it));
+	             it++;
+	        }
 		}
-		
-		Set<Node> items = systemRunChart.lookupAll("Label.chart-legend-item");
-        int it=0;
-        for (Node item : items) {
-             Label label = (Label) item;
-             label.setGraphic(seriesNodes.get(it));
-             it++;
-        }
 	}
 }
