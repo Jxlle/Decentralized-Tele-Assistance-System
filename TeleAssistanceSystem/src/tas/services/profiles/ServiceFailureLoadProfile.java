@@ -20,13 +20,13 @@ import tas.data.systemprofile.SystemProfileDataHandler;
 public class ServiceFailureLoadProfile extends ServiceProfile {
 	
 	@ServiceProfileAttribute()
-	public TreeMap<Double, Double> failureRate;
+	public TreeMap<Integer, Double> failureRate;
 	
 	/**
 	 * Create a new service failure load profile.
 	 */
 	public ServiceFailureLoadProfile() {
-		treeMapText = new Pair<String, String>("Load", "Additional success rate (%)");
+		treeMapText = new Pair<String, String>("Use Percentage", "Success Rate Modifier");
 		defaultEnabled = true;
 		type = "Failure";
 		constructFailRates();
@@ -35,19 +35,19 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 	// Construct default fail rate table
 	private void constructFailRates() {
 		failureRate = new TreeMap<>();
-		failureRate.put(0.0, 1.0);
-		failureRate.put(0.2, 0.95);
-		failureRate.put(0.35, 0.90);
-		failureRate.put(0.50, 0.85);
-		failureRate.put(0.65, 0.70);
-		failureRate.put(0.7, 0.60);
+		failureRate.put(0, 1.0);
+		failureRate.put(20, 0.90);
+		failureRate.put(35, 0.85);
+		failureRate.put(50, 0.70);
+		failureRate.put(65, 0.45);
+		failureRate.put(70, 0.30);
 	}
 	
-	public Map.Entry<Double, Double> getTableEntry(ServiceDescription description) {
+	public Map.Entry<Integer, Double> getTableEntry(ServiceDescription description) {
 		
-		double usePercentage = description.getLoad() / (double) SystemProfileDataHandler.activeProfile.getWorkflowCycles();
+		int usePercentage = (int) ((description.getLoad() / (double) (SystemProfileDataHandler.activeProfile.getWorkflowCycles() * SystemProfileDataHandler.activeProfile.getAmountOfParticipatingEntities())) * 100);
 		
-		Map.Entry<Double, Double> entry = failureRate.ceilingEntry(usePercentage);
+		Map.Entry<Integer, Double> entry = failureRate.ceilingEntry(usePercentage);
 		
 		if (entry == null) {
 			entry = failureRate.floorEntry(usePercentage);
@@ -56,7 +56,6 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		return entry;
 	}
 	
-	// TODO Scale with workflow cycles
 	@Override
 	public boolean preInvokeOperation(ServiceDescription description, String operationName, Object... args) {
 		
