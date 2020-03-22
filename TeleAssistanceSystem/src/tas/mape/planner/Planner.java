@@ -188,7 +188,9 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		int registryEndpointsCount = (int) Math.ceil(registryEndpoints.size() * (messageContentPercentage / 100));
 		List<String> registryEndpointsNew = new ArrayList<>();
 		
+		// If new registry endpoint list is shorter than old, take random registry endpoints from the list
 		if (registryEndpointsCount == registryEndpoints.size()) {
+			//System.err.println("NO CHANGE");
 			registryEndpointsNew = registryEndpoints;
 		}
 		else {		
@@ -199,9 +201,11 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 				registryEndpointsNew.add(registryEndpoints.get(randomIndex));
 				registryEndpoints.remove(randomIndex);
 			}
+			
+			//System.err.println("CHANGED Registry endpoints " + registryEndpointsNew);
 		}
 		
-		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination, registryEndpoints);
+		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination, registryEndpointsNew);
 		return new PlannerMessageContent(serviceLoads);
 	}
 	
