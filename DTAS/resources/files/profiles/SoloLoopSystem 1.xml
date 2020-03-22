@@ -1,0 +1,41 @@
+<tas.data.systemprofile.SystemProfile>
+  <executionCycles>10</executionCycles>
+  <workflowCycles>5000</workflowCycles>
+  <maxProtocolIterations>0</maxProtocolIterations>
+  <messageContentPercentage>0</messageContentPercentage>
+  <systemType>SOLO_LOOP</systemType>
+  <ratingType>CLASS</ratingType>
+  <entityRequirementTypes>
+    <entry>
+      <string>Default System Entity</string>
+      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
+    </entry>
+  </entityRequirementTypes>
+  <participatingEntities>
+    <string>Default System Entity</string>
+  </participatingEntities>
+  <variables>
+    <variable>
+      <name>patientId</name>
+      <values>
+        <value>
+          <data class="int">1</data>
+          <ratio>1.0</ratio>
+        </value>
+      </values>
+    </variable>
+    <variable>
+      <name>pick</name>
+      <values>
+        <value>
+          <data class="int">1</data>
+          <ratio>0.75</ratio>
+        </value>
+        <value>
+          <data class="int">2</data>
+          <ratio>0.25</ratio>
+        </value>
+      </values>
+    </variable>
+  </variables>
+</tas.data.systemprofile.SystemProfile>

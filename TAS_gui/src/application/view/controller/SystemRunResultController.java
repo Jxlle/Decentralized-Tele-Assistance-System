@@ -182,7 +182,11 @@ public class SystemRunResultController {
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
 				
+				// Dummy node
+				series.getData().add(new XYChart.Data<Number, Number>(0, 0));
+				
 				for (Pair<Double, Double> dataPoint : dataPoints.get(entity)) {
+					System.err.println("DATA POINT ADDED");
 					//System.err.print("CHART DATA POINT ADDED" + dataPoint.getKey() + " " + dataPoint.getValue() + " \n");
 					series.getData().add(new XYChart.Data<Number, Number>(dataPoint.getKey(), dataPoint.getValue()));
 				}

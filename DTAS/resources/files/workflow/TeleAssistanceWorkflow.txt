@@ -1,0 +1,30 @@
+START [patientId,pick]
+
+	// Declaration of pick actions
+	vitalParamsMsg = 1
+	pButtonMsg = 2
+	stopMsg = 3
+	
+	// Declaration of analysisResults
+	changeDrug = 1
+	changeDoses = 2
+	sendAlarm = 3
+
+	if (pick == vitalParamsMsg){	
+		data = this.getVitalParameters()
+		analysisResult = MedicalAnalysisService.analyzeData(data)
+			
+		if (analysisResult == changeDrug)
+			DrugService.changeDrug(patientId)
+		else if (analysisResult == changeDoses)
+			DrugService.changeDoses(patientId)
+		else if (analysisResult == sendAlarm)
+			AlarmService.triggerManualAlarm(patientId)
+	}
+	else if (pick == pButtonMsg) {
+		AlarmService.triggerAutomaticAlarm(patientId)
+	}
+
+RETURN
+
+
