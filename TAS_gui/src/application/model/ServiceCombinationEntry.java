@@ -22,7 +22,7 @@ public class ServiceCombinationEntry {
 		this.totalCost = new SimpleDoubleProperty(totalCost);
 		this.totalFailRate = new SimpleDoubleProperty(totalFailRate);
 		this.protocolMessageCount = new SimpleIntegerProperty(protocolMessageCount);
-		generateServiceCombinationInfo(serviceCombination);
+		usedServicesInfo = serviceCombination.toString();
 	}
 	
 	public int getCycle() {
@@ -43,24 +43,5 @@ public class ServiceCombinationEntry {
 	
 	public String getUsedServicesInfo() {
 		return usedServicesInfo;
-	}
-	
-	private void generateServiceCombinationInfo(ServiceCombination serviceCombination) {
-		
-		usedServicesInfo = "";
-		Map<Description, WeightedCollection<ServiceDescription>> allServices = serviceCombination.getAllServices();
-		
-		for (Description descr : allServices.keySet()) {
-			usedServicesInfo += "[" + descr.toString() +"]:\n";
-			
-			for (ServiceDescription service : allServices.get(descr).getItems()) {
-				usedServicesInfo += "\t> service name: " + service.getServiceEndpoint() + "\n";
-				usedServicesInfo += "\t\t>> service registry: " + service.getServiceRegistryEndpoint() + "\n";
-				usedServicesInfo += "\t\t>> usage chance: " + (allServices.get(descr).getChance(service) * 100) + "%\n";
-			}
-			
-			usedServicesInfo += "\n";
-		}
-		
 	}
 }

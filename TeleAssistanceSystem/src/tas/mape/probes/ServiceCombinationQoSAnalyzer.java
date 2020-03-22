@@ -53,6 +53,7 @@ public class ServiceCombinationQoSAnalyzer {
 		
 		// Calculate full failure rate
 		for (Description description : combination.getDescriptions()) {	
+			//System.err.println("sub value calc " + failureRates.get(description) +" " +  knowledge.getServiceUsageChance(description) + ", service: " + description.toString());
 			double subValue = failureRates.get(description) * knowledge.getServiceUsageChance(description);
 			List<Description> workflowServiceFlow = tree.findNodePath(description);
 			
@@ -62,9 +63,11 @@ public class ServiceCombinationQoSAnalyzer {
 				}
 			}
 			
+			//System.err.println("sub value " + subValue + ", service: " + description.toString());
 			totalValue += subValue;
 		}
 		
+		//System.err.println("total value " + totalValue);
 		return totalValue;
 	}
 	
@@ -102,7 +105,7 @@ public class ServiceCombinationQoSAnalyzer {
 				//            * actual fail rate (= 1 - (success rate * profile success rate multiplier (depends on the service load)))
 				double useChance = combination.getAllServices(description).getChance(service);	
 				//System.err.println("FAIL CALC " + useChance + " " + (1 - (1 - (double) service.getCustomProperties().get("FailureRate")) * profile.getTableEntry(service).getValue()) + " " + profile.getTableEntry(service).getValue());
-				totalValue += useChance * (1 - (1 - (double) service.getCustomProperties().get("FailureRate")) * profile.getTableEntry(service).getValue());
+				totalValue += (useChance * (1 - (1 - (double) service.getCustomProperties().get("FailureRate")) * profile.getTableEntry(service).getValue()));
 			}
 		}
 		

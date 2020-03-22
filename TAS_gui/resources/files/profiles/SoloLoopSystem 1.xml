@@ -1,7 +1,8 @@
 <tas.data.systemprofile.SystemProfile>
   <executionCycles>10</executionCycles>
-  <workflowCycles>100</workflowCycles>
+  <workflowCycles>5000</workflowCycles>
   <maxProtocolIterations>0</maxProtocolIterations>
+  <messageContentPercentage>0</messageContentPercentage>
   <systemType>SOLO_LOOP</systemType>
   <ratingType>CLASS</ratingType>
   <entityRequirementTypes>
@@ -32,7 +33,7 @@
         </value>
         <value>
           <data class="int">2</data>
-          <ratio>0.1</ratio>
+          <ratio>0.25</ratio>
         </value>
       </values>
     </variable>

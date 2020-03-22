@@ -224,12 +224,13 @@ public abstract class AbstractWorkflowQoSRequirement {
 		failureRates = new HashMap<>();
 		double totalValue = 0;
 		
-		// Get workflow service tree from knowlegde
+		// Get workflow service tree from knowledge
 		StaticTree<Description> tree = knowledge.getWorkflowServiceTree();
+		Map<String, Integer> serviceLoads = getServiceLoads(combination, knowledge);
 		
-		// Init simple failure rates per description
+		// Initialize simple failure rates per description
 		for (Description description : combination.keySet()) {	
-			setSimpleServiceFailureRate(combination, description, knowledge);
+			setSimpleServiceFailureRate(combination, description, knowledge, serviceLoads);
 		}
 		
 		// Calculate full failure rate
@@ -257,28 +258,14 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param combination the given service combination
 	 * @param description the given description
 	 * @param Knowledge the given knowledge
+	 * @param serviceLoads loads of the services
 	 * @throws IllegalStateException throws when the failure rate map already contains description data
 	 */
 	private void setSimpleServiceFailureRate(Map<Description, WeightedCollection<ServiceDescription>> combination, Description description, 
-			Knowledge knowledge) throws IllegalStateException {
+			Knowledge knowledge, Map<String, Integer> serviceLoads) throws IllegalStateException {
 		
 		if (failureRates.containsKey(description)) {
 			throw new IllegalStateException("The failure rate map already contains description data!");
-		}
-		
-		Map<String, Double> serviceLoads = new HashMap<String, Double>();
-		Map<String, Integer> serviceLoadsInt = new HashMap<String, Integer>();
-		
-		for (ServiceDescription service : combination.get(description).getItems()) {
-			if (service.getCustomProperties().containsKey("FailureRate")) {
-				double useChance = combination.get(description).getChance(service);	
-				double serviceLoad = knowledge.getServiceDescriptionLoad(description, useChance);
-				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? serviceLoad : v + serviceLoad);
-			}
-		}
-		
-		for (Map.Entry<String, Double> entry : serviceLoads.entrySet()) {
-			serviceLoadsInt.put(entry.getKey(), (int) Math.ceil(entry.getValue()));
 		}
 		
 		double totalValue = 0;
@@ -291,11 +278,40 @@ public abstract class AbstractWorkflowQoSRequirement {
 				// failure rate = chance that this service for this service type is used 
 				//            * approximated fail rate
 				double useChance = combination.get(description).getChance(service);	
-				totalValue += useChance * knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), serviceLoadsInt.get(service.getServiceEndpoint()));
+				//System.out.println("KNOWLEDGE VALUE of " + service.getServiceEndpoint() + ", " + knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), serviceLoadsInt.get(service.getServiceEndpoint())) + " " + serviceLoadsInt.get(service.getServiceEndpoint()));
+				totalValue += useChance * knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), serviceLoads.get(service.getServiceEndpoint()));
 			}
 		}
 		
 		failureRates.put(description, totalValue);
+	}
+	
+	/**
+	 * Calculate the service loads for each service in a given service combination with a given knowledge
+	 * @param combination the given service combination
+	 * @param Knowledge the given knowledge
+	 * @return the calculated service loads map
+	 */
+	private Map<String, Integer> getServiceLoads(Map<Description, WeightedCollection<ServiceDescription>> combination, Knowledge knowledge) {
+		
+		Map<String, Double> serviceLoads = new HashMap<String, Double>();
+		Map<String, Integer> serviceLoadsInt = new HashMap<String, Integer>();
+		
+		for (Description descr : combination.keySet()) {
+			WeightedCollection<ServiceDescription> serviceUsage = combination.get(descr);
+			
+			for (ServiceDescription service : serviceUsage.getItems()) {
+				double serviceLoad = knowledge.getServiceDescriptionLoad(descr, serviceUsage.getChance(service));
+				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? serviceLoad : v + serviceLoad);		
+			}
+		}
+		
+		for (Map.Entry<String, Double> entry : serviceLoads.entrySet()) {
+			//System.err.println("LOAD " + entry.getKey() + ": " + (int) Math.ceil(entry.getValue()));
+			serviceLoadsInt.put(entry.getKey(), (int) Math.ceil(entry.getValue()));
+		}
+		
+		return serviceLoadsInt;
 	}
 	
 	/**
@@ -310,12 +326,13 @@ public abstract class AbstractWorkflowQoSRequirement {
 		failureRates = new HashMap<>();
 		double totalValue = 0;
 		
-		// Get workflow service tree from knowlegde
+		// Get workflow service tree from knowledge
 		StaticTree<Description> tree = knowledge.getWorkflowServiceTree();
+		Map<String, Integer> serviceLoads = getServiceLoads(combination, knowledge, values);
 		
-		// Init simple failure rates per description
+		// Initialize simple failure rates per description
 		for (Description description : combination.getDescriptions()) {	
-			setSimpleServiceFailureRate(combination, description, knowledge, values);
+			setSimpleServiceFailureRate(combination, description, knowledge, values, serviceLoads);
 		}
 		
 		// Calculate full failure rate
@@ -326,7 +343,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 			for (Description desc : workflowServiceFlow) {
 				
 				if (!description.equals(desc)) {
-					subValue *= 1 - failureRates.get(description);
+					subValue *= 1 - failureRates.get(desc);
 				}
 			}
 			
@@ -344,10 +361,11 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param description the given description
 	 * @param Knowledge the given knowledge
 	 * @param loads the given service loads
+	 * @param serviceLoads loads of the services
 	 * @throws IllegalStateException throws when the failure rate map already contains description data
 	 */
 	private void setSimpleServiceFailureRate(ServiceCombination combination, Description description, 
-			Knowledge knowledge, Map<String, Integer> loads) throws IllegalStateException {
+			Knowledge knowledge, Map<String, Integer> loads, Map<String, Integer> serviceLoads) throws IllegalStateException {
 		
 		if (failureRates.containsKey(description)) {
 			throw new IllegalStateException("The failure rate map already contains description data!");
@@ -357,30 +375,53 @@ public abstract class AbstractWorkflowQoSRequirement {
 		
 		for (ServiceDescription service : combination.getAllServices(description).getItems()) {
 			
-			int load = 0;
-			double useChance = combination.getAllServices(description).getChance(service);
-			
-			// If endpoint exists as a key in the loads map, then it means that the map contains an updated load 
-			// based on the other entity service usage.
-			if (loads.containsKey(service.getServiceEndpoint())) {
-				load += load = loads.get(service.getServiceEndpoint());
-			}
-			
 			if (service.getCustomProperties().containsKey("FailureRate")) {	
-				
-				load += knowledge.getServiceDescriptionLoad(description, useChance);
-			}
-			
-			if (load != 0) {
 				// The failure rate (not taking services that activate this service in count) is calculated as follows:
 				//
-				// failrate = chance that this service for this service type is used 
+				// failure rate = chance that this service for this service type is used 
 				//            * approximated fail rate
-				totalValue += useChance * knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), load);
+				double useChance = combination.getAllServices(description).getChance(service);
+				totalValue += useChance * knowledge.getApproximatedServiceFailureRate(service.getServiceEndpoint(), serviceLoads.get(service.getServiceEndpoint()));
 			}
 		}
 		
 		failureRates.put(description, totalValue);
+	}
+	
+	/**
+	 * Calculate the service loads for each service in a given service combination with a given knowledge and additional service loads
+	 * @param serviceCombination the given service combination 
+	 * @param Knowledge the given knowledge
+	 * @param loads the given service loads
+	 * @return the calculated service loads map
+	 */
+	private Map<String, Integer> getServiceLoads(ServiceCombination serviceCombination, Knowledge knowledge, Map<String, Integer> loads) {
+		
+		Map<String, Double> serviceLoads = new HashMap<String, Double>();
+		Map<String, Integer> serviceLoadsInt = new HashMap<String, Integer>();
+		
+		for (Description description : serviceCombination.getDescriptions()) {			
+			WeightedCollection<ServiceDescription> serviceUsage = serviceCombination.getAllServices(description);
+			
+			for (ServiceDescription service : serviceUsage.getItems()) {
+				double load = knowledge.getServiceDescriptionLoad(description, serviceUsage.getChance(service));
+				
+				if (loads.containsKey(service.getServiceEndpoint())) {
+					load += loads.get(service.getServiceEndpoint());
+				}
+				
+				double serviceLoad = load;
+				
+				serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? serviceLoad : v + serviceLoad);		
+			}
+		}
+		
+		for (Map.Entry<String, Double> entry : serviceLoads.entrySet()) {
+			//System.err.println("LOAD " + entry.getKey() + ": " + (int) Math.ceil(entry.getValue()));
+			serviceLoadsInt.put(entry.getKey(), (int) Math.ceil(entry.getValue()));
+		}
+		
+		return serviceLoadsInt;
 	}
 	
 	/**
@@ -424,9 +465,11 @@ public abstract class AbstractWorkflowQoSRequirement {
 			if (goal.getType() == GoalType.fromString(property)) {
 				
 				if (goal.validValue(totalValue)) {
+					//System.out.println("value " + totalValue);
 					return 1;
 				}
 				else {
+					//System.out.println("value " + totalValue);
 					return 0;
 				}
 			}

@@ -410,8 +410,7 @@ public class ApplicationController implements Initializable {
     private void addDefaultEntities() {
     	
 		WorkflowExecutor workflowExecutor = new WorkflowExecutor(
-				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.shared.registry"), 
-						GlobalServiceInfo.getServiceRegistry("service.individual1.registry")));	
+				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.shared.registry"), GlobalServiceInfo.getServiceRegistry("service.individual1.registry")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");		
 		MAPEKComponent.Builder builder = new Builder();
 		

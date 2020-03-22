@@ -50,10 +50,8 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 		case CLASS:	
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreList.add(getClassRating(knowledge.getGoals(), 
-						getTotalApproximatedFailureRateValue(allServiceCombinations.get(i), knowledge), usedProperty));	
+				scoreList.add(getClassRating(knowledge.getGoals(), getTotalApproximatedFailureRateValue(allServiceCombinations.get(i), knowledge), usedProperty));	
 			}
-			
 			break;
 			
 		default:
@@ -92,8 +90,7 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 		case CLASS:	
 			for (int i = 0; i < serviceCombinations.size(); i++) {
-				scoreList.add(getClassRating(knowledge.getGoals(), 
-						getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceLoads, knowledge), usedProperty));	
+				scoreList.add(getClassRating(knowledge.getGoals(), getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceLoads, knowledge), usedProperty));	
 			}
 			
 			break;

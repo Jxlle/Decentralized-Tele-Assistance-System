@@ -40,13 +40,13 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		failureRate.put(35, 0.95);
 		failureRate.put(50, 0.91);
 		failureRate.put(65, 0.85);
-		failureRate.put(70, 0.75);
+		failureRate.put(70, 0.8);
 	}
 	
 	public Map.Entry<Integer, Double> getTableEntry(ServiceDescription description) {
 		
 		int usePercentage = (int) ((description.getLoad() / (double) (SystemProfileDataHandler.activeProfile.getWorkflowCycles() * SystemProfileDataHandler.activeProfile.getAmountOfParticipatingEntities())) * 100);
-		System.err.println("percentage for " + description.getServiceEndpoint() + ": " + usePercentage + " " + description.getLoad() + " " + (double) (SystemProfileDataHandler.activeProfile.getWorkflowCycles() * SystemProfileDataHandler.activeProfile.getAmountOfParticipatingEntities()));
+		//System.err.println("percentage for " + description.getServiceEndpoint() + ": " + usePercentage + " " + description.getLoad() + " " + (double) (SystemProfileDataHandler.activeProfile.getWorkflowCycles() * SystemProfileDataHandler.activeProfile.getAmountOfParticipatingEntities()));
 		
 		Map.Entry<Integer, Double> entry = failureRate.ceilingEntry(usePercentage);
 		
@@ -71,6 +71,7 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		
 		Random rand = new Random();
 		
+		//System.err.println("FAIL RATE of " + description.getServiceEndpoint() + ", " +  (1 - rate));
 		if (rand.nextDouble() >= rate) {
 			//System.err.print("failure load profile [FAILURE] " + description.getLoad() + " " + description.getServiceName() + " " + operationName + "\n");
 			return false;

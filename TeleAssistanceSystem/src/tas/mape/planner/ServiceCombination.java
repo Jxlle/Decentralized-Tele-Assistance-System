@@ -135,4 +135,24 @@ public class ServiceCombination implements Comparable<ServiceCombination> {
 	public int compareTo(ServiceCombination other) {
 		return this.getRating().compareTo(other.getRating());
 	}
+	
+	@Override
+	public String toString() {
+		
+		String combinationString = "";
+		
+		for (Description descr : allServices.keySet()) {
+			combinationString += "[" + descr.toString() +"]:\n";
+			
+			for (ServiceDescription service : allServices.get(descr).getItems()) {
+				combinationString += "\t> service name: " + service.getServiceEndpoint() + "\n";
+				combinationString += "\t\t>> service registry: " + service.getServiceRegistryEndpoint() + "\n";
+				combinationString += "\t\t>> usage chance: " + (allServices.get(descr).getChance(service) * 100) + "%\n";
+			}
+			
+			combinationString += "\n";
+		}
+		
+		return combinationString;
+	}
 }

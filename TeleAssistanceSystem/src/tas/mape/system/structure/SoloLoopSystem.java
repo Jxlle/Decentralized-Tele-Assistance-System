@@ -27,6 +27,8 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 	@Override
 	public void executeSystem(int executionCycles) {
 		
+		System.err.println("----------------------------------------------------------------------------------");
+		
 		// System entity
 		SystemEntity entity = getSystemEntity(0);
 		
@@ -43,6 +45,9 @@ public class SoloLoopSystem extends AbstractSystem<SystemEntity> {
 			
 			// Execute workflow
 			entity.getManagedSystem().executeWorkflow();
+			
+			// notify the probe that the system run is finished
+			entity.getManagingSystem().getProbe().systemRunFinished();
 			
 			// Reset all service loads after each execution cycle
 			GlobalServiceInfo.resetServiceLoads();
