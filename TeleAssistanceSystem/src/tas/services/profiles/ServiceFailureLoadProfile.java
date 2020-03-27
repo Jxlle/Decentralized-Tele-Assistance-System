@@ -37,10 +37,10 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		failureRate = new TreeMap<>();
 		failureRate.put(0, 1.0);
 		failureRate.put(20, 0.98);
-		failureRate.put(35, 0.95);
-		failureRate.put(50, 0.91);
-		failureRate.put(65, 0.85);
-		failureRate.put(70, 0.8);
+		failureRate.put(35, 0.96);
+		failureRate.put(55, 0.93);
+		failureRate.put(65, 0.89);
+		failureRate.put(70, 0.85);
 	}
 	
 	public Map.Entry<Integer, Double> getTableEntry(ServiceDescription description) {

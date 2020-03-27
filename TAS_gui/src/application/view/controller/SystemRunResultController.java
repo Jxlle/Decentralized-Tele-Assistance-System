@@ -1,6 +1,7 @@
 package application.view.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
@@ -37,7 +39,7 @@ import tas.mape.system.entity.SystemEntity;
 public class SystemRunResultController {
 	
 	private Accordion entityResultTableAccordion;
-	private AnchorPane systemRunChartPane;
+	private AnchorPane systemRunChartPane, protocolMessageChartPane;
 	private SystemRunProbe probe = new SystemRunProbe();
 	private int maximumDelta = 10;
 	
@@ -49,13 +51,15 @@ public class SystemRunResultController {
 		probe.reset();
 	}
 	
-	public SystemRunResultController(AnchorPane systemRunChartPane, Accordion entityResultTableAccordion) {
+	public SystemRunResultController(AnchorPane systemRunChartPane, AnchorPane protocolMessageChartPane, Accordion entityResultTableAccordion) {
 		this.systemRunChartPane = systemRunChartPane;
+		this.protocolMessageChartPane = protocolMessageChartPane;
 		this.entityResultTableAccordion = entityResultTableAccordion;
 	}
 	
 	public void clear() {
 		systemRunChartPane.getChildren().clear();
+		protocolMessageChartPane.getChildren().clear();
 		entityResultTableAccordion.getPanes().clear();
 	}
 	
@@ -158,8 +162,12 @@ public class SystemRunResultController {
 		}
 	}
 	
-	public void generateSystemRunChart() {
-		
+	public void generateSystemRunCharts() {
+		generatePerformanceChart();
+		generateProtocolMessageChart();
+	}
+	
+	private void generatePerformanceChart() {
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = probe.getDataPoints();
 		
 		if (dataPoints.values().stream().anyMatch(x -> x.size() > 0)) {
@@ -186,7 +194,6 @@ public class SystemRunResultController {
 				series.getData().add(new XYChart.Data<Number, Number>(0, 0));
 				
 				for (Pair<Double, Double> dataPoint : dataPoints.get(entity)) {
-					System.err.println("DATA POINT ADDED");
 					//System.err.print("CHART DATA POINT ADDED" + dataPoint.getKey() + " " + dataPoint.getValue() + " \n");
 					series.getData().add(new XYChart.Data<Number, Number>(dataPoint.getKey(), dataPoint.getValue()));
 				}
@@ -227,6 +234,35 @@ public class SystemRunResultController {
 	             label.setGraphic(seriesNodes.get(it));
 	             it++;
 	        }
+		}
+	}
+	
+	private void generateProtocolMessageChart() {
+		
+		HashMap<String, List<Integer>> protocolMessagesAll = probe.getProtocolMessageCount();
+		
+		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
+			
+			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+			
+			// Define chart axis
+			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
+			NumberAxis yAxis = new NumberAxis("Messages sent during protocol", 0, Collections.max(protocolMessages) + 5, 1);
+			
+			// Set chart position & size
+			LineChart<Number, Number> protocolMessageChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			protocolMessageChartPane.getChildren().add(protocolMessageChart);
+			protocolMessageChart.prefWidthProperty().bind(protocolMessageChartPane.widthProperty());
+			protocolMessageChart.prefHeightProperty().bind(protocolMessageChartPane.heightProperty());
+			
+			XYChart.Series<Number, Number> series = new Series<Number, Number>();
+			series.setName("Protocol Messages");
+			
+			for (int i = 0; i < protocolMessages.size(); i++) {
+				series.getData().add(new XYChart.Data<Number, Number>(i + 1, protocolMessages.get(i)));
+			}
+			
+			protocolMessageChart.getData().add(series);
 		}
 	}
 }

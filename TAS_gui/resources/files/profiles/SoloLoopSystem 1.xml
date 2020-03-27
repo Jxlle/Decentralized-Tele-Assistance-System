@@ -1,5 +1,5 @@
 <tas.data.systemprofile.SystemProfile>
-  <executionCycles>2</executionCycles>
+  <executionCycles>20</executionCycles>
   <workflowCycles>100</workflowCycles>
   <maxProtocolIterations>0</maxProtocolIterations>
   <messageContentPercentage>0</messageContentPercentage>
@@ -8,7 +8,7 @@
   <entityRequirementTypes>
     <entry>
       <string>Default System Entity</string>
-      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
+      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
     </entry>
   </entityRequirementTypes>
   <participatingEntities>

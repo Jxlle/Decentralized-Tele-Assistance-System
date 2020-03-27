@@ -199,6 +199,9 @@ public class ApplicationController implements Initializable {
     AnchorPane invRateChartPane;
     
     @FXML
+    AnchorPane protocolMessageChartPane;
+    
+    @FXML
     Accordion serviceRegistryAcc;
 
     @FXML
@@ -398,7 +401,7 @@ public class ApplicationController implements Initializable {
     }
     
     private void initChartController() {
-    	chartController = new SystemRunResultController(systemRunChartPane, entityResultTableAccordion);
+    	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, entityResultTableAccordion);
     }
     
    /* public void setTasStart(TASStart tasStart) {
@@ -1131,7 +1134,7 @@ public class ApplicationController implements Initializable {
         					    runButton.setId("runButton");
         						chartController.clear();
         						
-        						chartController.generateSystemRunChart();
+        						chartController.generateSystemRunCharts();
         						chartController.generateSystemRunTables();
         						//chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
         						//chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(),Integer.parseInt(sliceTextField.getText()));
@@ -1213,7 +1216,7 @@ public class ApplicationController implements Initializable {
 		    				SystemProfileExecutor.stopSystemExecution();	
 		    				
 		    				// Plot current graphs
-							chartController.generateSystemRunChart();
+							chartController.generateSystemRunCharts();
 							chartController.generateSystemRunTables();
 						}
 						else {

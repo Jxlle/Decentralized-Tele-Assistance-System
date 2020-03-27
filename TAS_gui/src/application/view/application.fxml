@@ -11,7 +11,6 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToolBar?>
@@ -19,7 +18,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.4670487106017192" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.ApplicationController">
+<SplitPane dividerPositions="0.4670487106017192" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.ApplicationController">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
          <children>
@@ -209,107 +208,9 @@
                                              </children></AnchorPane>
                                       </content>
                                     </Tab>
-                                  <Tab disable="true" text="Reliability">
-                                    <content>
-                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <SplitPane dividerPositions="0.6" layoutX="85.0" layoutY="25.0" prefHeight="222.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                  <items>
-                                                      <AnchorPane>
-                                                         <children>
-                                                          <AnchorPane fx:id="reliabilityChartPane" minHeight="0.0" minWidth="0.0" prefHeight="220.0" prefWidth="291.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
-                                                         </children>
-                                                      </AnchorPane>
-                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                                                         <children>
-                                                            <TableView fx:id="reliabilityTableView" layoutX="-21.0" layoutY="-21.0" prefHeight="220.0" prefWidth="253.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                         </children>
-                                                      </AnchorPane>
-                                                  </items>
-                                                </SplitPane>
-                                             </children>
-                                          </AnchorPane>
-                                    </content>
-                                  </Tab>
-                                    <Tab disable="true" text="Performance">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <SplitPane dividerPositions="0.6" prefHeight="222.0" prefWidth="553.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                   <items>
-                                                      <AnchorPane fx:id="performanceChartPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
-                                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                                                         <children>
-                                                            <TableView fx:id="performanceTableView" layoutX="-23.0" layoutY="10.0" prefHeight="220.0" prefWidth="216.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                         </children>
-                                                      </AnchorPane>
-                                                   </items>
-                                                </SplitPane>
-                                             </children>
-                                          </AnchorPane>
-                                       </content>
-                                    </Tab>
-                                    <Tab disable="true" text="Cost">
+                                    <Tab text="Protocol message Graph">
                                       <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <SplitPane dividerPositions="0.6" prefHeight="222.0" prefWidth="553.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                  <items>
-                                                    <AnchorPane fx:id="costChartPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
-                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                                                         <children>
-                                                            <TableView fx:id="costTableView" layoutX="-23.0" layoutY="10.0" prefHeight="220.0" prefWidth="216.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                         </children>
-                                                      </AnchorPane>
-                                                  </items>
-                                                </SplitPane>
-                                             </children>
-                                          </AnchorPane>
-                                      </content>
-                                    </Tab>
-                                    <Tab disable="true" text="Invocation Cost">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <AnchorPane fx:id="invCostChartPane" minHeight="0.0" minWidth="0.0" prefHeight="220.0" prefWidth="291.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
-                                             </children>
-                                          </AnchorPane>
-                                       </content>
-                                    </Tab>
-                                    <Tab disable="true" text="AvgReliability">
-                                      <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <AnchorPane fx:id="avgReliabilityChartPane" prefHeight="312.0" prefWidth="438.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                             </children>
-                                          </AnchorPane>
-                                      </content>
-                                    </Tab>
-                                    <Tab disable="true" text="AvgPerformance">
-                                      <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <AnchorPane fx:id="avgPerformanceChartPane" prefHeight="312.0" prefWidth="438.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                             </children>
-                                          </AnchorPane>
-                                      </content>
-                                    </Tab>
-                                    <Tab closable="false" disable="true" text="AvgCost">
-                                      <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <AnchorPane fx:id="avgCostChartPane" prefHeight="312.0" prefWidth="438.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                             </children>
-                                          </AnchorPane>
-                                      </content>
-                                    </Tab>
-                                    <Tab closable="false" disable="true" text="Invocation Rate">
-                                      <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <AnchorPane fx:id="invRateChartPane" prefHeight="312.0" prefWidth="438.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                             </children>
-                                          </AnchorPane>
+                                        <AnchorPane fx:id="protocolMessageChartPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                                       </content>
                                     </Tab>
                                 </tabs>
