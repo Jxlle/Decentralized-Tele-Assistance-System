@@ -1,6 +1,7 @@
 package tas.mape.communication.protocol;
 
 import tas.mape.communication.message.PlannerMessage;
+import tas.mape.communication.message.ProtocolMessageInformation;
 import tas.mape.planner.Planner;
 
 /**
@@ -17,6 +18,7 @@ public class PlannerProtocolDoNothing extends PlannerTwoComponentProtocol {
 	@Override
 	public void receiveAndHandleMessage(PlannerMessage message, Planner receiver) {
 	
+		observer.protocolMessageSent(new ProtocolMessageInformation(message.getSenderEndpoint(), message.getReceiverEndpoint(), message.getType()));
 		String messageType = message.getType();
 		
 		switch(messageType) {

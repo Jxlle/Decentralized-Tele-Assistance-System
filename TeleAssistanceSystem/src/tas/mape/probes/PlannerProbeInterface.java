@@ -4,7 +4,7 @@ import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.ServiceCombination;
 
 /**
- * Interface used for probes that collect data for generating graphs
+ * Interface used for probes that collect system run data for generating graphs
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */

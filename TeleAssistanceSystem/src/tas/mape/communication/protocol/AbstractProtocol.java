@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.ComponentMessage;
 import tas.mape.communication.message.ComponentMessageHost;
+import tas.mape.probes.ProtocolObserver;
 
 /**
  * Abstract class representing the structure of a protocol.
@@ -34,6 +35,9 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	// The list of components that are using this protocol
 	protected List<E> components = new ArrayList<>();
 	
+	// Protocol observer for getting protocol messaging data
+	protected ProtocolObserver observer = new ProtocolObserver();
+	
 	// The message host of the components using this protocol
 	private ComponentMessageHost<T> messageHost = new ComponentMessageHost<T>();
 	
@@ -52,29 +56,8 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 		
 		this.maxIterations = maxIterations;
 		this.messageContentPercentage = messageContentPercentage;
+		observer.protocolStarted();
 		startProtocol();
-	}
-	
-	/**
-	 * Handle a given message that was received by the given communication component
-	 * @param message the given message
-	 * @param receiver the given communication component (receiver)
-	 */
-	public abstract void receiveAndHandleMessage(T message, E receiver);
-	
-	/**
-	 * Return the index of a randomly chosen component
-	 * @return the index of the chosen component
-	 */
-	protected int getRandomComponentIndex() {
-		return ThreadLocalRandom.current().nextInt(0, getNeededAmountOfComponents());
-	}
-	
-	/**
-	 * Reset protocol data
-	 */
-	protected void resetProtocol() {
-		messageID = 0;
 	}
 	
 	/**
@@ -111,6 +94,37 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	public int getNeededAmountOfComponents() {
 		return neededAmountOfComponents;
 	}
+	
+	/**
+	 * Return the protocol observer
+	 * @return the protocol observer
+	 */
+	public ProtocolObserver getObserver() {
+		return observer;
+	}
+	
+	/**
+	 * Return the index of a randomly chosen component
+	 * @return the index of the chosen component
+	 */
+	protected int getRandomComponentIndex() {
+		return ThreadLocalRandom.current().nextInt(0, getNeededAmountOfComponents());
+	}
+	
+	/**
+	 * Reset protocol data
+	 */
+	protected void resetProtocol() {
+		messageID = 0;
+		observer.protocolEnded();
+	}
+	
+	/**
+	 * Handle a given message that was received by the given communication component
+	 * @param message the given message
+	 * @param receiver the given communication component (receiver)
+	 */
+	public abstract void receiveAndHandleMessage(T message, E receiver);
 	
 	/**
 	 * Start the protocol, choose starting and receiving components to begin communication

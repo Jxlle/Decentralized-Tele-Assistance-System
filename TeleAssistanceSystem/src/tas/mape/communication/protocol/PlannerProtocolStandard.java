@@ -4,6 +4,7 @@ import java.util.List;
 
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.message.PlannerMessageContent;
+import tas.mape.communication.message.ProtocolMessageInformation;
 import tas.mape.planner.Planner;
 import tas.mape.planner.ServiceCombination;
 
@@ -47,6 +48,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 	@Override
 	public void receiveAndHandleMessage(PlannerMessage message, Planner receiver) throws IllegalStateException {
 		
+		observer.protocolMessageSent(new ProtocolMessageInformation(message.getSenderEndpoint(), message.getReceiverEndpoint(), message.getType()));
 		String messageType = message.getType();
 		PlannerMessageContent content = null;
 		PlannerMessage response = null;

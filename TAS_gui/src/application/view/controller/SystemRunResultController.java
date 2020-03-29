@@ -1,12 +1,17 @@
 package application.view.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import application.Node.ArrowNode;
+import application.Node.ArrowNode.LeftArrowNode;
+import application.Node.ArrowNode.RightArrowNode;
 import application.model.ServiceCombinationEntry;
+import application.utility.Arrow;
 import application.utility.ScatterLineChart;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,45 +33,62 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.Pair;
+import tas.mape.communication.message.ProtocolMessageInformation;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.planner.ServiceCombination;
+import tas.mape.probes.ProtocolProbe;
 import tas.mape.probes.SystemRunProbe;
 import tas.mape.system.entity.SystemEntity;
 
 public class SystemRunResultController {
 	
 	private Accordion entityResultTableAccordion;
-	private AnchorPane systemRunChartPane, protocolMessageChartPane;
-	private SystemRunProbe probe = new SystemRunProbe();
+	private AnchorPane systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane;
+	private Label protocolDetailsText;
+	private SystemRunProbe systemRunProbe = new SystemRunProbe();
+	private ProtocolProbe protocolProbe = new ProtocolProbe();
 	private int maximumDelta = 10;
 	
+	public void setProtocolProbe() {
+		protocolProbe.connect();
+	}
+	
 	public void addEntityToProbe(SystemEntity entity) {
-		probe.connect(entity);
+		systemRunProbe.connect(entity);
 	}
 	
-	public void resetProbe() {
-		probe.reset();
+	public void resetProbes() {
+		systemRunProbe.reset();
+		protocolProbe.reset();
 	}
 	
-	public SystemRunResultController(AnchorPane systemRunChartPane, AnchorPane protocolMessageChartPane, Accordion entityResultTableAccordion) {
+	public SystemRunResultController(AnchorPane systemRunChartPane, AnchorPane protocolMessageChartPane, AnchorPane protocolFlowAnchorPane, Accordion entityResultTableAccordion, Label protocolDetailsText) {
 		this.systemRunChartPane = systemRunChartPane;
 		this.protocolMessageChartPane = protocolMessageChartPane;
+		this.protocolFlowAnchorPane = protocolFlowAnchorPane;
 		this.entityResultTableAccordion = entityResultTableAccordion;
+		this.protocolDetailsText = protocolDetailsText;
 	}
 	
 	public void clear() {
 		systemRunChartPane.getChildren().clear();
 		protocolMessageChartPane.getChildren().clear();
+		protocolFlowAnchorPane.getChildren().clear();
 		entityResultTableAccordion.getPanes().clear();
+		
+		protocolFlowAnchorPane.getChildren().add(protocolDetailsText);
+		protocolDetailsText.setDisable(false);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void generateSystemRunTables() {
 		
-		HashMap<String, List<Pair<Double, Double>>> dataPoints = probe.getDataPoints();
+		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
 		
 		for (String entity : dataPoints.keySet()) {
 			
@@ -149,9 +171,9 @@ public class SystemRunResultController {
 			
 			for (int i = 0; i < dataPoints.get(entity).size(); i++) {	
 				Pair<Double, Double> dataPoint = dataPoints.get(entity).get(i);
-				int cycle = probe.getSystemCycles().get(entity).get(i);
-				int protocolMessageCount = probe.getProtocolMessageCount().get(entity).get(i);
-				ServiceCombination combination = probe.getChosenCombinations().get(entity).get(i);
+				int cycle = systemRunProbe.getSystemCycles().get(entity).get(i);
+				int protocolMessageCount = systemRunProbe.getProtocolMessageCount().get(entity).get(i);
+				ServiceCombination combination = systemRunProbe.getChosenCombinations().get(entity).get(i);
 				serviceCombinationData.add(new ServiceCombinationEntry(cycle, dataPoint.getValue(), dataPoint.getKey(), protocolMessageCount, combination));
 			}
 			
@@ -168,12 +190,12 @@ public class SystemRunResultController {
 	}
 	
 	private void generatePerformanceChart() {
-		HashMap<String, List<Pair<Double, Double>>> dataPoints = probe.getDataPoints();
+		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
 		
 		if (dataPoints.values().stream().anyMatch(x -> x.size() > 0)) {
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("Total Service Combination Failure Rate (approximated by workflow analyzer)", 0, 1, 0.1);
-			NumberAxis yAxis = new NumberAxis("Total Service Combination Cost", 0, (probe.getMaxCost() + maximumDelta), 1);
+			NumberAxis yAxis = new NumberAxis("Total Service Combination Cost", 0, (systemRunProbe.getMaxCost() + maximumDelta), 1);
 			
 			// Set chart position & size
 			ScatterLineChart<Number, Number> systemRunChart = new ScatterLineChart<Number, Number>(xAxis, yAxis); 
@@ -213,7 +235,7 @@ public class SystemRunResultController {
 	                 flag++;
 	            }
 				
-				List<Goal> goals = probe.getConnectedEntity(entity).getManagingSystem().getGoals();
+				List<Goal> goals = systemRunProbe.getConnectedEntity(entity).getManagingSystem().getGoals();
 				
 				for (Goal goal : goals) {
 					if (goal.getType().equals(GoalType.COST)) {
@@ -239,7 +261,7 @@ public class SystemRunResultController {
 	
 	private void generateProtocolMessageChart() {
 		
-		HashMap<String, List<Integer>> protocolMessagesAll = probe.getProtocolMessageCount();
+		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
 		
 		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
 			
@@ -255,14 +277,82 @@ public class SystemRunResultController {
 			protocolMessageChart.prefWidthProperty().bind(protocolMessageChartPane.widthProperty());
 			protocolMessageChart.prefHeightProperty().bind(protocolMessageChartPane.heightProperty());
 			
-			XYChart.Series<Number, Number> series = new Series<Number, Number>();
+			Series<Number, Number> series = new Series<>();
 			series.setName("Protocol Messages");
+			protocolMessageChart.getData().add(series);
 			
 			for (int i = 0; i < protocolMessages.size(); i++) {
-				series.getData().add(new XYChart.Data<Number, Number>(i + 1, protocolMessages.get(i)));
+				Data<Number, Number> data = new Data<>(i + 1, protocolMessages.get(i));
+				series.getData().add(data);
+				
+	            // handler for clicking on data point:
+				int index = i;
+	            data.getNode().setOnMouseClicked(e -> generateProtocolFlow(index));
+			}
+		}
+	}
+	
+	private void generateProtocolFlow(int executionCycle) {
+		
+		protocolDetailsText.setDisable(true);
+		
+		List<Double> lineXList = new ArrayList<>();
+		List<String> entities = new ArrayList<>(systemRunProbe.getDataPoints().keySet());
+		int widthDelta = 100;
+		int heightDelta = 50;
+		double lineWidthDelta = (protocolFlowAnchorPane.widthProperty().get() - widthDelta * 2) / (entities.size() - 1);	
+		
+		protocolFlowAnchorPane.getChildren().clear();
+		
+		for (int i = 0; i < entities.size(); i++) {
+			
+			Text text = new Text(entities.get(i));
+			Line line = new Line(widthDelta + i * lineWidthDelta, heightDelta, widthDelta + i * lineWidthDelta, protocolFlowAnchorPane.heightProperty().get() - heightDelta);
+			lineXList.add(widthDelta + i * lineWidthDelta);
+			
+			protocolFlowAnchorPane.getChildren().add(line);
+			protocolFlowAnchorPane.getChildren().add(text);
+			
+			text.applyCss(); 
+			final double textWidth = text.getLayoutBounds().getWidth();
+			
+			AnchorPane.setLeftAnchor(text, widthDelta + i * lineWidthDelta - textWidth / 2);
+			AnchorPane.setTopAnchor(text, (double) heightDelta - 20);
+		}
+		
+		if (entities.size() > 1) {
+			List<ProtocolMessageInformation> protocolMessages = protocolProbe.getProtocolMessages(executionCycle - 1);
+			int lineHeightDeltaDelta = 30;
+			double lineHeightDelta = (protocolFlowAnchorPane.heightProperty().get() - (heightDelta + lineHeightDeltaDelta) * 2) / (protocolMessages.size() - 1);
+			List<String> entityCommEndpoints = new ArrayList<>();
+			
+			for (String entity : entities) {
+				entityCommEndpoints.add(systemRunProbe.getConnectedEntity(entity).getManagingSystem().getPlannerEndpoint());
 			}
 			
-			protocolMessageChart.getData().add(series);
+			
+			for (int i = 0; i < protocolMessages.size(); i++) {
+				
+				ProtocolMessageInformation message = protocolMessages.get(i);
+				double senderX = lineXList.get(entityCommEndpoints.indexOf(message.sender));
+				double receiverX = lineXList.get(entityCommEndpoints.indexOf(message.receiver));		
+				Text arrowText = new Text(message.messageType);
+				
+				Arrow arrow = new Arrow();
+				arrow.setStartX(senderX);
+				arrow.setStartY(heightDelta + lineHeightDeltaDelta + i * lineHeightDelta);
+				arrow.setEndX(receiverX);
+				arrow.setEndY(heightDelta + lineHeightDeltaDelta + i * lineHeightDelta);
+				
+				arrowText.applyCss(); 
+				final double textWidth = arrowText.getLayoutBounds().getWidth();
+				
+				AnchorPane.setLeftAnchor(arrowText, (Math.abs(senderX - receiverX) - textWidth) / 2);
+				AnchorPane.setTopAnchor(arrowText, heightDelta + lineHeightDeltaDelta + i * lineHeightDelta - 20);
+				
+				protocolFlowAnchorPane.getChildren().add(arrow);
+				protocolFlowAnchorPane.getChildren().add(arrowText);
+			}
 		}
 	}
 }

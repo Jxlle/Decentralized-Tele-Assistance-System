@@ -9,7 +9,7 @@ import tas.mape.planner.ServiceCombination;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class PlannerProbe extends AbstractProbe<PlannerProbeInterface> {
+public class PlannerObserver extends AbstractProbe<PlannerProbeInterface> {
     
 	/**
 	 * Notify subscribed probes that a service combination has been chosen.

@@ -19,7 +19,7 @@ import tas.mape.knowledge.Knowledge;
 import tas.mape.monitor.Monitor;
 import tas.mape.planner.Planner;
 import tas.mape.planner.RatingType;
-import tas.mape.probes.PlannerProbe;
+import tas.mape.probes.PlannerObserver;
 
 /**
  * Class representing a component that can execute a MAPEK-loop.
@@ -249,8 +249,8 @@ public class MAPEKComponent {
 	 * Return the planner probe
 	 * @return the planner probe
 	 */
-	public PlannerProbe getProbe() {
-		return planner.getProbe();
+	public PlannerObserver getProbe() {
+		return planner.getObserver();
 	}
 	
 	/**
@@ -284,6 +284,14 @@ public class MAPEKComponent {
 	 */
 	public AbstractProtocol<PlannerMessage, Planner> getProtocol() {
 		return planner.getProtocol();
+	}
+	
+	/**
+	 * Return the endpoint of the planner
+	 * @return the endpoint of the planner
+	 */
+	public String getPlannerEndpoint() {
+		return planner.getEndpoint();
 	}
 	
 	/**

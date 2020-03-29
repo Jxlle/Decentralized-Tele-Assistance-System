@@ -202,6 +202,9 @@ public class ApplicationController implements Initializable {
     AnchorPane protocolMessageChartPane;
     
     @FXML
+    AnchorPane protocolFlowAnchorPane;
+    
+    @FXML
     Accordion serviceRegistryAcc;
 
     @FXML
@@ -263,6 +266,9 @@ public class ApplicationController implements Initializable {
     
     @FXML
     Accordion entityResultTableAccordion;
+    
+    @FXML
+    Label protocolDetailsText;
     
     ProgressBar progressBar;
     Label invocationLabel;
@@ -401,7 +407,7 @@ public class ApplicationController implements Initializable {
     }
     
     private void initChartController() {
-    	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, entityResultTableAccordion);
+    	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, entityResultTableAccordion, protocolDetailsText);
     }
     
    /* public void setTasStart(TASStart tasStart) {
@@ -1100,7 +1106,7 @@ public class ApplicationController implements Initializable {
         					}
     				    });
     			    	
-    	    			chartController.resetProbe();
+    	    			chartController.resetProbes();
     	    			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
     	    			SystemProfileDataHandler.activeProfile = profile;
     	    		    analyzed = false;
@@ -1123,7 +1129,13 @@ public class ApplicationController implements Initializable {
     			    	
     			    	analyzed = true;
     			    	entityBeingAnalyzed = "";
-
+    			    	
+    			    	// Set protocol 
+    			    	SystemProfileExecutor.setProtocol(profile);
+    			    	
+    			    	// Set chart protocol probe
+    			    	chartController.setProtocolProbe();
+    			    	
     			    	// Execute system
     			    	SystemProfileExecutor.execute(entities);
     			    	done = true;

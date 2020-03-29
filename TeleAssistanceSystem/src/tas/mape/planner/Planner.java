@@ -16,7 +16,7 @@ import tas.mape.communication.message.PlannerMessageContent;
 import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.executor.Executor;
 import tas.mape.knowledge.Knowledge;
-import tas.mape.probes.PlannerProbe;
+import tas.mape.probes.PlannerObserver;
 
 /**
  * Class that represents the planner component in a MAPE-K component
@@ -31,7 +31,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private static int id;
 	private Executor executor;
 	private Knowledge knowledge;
-	private PlannerProbe probe;
+	private PlannerObserver observer;
 	private boolean executed, protocolFinished;
 	private AbstractProtocol<PlannerMessage, Planner> protocol;
 	private List<ServiceCombination> availableServiceCombinations;
@@ -47,7 +47,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		super("planner_" + id);
 		this.knowledge = knowledge;
 		this.executor = executor;
-		probe = new PlannerProbe();
+		observer = new PlannerObserver();
 		id++;
 	}
 	
@@ -55,8 +55,8 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * Return the planner probe
 	 * @return the planner probe
 	 */
-	public PlannerProbe getProbe() {
-		return probe;
+	public PlannerObserver getObserver() {
+		return observer;
 	}
 	
 	/**
@@ -145,7 +145,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public void finishedProtocol(int protocolMessages) {
 		protocolFinished = true;
-		probe.serviceCombinationChosen(currentServiceCombination, knowledge, protocolMessages);
+		observer.serviceCombinationChosen(currentServiceCombination, knowledge, protocolMessages);
 		makePlan(currentServiceCombination);
 	}
 	
