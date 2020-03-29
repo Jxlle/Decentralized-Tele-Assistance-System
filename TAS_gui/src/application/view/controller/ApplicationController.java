@@ -410,12 +410,6 @@ public class ApplicationController implements Initializable {
     	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, entityResultTableAccordion, protocolDetailsText);
     }
     
-   /* public void setTasStart(TASStart tasStart) {
-      	chartController = new ChartController(reliabilityChartPane, costChartPane,performanceChartPane,invCostChartPane,
-    			avgReliabilityChartPane, avgCostChartPane, avgPerformanceChartPane, invRateChartPane, tasStart.getServiceTypes());
-    	tableViewController = new TableViewController(reliabilityTableView, costTableView,performanceTableView);
-    }*/
-    
     private void addDefaultEntities() {
     	
 		WorkflowExecutor workflowExecutor = new WorkflowExecutor(
