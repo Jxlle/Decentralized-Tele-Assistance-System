@@ -1,6 +1,7 @@
 package tas.mape.analyzer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,19 +39,25 @@ public class CostReq extends AbstractWorkflowQoSRequirement {
 			throws IllegalArgumentException {
 			
 		List<Comparable<?>> scoreList = new ArrayList<>();
+		HashMap<String, List<Double>> properties = new HashMap<>();
+		List<Double> costList = new ArrayList<>();
+		
+		for (int i = 0; i < allServiceCombinations.size(); i++) {
+			costList.add(getTotalValue(allServiceCombinations.get(i), usedProperty));	
+		}
 		
 		switch (ratingType) {
 		
 		case SCORE:	
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreList.add(GetNumberRatingDouble(getTotalValue(allServiceCombinations.get(i), usedProperty)));	
+				scoreList.add(GetNumberRatingDouble(costList.get(i)));	
 			}
 			
 			break;
 			
 		case CLASS:	
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreList.add(getClassRating(knowledge.getGoals(), getTotalValue(allServiceCombinations.get(i), usedProperty), usedProperty));	
+				scoreList.add(getClassRating(knowledge.getGoals(), costList.get(i), usedProperty));	
 			}
 			
 			break;
@@ -61,8 +68,10 @@ public class CostReq extends AbstractWorkflowQoSRequirement {
 		
 		}
 		
+		properties.put(usedProperty, costList);
+		
 		// Return sorted service combinations
-		return getSortedServiceCombinations(combinationLimit, ratingType, scoreList, allServiceCombinations);
+		return getSortedServiceCombinations(combinationLimit, ratingType, scoreList, allServiceCombinations, properties);
 	}
 
 	/**

@@ -486,10 +486,11 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param ratingType the given rating type
 	 * @param combinationScores the given list of combination scores
 	 * @param serviceCombinations the given list of all service combinations
+	 * @param propertyValues list of the combination property values
 	 * @return a list of sorted service combinations
 	 */
 	protected List<ServiceCombination> getSortedServiceCombinations(int combinationLimit, RatingType ratingType, 
-			List<Comparable<?>> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> serviceCombinations) {
+			List<Comparable<?>> combinationScores, List<Map<Description, WeightedCollection<ServiceDescription>>> serviceCombinations, HashMap<String, List<Double>> propertyValues) {
 		
 		List<ServiceCombination> chosenServicesList = new ArrayList<>();
 		ServiceCombination chosenServicesEntry;
@@ -499,6 +500,10 @@ public abstract class AbstractWorkflowQoSRequirement {
 			chosenServicesCombination = serviceCombinations.get(i);
 			chosenServicesEntry = new ServiceCombination(chosenServicesCombination, ratingType, combinationScores.get(i));
 			chosenServicesList.add(chosenServicesEntry);
+			
+			for (String property : propertyValues.keySet()) {
+				chosenServicesEntry.addProperty(property, propertyValues.get(property).get(i));
+			}
 		}
 		
 		Collections.sort(chosenServicesList, Collections.reverseOrder());
@@ -510,15 +515,21 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * rating them using the given new combination scores. 
 	 * @param serviceCombinations the given service combinations
 	 * @param combinationScores the given list of combination scores
+	 * @param propertyValues list of the combination property values
 	 * @return a list of sorted service combinations
 	 */
 	protected List<ServiceCombination> getSortedServiceCombinations(List<ServiceCombination> serviceCombinations, 
-			List<Comparable<?>> combinationScores) {
+			List<Comparable<?>> combinationScores, HashMap<String, List<Double>> propertyValues) {
 		
 		List<ServiceCombination> chosenServicesList = new ArrayList<>();
 		
 		for (int i = 0; i < serviceCombinations.size(); i++) {
-			chosenServicesList.add(serviceCombinations.get(i).GetCloneNewRating(combinationScores.get(i)));
+			ServiceCombination newCombination = serviceCombinations.get(i).GetCloneNewRating(combinationScores.get(i));
+			chosenServicesList.add(newCombination);
+			
+			for (String property : propertyValues.keySet()) {
+				newCombination.addProperty(property, propertyValues.get(property).get(i));
+			}
 		}
 		
 		Collections.sort(chosenServicesList, Collections.reverseOrder());

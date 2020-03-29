@@ -205,6 +205,9 @@ public class ApplicationController implements Initializable {
     AnchorPane protocolFlowAnchorPane;
     
     @FXML
+    AnchorPane FailureRateErrorChartPane;
+    
+    @FXML
     Accordion serviceRegistryAcc;
 
     @FXML
@@ -407,7 +410,7 @@ public class ApplicationController implements Initializable {
     }
     
     private void initChartController() {
-    	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, entityResultTableAccordion, protocolDetailsText);
+    	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, FailureRateErrorChartPane, entityResultTableAccordion, protocolDetailsText);
     }
     
     private void addDefaultEntities() {
@@ -429,7 +432,7 @@ public class ApplicationController implements Initializable {
 		MAPEKComponent component = builder.build();
 		SystemEntity systemEntity = new SystemEntity("Default System Entity", workflowExecutor, component);
 		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
-		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.3));
+		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.2));
 		addEntityToList(systemEntity);
 		
 		workflowExecutor = new WorkflowExecutor(
@@ -451,7 +454,7 @@ public class ApplicationController implements Initializable {
 		component = builder.build();
 		systemEntity = new SystemEntity("Default System Entity 2", workflowExecutor, component);
 		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
-		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.3));
+		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.2));
 		addEntityToList(systemEntity);
     }
     

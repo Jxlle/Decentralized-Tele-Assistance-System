@@ -179,7 +179,7 @@
                            <children>
                               <TabPane layoutX="84.0" layoutY="28.0" prefHeight="255.0" prefWidth="555.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <tabs>
-                                    <Tab text="System Run Performance">
+                                    <Tab text="System run performance">
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -230,6 +230,15 @@
                                                    </items>
                                                 </SplitPane>
                                              </children></AnchorPane>
+                                      </content>
+                                    </Tab>
+                                    <Tab text="Failure rate error">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <AnchorPane fx:id="FailureRateErrorChartPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
                                       </content>
                                     </Tab>
                                 </tabs>

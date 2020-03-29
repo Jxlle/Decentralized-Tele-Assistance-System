@@ -1,6 +1,7 @@
 package tas.mape.analyzer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,19 +39,25 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 			throws IllegalArgumentException {
 			
 		List<Comparable<?>> scoreList = new ArrayList<>();
+		HashMap<String, List<Double>> properties = new HashMap<>();
+		List<Double> failRateList = new ArrayList<>();
+		
+		for (int i = 0; i < allServiceCombinations.size(); i++) {
+			failRateList.add(getTotalApproximatedFailureRateValue(allServiceCombinations.get(i), knowledge));	
+		}
 		
 		switch (ratingType) {
 		
 		case SCORE:	
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreList.add(GetNumberRatingDouble(getTotalApproximatedFailureRateValue(allServiceCombinations.get(i), knowledge)));	
+				scoreList.add(GetNumberRatingDouble(failRateList.get(i)));	
 			}
 			
 			break;
 			
 		case CLASS:	
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreList.add(getClassRating(knowledge.getGoals(), getTotalApproximatedFailureRateValue(allServiceCombinations.get(i), knowledge), usedProperty));	
+				scoreList.add(getClassRating(knowledge.getGoals(), failRateList.get(i), usedProperty));	
 			}
 			break;
 			
@@ -60,8 +67,10 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 		
 		}
 		
+		properties.put(usedProperty, failRateList);
+		
 		// Return sorted service combinations
-		return getSortedServiceCombinations(combinationLimit, ratingType, scoreList, allServiceCombinations);
+		return getSortedServiceCombinations(combinationLimit, ratingType, scoreList, allServiceCombinations, properties);
 	}
 
 	/**
@@ -78,19 +87,25 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 			Map<String, Integer> serviceLoads, Knowledge knowledge) {
 		
 		List<Comparable<?>> scoreList = new ArrayList<>();
+		HashMap<String, List<Double>> properties = new HashMap<>();
+		List<Double> failRateList = new ArrayList<>();
+		
+		for (int i = 0; i < serviceCombinations.size(); i++) {
+			failRateList.add(getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceLoads, knowledge));	
+		}
 		
 		switch (serviceCombinations.get(0).getRatingType()) {
 		
 		case SCORE:	
 			for (int i = 0; i < serviceCombinations.size(); i++) {
-				scoreList.add(GetNumberRatingDouble(getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceLoads, knowledge)));
+				scoreList.add(GetNumberRatingDouble(failRateList.get(i)));
 			}
 			
 			break;
 			
 		case CLASS:	
 			for (int i = 0; i < serviceCombinations.size(); i++) {
-				scoreList.add(getClassRating(knowledge.getGoals(), getTotalApproximatedFailureRateValue(serviceCombinations.get(i), serviceLoads, knowledge), usedProperty));	
+				scoreList.add(getClassRating(knowledge.getGoals(), failRateList.get(i), usedProperty));	
 			}
 			
 			break;
@@ -100,7 +115,9 @@ public class ReliabilityReq extends AbstractWorkflowQoSRequirement {
 		
 		}
 		
+		properties.put(usedProperty, failRateList);
+		
 		// Return sorted service combinations based on given values
-		return getSortedServiceCombinations(serviceCombinations, scoreList);
+		return getSortedServiceCombinations(serviceCombinations, scoreList, properties);
 	}
 }

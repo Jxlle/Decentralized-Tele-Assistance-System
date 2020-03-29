@@ -1,15 +1,11 @@
 package application.view.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import application.Node.ArrowNode;
-import application.Node.ArrowNode.LeftArrowNode;
-import application.Node.ArrowNode.RightArrowNode;
 import application.model.ServiceCombinationEntry;
 import application.utility.Arrow;
 import application.utility.ScatterLineChart;
@@ -48,7 +44,7 @@ import tas.mape.system.entity.SystemEntity;
 public class SystemRunResultController {
 	
 	private Accordion entityResultTableAccordion;
-	private AnchorPane systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane;
+	private AnchorPane systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, FailureRateErrorChartPane;
 	private Label protocolDetailsText;
 	private SystemRunProbe systemRunProbe = new SystemRunProbe();
 	private ProtocolProbe protocolProbe = new ProtocolProbe();
@@ -67,10 +63,11 @@ public class SystemRunResultController {
 		protocolProbe.reset();
 	}
 	
-	public SystemRunResultController(AnchorPane systemRunChartPane, AnchorPane protocolMessageChartPane, AnchorPane protocolFlowAnchorPane, Accordion entityResultTableAccordion, Label protocolDetailsText) {
+	public SystemRunResultController(AnchorPane systemRunChartPane, AnchorPane protocolMessageChartPane, AnchorPane protocolFlowAnchorPane, AnchorPane FailureRateErrorChartPane, Accordion entityResultTableAccordion, Label protocolDetailsText) {
 		this.systemRunChartPane = systemRunChartPane;
 		this.protocolMessageChartPane = protocolMessageChartPane;
 		this.protocolFlowAnchorPane = protocolFlowAnchorPane;
+		this.FailureRateErrorChartPane = FailureRateErrorChartPane;
 		this.entityResultTableAccordion = entityResultTableAccordion;
 		this.protocolDetailsText = protocolDetailsText;
 	}
@@ -79,6 +76,7 @@ public class SystemRunResultController {
 		systemRunChartPane.getChildren().clear();
 		protocolMessageChartPane.getChildren().clear();
 		protocolFlowAnchorPane.getChildren().clear();
+		FailureRateErrorChartPane.getChildren().clear();
 		entityResultTableAccordion.getPanes().clear();
 		
 		protocolFlowAnchorPane.getChildren().add(protocolDetailsText);
@@ -187,6 +185,7 @@ public class SystemRunResultController {
 	public void generateSystemRunCharts() {
 		generatePerformanceChart();
 		generateProtocolMessageChart();
+		generateFailureRateErrorChart();
 	}
 	
 	private void generatePerformanceChart() {
@@ -194,8 +193,8 @@ public class SystemRunResultController {
 		
 		if (dataPoints.values().stream().anyMatch(x -> x.size() > 0)) {
 			// Define chart axis
-			NumberAxis xAxis = new NumberAxis("Total Service Combination Failure Rate (approximated by workflow analyzer)", 0, 1, 0.1);
-			NumberAxis yAxis = new NumberAxis("Total Service Combination Cost", 0, (systemRunProbe.getMaxCost() + maximumDelta), 1);
+			NumberAxis xAxis = new NumberAxis("Total service combination failure rate (approximated by workflow analyzer)", 0, 1, 0.1);
+			NumberAxis yAxis = new NumberAxis("Total service combination cost", 0, (systemRunProbe.getMaxCost() + maximumDelta), 1);
 			
 			// Set chart position & size
 			ScatterLineChart<Number, Number> systemRunChart = new ScatterLineChart<Number, Number>(xAxis, yAxis); 
@@ -256,6 +255,48 @@ public class SystemRunResultController {
 	             label.setGraphic(seriesNodes.get(it));
 	             it++;
 	        }
+		}
+	}
+	
+	private void generateFailureRateErrorChart() {
+		
+		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
+		
+		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
+			
+			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+			
+			// Define chart axis
+			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
+			NumberAxis yAxis = new NumberAxis("Chosen Service Combination Failure Rate error (real <-> entity approximation)", 0, 1, 0.1);
+			
+			// Set chart position & size
+			LineChart<Number, Number> failureRateErrorChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			FailureRateErrorChartPane.getChildren().add(failureRateErrorChart);
+			failureRateErrorChart.prefWidthProperty().bind(FailureRateErrorChartPane.widthProperty());
+			failureRateErrorChart.prefHeightProperty().bind(FailureRateErrorChartPane.heightProperty());
+			
+			// Set data points
+			for (String entity : protocolMessagesAll.keySet()) {
+				
+				XYChart.Series<Number, Number> series = new Series<Number, Number>();
+				series.setName(entity);
+				
+				for (int i = 0; i < dataPoints.get(entity).size(); i++) {
+					
+					double entityFailRate = systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate");
+					double systemFailRate = dataPoints.get(entity).get(i).getKey();
+					
+					series.getData().add(new XYChart.Data<Number, Number>(i + 1, Math.abs(entityFailRate - systemFailRate)));
+				}
+				
+				for (Pair<Double, Double> dataPoint : dataPoints.get(entity)) {
+					series.getData().add(new XYChart.Data<Number, Number>(dataPoint.getKey(), dataPoint.getValue()));
+				}
+				
+				failureRateErrorChart.getData().add(series);
+			}
 		}
 	}
 	
@@ -321,7 +362,7 @@ public class SystemRunResultController {
 		}
 		
 		if (entities.size() > 1) {
-			List<ProtocolMessageInformation> protocolMessages = protocolProbe.getProtocolMessages(executionCycle - 1);
+			List<ProtocolMessageInformation> protocolMessages = protocolProbe.getProtocolMessages(executionCycle);
 			int lineHeightDeltaDelta = 30;
 			double lineHeightDelta = (protocolFlowAnchorPane.heightProperty().get() - (heightDelta + lineHeightDeltaDelta) * 2) / (protocolMessages.size() - 1);
 			List<String> entityCommEndpoints = new ArrayList<>();

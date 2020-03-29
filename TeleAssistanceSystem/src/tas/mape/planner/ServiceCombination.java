@@ -20,6 +20,11 @@ public class ServiceCombination implements Comparable<ServiceCombination> {
 	// description (method type + operation name) and each usable service has a use chance.
 	private Map<Description, WeightedCollection<ServiceDescription>> allServices;
 	
+	/**
+	 * Map representing the properties of the service combination, for example 'cost' or 'failure rate'
+	 */
+	private Map<String, Double> properties = new HashMap<>();
+	
 	// Type of the service combination rating 
 	private RatingType ratingType;
 	
@@ -91,6 +96,24 @@ public class ServiceCombination implements Comparable<ServiceCombination> {
 		}
 		
 		return serviceEndpointMap;
+	}
+	
+	/**
+	 * Add a given property value for the given property
+	 * @param property the given property
+	 * @param value the given property value
+	 */
+	public void addProperty(String property, double value) {
+		properties.put(property,  value);
+	}
+	
+	/**
+	 * Return the property value for the given property
+	 * @param property the given property
+	 * @return the property value for the given property
+	 */
+	public double getProperty(String property) {
+		return properties.get(property);
 	}
 	
 	/**

@@ -2,6 +2,7 @@ package tas.mape.analyzer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,14 +40,23 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 		List<Comparable<?>> scoreListFailureRate = new ArrayList<>();
 		List<Comparable<?>> scoreList = new ArrayList<>();
 		
+		HashMap<String, List<Double>> properties = new HashMap<>();
+		List<Double> costList = new ArrayList<>();
+		List<Double> failRateList = new ArrayList<>();
+		
+		for (int i = 0; i < allServiceCombinations.size(); i++) {
+			costList.add(getTotalValue(allServiceCombinations.get(i), "Cost"));	
+			failRateList.add(getTotalApproximatedFailureRateValue(allServiceCombinations.get(i), knowledge));
+		}
+		
 		switch (ratingType) {
 		
 		case SCORE:
 			
 			// Calculate requirement scores
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreListCost.add((double) GetNumberRatingDouble(getTotalValue(allServiceCombinations.get(i), "Cost")));
-				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalApproximatedFailureRateValue(allServiceCombinations.get(i), knowledge)));
+				scoreListCost.add((double) GetNumberRatingDouble(costList.get(i)));
+				scoreListFailureRate.add((double) GetNumberRatingDouble(failRateList.get(i)));
 			}
 			
 			// Initialize lists
@@ -104,8 +114,8 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 			// Calculate requirement scores
 			for (int i = 0; i < allServiceCombinations.size(); i++) {
-				scoreListCost.add(getClassRating(knowledge.getGoals(), getTotalValue(allServiceCombinations.get(i), "Cost"), "Cost"));
-				scoreListFailureRate.add(getClassRating(knowledge.getGoals(), getTotalApproximatedFailureRateValue(allServiceCombinations.get(i), knowledge), "FailureRate"));
+				scoreListCost.add(getClassRating(knowledge.getGoals(), costList.get(i), "Cost"));
+				scoreListFailureRate.add(getClassRating(knowledge.getGoals(), failRateList.get(i), "FailureRate"));
 			}
 			
 			// Calculate total class for each service combination
@@ -119,8 +129,11 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			throw new IllegalArgumentException("The given rating type " + ratingType + " has no implementation for the requirement!");
 		}
 		
+		properties.put("Cost", costList);
+		properties.put("FailureRate", failRateList);
+		
 		// Return sorted service combinations
-		return getSortedServiceCombinations(combinationLimit, ratingType, scoreList, allServiceCombinations);
+		return getSortedServiceCombinations(combinationLimit, ratingType, scoreList, allServiceCombinations, properties);
 	}
 
 	/**
@@ -140,15 +153,24 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 		List<Comparable<?>> scoreListFailureRate = new ArrayList<>();
 		List<Comparable<?>> scoreList = new ArrayList<>();
 		
+		HashMap<String, List<Double>> properties = new HashMap<>();
+		List<Double> costList = new ArrayList<>();
+		List<Double> failRateList = new ArrayList<>();
+		
+		for (int i = 0; i < serviceCombinations.size(); i++) {
+			costList.add(getTotalValue(serviceCombinations.get(i), "Cost"));	
+			failRateList.add(getTotalApproximatedFailureRateValue(serviceCombinations.get(i), 
+					serviceLoads, knowledge));
+		}
+		
 		switch (serviceCombinations.get(0).getRatingType()) {
 		
 		case SCORE:
 			
 			// Calculate requirement scores
 			for (int i = 0; i < serviceCombinations.size(); i++) {
-				scoreListCost.add((double) GetNumberRatingDouble(getTotalValue(serviceCombinations.get(i), "Cost")));
-				scoreListFailureRate.add((double) GetNumberRatingDouble(getTotalApproximatedFailureRateValue(serviceCombinations.get(i), 
-						serviceLoads, knowledge)));
+				scoreListCost.add((double) GetNumberRatingDouble(costList.get(i)));
+				scoreListFailureRate.add((double) GetNumberRatingDouble(failRateList.get(i)));
 			}
 			
 			// Initialize lists
@@ -205,9 +227,8 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			
 			// Calculate requirement scores
 			for (int i = 0; i < serviceCombinations.size(); i++) {
-				scoreListCost.add(getClassRating(knowledge.getGoals(), getTotalValue(serviceCombinations.get(i), "Cost"), "Cost"));
-				scoreListFailureRate.add(getClassRating(knowledge.getGoals(), getTotalApproximatedFailureRateValue(serviceCombinations.get(i), 
-						serviceLoads, knowledge), "FailureRate"));
+				scoreListCost.add(getClassRating(knowledge.getGoals(), costList.get(i), "Cost"));
+				scoreListFailureRate.add(getClassRating(knowledge.getGoals(), failRateList.get(i), "FailureRate"));
 			}
 			
 			// Calculate total class for each service combination
@@ -221,8 +242,11 @@ public class CostAndReliabilityReq extends AbstractWorkflowQoSRequirement {
 			throw new IllegalArgumentException("The given service combination rating type " + serviceCombinations.get(0).getRatingType() + " has no implementation for the requirement!");
 		}
 		
+		properties.put("Cost", costList);
+		properties.put("FailureRate", failRateList);
+		
 		// Return sorted service combinations based on given values
-		return getSortedServiceCombinations(serviceCombinations, scoreList);
+		return getSortedServiceCombinations(serviceCombinations, scoreList, properties);
 	}
 	
 }

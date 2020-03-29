@@ -9,11 +9,11 @@
   <entityRequirementTypes>
     <entry>
       <string>Default System Entity</string>
-      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
+      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
     </entry>
     <entry>
       <string>Default System Entity 2</string>
-      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
+      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
     </entry>
   </entityRequirementTypes>
   <participatingEntities>
