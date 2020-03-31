@@ -205,7 +205,10 @@ public class ApplicationController implements Initializable {
     AnchorPane protocolFlowAnchorPane;
     
     @FXML
-    AnchorPane FailureRateErrorChartPane;
+    AnchorPane failureRateErrorChartPane;
+    
+    @FXML
+    AnchorPane failureRateChartPane;
     
     @FXML
     Accordion serviceRegistryAcc;
@@ -410,7 +413,7 @@ public class ApplicationController implements Initializable {
     }
     
     private void initChartController() {
-    	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, FailureRateErrorChartPane, entityResultTableAccordion, protocolDetailsText);
+    	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, failureRateErrorChartPane, failureRateChartPane, costChartPane, entityResultTableAccordion, protocolDetailsText);
     }
     
     private void addDefaultEntities() {

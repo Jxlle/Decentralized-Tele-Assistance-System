@@ -44,7 +44,7 @@ import tas.mape.system.entity.SystemEntity;
 public class SystemRunResultController {
 	
 	private Accordion entityResultTableAccordion;
-	private AnchorPane systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, FailureRateErrorChartPane;
+	private AnchorPane systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, failureRateErrorChartPane, costChartPane, failureRateChartPane;
 	private Label protocolDetailsText;
 	private SystemRunProbe systemRunProbe = new SystemRunProbe();
 	private ProtocolProbe protocolProbe = new ProtocolProbe();
@@ -63,11 +63,14 @@ public class SystemRunResultController {
 		protocolProbe.reset();
 	}
 	
-	public SystemRunResultController(AnchorPane systemRunChartPane, AnchorPane protocolMessageChartPane, AnchorPane protocolFlowAnchorPane, AnchorPane FailureRateErrorChartPane, Accordion entityResultTableAccordion, Label protocolDetailsText) {
+	public SystemRunResultController(AnchorPane systemRunChartPane, AnchorPane protocolMessageChartPane, AnchorPane protocolFlowAnchorPane, AnchorPane failureRateErrorChartPane, 
+			AnchorPane costChartPane, AnchorPane failureRateChartPane, Accordion entityResultTableAccordion, Label protocolDetailsText) {
 		this.systemRunChartPane = systemRunChartPane;
 		this.protocolMessageChartPane = protocolMessageChartPane;
 		this.protocolFlowAnchorPane = protocolFlowAnchorPane;
-		this.FailureRateErrorChartPane = FailureRateErrorChartPane;
+		this.failureRateErrorChartPane = failureRateErrorChartPane;
+		this.costChartPane = costChartPane;
+		this.failureRateChartPane = failureRateChartPane;
 		this.entityResultTableAccordion = entityResultTableAccordion;
 		this.protocolDetailsText = protocolDetailsText;
 	}
@@ -76,7 +79,9 @@ public class SystemRunResultController {
 		systemRunChartPane.getChildren().clear();
 		protocolMessageChartPane.getChildren().clear();
 		protocolFlowAnchorPane.getChildren().clear();
-		FailureRateErrorChartPane.getChildren().clear();
+		failureRateErrorChartPane.getChildren().clear();
+		failureRateChartPane.getChildren().clear();
+		costChartPane.getChildren().clear();
 		entityResultTableAccordion.getPanes().clear();
 		
 		protocolFlowAnchorPane.getChildren().add(protocolDetailsText);
@@ -186,6 +191,8 @@ public class SystemRunResultController {
 		generatePerformanceChart();
 		generateProtocolMessageChart();
 		generateFailureRateErrorChart();
+		generateFailureRateChart();
+		generateCostChart();
 	}
 	
 	private void generatePerformanceChart() {
@@ -273,9 +280,9 @@ public class SystemRunResultController {
 			
 			// Set chart position & size
 			LineChart<Number, Number> failureRateErrorChart = new LineChart<Number, Number>(xAxis, yAxis); 
-			FailureRateErrorChartPane.getChildren().add(failureRateErrorChart);
-			failureRateErrorChart.prefWidthProperty().bind(FailureRateErrorChartPane.widthProperty());
-			failureRateErrorChart.prefHeightProperty().bind(FailureRateErrorChartPane.heightProperty());
+			failureRateErrorChartPane.getChildren().add(failureRateErrorChart);
+			failureRateErrorChart.prefWidthProperty().bind(failureRateErrorChartPane.widthProperty());
+			failureRateErrorChart.prefHeightProperty().bind(failureRateErrorChartPane.heightProperty());
 			
 			// Set data points
 			for (String entity : protocolMessagesAll.keySet()) {
@@ -291,11 +298,79 @@ public class SystemRunResultController {
 					series.getData().add(new XYChart.Data<Number, Number>(i + 1, Math.abs(entityFailRate - systemFailRate)));
 				}
 				
-				for (Pair<Double, Double> dataPoint : dataPoints.get(entity)) {
-					series.getData().add(new XYChart.Data<Number, Number>(dataPoint.getKey(), dataPoint.getValue()));
+				failureRateErrorChart.getData().add(series);
+			}
+		}
+	}
+	
+	private void generateFailureRateChart() {
+		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
+		
+		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
+			
+			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+			
+			// Define chart axis
+			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
+			NumberAxis yAxis = new NumberAxis("Total service combination failure rate (approximated by workflow analyzer)", 0, 1, 0.1);
+			
+			// Set chart position & size
+			LineChart<Number, Number> failureRateChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			failureRateChartPane.getChildren().add(failureRateChart);
+			failureRateChart.prefWidthProperty().bind(failureRateChartPane.widthProperty());
+			failureRateChart.prefHeightProperty().bind(failureRateChartPane.heightProperty());
+			
+			// Set data points
+			for (String entity : protocolMessagesAll.keySet()) {
+				
+				XYChart.Series<Number, Number> series = new Series<Number, Number>();
+				series.setName(entity);
+				
+				for (int i = 0; i < dataPoints.get(entity).size(); i++) {
+			
+					double systemFailRate = dataPoints.get(entity).get(i).getKey();
+					
+					series.getData().add(new XYChart.Data<Number, Number>(i + 1, systemFailRate));
 				}
 				
-				failureRateErrorChart.getData().add(series);
+				failureRateChart.getData().add(series);
+			}
+		}
+	}
+	
+	private void generateCostChart() {
+		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
+		
+		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
+			
+			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+			
+			// Define chart axis
+			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
+			NumberAxis yAxis = new NumberAxis("Total service combination cost", 0, (systemRunProbe.getMaxCost() + maximumDelta), 1);
+			
+			// Set chart position & size
+			LineChart<Number, Number> costChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			costChartPane.getChildren().add(costChart);
+			costChart.prefWidthProperty().bind(costChartPane.widthProperty());
+			costChart.prefHeightProperty().bind(costChartPane.heightProperty());
+			
+			// Set data points
+			for (String entity : protocolMessagesAll.keySet()) {
+				
+				XYChart.Series<Number, Number> series = new Series<Number, Number>();
+				series.setName(entity);
+				
+				for (int i = 0; i < dataPoints.get(entity).size(); i++) {
+			
+					double systemCost = dataPoints.get(entity).get(i).getValue();
+					
+					series.getData().add(new XYChart.Data<Number, Number>(i + 1, systemCost));
+				}
+				
+				costChart.getData().add(series);
 			}
 		}
 	}
