@@ -25,7 +25,6 @@ public class ProtocolProbe implements ProtocolProbeInterface {
 	
 	@Override
 	public void protocolStarted() {
-		System.out.println("PROTOCOL STARTED - NEW LIST");
 		protocolMessages.add(new ArrayList<>());
 	}
 

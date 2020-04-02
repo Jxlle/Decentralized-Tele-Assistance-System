@@ -65,6 +65,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 			
 			// Increase message ID
 			messageID++;
+			System.err.print(receiver.getAvailableServiceCombinations().get(0).toString() + "\n");
 			receiver.sendMessage(response);	
 			
 			break;
@@ -103,7 +104,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 			}
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);	
-			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints, messageContentPercentage);
+			content = receiver.generateMessageContent(newServiceCombinations.get(0), sharedRegistryEndpoints, messageContentPercentage);
 			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), responseType, content);
 			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
 			
@@ -113,6 +114,8 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 			
 			// Increase message ID
 			messageID++;
+			System.err.print("OLD offer \n" + newServiceCombinations.get(0).toString() + "\n");
+			System.err.print("NEW offer \n" + newServiceCombinations.get(0).toString() + "\n");
 			receiver.sendMessage(response);	
 			
 			break;

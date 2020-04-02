@@ -387,7 +387,10 @@ public class ApplicationController implements Initializable {
 		WorkflowAnalyzer.analyzeWorkflow(entity.getManagedSystem().getAssistanceService());
 		Map<Description, Pair<List<ServiceDescription>, Double>> usableServices = WorkflowAnalyzer.getUsableServicesAndChance();
 		
-		entity.getManagingSystem().resetMonitorProbes();
+		// Reset all entity probes, not only the current entity
+		for (SystemEntity e : entities) {
+			e.getManagingSystem().resetMonitorProbes();
+		}
 		
 		/*for (Description d : usableServices.keySet()) {
 			System.err.print("------------------------------------------------------------ \n");
@@ -413,7 +416,7 @@ public class ApplicationController implements Initializable {
     }
     
     private void initChartController() {
-    	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, failureRateErrorChartPane, failureRateChartPane, costChartPane, entityResultTableAccordion, protocolDetailsText);
+    	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, failureRateErrorChartPane, costChartPane, failureRateChartPane, entityResultTableAccordion, protocolDetailsText);
     }
     
     private void addDefaultEntities() {
@@ -427,7 +430,7 @@ public class ApplicationController implements Initializable {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.shared.registry", "service.individual1.registry")))
 			 	   .initializePlanner()
 				   .initializeAnalyzer(100, 1)
-				   .initializeMonitor(0.05, 0.05);
+				   .initializeMonitor(0.01, 0.01);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
@@ -449,7 +452,7 @@ public class ApplicationController implements Initializable {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.shared.registry", "service.individual2.registry")))
 			 	   .initializePlanner()
 				   .initializeAnalyzer(100, 1)
-				   .initializeMonitor(0.05, 0.05);
+				   .initializeMonitor(0.01, 0.01);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}

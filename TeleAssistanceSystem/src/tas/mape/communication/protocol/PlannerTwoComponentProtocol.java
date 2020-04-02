@@ -41,6 +41,8 @@ public abstract class PlannerTwoComponentProtocol extends AbstractTwoComponentPr
 		// Set message ID
 		messageID = 1;
 		
+		System.err.print(sender.getAvailableServiceCombinations().get(0).toString() + "\n");
+		
 		// Send message
 		sender.sendMessage(message);
 	}
