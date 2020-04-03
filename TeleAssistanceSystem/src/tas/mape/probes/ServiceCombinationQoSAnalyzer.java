@@ -3,12 +3,14 @@ package tas.mape.probes;
 import java.util.HashMap;
 import java.util.List;
 
+import profile.SystemRequirementType;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.StaticTree;
 import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.knowledge.Knowledge;
+import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 import tas.services.profiles.ServiceFailureLoadProfile;
 
@@ -71,6 +73,39 @@ public class ServiceCombinationQoSAnalyzer {
 		return totalValue;
 	}
 	
+	public double getRealRatingValue(ServiceCombination combination, Knowledge knowledge, double realFailureRate) {
+		
+		RatingType type = combination.getRatingType();
+		SystemRequirementType requirement = knowledge.getSystemRequirement();
+		
+		switch(type) {
+		
+			case CLASS:
+				
+				switch(requirement) {
+				
+					case COST:
+						return Double.valueOf(combination.getRating().toString());
+						
+					case RELIABILITY:
+						return AbstractWorkflowQoSRequirement.getClassRating(knowledge.getGoals(), realFailureRate, "FailureRate");
+					
+					case COST_AND_RELIABILITY:
+						return AbstractWorkflowQoSRequirement.getClassRating(knowledge.getGoals(), realFailureRate, "FailureRate") +
+								AbstractWorkflowQoSRequirement.getClassRating(knowledge.getGoals(), combination.getProperty("Cost"), "Cost");
+						
+					default:
+						throw new IllegalStateException("The system doesn't support this requirement type yet to calculate the real rating. Type: " + requirement);
+				}
+			
+			case SCORE:
+				return 0;
+				
+			default:
+				throw new IllegalStateException("The system doesn't support this rating type yet to calculate the real rating. Type: " + type);	
+		}
+	}
+	
 	/**
 	 * Calculate and set the simple service failure rate for a given description (= service type & operation name) with a given service combination
 	 * and description. This failure rate does not take the service flow of the workflow into account. The full accurate failure rate is calculated above. 
@@ -111,5 +146,4 @@ public class ServiceCombinationQoSAnalyzer {
 		
 		failureRates.put(description, totalValue);
 	}
-
 }

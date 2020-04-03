@@ -127,6 +127,14 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
+	 * Return the currently used service combination
+	 * @return the currently used service combination
+	 */
+	public ServiceCombination getCurrentServiceCombination() {
+		return currentServiceCombination;
+	}
+	
+	/**
 	 * Calculate the new service combinations list based on a given planner message content object.
 	 * This is calculated by re-rating the service combinations based on failure rates calculated 
 	 * from the message content.

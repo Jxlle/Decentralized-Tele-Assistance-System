@@ -58,6 +58,8 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 			// Update current execution cycle
 			currentExecutionCycle = i;
 			
+			System.out.println("EXECUTION CYCLE " + (i + 1) + " STARTED.-------------------------------------------");
+			
 			// Execute MAPE-K loop until the communication step
 			entity1.getManagingSystem().executeMonitor();
 			entity2.getManagingSystem().executeMonitor();

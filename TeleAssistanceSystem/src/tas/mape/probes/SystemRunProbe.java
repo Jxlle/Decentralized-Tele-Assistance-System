@@ -21,6 +21,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	private HashMap<String, List<Pair<Double, Double>>> dataPoints = new HashMap<>();
 	private HashMap<String, List<Integer>> systemCycles = new HashMap<>();
 	private HashMap<String, List<Integer>> protocolMessagesCount = new HashMap<>();
+	private HashMap<String, List<Double>> ratings = new HashMap<>();
 	private HashMap<String, Knowledge> knowledges = new HashMap<>();
 	private List<SystemEntity> connectedEntities = new ArrayList<>();
 	
@@ -36,6 +37,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		chosenCombinations.put(entity.getEntityName(), new ArrayList<>());
 		systemCycles.put(entity.getEntityName(), new ArrayList<>());
 		protocolMessagesCount.put(entity.getEntityName(), new ArrayList<>());
+		ratings.put(entity.getEntityName(), new ArrayList<>());
 	}
 	
 	/**
@@ -47,6 +49,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		chosenCombinations.clear();
 		systemCycles.clear();
 		knowledges.clear();
+		ratings.clear();
 		
 		// Unregister from connected entities
 		for (SystemEntity entity : connectedEntities) {
@@ -54,6 +57,14 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		}
 		
 		connectedEntities.clear();
+	}
+	
+	/**
+	 * Return the probe ratings data
+	 * @return the probe ratings data
+	 */
+	public HashMap<String, List<Double>> getRatings() {
+		return ratings;
 	}
 	
 	/**
@@ -151,12 +162,16 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		for (String entity : knowledges.keySet()) {
 			
 			int cycle = systemCycles.get(entity).get(systemCycles.get(entity).size() - 1);
-			Double combinationCost = sca.getRealServiceCombinationCost(chosenCombinations.get(entity).get(cycle - 1));
-			Double combinationFailureRate = sca.getRealServiceCombinationFailureRate(chosenCombinations.get(entity).get(cycle - 1), knowledges.get(entity));
+			ServiceCombination currentCombination = chosenCombinations.get(entity).get(cycle - 1);
+			Double combinationCost = sca.getRealServiceCombinationCost(currentCombination);
+			Double combinationFailureRate = sca.getRealServiceCombinationFailureRate(currentCombination, knowledges.get(entity));
 			
 			// Add data points to the data
 			List<Pair<Double, Double>> entityDataPoints = dataPoints.get(entity);
 			entityDataPoints.add(new Pair<Double, Double>(combinationFailureRate, combinationCost));
+			
+			List<Double> entityRatings = ratings.get(entity);
+			entityRatings.add(sca.getRealRatingValue(currentCombination, knowledges.get(entity), combinationFailureRate));
 		}
 	}
 }

@@ -442,7 +442,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param totalValue the given accumulated property value
 	 * @return the service combination rating
 	 */
-	protected double GetNumberRatingDouble(double totalValue) {
+	public static double GetNumberRatingDouble(double totalValue) {
 		
 		// Return score. +1 excludes special cases where the total value is between 0 and 1
 		return 1 / (totalValue + 1) * 100;
@@ -458,7 +458,7 @@ public abstract class AbstractWorkflowQoSRequirement {
 	 * @param property the given name of the custom service property
 	 * @return the service combination rating
 	 */
-	protected int getClassRating(List<Goal> goals, double totalValue, String property) throws IllegalStateException {
+	public static int getClassRating(List<Goal> goals, double totalValue, String property) throws IllegalStateException {
 		
 		for (Goal goal : goals) {
 			

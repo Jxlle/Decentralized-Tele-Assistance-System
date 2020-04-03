@@ -36,6 +36,7 @@ import javafx.util.Pair;
 import tas.mape.communication.message.ProtocolMessageInformation;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalType;
+import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 import tas.mape.probes.ProtocolProbe;
 import tas.mape.probes.SystemRunProbe;
@@ -44,7 +45,8 @@ import tas.mape.system.entity.SystemEntity;
 public class SystemRunResultController {
 	
 	private Accordion entityResultTableAccordion;
-	private AnchorPane systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, failureRateErrorChartPane, costChartPane, failureRateChartPane;
+	private AnchorPane systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, failureRateErrorChartPane, 
+	costChartPane, failureRateChartPane, ratingEvolutionChartPane, ratingEvolutionSystemChartPane, failureRateSystemChartPane;
 	private Label protocolDetailsText;
 	private SystemRunProbe systemRunProbe = new SystemRunProbe();
 	private ProtocolProbe protocolProbe = new ProtocolProbe();
@@ -64,13 +66,16 @@ public class SystemRunResultController {
 	}
 	
 	public SystemRunResultController(AnchorPane systemRunChartPane, AnchorPane protocolMessageChartPane, AnchorPane protocolFlowAnchorPane, AnchorPane failureRateErrorChartPane, 
-			AnchorPane costChartPane, AnchorPane failureRateChartPane, Accordion entityResultTableAccordion, Label protocolDetailsText) {
+			AnchorPane costChartPane, AnchorPane failureRateChartPane, AnchorPane failureRateSystemChartPane, AnchorPane ratingEvolutionChartPane, AnchorPane ratingEvolutionSystemChartPane, Accordion entityResultTableAccordion, Label protocolDetailsText) {
 		this.systemRunChartPane = systemRunChartPane;
 		this.protocolMessageChartPane = protocolMessageChartPane;
 		this.protocolFlowAnchorPane = protocolFlowAnchorPane;
 		this.failureRateErrorChartPane = failureRateErrorChartPane;
 		this.costChartPane = costChartPane;
 		this.failureRateChartPane = failureRateChartPane;
+		this.failureRateSystemChartPane = failureRateSystemChartPane;
+		this.ratingEvolutionChartPane = ratingEvolutionChartPane;
+		this.ratingEvolutionSystemChartPane = ratingEvolutionSystemChartPane;
 		this.entityResultTableAccordion = entityResultTableAccordion;
 		this.protocolDetailsText = protocolDetailsText;
 	}
@@ -80,12 +85,25 @@ public class SystemRunResultController {
 		protocolMessageChartPane.getChildren().clear();
 		protocolFlowAnchorPane.getChildren().clear();
 		failureRateErrorChartPane.getChildren().clear();
+		ratingEvolutionChartPane.getChildren().clear();
 		failureRateChartPane.getChildren().clear();
+		failureRateSystemChartPane.getChildren().clear();
 		costChartPane.getChildren().clear();
 		entityResultTableAccordion.getPanes().clear();
 		
 		protocolFlowAnchorPane.getChildren().add(protocolDetailsText);
 		protocolDetailsText.setDisable(false);
+	}
+	
+	public void generateSystemRunCharts() {
+		generatePerformanceChart();
+		generateProtocolMessageChart();
+		generateFailureRateErrorChart();
+		generateRatingChart();
+		generateFailureRateSystemChart();
+		generateRatingSystemChart();
+		generateFailureRateChart();
+		generateCostChart();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -187,20 +205,12 @@ public class SystemRunResultController {
 		}
 	}
 	
-	public void generateSystemRunCharts() {
-		generatePerformanceChart();
-		generateProtocolMessageChart();
-		generateFailureRateErrorChart();
-		generateFailureRateChart();
-		generateCostChart();
-	}
-	
 	private void generatePerformanceChart() {
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
 		
 		if (dataPoints.values().stream().anyMatch(x -> x.size() > 0)) {
 			// Define chart axis
-			NumberAxis xAxis = new NumberAxis("Total service combination failure rate (approximated by workflow analyzer)", 0, 1, 0.1);
+			NumberAxis xAxis = new NumberAxis("Total service combination failure rate \n(approximated by workflow analyzer)", 0, 1, 0.1);
 			NumberAxis yAxis = new NumberAxis("Total service combination cost", 0, (systemRunProbe.getMaxCost() + maximumDelta), 1);
 			
 			// Set chart position & size
@@ -276,7 +286,7 @@ public class SystemRunResultController {
 			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
-			NumberAxis yAxis = new NumberAxis("Chosen Service Combination Failure Rate error (real <-> entity approximation)", 0, 1, 0.1);
+			NumberAxis yAxis = new NumberAxis("Chosen Service Combination Failure Rate error \n(system approximation <-> entity approximation)", 0, 1, 0.1);
 			
 			// Set chart position & size
 			LineChart<Number, Number> failureRateErrorChart = new LineChart<Number, Number>(xAxis, yAxis); 
@@ -303,7 +313,151 @@ public class SystemRunResultController {
 		}
 	}
 	
-	private void generateFailureRateChart() {
+	private void generateRatingChart() {
+		
+		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		HashMap<String, List<ServiceCombination>> chosenCombinationsAll = systemRunProbe.getChosenCombinations();
+		
+		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
+			
+			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+			List<ServiceCombination> chosenCombinations = new ArrayList<>(chosenCombinationsAll.values()).get(0);
+			RatingType type = chosenCombinations.get(0).getRatingType();
+			
+			// Define chart axis
+			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
+			NumberAxis yAxis = null;
+			
+			switch (type) {
+			
+				case CLASS:
+					
+					int maxGoals = 0;
+					
+					for (String entity : chosenCombinationsAll.keySet()) {
+						
+						int goals = systemRunProbe.getConnectedEntity(entity).getManagingSystem().getGoals().size();
+						
+						if (goals > maxGoals) {
+							maxGoals = goals;
+						}
+					}
+					
+					yAxis = new NumberAxis(type + " rating value \n(what entity thinks)", 0, maxGoals + 1, 1);
+					break;
+				
+				case SCORE:
+					
+					// TODO ECHTE SCORE
+					double maxScore = 0;
+					
+					for (String entity : chosenCombinationsAll.keySet()) {
+						for (ServiceCombination serviceCombination : chosenCombinationsAll.get(entity)) {
+							double score = Double.valueOf(serviceCombination.getRating().toString());
+							
+							if (score > maxScore) {
+								maxScore = score;
+							}
+						}
+					}
+					
+					yAxis = new NumberAxis(type + " rating value \n(what entity thinks)", 0, maxScore + 1, 1);
+					break;
+					
+				default:
+					throw new IllegalStateException("The system doesn't support the drawing of this rating type. Type: " + type);			
+					
+			}
+			
+			// Set chart position & size
+			LineChart<Number, Number> ratingChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			ratingEvolutionChartPane.getChildren().add(ratingChart);
+			ratingChart.prefWidthProperty().bind(ratingEvolutionChartPane.widthProperty());
+			ratingChart.prefHeightProperty().bind(ratingEvolutionChartPane.heightProperty());
+			
+			// Set data points
+			for (String entity : protocolMessagesAll.keySet()) {
+				
+				XYChart.Series<Number, Number> series = new Series<Number, Number>();
+				series.setName(entity);
+				
+				for (int i = 0; i < chosenCombinationsAll.get(entity).size(); i++) {		
+					series.getData().add(new XYChart.Data<Number, Number>(i + 1, Double.valueOf(chosenCombinationsAll.get(entity).get(i).getRating().toString())));
+				}
+				
+				ratingChart.getData().add(series);
+			}
+		}
+	}
+	
+	private void generateRatingSystemChart() {
+		
+		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		HashMap<String, List<ServiceCombination>> chosenCombinationsAll = systemRunProbe.getChosenCombinations();
+		
+		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
+			
+			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+			List<ServiceCombination> chosenCombinations = new ArrayList<>(chosenCombinationsAll.values()).get(0);
+			RatingType type = chosenCombinations.get(0).getRatingType();
+			
+			// Define chart axis
+			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
+			NumberAxis yAxis = null;
+			
+			switch (type) {
+			
+				case CLASS:
+					
+					int maxGoals = 0;
+					
+					for (String entity : chosenCombinationsAll.keySet()) {
+						
+						int goals = systemRunProbe.getConnectedEntity(entity).getManagingSystem().getGoals().size();
+						
+						if (goals > maxGoals) {
+							maxGoals = goals;
+						}
+					}
+					
+					yAxis = new NumberAxis("real " + type + " rating value", 0, maxGoals + 1, 1);
+					break;
+				
+				case SCORE:
+					
+					// TODO score			
+					yAxis = new NumberAxis(type + " rating type is work in progress", 0, 1, 1);
+					break;
+					
+				default:
+					throw new IllegalStateException("The system doesn't support the drawing of this rating type. Type: " + type);			
+			}
+			
+			// Set chart position & size
+			LineChart<Number, Number> ratingSystemChart = new LineChart<Number, Number>(xAxis, yAxis);
+			ratingEvolutionSystemChartPane.getChildren().add(ratingSystemChart);
+			ratingSystemChart.prefWidthProperty().bind(ratingEvolutionSystemChartPane.widthProperty());
+			ratingSystemChart.prefHeightProperty().bind(ratingEvolutionSystemChartPane.heightProperty());
+			
+			// Set data points
+			for (String entity : protocolMessagesAll.keySet()) {
+				
+				XYChart.Series<Number, Number> series = new Series<Number, Number>();
+				series.setName(entity);
+				
+				// Dummy node
+				series.getData().add(new XYChart.Data<Number, Number>(0, 0));
+				
+				for (int i = 0; i < chosenCombinationsAll.get(entity).size(); i++) {		
+					series.getData().add(new XYChart.Data<Number, Number>(i + 1, systemRunProbe.getRatings().get(entity).get(i)));
+				}
+				
+				ratingSystemChart.getData().add(series);
+			}
+		}
+	}
+	
+	private void generateFailureRateSystemChart() {
 		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
 		
@@ -313,7 +467,42 @@ public class SystemRunResultController {
 			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
-			NumberAxis yAxis = new NumberAxis("Total service combination failure rate (approximated by workflow analyzer)", 0, 1, 0.1);
+			NumberAxis yAxis = new NumberAxis("Total service combination failure rate \n(approximated by workflow analyzer)", 0, 1, 0.1);
+			
+			// Set chart position & size
+			LineChart<Number, Number> failureRateSystemChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			failureRateSystemChartPane.getChildren().add(failureRateSystemChart);
+			failureRateSystemChart.prefWidthProperty().bind(failureRateSystemChartPane.widthProperty());
+			failureRateSystemChart.prefHeightProperty().bind(failureRateSystemChartPane.heightProperty());
+			
+			// Set data points
+			for (String entity : protocolMessagesAll.keySet()) {
+				
+				XYChart.Series<Number, Number> series = new Series<Number, Number>();
+				series.setName(entity);
+				
+				for (int i = 0; i < dataPoints.get(entity).size(); i++) {
+			
+					double systemFailRate = dataPoints.get(entity).get(i).getKey();
+					
+					series.getData().add(new XYChart.Data<Number, Number>(i + 1, systemFailRate));
+				}
+				
+				failureRateSystemChart.getData().add(series);
+			}
+		}
+	}
+	
+	private void generateFailureRateChart() {
+		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		
+		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
+			
+			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+			
+			// Define chart axis
+			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
+			NumberAxis yAxis = new NumberAxis("Total service combination failure rate \n(what entity thinks)", 0, 1, 0.1);
 			
 			// Set chart position & size
 			LineChart<Number, Number> failureRateChart = new LineChart<Number, Number>(xAxis, yAxis); 
@@ -327,11 +516,10 @@ public class SystemRunResultController {
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
 				
-				for (int i = 0; i < dataPoints.get(entity).size(); i++) {
+				for (int i = 0; i < systemRunProbe.getChosenCombinations().get(entity).size(); i++) {
 			
-					double systemFailRate = dataPoints.get(entity).get(i).getKey();
-					
-					series.getData().add(new XYChart.Data<Number, Number>(i + 1, systemFailRate));
+					ServiceCombination serviceCombination = systemRunProbe.getChosenCombinations().get(entity).get(i);		
+					series.getData().add(new XYChart.Data<Number, Number>(i + 1, serviceCombination.getProperty("FailureRate")));
 				}
 				
 				failureRateChart.getData().add(series);

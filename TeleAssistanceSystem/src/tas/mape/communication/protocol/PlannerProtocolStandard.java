@@ -1,5 +1,6 @@
 package tas.mape.communication.protocol;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import tas.mape.communication.message.PlannerMessage;
@@ -53,11 +54,11 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		PlannerMessageContent content = null;
 		PlannerMessage response = null;
 		
+		System.out.println("\t> " + messageType + " , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 		switch(messageType) {
 		
 		// First offer has been received
 		case "FIRST_OFFER":
-			System.err.println("\t> FIRST_OFFER , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 			receiver.setAvailableServiceCombinations(receiver.calculateNewServiceCombinations(message.getContent()));
 			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints, messageContentPercentage);
 			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "NEW_OFFER", content);
@@ -72,15 +73,17 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		
 		// New offer has been received
 		case "NEW_OFFER":
-			System.err.println("\t> NEW_OFFER , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 			List<ServiceCombination> newServiceCombinations = receiver.calculateNewServiceCombinations(message.getContent());
-			String responseType;
+			ServiceCombination chosenCombination = null;
+			String responseType = null;
 			
 			switch (newServiceCombinations.get(0).getRatingType()) {
 			
 			case SCORE:
 				
-				if (newServiceCombinations.get(0).hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == maxIterations) {
+				chosenCombination = newServiceCombinations.get(0);
+				
+				if (chosenCombination.hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == maxIterations) {				
 					responseType = "ACCEPTED_OFFER";
 				}
 				else {
@@ -90,23 +93,49 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 				
 			case CLASS:
 				
-				if (newServiceCombinations.get(0).getRating().equals(receiver.getAvailableServiceCombinations().get(0).getRating()) || messageID == maxIterations) {
-					responseType = "ACCEPTED_OFFER";
+				if (messageID != maxIterations) {
+					for (ServiceCombination s : newServiceCombinations) {
+						if (s.hasSameCollection(receiver.getCurrentServiceCombination())) {
+							System.out.println("same ");
+							if (s.getRating().equals(receiver.getCurrentServiceCombination().getRating())) {
+								System.out.println("same score");
+								responseType = "ACCEPTED_OFFER";
+								chosenCombination = s;
+							}
+							else {
+								responseType = "NEW_OFFER";
+								List<ServiceCombination> bestCombinations = new ArrayList<>();
+								
+								for (ServiceCombination s2 : newServiceCombinations) {
+									if (s2.getRating().equals(newServiceCombinations.get(0).getRating())) {
+										bestCombinations.add(s2);
+									}
+								}
+								
+								chosenCombination = bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));
+							}
+							
+							break;
+						}
+					}
 				}
 				else {
-					responseType = "NEW_OFFER";
-				}
+					responseType = "ACCEPTED_OFFER";
+				}	
+				
 				break;
 				
 			default:
-				throw new IllegalStateException("The protocol doesn't support this rating type. Type: " + newServiceCombinations.get(0).getRatingType());
-			
+				throw new IllegalStateException("The protocol doesn't support this rating type. Type: " + newServiceCombinations.get(0).getRatingType());	
 			}
 			
+			System.err.print("OLD offer \n" + receiver.getAvailableServiceCombinations().get(0).toString() + ", class: " + receiver.getAvailableServiceCombinations().get(0).getRating() + "score: " + receiver.getAvailableServiceCombinations().get(0).getProperty("FailureRate") + "\n");
+			System.err.print("NEW offer \n" + newServiceCombinations.get(0).toString() + ", class: " + newServiceCombinations.get(0).getRating() + "score: " +  newServiceCombinations.get(0).getProperty("FailureRate") + "\n");
+			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);	
-			content = receiver.generateMessageContent(newServiceCombinations.get(0), sharedRegistryEndpoints, messageContentPercentage);
+			content = receiver.generateMessageContent(chosenCombination, sharedRegistryEndpoints, messageContentPercentage);
 			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), responseType, content);
-			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
+			receiver.setCurrentServiceCombination(chosenCombination);
 			
 			if (responseType == "ACCEPTED_OFFER") {
 				receiver.finishedProtocol(messageID + 1);
@@ -114,19 +143,16 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 			
 			// Increase message ID
 			messageID++;
-			System.err.print("OLD offer \n" + newServiceCombinations.get(0).toString() + "\n");
-			System.err.print("NEW offer \n" + newServiceCombinations.get(0).toString() + "\n");
 			receiver.sendMessage(response);	
 			
 			break;
 		
 		// Offer has been accepted, stop protocol
 		case "ACCEPTED_OFFER":
-			System.err.println("\t> ACCEPTED_OFFER , receiver:" + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 			receiver.finishedProtocol(messageID);
 			resetProtocol();
 			break;
-		
+			
 		// Exception state
 		default:
 			throw new IllegalStateException("The received message has a type that cannot be processed! Type: " + messageType);

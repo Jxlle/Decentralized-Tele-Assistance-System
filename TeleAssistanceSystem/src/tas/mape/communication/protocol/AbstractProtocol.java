@@ -2,6 +2,7 @@ package tas.mape.communication.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import tas.mape.communication.CommunicationComponent;
@@ -19,6 +20,9 @@ import tas.mape.probes.ProtocolObserver;
  * @note Currently only supports communication between components of the same type, sending the same type of messages
  */
 public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends CommunicationComponent<T>> {
+	
+	// Random for generating pseudo random numbers
+	static Random random = new Random();
 	
 	// Message ID of the last sent message
 	protected int messageID;
