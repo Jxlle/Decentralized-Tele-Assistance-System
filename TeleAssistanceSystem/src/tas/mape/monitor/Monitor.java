@@ -143,7 +143,12 @@ public class Monitor {
 			
 			//System.err.print("System invocations: " + serviceInvocations.get(serviceEndpoint) + ", service failures: " + serviceFailures.get(serviceEndpoint));
 			
-			double approximatedServiceFailureRate = serviceFailures.get(serviceEndpoint) / (double) serviceInvocations.get(serviceEndpoint);
+			double approximatedServiceFailureRate = 0;
+			
+			if (serviceInvocations.get(serviceEndpoint) != 0) {
+				approximatedServiceFailureRate = serviceFailures.get(serviceEndpoint) / (double) serviceInvocations.get(serviceEndpoint);
+			}			
+			
 			double currentServiceFailureRate = knowledge.getApproximatedServiceFailureRate(serviceEndpoint, serviceInvocations.get(serviceEndpoint));
 			double newServiceFailureRate = getNewFailureRate(approximatedServiceFailureRate, currentServiceFailureRate);
 			
