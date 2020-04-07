@@ -49,8 +49,8 @@ import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.SystemEntity;
 import tas.mape.system.entity.WorkflowExecutor;
 import tas.mape.system.structure.AbstractSystem;
-import tas.mape.system.structure.DoubleLoopSystem;
-import tas.mape.system.structure.SoloLoopSystem;
+import tas.mape.system.structure.DoubleEntitySystem;
+import tas.mape.system.structure.SingleEntitySystem;
 import tas.workflowAnalyzer.WorkflowAnalyzer;
 import tas.mape.system.entity.MAPEKComponent.Builder;
 import application.MainGui;
@@ -127,7 +127,7 @@ public class ApplicationController implements Initializable {
     Map<String, Boolean> workflowAnalyzed = new HashMap<>(); 
     Map<String, List<ServiceRegistry>> entityRegistries;
     List<Pair<String, Class<? extends AbstractSystem<SystemEntity>>>> systemLoops = 
-    		Arrays.asList(new Pair<>("Solo Loop System", SoloLoopSystem.class), new Pair<>("Double Loop System", DoubleLoopSystem.class));
+    		Arrays.asList(new Pair<>("Solo Loop System", SingleEntitySystem.class), new Pair<>("Double Loop System", DoubleEntitySystem.class));
     Set<Button> profileRuns = new HashSet<>();
     Map<String, AnchorPane> servicePanes = new ConcurrentHashMap<>();
     Map<String, ListView<AnchorPane>> serviceRegistryPanes = new ConcurrentHashMap<>();

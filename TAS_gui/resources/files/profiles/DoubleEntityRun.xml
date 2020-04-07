@@ -3,7 +3,7 @@
   <workflowCycles>5000</workflowCycles>
   <maxProtocolIterations>100</maxProtocolIterations>
   <messageContentPercentage>100</messageContentPercentage>
-  <systemType>DOUBLE_LOOP</systemType>
+  <systemType>DOUBLE_ENTITY</systemType>
   <protocolType>STANDARD_PROTOCOL</protocolType>
   <ratingType>CLASS</ratingType>
   <entityRequirementTypes>

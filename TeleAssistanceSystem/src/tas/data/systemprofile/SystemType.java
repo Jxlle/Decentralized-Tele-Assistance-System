@@ -1,8 +1,8 @@
 package tas.data.systemprofile;
 
 import tas.mape.system.structure.AbstractSystem;
-import tas.mape.system.structure.DoubleLoopSystem;
-import tas.mape.system.structure.SoloLoopSystem;
+import tas.mape.system.structure.DoubleEntitySystem;
+import tas.mape.system.structure.SingleEntitySystem;
 
 /**
  * Enum representing the different system types
@@ -12,8 +12,8 @@ import tas.mape.system.structure.SoloLoopSystem;
 public enum SystemType {
 	
 	// Available system types
-	SOLO_LOOP(SoloLoopSystem.class, 1),
-	DOUBLE_LOOP(DoubleLoopSystem.class, 2);
+	SINGLE_ENTITY(SingleEntitySystem.class, 1),
+	DOUBLE_ENTITY(DoubleEntitySystem.class, 2);
 	
 	private Class<? extends AbstractSystem<?>> systemClass;
 	private int maxEntities;

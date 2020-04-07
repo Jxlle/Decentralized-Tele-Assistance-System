@@ -3,7 +3,7 @@
   <workflowCycles>5000</workflowCycles>
   <maxProtocolIterations>0</maxProtocolIterations>
   <messageContentPercentage>0</messageContentPercentage>
-  <systemType>SOLO_LOOP</systemType>
+  <systemType>SINGLE_ENTITY</systemType>
   <ratingType>CLASS</ratingType>
   <entityRequirementTypes>
     <entry>

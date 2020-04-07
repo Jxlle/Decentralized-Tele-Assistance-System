@@ -13,7 +13,7 @@ import tas.mape.system.entity.SystemEntity;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, PlannerMessage, Planner> {
+public class DoubleEntitySystem extends AbstractMultiEntitySystem<SystemEntity, PlannerMessage, Planner> {
 
 	/**
 	 * Create a new double-loop system with two given system entities
@@ -21,7 +21,7 @@ public class DoubleLoopSystem extends AbstractMultiLoopSystem<SystemEntity, Plan
 	 * @throws IllegalArgumentException throw when the given 
 	 *         amount of entities is not supported by the system
 	 */
-	public DoubleLoopSystem(SystemEntity[] systemEntities) throws IllegalArgumentException {
+	public DoubleEntitySystem(SystemEntity[] systemEntities) throws IllegalArgumentException {
 		super(systemEntities);
 	}
 	

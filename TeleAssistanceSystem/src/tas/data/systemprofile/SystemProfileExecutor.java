@@ -9,7 +9,7 @@ import tas.mape.communication.protocol.AbstractTwoComponentProtocol;
 import tas.mape.planner.Planner;
 import tas.mape.probes.ProtocolProbe;
 import tas.mape.system.entity.SystemEntity;
-import tas.mape.system.structure.AbstractMultiLoopSystem;
+import tas.mape.system.structure.AbstractMultiEntitySystem;
 import tas.mape.system.structure.AbstractSystem;
 
 /**
@@ -118,7 +118,7 @@ public class SystemProfileExecutor {
 		}
 		// Run system with multiple participating entities
 		else {
-			AbstractMultiLoopSystem<?, PlannerMessage, Planner> system = null;
+			AbstractMultiEntitySystem<?, PlannerMessage, Planner> system = null;
 			
 			// Find system constructor
 			try {
@@ -143,7 +143,7 @@ public class SystemProfileExecutor {
 			
 			// Create system instance
 			try {
-				system = (AbstractMultiLoopSystem<?, PlannerMessage, Planner>) systemConstructor.newInstance(new Object[] {entities});
+				system = (AbstractMultiEntitySystem<?, PlannerMessage, Planner>) systemConstructor.newInstance(new Object[] {entities});
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
 				e.printStackTrace();
