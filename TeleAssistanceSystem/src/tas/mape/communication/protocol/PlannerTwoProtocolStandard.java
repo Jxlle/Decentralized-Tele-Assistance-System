@@ -37,7 +37,7 @@ import tas.mape.planner.ServiceCombination;
  *    
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
+public class PlannerTwoProtocolStandard extends PlannerTwoComponentProtocol {
 
 	/**
 	 * Handle a given message that was received by the given communication component

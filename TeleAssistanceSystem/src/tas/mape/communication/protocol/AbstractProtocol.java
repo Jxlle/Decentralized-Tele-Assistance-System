@@ -46,6 +46,14 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	private ComponentMessageHost<T> messageHost = new ComponentMessageHost<T>();
 	
 	/**
+	 * Create a new abstract protocol with a given needed amount of components
+	 * @param neededAmountOfComponents the given needed amount of components
+	 */
+	protected AbstractProtocol(int neededAmountOfComponents) {
+		this.neededAmountOfComponents = neededAmountOfComponents;
+	}
+	
+	/**
 	 * Execute the protocol with the currently used communication components that will communicate, a 
 	 * given maximum amount of iterations and how much information its going to use in its messages
 	 * @param maxIterations the given maximum amount of iterations
@@ -116,6 +124,24 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	}
 	
 	/**
+	 * Start the protocol, choose starting and receiving components to begin communication
+	 */
+	protected void startProtocol() {
+		
+		int senderIndex = getRandomComponentIndex();
+		List<Integer> receiverIndices = new ArrayList<>();
+		
+		for (int i = 0; i < components.size(); i++) {
+			if (i != senderIndex) {
+				receiverIndices.add(i);
+			}
+		}
+		
+		InitializeProtocol(senderIndex, receiverIndices);
+		sendFirstMessage(senderIndex, receiverIndices);
+	}
+	
+	/**
 	 * Reset protocol data
 	 */
 	protected void resetProtocol() {
@@ -131,15 +157,16 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	public abstract void receiveAndHandleMessage(T message, E receiver);
 	
 	/**
-	 * Start the protocol, choose starting and receiving components to begin communication
-	 */
-	protected abstract void startProtocol();
-	
-	/**
-	 * Initialize local protocol properties and let a starting communication component send 
-	 * its first message to given receiver(s) to start the protocol.
+	 * Initialize local protocol properties
 	 * @param startIndex the given index of the starting component
 	 * @param receiverIndices the given indices of the receivers of the first message
 	 */
-	protected abstract void InitializeAndSendFirstMessage(int startIndex, int... receiverIndices);
+	protected abstract void InitializeProtocol(int startIndex, List<Integer> receiverIndices);
+	
+	/**
+	 * Let a starting communication component send its first message to given receiver(s) to start the protocol.
+	 * @param startIndex the given index of the starting component
+	 * @param receiverIndices the given indices of the receivers of the first message
+	 */
+	protected abstract void sendFirstMessage(int startIndex, List<Integer> receiverIndices);
 }

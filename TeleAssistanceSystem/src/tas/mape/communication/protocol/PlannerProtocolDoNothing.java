@@ -10,8 +10,6 @@ import tas.mape.planner.Planner;
  * both entities never communicated. This protocol uses exactly 2 messages during execution.
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
- *
- * @note This class is only used to compare results with other protocols.
  */
 public class PlannerProtocolDoNothing extends PlannerTwoComponentProtocol {
 

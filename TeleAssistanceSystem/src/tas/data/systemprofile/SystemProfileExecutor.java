@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import tas.mape.communication.message.PlannerMessage;
-import tas.mape.communication.protocol.AbstractTwoComponentProtocol;
+import tas.mape.communication.protocol.AbstractPlannerProtocol;
 import tas.mape.planner.Planner;
 import tas.mape.probes.ProtocolProbe;
 import tas.mape.system.entity.MAPEKSystemEntity;
@@ -32,7 +32,7 @@ public class SystemProfileExecutor {
 	/**
 	 * Current system protocol
 	 */
-	private static AbstractTwoComponentProtocol<PlannerMessage, Planner> protocol;
+	private static AbstractPlannerProtocol protocol;
 	
 	/**
 	 * Find the protocol used described in the given system profile
@@ -42,12 +42,12 @@ public class SystemProfileExecutor {
 	@SuppressWarnings("unchecked")
 	public static void setProtocol(SystemProfile profile) {
 		
-		Class<? extends AbstractTwoComponentProtocol<PlannerMessage, Planner>> protocolClass = null;
+		Class<? extends AbstractPlannerProtocol> protocolClass = null;
 		Constructor<?> protocolConstructor = null;
 		
 		// Initialize protocol in a system with more than 2 participating entities
 		if (profile != null && profile.getAmountOfParticipatingEntities() > 1) {
-			protocolClass = (Class<? extends AbstractTwoComponentProtocol<PlannerMessage, Planner>>) profile.getProtocolType().getProtocolClass();
+			protocolClass = (Class<? extends AbstractPlannerProtocol>) profile.getProtocolType().getProtocolClass();
 			
 			try {
 				protocolConstructor = protocolClass.getConstructor();
@@ -56,7 +56,7 @@ public class SystemProfileExecutor {
 			}
 			
 			try {
-				protocol = (AbstractTwoComponentProtocol<PlannerMessage, Planner>) protocolConstructor.newInstance();
+				protocol = (AbstractPlannerProtocol) protocolConstructor.newInstance();
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
 				e.printStackTrace();
