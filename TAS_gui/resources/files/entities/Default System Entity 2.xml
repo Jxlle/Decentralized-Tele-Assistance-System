@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<MAPEKSystemEntity>
+<Name>Default System Entity 2</Name>
+<WorkflowPath>resources\files\workflow\TeleAssistanceWorkflow.txt</WorkflowPath>
+<AnalyzerStrategy>1</AnalyzerStrategy>
+<MonitorFailureChange>0.01</MonitorFailureChange>
+<MonitorMinFailureDelta>0.01</MonitorMinFailureDelta>
+<AnalyzerCombinationLimit>0.01</AnalyzerCombinationLimit>
+<KnowledgeLoadFailureDelta>10</KnowledgeLoadFailureDelta>
+<Registries>
+<RegistryEndpoint>service.shared.registry</RegistryEndpoint>
+<RegistryEndpoint>service.individual2.registry</RegistryEndpoint>
+</Registries>
+<Goals>
+<Goal>
+<Type>COST</Type>
+<Relation>LOWER_THAN</Relation>
+<Value>18.0</Value>
+</Goal>
+<Goal>
+<Type>FAILURE_RATE</Type>
+<Relation>LOWER_THAN</Relation>
+<Value>0.185</Value>
+</Goal>
+</Goals>
+</MAPEKSystemEntity>
