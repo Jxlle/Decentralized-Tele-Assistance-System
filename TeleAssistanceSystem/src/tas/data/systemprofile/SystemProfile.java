@@ -167,7 +167,7 @@ public class SystemProfile {
 		}
 		
 		participatingEntities.add(entityName);
-		entityRequirementTypes.put(entityName,  requirementType);
+		entityRequirementTypes.put(entityName, requirementType);
 	}
 	
 	/**
@@ -180,10 +180,11 @@ public class SystemProfile {
 	}
 	
 	/**
-	 * Clear the participating entities list
+	 * Clear the participating entities from the profile
 	 */
 	public void clearEntities() {
 		participatingEntities.clear();
+		entityRequirementTypes.clear();
 	}
 	
 	/**
