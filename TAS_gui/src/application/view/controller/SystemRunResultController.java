@@ -86,6 +86,7 @@ public class SystemRunResultController {
 		protocolFlowAnchorPane.getChildren().clear();
 		failureRateErrorChartPane.getChildren().clear();
 		ratingEvolutionChartPane.getChildren().clear();
+		ratingEvolutionSystemChartPane.getChildren().clear();
 		failureRateChartPane.getChildren().clear();
 		failureRateSystemChartPane.getChildren().clear();
 		costChartPane.getChildren().clear();

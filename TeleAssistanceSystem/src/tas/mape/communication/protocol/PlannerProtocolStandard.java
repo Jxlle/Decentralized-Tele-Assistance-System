@@ -130,7 +130,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 			}
 			
 			System.err.print("OLD offer \n" + receiver.getAvailableServiceCombinations().get(0).toString() + ", class: " + receiver.getAvailableServiceCombinations().get(0).getRating() + "score: " + receiver.getAvailableServiceCombinations().get(0).getProperty("FailureRate") + "\n");
-			System.err.print("NEW offer \n" + newServiceCombinations.get(0).toString() + ", class: " + newServiceCombinations.get(0).getRating() + "score: " +  newServiceCombinations.get(0).getProperty("FailureRate") + "\n");
+			System.err.print("NEW offer \n" + chosenCombination.toString() + ", class: " + chosenCombination.getRating() + "score: " +  chosenCombination.getProperty("FailureRate") + "\n");
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);	
 			content = receiver.generateMessageContent(chosenCombination, sharedRegistryEndpoints, messageContentPercentage);

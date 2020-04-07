@@ -193,27 +193,39 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public PlannerMessageContent generateMessageContent(ServiceCombination serviceCombination, List<String> registryEndpoints, int messageContentPercentage) {
 		
-		int registryEndpointsCount = (int) Math.ceil(registryEndpoints.size() * (messageContentPercentage / 100));
-		List<String> registryEndpointsNew = new ArrayList<>();
+		List<ServiceDescription> availableDescriptions = new ArrayList<>();
+		List<ServiceDescription> usedDescriptions = new ArrayList<>();
+		
+		for (Description description : serviceCombination.getDescriptions()) {
+			
+			WeightedCollection<ServiceDescription> serviceUsage = serviceCombination.getAllServices(description);
+			
+			for (ServiceDescription service : serviceUsage.getItems()) {
+				if (!availableDescriptions.contains(service)) {
+					availableDescriptions.add(service);
+				}
+			}
+		}
+		
+		int usedDescriptionsCount = (int) Math.ceil(availableDescriptions.size() * (messageContentPercentage / (double) 100));
 		
 		// If new registry endpoint list is shorter than old, take random registry endpoints from the list
-		if (registryEndpointsCount == registryEndpoints.size()) {
-			//System.err.println("NO CHANGE");
-			registryEndpointsNew = registryEndpoints;
+		if (usedDescriptionsCount == availableDescriptions.size()) {
+			usedDescriptions = availableDescriptions;
 		}
 		else {		
-			registryEndpointsNew = new ArrayList<>();
 			
-			for (int i = 0; i < registryEndpointsCount; i++) {				
-				int randomIndex = new Random().nextInt(registryEndpoints.size());
-				registryEndpointsNew.add(registryEndpoints.get(randomIndex));
-				registryEndpoints.remove(randomIndex);
+			List<ServiceDescription> availables = new ArrayList<ServiceDescription>(availableDescriptions);
+			for (int i = 0; i < usedDescriptionsCount; i++) {				
+				int randomIndex = new Random().nextInt(availables.size());
+				usedDescriptions.add(availables.get(randomIndex));
+				availables.remove(randomIndex);
 			}
 			
-			//System.err.println("CHANGED Registry endpoints " + registryEndpointsNew);
+			System.out.println("CHANGED Registry endpoints, \n\tcount: " + usedDescriptionsCount + "\n\tnormal: " + availableDescriptions +" \n\tchanged: " +  usedDescriptions);
 		}
 		
-		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination, registryEndpointsNew);
+		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination, usedDescriptions);
 		return new PlannerMessageContent(serviceLoads);
 	}
 	
@@ -254,13 +266,13 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
-	 * Calculate the service loads for each service in a given service combination that have a 
-	 * registry endpoint present in a given list of registry endpoints
+	 * Calculate the service loads for each service in a given service combination that are present in the given
+	 * description list
 	 * @param serviceCombination the given service combination 
-	 * @param registryEndpoints the given registry endpoints
+	 * @param descriptions the given service descriptions
 	 * @return the calculated service loads map containing endpoint (key), load (value) data
 	 */
-	private Map<String, Integer> getServiceLoads(ServiceCombination serviceCombination, List<String> registryEndpoints) {
+	private Map<String, Integer> getServiceLoads(ServiceCombination serviceCombination, List<ServiceDescription> descriptions) {
 		
 		Map<String, Double> serviceLoads = new HashMap<String, Double>();
 		Map<String, Integer> result = new HashMap<String, Integer>();
@@ -270,8 +282,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			WeightedCollection<ServiceDescription> serviceUsage = serviceCombination.getAllServices(description);
 			
 			for (ServiceDescription service : serviceUsage.getItems()) {	
-				
-				if (registryEndpoints.contains(service.getServiceRegistryEndpoint())) {
+				if (descriptions.stream().anyMatch(x -> x.equals(service))) {
 					double serviceLoad = knowledge.getServiceDescriptionLoad(description, serviceUsage.getChance(service));
 					serviceLoads.compute(service.getServiceEndpoint(), (k, v) -> (v == null) ? serviceLoad : v + serviceLoad);
 				}		

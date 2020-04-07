@@ -141,9 +141,7 @@ public class GlobalServiceInfo {
      * @param file the given file
      */
     public static void loadData(File file) {
-    	//GlobalServiceInfoLoader.loadFromXml(file);
-    	ChangeToDefaultServices();
-    	saveData(file);
+    	GlobalServiceInfoLoader.loadFromXml(file);
     }
     
     /**
