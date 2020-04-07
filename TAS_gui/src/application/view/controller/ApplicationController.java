@@ -69,6 +69,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -80,6 +81,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -128,9 +130,10 @@ public class ApplicationController implements Initializable {
     Set<Button> profileRuns = new HashSet<>();
     Map<String, AnchorPane> servicePanes = new ConcurrentHashMap<>();
     Map<String, ListView<AnchorPane>> serviceRegistryPanes = new ConcurrentHashMap<>();
+    Task<Void> progressTask;
     int maxSteps;
     String entityBeingAnalyzed;
-    boolean analyzed, done, forceQuit;
+    boolean analyzed, done;
     
     @FXML
     ListView<AnchorPane> profileListView;
@@ -287,7 +290,6 @@ public class ApplicationController implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-
     	GlobalServiceInfo.loadData(new File(defaultServiceDataPath));
     	this.initChartController();
     	this.addServicesProfiles();
@@ -295,33 +297,6 @@ public class ApplicationController implements Initializable {
     	this.fillSystemProfiles();
     	this.setButton();
     	this.addDefaultEntities();
-
-    	/*scheduExec.scheduleAtFixedRate(new Runnable() {
-    	    @Override
-    		public void run() {
-    	    	
-    			Set<String> services = compositeService.getCache().getServices();
-    			Set<String> registeredServices = servicePanes.keySet();
-
-    			for (String service : registeredServices) {
-    			    
-    			    Platform.runLater(new Runnable() {
-    				@Override
-    				public void run() {
-    					
-    					Circle circle = (Circle) servicePanes.get(service).getChildren().get(0);
-    					
-    					// TODO check on endpoints, not names
-    				    if(services != null && services.contains(service))
-    					    circle.setFill(Color.GREEN);
-    				    else
-    					    circle.setFill(Color.DARKRED);
-    				 }
-    			    });
-    			}
-
-    	    }
-    	}, 0, 1000, TimeUnit.MILLISECONDS);*/
     }
     
     
@@ -397,20 +372,6 @@ public class ApplicationController implements Initializable {
 		for (SystemEntity e : entities) {
 			e.getManagingSystem().resetMonitorProbes();
 		}
-		
-		/*for (Description d : usableServices.keySet()) {
-			System.err.print("------------------------------------------------------------ \n");
-			
-			for (ServiceDescription sd : usableServices.get(d).getKey()) {
-				System.err.print("service name: " + sd.getServiceName() + ", " + d.toString() + " \n");
-			}
-			
-			System.err.print("=== \n");
-			System.err.print("description usage chance :" + usableServices.get(d).getValue() + " \n");
-			System.err.print("------------------------------------------------------------ \n");
-		}
-		
-		System.err.print("done analyzing\n");*/
 		
 		entity.getManagingSystem().setWorkflowServiceTree(WorkflowAnalyzer.getWorkflowServiceTree());
 		entity.getManagingSystem().setUsedServicesAndChances(usableServices);
@@ -504,27 +465,6 @@ public class ApplicationController implements Initializable {
     }
     
     private void setButton() {
-    	
-    	/*sliceTextField.textProperty().addListener(new ChangeListener<String>() {
-    	    @Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-    	        if (newValue.matches("\\d*")) {
-    	        	//System.out.println(newValue);
-    	        } else {
-    	        	sliceTextField.setText(oldValue);
-    	        }
-    	    }
-    	});
-    	
-    	sliceTextField.setOnKeyPressed(new EventHandler<KeyEvent>(){
-    		@Override
-    		 public void handle(KeyEvent event){
-    			if (event.getCode().equals(KeyCode.ENTER)) {
-    				
-    				// TODO CHART SLICES
-					//chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(),Integer.parseInt(sliceTextField.getText()));
-    		    }
-    		 }
-    	});*/
 
     	openServicesMenuItem.setOnAction(new EventHandler<ActionEvent>() {
     	    @Override
@@ -1051,6 +991,15 @@ public class ApplicationController implements Initializable {
     	}
     }
     
+    private void resetProgressBar() {
+		progressTask.cancel();
+    	invocationLabel.setText("");
+		progressBar.progressProperty().unbind();
+		progressBar.setProgress(0.0f);
+	    done = false;
+	    analyzed = false;
+    }
+    
     private void addSystemProfile(String profilePath) {
     	
     	AnchorPane itemPane = new AnchorPane();
@@ -1121,6 +1070,48 @@ public class ApplicationController implements Initializable {
     	    			SystemProfileDataHandler.activeProfile = profile;
     	    		    analyzed = false;
     	    		    
+    	    		    // Check profile integrity
+    	    		    for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
+    	    		    	
+    			    		final int index = i;
+    			    		
+    			    		SystemEntity entity = entities.stream()
+    			    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
+    			    		
+    			    		if (entity == null) {
+    			    			
+            				    Platform.runLater(new Runnable() {
+                					@Override
+                					public void run() {	
+            			    			resetProgressBar();
+                						Alert fail = new Alert(AlertType.WARNING);
+            				            fail.setHeaderText("INVALID CONTENT");
+            				            fail.setContentText("System run stopped. Input profile contains unknown system entity.");
+            				            fail.showAndWait();
+                					}
+            				    });
+    				            
+    			    			runButton.setId("runButton");
+    			    			return null;
+    			    		}
+    			    		
+    			    		if (profile.getEntityRequirementType(profile.getParticipatingEntity(index)) == null) {
+            				    Platform.runLater(new Runnable() {
+                					@Override
+                					public void run() {	
+            			    			resetProgressBar();
+                						Alert fail = new Alert(AlertType.WARNING);
+            				            fail.setHeaderText("INVALID CONTENT");
+            				            fail.setContentText("System run stopped. Input profile misses requirement type for entity " + profile.getParticipatingEntity(index) + ".");
+            				            fail.showAndWait();
+                					}
+            				    });
+    				            
+    			    			runButton.setId("runButton");
+    			    			return null;
+    			    		}
+    	    		    }
+    	    		    
     			    	// Analyze entity workflows if needed
     			    	for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
     			    		
@@ -1137,6 +1128,7 @@ public class ApplicationController implements Initializable {
     			    		}
     			    	}
     			    	
+    			    	System.out.println("analyzed");
     			    	analyzed = true;
     			    	entityBeingAnalyzed = "";
     			    	
@@ -1153,17 +1145,12 @@ public class ApplicationController implements Initializable {
     				    Platform.runLater(new Runnable() {
         					@Override
         					public void run() {
-        					    runButton.setId("runButton");
-        						chartController.clear();
-        						
+        						chartController.clear();			
         						chartController.generateSystemRunCharts();
         						chartController.generateSystemRunTables();
-        						//chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
-        						//chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(),Integer.parseInt(sliceTextField.getText()));
-
-        					    /*tableViewController.fillReliabilityDate(resultFilePath);
-        					    tableViewController.fillCostData(resultFilePath);
-        						tableViewController.fillPerformanceData(resultFilePath);*/
+        						
+        					    resetProgressBar();
+        					    runButton.setId("runButton");
         					}
     				    });
     				
@@ -1176,11 +1163,13 @@ public class ApplicationController implements Initializable {
     			thread.setDaemon(true);
     			thread.start();
     			
-    			Task<Void> progressTask = new Task<Void>() {
+    			progressTask = new Task<Void>() {
     			    @Override
     			    protected Void call() throws Exception {
     			    	
-    			    	while (WorkflowAnalyzer.getCurrentSteps() < WorkflowAnalyzer.analyzerCycles && !analyzed && !forceQuit) {
+    			    	System.out.println(runButton + " " + analyzed + " " + done);
+    			    	
+    			    	while (WorkflowAnalyzer.getCurrentSteps() < WorkflowAnalyzer.analyzerCycles && !analyzed) {
         				    Platform.runLater(new Runnable() {
             					@Override
             					public void run() {	
@@ -1193,7 +1182,7 @@ public class ApplicationController implements Initializable {
         				    Thread.sleep(100);
     			    	}
     			    	
-    			    	while (analyzed && !done && !forceQuit) {
+    			    	while (analyzed && !done) {
         				    Platform.runLater(new Runnable() {
             					@Override
             					public void run() {	
@@ -1208,15 +1197,13 @@ public class ApplicationController implements Initializable {
         				    Thread.sleep(100);
     			    	}
     			    	
-    			    	if (done || forceQuit) {
+    			    	if (done) {
         				    Platform.runLater(new Runnable() {
             					@Override
             					public void run() {	
                 			    	invocationLabel.setText("");
                 				    updateProgress(0, 0);
                 				    done = false;
-                				    //analyzed = false;
-                				    forceQuit = false;
             					}
         				    });
     			    	}
@@ -1229,10 +1216,10 @@ public class ApplicationController implements Initializable {
     			new Thread(progressTask).start();
     	    }   
     	    else {    	
-    	    	
+			    
 			    Platform.runLater(new Runnable() {
 					@Override
-					public void run() {	
+					public synchronized void run() {	
 						if (analyzed) {
 		    				// Stop system
 		    				SystemProfileExecutor.stopSystemExecution();	
@@ -1247,10 +1234,10 @@ public class ApplicationController implements Initializable {
 						}
 						
 						chartController.clear();
-					    runButton.setId("runButton");
+					    runButton.setId("runButton");	
 					    
-						// Reset progress bar
-					    forceQuit = true;
+					    // Reset progress bar
+					    resetProgressBar();
 					}
 			    });
     	    }
@@ -1271,234 +1258,6 @@ public class ApplicationController implements Initializable {
     	profileListView.getItems().add(itemPane);
     }
 
-    /*private void fillProfiles() {
-	File folder = new File(profileFilePath);
-	File[] files = folder.listFiles();
-
-	try {
-	    for (File file : files) {
-		if (file.isFile()) {
-		    // System.out.println(file.getName());
-		    if (file.getName().lastIndexOf('.') > 0)
-			this.addProfile(file.getAbsolutePath());
-		}
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-	// this.addProfile("resources/files/inputProfile1.xml");
-	// this.addProfile("/inputProfile2.xml");
-    }*/
-
-    private void addProfile(String profilePath) {
-
-    	final String path = profilePath;
-
-    	AnchorPane itemPane = new AnchorPane();
-    	//itemPane.setPrefHeight(40);
-    	//itemPane.setMinHeight(40);
-
-    	Button inspectButton = new Button();
-    	inspectButton.setPrefWidth(32);
-    	inspectButton.setPrefHeight(32);
-    	inspectButton.setLayoutY(5);
-    	inspectButton.setId("inspectButton");
-
-    	inspectButton.setOnAction(new EventHandler<ActionEvent>() {
-    	    @Override
-    	    public void handle(ActionEvent event) {
-    		try {
-    			
-    		    FXMLLoader loader = new FXMLLoader();
-    		    loader.setLocation(MainGui.class.getResource("view/inputProfileDialog.fxml"));
-    		    AnchorPane pane = (AnchorPane) loader.load();
-
-    		    Stage dialogStage = new Stage();
-    		    dialogStage.setTitle("Input Profile");
-    		    
-    			InputProfileController controller=(InputProfileController)loader.getController();
-    			controller.setStage(dialogStage);
-    			controller.viewProfile(path);
-
-    		    Scene dialogScene = new Scene(pane);
-    		    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
-
-    		    dialogStage.initOwner(primaryStage);
-    		    dialogStage.setResizable(false);
-    		    dialogStage.setScene(dialogScene);
-    		    dialogStage.show();    		    
-    		    
-    		} catch (Exception e) {
-    		    e.printStackTrace();
-    		}
-
-    	    }
-    	});
-
-    	// profileInspects.put(inspectButton, profilePath);
-
-    	Button runButton = new Button();
-    	runButton.setPrefWidth(32);
-    	runButton.setPrefHeight(32);
-    	runButton.setLayoutY(5);
-    	runButton.setId("runButton");
-    	profileRuns.add(runButton);
-    	if (this.workflowPath == null)
-    	    runButton.setDisable(true);
-    	// profileInspects.put(runButton, profilePath);
-
-    	Label label = new Label();
-    	label.setLayoutY(15);
-    	label.setText(Paths.get(profilePath).getFileName().toString().split("\\.")[0]);
-
-    	final Circle circle = new Circle();
-    	circle.setLayoutY(20);
-    	circle.setFill(Color.GREEN);
-    	circle.setRadius(10);
-
-    	/*runButton.setOnAction(new EventHandler<ActionEvent>() {
-    	    @Override
-    	    public void handle(ActionEvent event) {
-
-    	    if(runButton.getId().equals("runButton")){
-
-    			probe.reset();
-    			
-    			Task<Void> task = new Task<Void>() {
-    			    @Override
-    			    protected Void call() throws Exception {
-
-    				//System.out.println("Task has been called!!");
-    				//System.out.println(workflowPath);
-
-    				if (workflowPath != null) {
-    					
-    				    //if(preAdaptation!=null)
-    					//      adaptationEngines.get(preAdaptation).stop();
-    					//    preAdaptation=currentAdaptation;
-    					//    adaptationEngines.get(currentAdaptation).start();
-
-    				    //System.out.println(workflowPath);
-
-    				    Platform.runLater(new Runnable() {
-        					@Override
-        					public void run() {
-        					    circle.setFill(Color.DARKRED);
-        					    runButton.setId("stopButton");
-        					}
-    				    });
-
-    				    //System.out.println("Before executing workflow!!");
-
-    				    tasStart.executeWorkflow(workflowPath, path);
-
-    				    //System.out.println("Finish executing workflow!!");
-
-    				    //if(preAdaptation!=null)
-    					//	adaptationEngines.get(preAdaptation).stop();
-    					//    preAdaptation=null;
-    					    
-    				    Platform.runLater(new Runnable() {
-        					@Override
-        					public void run() {
-        					    circle.setFill(Color.GREEN);
-        					    runButton.setId("runButton");
-        						chartController.clear();
-        						tableViewController.clear();
-        						
-        						chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
-        						chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(),Integer.parseInt(sliceTextField.getText()));
-
-        					    tableViewController.fillReliabilityDate(resultFilePath);
-        					    tableViewController.fillCostData(resultFilePath);
-        						tableViewController.fillPerformanceData(resultFilePath);
-        					}
-    				    });
-    				}
-    				return null;
-    			    }
-    			};
-
-    			// System.out.println("Bind progress bar with task!!");
-    			
-    			ExecutionThread thread=new ExecutionThread("main",task);
-    			thread.setDaemon(true);
-    			thread.start();
-    			
-    			//Thread thread = new Thread(task);
-    			//thread.setDaemon(true);
-    			//thread.start();
-
-    			System.out.println("Start task!!");
-    			ProfileExecutor.readFromXml(path, "test");
-    			maxSteps = ProfileExecutor.profiles.get("test").getMaxSteps();
-    			Task<Void> progressTask = new Task<Void>() {
-    			    @Override
-    			    protected Void call() throws Exception {
-        				while (probe.workflowInvocationCount < maxSteps) {
-        				    Platform.runLater(new Runnable() {
-            					@Override
-            					public void run() {
-            					    invocationLabel.setText(" " + probe.workflowInvocationCount + " / " + maxSteps);
-            					}
-        				    });
-        				    updateProgress(probe.workflowInvocationCount, maxSteps);
-        				    Thread.sleep(1000);
-        				}
-        				Platform.runLater(new Runnable() {
-        				    @Override
-        				    public void run() {
-        				    	invocationLabel.setText("" + maxSteps + " / " + maxSteps);
-        				    }
-        				});
-        				updateProgress(probe.workflowInvocationCount, maxSteps);
-        				return null;
-    			    }
-    			};
-    			progressBar.progressProperty().bind(progressTask.progressProperty());
-    			new Thread(progressTask).start();
-    	    }
-    	    
-    	    else{ 	
-    	    	//System.out.println("stop workflow");
-    		    //if(preAdaptation!=null)
-    			//	 adaptationEngines.get(preAdaptation).stop();
-    			//    preAdaptation=null;
-    			    
-    	    	tasStart.stop();
-    	    	//tasStart.pause();
-    	    				
-    		    Platform.runLater(new Runnable() {
-    			@Override
-    			public void run() {
-    			    circle.setFill(Color.GREEN);
-    			    runButton.setId("runButton");
-    				chartController.clear();
-    				tableViewController.clear();
-    				
-    				chartController.generateCharts(resultFilePath, tasStart.getCurrentSteps());
-    				chartController.generateAvgCharts(resultFilePath, tasStart.getCurrentSteps(),Integer.parseInt(sliceTextField.getText()));
-
-    			    tableViewController.fillReliabilityDate(resultFilePath);
-    			    tableViewController.fillCostData(resultFilePath);
-    				tableViewController.fillPerformanceData(resultFilePath);
-    			}
-    		    });
-    	    }
-    	    }
-    	});*/
-
-    	AnchorPane.setLeftAnchor(circle, 10.0);
-    	AnchorPane.setLeftAnchor(label, 40.0);
-    	AnchorPane.setRightAnchor(inspectButton, 60.0);
-    	AnchorPane.setRightAnchor(runButton, 10.0);
-
-    	itemPane.getChildren().setAll(circle, label, runButton, inspectButton);
-
-    	profileListView.getItems().add(itemPane);
-        
-    }
-    
     private ListView<AnchorPane> addServiceRegistry(ServiceRegistry registry) {
     	
     	TitledPane registryPane = new TitledPane();
