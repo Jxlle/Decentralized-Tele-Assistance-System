@@ -54,7 +54,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 		PlannerMessageContent content = null;
 		PlannerMessage response = null;
 		
-		System.out.println("\t> " + messageType + " , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
+		//System.out.println("\t> " + messageType + " , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 		switch(messageType) {
 		
 		// First offer has been received
@@ -66,7 +66,6 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 			
 			// Increase message ID
 			messageID++;
-			System.err.print(receiver.getAvailableServiceCombinations().get(0).toString() + "\n");
 			receiver.sendMessage(response);	
 			
 			break;
@@ -96,9 +95,7 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 				if (messageID != maxIterations) {
 					for (ServiceCombination s : newServiceCombinations) {
 						if (s.hasSameCollection(receiver.getCurrentServiceCombination())) {
-							System.out.println("same ");
 							if (s.getRating().equals(receiver.getCurrentServiceCombination().getRating())) {
-								System.out.println("same score");
 								responseType = "ACCEPTED_OFFER";
 								chosenCombination = s;
 							}
@@ -129,8 +126,8 @@ public class PlannerProtocolStandard extends PlannerTwoComponentProtocol {
 				throw new IllegalStateException("The protocol doesn't support this rating type. Type: " + newServiceCombinations.get(0).getRatingType());	
 			}
 			
-			System.err.print("OLD offer \n" + receiver.getAvailableServiceCombinations().get(0).toString() + ", class: " + receiver.getAvailableServiceCombinations().get(0).getRating() + "score: " + receiver.getAvailableServiceCombinations().get(0).getProperty("FailureRate") + "\n");
-			System.err.print("NEW offer \n" + chosenCombination.toString() + ", class: " + chosenCombination.getRating() + "score: " +  chosenCombination.getProperty("FailureRate") + "\n");
+			//System.err.print("OLD offer \n" + receiver.getAvailableServiceCombinations().get(0).toString() + ", class: " + receiver.getAvailableServiceCombinations().get(0).getRating() + "score: " + receiver.getAvailableServiceCombinations().get(0).getProperty("FailureRate") + "\n");
+			//System.err.print("NEW offer \n" + chosenCombination.toString() + ", class: " + chosenCombination.getRating() + "score: " +  chosenCombination.getProperty("FailureRate") + "\n");
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);	
 			content = receiver.generateMessageContent(chosenCombination, sharedRegistryEndpoints, messageContentPercentage);

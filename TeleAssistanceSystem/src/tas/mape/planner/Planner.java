@@ -222,7 +222,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 				availables.remove(randomIndex);
 			}
 			
-			System.out.println("CHANGED Registry endpoints, \n\tcount: " + usedDescriptionsCount + "\n\tnormal: " + availableDescriptions +" \n\tchanged: " +  usedDescriptions);
+			//System.out.println("CHANGED Registry endpoints, \n\tcount: " + usedDescriptionsCount + "\n\tnormal: " + availableDescriptions +" \n\tchanged: " +  usedDescriptions);
 		}
 		
 		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination, usedDescriptions);
