@@ -97,9 +97,6 @@ public class ApplicationController implements Initializable {
     
     // for generating kinds of charts
     SystemRunResultController chartController;
-    
-    // for generating kinds of table views
-    TableViewController tableViewController;
 
     // the path of important files 
     //String workflowPath = "src"+File.separator+"resources" + File.separator + "workflow_test1.txt";
