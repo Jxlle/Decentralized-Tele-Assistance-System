@@ -26,7 +26,7 @@ public class ServiceFailureProfile extends ServiceProfile {
 	public ServiceFailureProfile(ServiceDescription description){
 		
 		if (description.getCustomProperties().containsKey("FailureRate")) {
-			failureRate.put(0, (double) description.getCustomProperties().get("successRate"));
+			failureRate.put(0, (double) description.getCustomProperties().get("FailureRate"));
 		}
 		else {
 			failureRate.put(0, 0.0);
