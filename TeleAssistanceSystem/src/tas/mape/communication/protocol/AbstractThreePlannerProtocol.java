@@ -3,9 +3,15 @@ package tas.mape.communication.protocol;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class PlannerThreeComponentProtocol extends AbstractPlannerProtocol {
+/**
+ * Abstract class representing the structure of a three-component planner protocol.
+ * This could be generalized to an n-component planner protocol
+ * 
+ * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
+ */
+public abstract class AbstractThreePlannerProtocol extends AbstractPlannerProtocol {
 
-	protected PlannerThreeComponentProtocol() {
+	protected AbstractThreePlannerProtocol() {
 		super(3);
 	}
 	

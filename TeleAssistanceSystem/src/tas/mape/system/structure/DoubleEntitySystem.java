@@ -4,7 +4,7 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractProtocol;
-import tas.mape.communication.protocol.PlannerProtocolDoNothing;
+import tas.mape.communication.protocol.TwoPlannerProtocolDoNothing;
 import tas.mape.planner.Planner;
 import tas.mape.system.entity.MAPEKSystemEntity;
 
@@ -32,7 +32,7 @@ public class DoubleEntitySystem extends AbstractMultiEntitySystem<MAPEKSystemEnt
 	 */
 	@Override
 	public void executeSystem(int executionCycles) {
-		executeSystem(executionCycles, new PlannerProtocolDoNothing(), 0, 100);
+		executeSystem(executionCycles, new TwoPlannerProtocolDoNothing(), 0, 100);
 	}
 	
 	/**

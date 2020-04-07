@@ -11,7 +11,7 @@ import tas.mape.planner.Planner;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class PlannerProtocolDoNothing extends PlannerTwoComponentProtocol {
+public class TwoPlannerProtocolDoNothing extends AbstractTwoPlannerProtocol {
 
 	@Override
 	public void receiveAndHandleMessage(PlannerMessage message, Planner receiver) {

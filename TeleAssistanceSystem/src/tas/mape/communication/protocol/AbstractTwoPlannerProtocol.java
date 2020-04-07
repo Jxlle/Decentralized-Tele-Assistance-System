@@ -14,12 +14,12 @@ import tas.mape.planner.ServiceCombination;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public abstract class PlannerTwoComponentProtocol extends AbstractPlannerProtocol {
+public abstract class AbstractTwoPlannerProtocol extends AbstractPlannerProtocol {
 
 	/**
 	 * Create a new planner two-component protocol
 	 */
-	public PlannerTwoComponentProtocol() {
+	public AbstractTwoPlannerProtocol() {
 		super(2);
 	}
 

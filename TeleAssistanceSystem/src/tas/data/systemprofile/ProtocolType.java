@@ -1,8 +1,8 @@
 package tas.data.systemprofile;
 
 import tas.mape.communication.protocol.AbstractProtocol;
-import tas.mape.communication.protocol.PlannerProtocolDoNothing;
-import tas.mape.communication.protocol.PlannerTwoProtocolStandard;
+import tas.mape.communication.protocol.TwoPlannerProtocolDoNothing;
+import tas.mape.communication.protocol.TwoPlannerProtocolStandard;
 
 /**
  * Enum representing the different protocol types
@@ -12,8 +12,8 @@ import tas.mape.communication.protocol.PlannerTwoProtocolStandard;
 public enum ProtocolType {
 
 	// Available protocol types
-	DO_NOTHING_PROTOCOL(PlannerProtocolDoNothing.class),
-	STANDARD_PROTOCOL(PlannerTwoProtocolStandard.class);
+	DO_NOTHING_PROTOCOL(TwoPlannerProtocolDoNothing.class),
+	STANDARD_PROTOCOL(TwoPlannerProtocolStandard.class);
 	
 	private Class<? extends AbstractProtocol<?, ?>> protocolClass;
 	
