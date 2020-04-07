@@ -47,7 +47,7 @@ public class MAPEKSystemEntityWriter {
 			root.appendChild(workflowPath);
 			
 			Element analyzerStrategy = doc.createElement("AnalyzerStrategy");
-			analyzerStrategy.appendChild(doc.createTextNode(entity.getManagingSystem().getAnalyzer().getServiceGenerationStrategy().toString()));
+			analyzerStrategy.appendChild(doc.createTextNode(String.valueOf(entity.getManagingSystem().getAnalyzer().getServiceGenerationStrategy())));
 			root.appendChild(analyzerStrategy);
 			
 		    Element monitorFailureChange = doc.createElement("MonitorFailureChange");
@@ -59,7 +59,7 @@ public class MAPEKSystemEntityWriter {
 		    root.appendChild(monitorMinFailureDelta);
 			
 		    Element analyzerCombinationLimit = doc.createElement("AnalyzerCombinationLimit");
-		    analyzerCombinationLimit.appendChild(doc.createTextNode(String.valueOf(entity.getManagingSystem().getMonitor().getMinFailureDelta())));
+		    analyzerCombinationLimit.appendChild(doc.createTextNode(String.valueOf(entity.getManagingSystem().getAnalyzer().getCombinationLimit())));
 		    root.appendChild(analyzerCombinationLimit);
 			
 		    Element knowledgeLoadFailureDelta = doc.createElement("KnowledgeLoadFailureDelta");

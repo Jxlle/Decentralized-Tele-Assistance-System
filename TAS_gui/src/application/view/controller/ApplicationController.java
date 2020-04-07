@@ -48,7 +48,6 @@ import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.MAPEKSystemEntity;
 import tas.mape.system.entity.MAPEKSystemEntityLoader;
-import tas.mape.system.entity.MAPEKSystemEntityWriter;
 import tas.mape.system.entity.WorkflowExecutor;
 import tas.workflowAnalyzer.WorkflowAnalyzer;
 import tas.mape.system.entity.MAPEKComponent.Builder;

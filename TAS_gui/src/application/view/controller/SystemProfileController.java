@@ -368,7 +368,7 @@ public class SystemProfileController implements Initializable {
 				protocolTypes.addAll(ProtocolType.findProtocolTypes(newValue));
 				protocolTypeComboBox.setItems(protocolTypes);
 				
-				if (!ProtocolType.findProtocolTypes(profile.getSystemType()).contains(profile.getProtocolType())) {
+				if (profile.getProtocolType() != null && !ProtocolType.findProtocolTypes(profile.getSystemType()).contains(profile.getProtocolType())) {
 					throw new IllegalStateException("The current selected profile has an illegal XML file. "
 							+ "The system type and the protocol are not compatible! \n\tsystem type: " + profile.getSystemType() + ", protocol: " + profile.getProtocolType());
 				}
@@ -424,7 +424,7 @@ public class SystemProfileController implements Initializable {
 		protocolTypes.addAll(ProtocolType.findProtocolTypes(profile.getSystemType()));
 		protocolTypeComboBox.setItems(protocolTypes);
 		
-		if (!ProtocolType.findProtocolTypes(profile.getSystemType()).contains(profile.getProtocolType())) {
+		if (profile.getProtocolType() != null && !ProtocolType.findProtocolTypes(profile.getSystemType()).contains(profile.getProtocolType())) {
 			throw new IllegalStateException("The current selected profile has an illegal XML file. "
 					+ "The system type and the protocol are not compatible! \n\tsystem type: " + profile.getSystemType() + ", protocol: " + profile.getProtocolType());
 		}

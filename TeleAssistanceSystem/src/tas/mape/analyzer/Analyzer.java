@@ -50,8 +50,16 @@ public class Analyzer {
 	 * Return the service generation strategy number 
 	 * @return the service generation strategy number
 	 */
-	public Integer getServiceGenerationStrategy() {
+	public int getServiceGenerationStrategy() {
 		return serviceGenerationStrategy;
+	}
+	
+	/**
+	 * Return the combination limit
+	 * @return the combination limit
+	 */
+	public int getCombinationLimit() {
+		return combinationLimit;
 	}
 	
 	/**
