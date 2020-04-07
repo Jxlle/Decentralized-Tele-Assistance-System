@@ -76,8 +76,8 @@ public class SystemProfileExecutor {
 		
 		// Set the chosen data for all entities
 		for (MAPEKSystemEntity entity : entityList) {
-			entity.getManagingSystem().setRatingType(profile.getRatingType());
-			entity.getManagingSystem().setRequirementType(profile.getEntityRequirementType(entity.getEntityName()));
+			entity.getManagingSystem().getAnalyzer().setRatingType(profile.getRatingType());
+			entity.getManagingSystem().getKnowledge().setRequirementType(profile.getEntityRequirementType(entity.getEntityName()));
 		}
 		
 		Class<? extends AbstractSystem<?>> systemClass = profile.getSystemType().getSystemClass();

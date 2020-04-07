@@ -151,6 +151,14 @@ public class Knowledge {
 	}
 	
 	/**
+	 * Return the loadFailureDelta value
+	 * @return the loadFailureDelta value
+	 */
+	public int getLoadFailureDelta() {
+		return loadFailureDelta;
+	}
+	
+	/**
 	 * Increase the current system cycle.
 	 */
 	public void increaseSystemCycle() {

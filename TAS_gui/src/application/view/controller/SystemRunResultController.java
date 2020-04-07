@@ -252,7 +252,7 @@ public class SystemRunResultController {
 	                 flag++;
 	            }
 				
-				List<Goal> goals = systemRunProbe.getConnectedEntity(entity).getManagingSystem().getGoals();
+				List<Goal> goals = systemRunProbe.getConnectedEntity(entity).getManagingSystem().getKnowledge().getGoals();
 				
 				for (Goal goal : goals) {
 					if (goal.getType().equals(GoalType.COST)) {
@@ -337,7 +337,7 @@ public class SystemRunResultController {
 					
 					for (String entity : chosenCombinationsAll.keySet()) {
 						
-						int goals = systemRunProbe.getConnectedEntity(entity).getManagingSystem().getGoals().size();
+						int goals = systemRunProbe.getConnectedEntity(entity).getManagingSystem().getKnowledge().getGoals().size();
 						
 						if (goals > maxGoals) {
 							maxGoals = goals;
@@ -414,7 +414,7 @@ public class SystemRunResultController {
 					
 					for (String entity : chosenCombinationsAll.keySet()) {
 						
-						int goals = systemRunProbe.getConnectedEntity(entity).getManagingSystem().getGoals().size();
+						int goals = systemRunProbe.getConnectedEntity(entity).getManagingSystem().getKnowledge().getGoals().size();
 						
 						if (goals > maxGoals) {
 							maxGoals = goals;
@@ -632,7 +632,7 @@ public class SystemRunResultController {
 			List<String> entityCommEndpoints = new ArrayList<>();
 			
 			for (String entity : entities) {
-				entityCommEndpoints.add(systemRunProbe.getConnectedEntity(entity).getManagingSystem().getPlannerEndpoint());
+				entityCommEndpoints.add(systemRunProbe.getConnectedEntity(entity).getManagingSystem().getPlanner().getEndpoint());
 			}
 			
 			

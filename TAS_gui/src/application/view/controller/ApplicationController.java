@@ -47,10 +47,9 @@ import tas.mape.knowledge.Goal.GoalRelation;
 import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.MAPEKSystemEntity;
+import tas.mape.system.entity.MAPEKSystemEntityLoader;
+import tas.mape.system.entity.MAPEKSystemEntityWriter;
 import tas.mape.system.entity.WorkflowExecutor;
-import tas.mape.system.structure.AbstractSystem;
-import tas.mape.system.structure.DoubleEntitySystem;
-import tas.mape.system.structure.SingleMAPEKEntitySystem;
 import tas.workflowAnalyzer.WorkflowAnalyzer;
 import tas.mape.system.entity.MAPEKComponent.Builder;
 import application.MainGui;
@@ -112,6 +111,7 @@ public class ApplicationController implements Initializable {
     String workflowPath;
     String workflowFilePath = fileDirPath + "workflow" + File.separator;
     String profileFilePath = fileDirPath + "profiles" + File.separator;
+    String entityFilePath = fileDirPath + "entities" + File.separator;
     String serviceDataFilePath = fileDirPath + "service data" + File.separator;
     String resultFilePath = resultDirPath + "result.csv";
     String logFilePath = resultDirPath + "log.csv";
@@ -294,7 +294,7 @@ public class ApplicationController implements Initializable {
     	this.addItems();
     	this.fillSystemProfiles();
     	this.setButton();
-    	this.addDefaultEntities();
+    	this.fillSystemEntities();
     }
     
     
@@ -368,11 +368,11 @@ public class ApplicationController implements Initializable {
 		
 		// Reset all entity probes, not only the current entity
 		for (MAPEKSystemEntity e : entities) {
-			e.getManagingSystem().resetMonitorProbes();
+			e.getManagingSystem().getMonitor().resetProbes();
 		}
 		
-		entity.getManagingSystem().setWorkflowServiceTree(WorkflowAnalyzer.getWorkflowServiceTree());
-		entity.getManagingSystem().setUsedServicesAndChances(usableServices);
+		entity.getManagingSystem().getKnowledge().setWorkflowServiceTree(WorkflowAnalyzer.getWorkflowServiceTree());
+		entity.getManagingSystem().getKnowledge().setUsedServicesAndChances(usableServices);
 		workflowAnalyzed.put(entity.getEntityName(), true);
 	}
 
@@ -383,6 +383,27 @@ public class ApplicationController implements Initializable {
     private void initChartController() {
     	chartController = new SystemRunResultController(systemRunChartPane, protocolMessageChartPane, protocolFlowAnchorPane, failureRateErrorChartPane, costChartPane, failureRateChartPane, 
     			failureRateSystemChartPane, ratingEvolutionChartPane, ratingEvolutionSystemChartPane, entityResultTableAccordion, protocolDetailsText);
+    }
+    
+    private void fillSystemEntities() {
+    	File folder = new File(entityFilePath);
+    	File[] files = folder.listFiles();
+
+    	try {
+    	    for (File file : files) {
+        		if (file.isFile()) {
+        		    if (file.getName().lastIndexOf('.') > 0)
+        		    	addEntityToList(MAPEKSystemEntityLoader.loadFromXml(file));
+        		}
+    	    }
+    	    
+    	    if (files.length == 0) {
+    	    	addDefaultEntities();
+    	    }
+    	    
+    	} catch (Exception e) {
+    	    e.printStackTrace();
+    	}
     }
     
     private void addDefaultEntities() {
@@ -403,8 +424,8 @@ public class ApplicationController implements Initializable {
 		
 		MAPEKComponent component = builder.build();
 		MAPEKSystemEntity systemEntity = new MAPEKSystemEntity("Default System Entity", workflowExecutor, component);
-		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
-		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.185));
+		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
+		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.185));
 		addEntityToList(systemEntity);
 		
 		workflowExecutor = new WorkflowExecutor(
@@ -425,8 +446,8 @@ public class ApplicationController implements Initializable {
 		
 		component = builder.build();
 		systemEntity = new MAPEKSystemEntity("Default System Entity 2", workflowExecutor, component);
-		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
-		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.185));
+		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
+		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.185));
 		addEntityToList(systemEntity);
     }
     
@@ -448,7 +469,7 @@ public class ApplicationController implements Initializable {
     	// Set service data
     	List<ServiceRegistry> serviceRegistries = new ArrayList<>();
     	
-    	for (String registryEndpoint : selectedEntity.getManagingSystem().getRegistryEndpoints()) {
+    	for (String registryEndpoint : selectedEntity.getManagingSystem().getKnowledge().getRegistryEndpoints()) {
     		serviceRegistries.add(GlobalServiceInfo.getServiceRegistry(registryEndpoint));
     	}
     	
@@ -1402,11 +1423,11 @@ public class ApplicationController implements Initializable {
     	Circle circle = new Circle();
     	circle.setOnMouseClicked(event -> {
     		if(circle.getFill().equals(Color.DARKRED)) {
-    			selectedEntity.getManagingSystem().removeServiceFromBlacklist(description);
+    			selectedEntity.getManagingSystem().getKnowledge().removeServiceFromBlacklist(description);
     		    circle.setFill(Color.GREEN);
     		}
     		else {    		    
-    			selectedEntity.getManagingSystem().addServiceToBlacklist(description);
+    			selectedEntity.getManagingSystem().getKnowledge().addServiceToBlacklist(description);
     		    circle.setFill(Color.DARKRED);
     		}
     	});
@@ -1414,7 +1435,7 @@ public class ApplicationController implements Initializable {
     	circle.setLayoutY(20);
     	circle.setRadius(10);
     	
-    	if (!selectedEntity.getManagingSystem().isBlacklisted(description))
+    	if (!selectedEntity.getManagingSystem().getKnowledge().isBlacklisted(description))
     	    circle.setFill(Color.GREEN);
     	else
     	    circle.setFill(Color.DARKRED);

@@ -1,26 +1,11 @@
 package tas.mape.system.entity;
 
 import java.util.List;
-import java.util.Map;
-
-import javafx.util.Pair;
-import profile.SystemRequirementType;
-import service.auxiliary.Description;
-import service.auxiliary.ServiceDescription;
-import service.auxiliary.StaticTree;
-import service.composite.CompositeService;
 import tas.mape.analyzer.Analyzer;
-import tas.mape.communication.message.ComponentMessageHost;
-import tas.mape.communication.message.PlannerMessage;
-import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.executor.Executor;
-import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.monitor.Monitor;
 import tas.mape.planner.Planner;
-import tas.mape.planner.RatingType;
-import tas.mape.probes.PlannerObserver;
-
 /**
  * Class representing a component that can execute a MAPEK-loop.
  * This is a managing system for the managed system, the workflow executor.
@@ -163,273 +148,47 @@ public class MAPEKComponent {
 	 */
 	private MAPEKComponent() {}
 	
-	// The methods below are exact same methods found in the components. These are
-	// implemented so the user of this class can change component parameters without mis-using the internal components.
-	
 	/**
-	 * Initialize the executor components with the given composite service.
-	 * @param compositeService the given composite service
+	 * the monitor component
+	 * @return the monitor component
 	 */
-	public void initializeExecutorEffectors(CompositeService compositeService) {
-		executor.initializeEffectors(compositeService);
+	public Monitor getMonitor() {
+		return monitor;
 	}
 	
 	/**
-	 * Connect all monitor probes with the probes of the given composite service
-	 * @param compositeService the given composite service
+	 * the analyzer component
+	 * @return the analyzer component
 	 */
-	public void connectMonitorProbes(CompositeService compositeService) {
-		monitor.connectProbes(compositeService);
+	public Analyzer getAnalyzer() {
+		return analyzer;
 	}
 	
 	/**
-	 * Set minimum failure delta in the monitor to the given value
-	 * @param minFailureDelta the new minimum failure delta
+	 * the planner component
+	 * @return the planner component
 	 */
-	public void setMinFailureDelta(double minFailureDelta) {
-		monitor.setMinFailureDelta(minFailureDelta);
+	public Planner getPlanner() {
+		return planner;
 	}
 	
 	/**
-	 * Return the minimum failure delta of the monitor
-	 * @return the minimum failure delta of the monitor
+	 * Return the executor component
+	 * @return the executor component
 	 */
-	public double getMinFailureDelta() {
-		return monitor.getMinFailureDelta();
+	public Executor getExecutor() {
+		return executor;
 	}
 	
 	/**
-	 * Set monitor failure change to the given value
-	 * @param failureChange the new monitor failure change
+	 * Return the knowledge component
+	 * @return the knowledge component
 	 */
-	public void setFailureChange(double failureChange) {
-		monitor.setFailureChange(failureChange);
+	public Knowledge getKnowledge() {
+		return knowledge;
 	}
 	
-	/**
-	 * Reset monitor workflow probes
-	 */
-	public void resetMonitorProbes() {
-		monitor.resetProbes();
-	}
-	
-	/**
-	 * Return the monitor failure change
-	 * @return the monitor failure change
-	 */
-	public double getFailureChange() {
-		return monitor.getFailureChange();
-	}
-	
-	/**
-	 * Set the planner rating type to the given rating type
-	 * @param ratingType the given rating type
-	 */
-	public void setRatingType(RatingType ratingType) {
-		analyzer.setRatingType(ratingType);
-	}
-	
-	/**
-	 * Return the service generation strategy number 
-	 * @return the service generation strategy number
-	 */
-	public Integer getServiceGenerationStrategy() {
-		return analyzer.getServiceGenerationStrategy();
-	}
-	
-	/**
-	 * Set the service generation strategy
-	 * @param serviceGenerationStrategy the given service generation strategy
-	 */
-	public void setServiceGenerationStrategy(int serviceGenerationStrategy) {
-		analyzer.setServiceGenerationStrategy(serviceGenerationStrategy);
-	}
-	
-	/**
-	 * Return the planner probe
-	 * @return the planner probe
-	 */
-	public PlannerObserver getProbe() {
-		return planner.getObserver();
-	}
-	
-	/**
-	 * Return the planner message host
-	 * @return the planner message host
-	 */
-	public ComponentMessageHost<PlannerMessage> getMessageHost() {
-		return planner.getMessageHost();
-	}
-	
-	/**
-	 * Set the planner message host to a new given message host
-	 * @param messageHost the new planner message host
-	 */
-	public void setMessageHost(ComponentMessageHost<PlannerMessage> messageHost) {
-		planner.setMessageHost(messageHost);
-	}
-	
-	/**
-	 * Set the currently used planner protocol to a given protocol and add this planner
-	 * to the protocol components
-	 * @param protocol the new planner protocol
-	 */
-	public void setProtocol(AbstractProtocol<PlannerMessage, Planner> protocol) {
-		planner.setProtocol(protocol);
-	}
-	
-	/**
-	 * Return the currently used planner protocol
-	 * @return the currently used planner protocol
-	 */
-	public AbstractProtocol<PlannerMessage, Planner> getProtocol() {
-		return planner.getProtocol();
-	}
-	
-	/**
-	 * Return the endpoint of the planner
-	 * @return the endpoint of the planner
-	 */
-	public String getPlannerEndpoint() {
-		return planner.getEndpoint();
-	}
-	
-	/**
-	 * Return the stored workflow service tree
-	 * @return the stored workflow service tree
-	 */
-	public StaticTree<Description> getWorkflowServiceTree() {
-		return knowledge.getWorkflowServiceTree();
-	}
-	
-	/**
-	 * Set the current workflow service tree to the given tree
-	 * @param workflowServiceTree the given tree
-	 */
-	public void setWorkflowServiceTree(StaticTree<Description> workflowServiceTree) {
-		knowledge.setWorkflowServiceTree(workflowServiceTree);
-	}
-	
-	/**
-	 * Set the parent entity name to the given name
-	 * @param parentEntityName the given name
-	 * @throws IllegalStateException throws when this knowledge is already part of a system entity
-	 */
-	public void setParentEntityName(String parentEntityName) {
-		knowledge.setParentEntityName(parentEntityName);
-	}
-	
-	/**
-	 * Initialize used services, usable services and their usage changes
-	 * @param usableServicesAndChance map containing usable service information with additional usage chance
-	 */
-	public void setUsedServicesAndChances(Map<Description, Pair<List<ServiceDescription>, Double>> usableServicesAndChance) {
-		knowledge.setUsedServicesAndChances(usableServicesAndChance);
-	}
-	
-	/**
-	 * Add a given service to the blacklist and update the usable services accordingly
-	 * @param blacklistedService the given service to be blacklisted
-	 */
-	public void addServiceToBlacklist(ServiceDescription blacklistedService) {
-		knowledge.addServiceToBlacklist(blacklistedService);
-	}
-	
-	/**
-	 * Remove a given service from the blacklist and update the usable services accordingly
-	 * @param blacklistedService the given service to be freed
-	 */
-	public void removeServiceFromBlacklist(ServiceDescription freedService) {
-		knowledge.removeServiceFromBlacklist(freedService);
-	}
-	
-	/**
-	 * Return whether a given service is blacklisted
-	 * @param service the given service
-	 * @return whether a given service is blacklisted
-	 */
-	public boolean isBlacklisted(ServiceDescription service) {
-		return knowledge.isBlacklisted(service);
-	}
-	
-	/**
-	 * Return the used registry endpoints
-	 * @return the used registry endpoints
-	 */
-	public List<String> getRegistryEndpoints() {
-		return knowledge.getRegistryEndpoints();
-	}
-	
-	/**
-	 * Return the system goals
-	 * @return the system goals
-	 */
-	public List<Goal> getGoals() {
-		return knowledge.getGoals();
-	}
-	
-	/**
-	 * Add a given goal to the list of goals
-	 * @param goal the given goal
-	 */
-	public void addGoal(Goal goal) {
-		knowledge.addGoal(goal);
-	}
-	
-	/**
-	 * Remove a given goal from the list of goals
-	 * @param goal the given goal
-	 */
-	public void removeGoal(Goal goal) {
-		knowledge.removeGoal(goal);
-	}
-	
-	/**
-	 * Change the list of goals to a given list of goals
-	 * @param goals the given list of goals
-	 */
-	public void changeGoals(List<Goal> goals) {
-		knowledge.changeGoals(goals);
-	}
-	
-	/**
-	 * Reset the goals
-	 */
-	public void resetGoals() {
-		knowledge.resetGoals();
-	}
-	
-	/**
-	 * Reset all approximated service failure rates to the default values
-	 */
-	public void resetApproximatedServiceFailureRates() {
-		knowledge.resetApproximatedServiceFailureRates();
-	}
-	
-	/**
-	 * Set the current requirement type to the given type
-	 * @param requirementType the given requirement type
-	 */
-	public void setRequirementType(SystemRequirementType requirementType) {
-		knowledge.setRequirementType(requirementType);
-	}
-	
-	/**
-	 * Return the current system cycle.
-	 * @return the current system cycle.
-	 */
-	public int getSystemCycle() {
-		return knowledge.getSystemCycle();
-	}
-	
-	/**
-	 * Reset the current system cycle
-	 */
-	public void resetSystemCycle() {
-		knowledge.resetSystemCycle();
-	}
-	
-	// The methods below are used to simulate the mape loop for multiple workflow entities 'concurrently'
+	// The methods below are used to simulate the MAPEK loop for multiple workflow entities 'concurrently'
 	// instead of using multiple threads. Using multiple threads is possible, but can introduce race conditions.
 	
 	/**

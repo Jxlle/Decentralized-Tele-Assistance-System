@@ -538,7 +538,7 @@ public class SystemEntityController implements Initializable {
 		    		MAPEKComponent component = builder.build();
 		    		
 		    		for (Goal goal : goals) {
-			    		component.addGoal(goal);
+			    		component.getKnowledge().addGoal(goal);
 		    		}
 		    	
 		    		MAPEKSystemEntity systemEntity = new MAPEKSystemEntity(entityName, workflowExecutor, component);

@@ -44,7 +44,7 @@ public class SingleMAPEKEntitySystem extends AbstractSingleEntitySystem<MAPEKSys
 			entity.getManagingSystem().executeExecutor();
 			
 			// notify the probe that adaptation is finished
-			entity.getManagingSystem().getProbe().adaptationFinished();
+			entity.getManagingSystem().getPlanner().getObserver().adaptationFinished();
 			
 			// Execute workflow
 			entity.getManagedSystem().executeWorkflow();
@@ -59,8 +59,8 @@ public class SingleMAPEKEntitySystem extends AbstractSingleEntitySystem<MAPEKSys
 		}
 		
 		// Reset approximated failure rates table after the run
-		entity.getManagingSystem().resetApproximatedServiceFailureRates();
-		entity.getManagingSystem().resetSystemCycle();
+		entity.getManagingSystem().getKnowledge().resetApproximatedServiceFailureRates();
+		entity.getManagingSystem().getKnowledge().resetSystemCycle();
 		
 		// Reset current execution cycle
 		currentExecutionCycle = 0;

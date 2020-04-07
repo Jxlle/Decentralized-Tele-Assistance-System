@@ -39,8 +39,8 @@ public class DoubleEntitySystem extends AbstractMultiEntitySystem<MAPEKSystemEnt
 		MAPEKSystemEntity entity2 = getSystemEntity(1);
 		
 		// Set system protocol
-		entity1.getManagingSystem().setProtocol(protocol);
-		entity2.getManagingSystem().setProtocol(protocol);
+		entity1.getManagingSystem().getPlanner().setProtocol(protocol);
+		entity2.getManagingSystem().getPlanner().setProtocol(protocol);
 		
 		for (int i = 0; i < executionCycles; i++) {
 			
@@ -65,7 +65,7 @@ public class DoubleEntitySystem extends AbstractMultiEntitySystem<MAPEKSystemEnt
 			entity2.getManagingSystem().executeExecutor();
 			
 			// notify the probe that adaptation is finished (can be any entity, they contain the same probe)
-			entity1.getManagingSystem().getProbe().adaptationFinished();
+			entity1.getManagingSystem().getPlanner().getObserver().adaptationFinished();
 			
 			// Execute workflow
 			System.err.println("executing workflow 1");
@@ -83,16 +83,16 @@ public class DoubleEntitySystem extends AbstractMultiEntitySystem<MAPEKSystemEnt
 		}
 		
 		// Reset system protocol
-		entity1.getManagingSystem().setProtocol(null);
-		entity2.getManagingSystem().setProtocol(null);
+		entity1.getManagingSystem().getPlanner().setProtocol(null);
+		entity2.getManagingSystem().getPlanner().setProtocol(null);
 		
 		// Reset approximated failure rates table after the run
-		entity1.getManagingSystem().resetApproximatedServiceFailureRates();
-		entity2.getManagingSystem().resetApproximatedServiceFailureRates();
+		entity1.getManagingSystem().getKnowledge().resetApproximatedServiceFailureRates();
+		entity2.getManagingSystem().getKnowledge().resetApproximatedServiceFailureRates();
 		
 		// Reset system cycles
-		entity1.getManagingSystem().resetSystemCycle();
-		entity2.getManagingSystem().resetSystemCycle();
+		entity1.getManagingSystem().getKnowledge().resetSystemCycle();
+		entity2.getManagingSystem().getKnowledge().resetSystemCycle();
 		
 		// Reset current execution cycle
 		currentExecutionCycle = 0;

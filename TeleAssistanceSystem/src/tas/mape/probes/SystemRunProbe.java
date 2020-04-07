@@ -30,7 +30,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	 * @param entity the given system entity
 	 */
 	public void connect(MAPEKSystemEntity entity) {
-		entity.getManagingSystem().getProbe().register(this);
+		entity.getManagingSystem().getPlanner().getObserver().register(this);
 		
 		connectedEntities.add(entity);
 		dataPoints.put(entity.getEntityName(), new ArrayList<>());
@@ -54,7 +54,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		
 		// Unregister from connected entities
 		for (MAPEKSystemEntity entity : connectedEntities) {
-			entity.getManagingSystem().getProbe().unRegister(this);
+			entity.getManagingSystem().getPlanner().getObserver().unRegister(this);
 		}
 		
 		connectedEntities.clear();

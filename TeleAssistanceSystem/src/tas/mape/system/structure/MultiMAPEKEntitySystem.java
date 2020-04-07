@@ -31,7 +31,7 @@ public class MultiMAPEKEntitySystem extends AbstractMultiEntitySystem<MAPEKSyste
 		
 		// Set system protocol
 		for (MAPEKSystemEntity entity : getSystemEntities()) {
-			entity.getManagingSystem().setProtocol(protocol);
+			entity.getManagingSystem().getPlanner().setProtocol(protocol);
 		}
 		
 		for (int i = 0; i < executionCycles; i++) {
@@ -55,7 +55,7 @@ public class MultiMAPEKEntitySystem extends AbstractMultiEntitySystem<MAPEKSyste
 			}
 			
 			// notify the probe that adaptation is finished (can be any entity, they contain the same probe)
-			getSystemEntity(0).getManagingSystem().getProbe().adaptationFinished();
+			getSystemEntity(0).getManagingSystem().getPlanner().getObserver().adaptationFinished();
 			
 			// Execute workflow
 			for (MAPEKSystemEntity entity : getSystemEntities()) {
@@ -73,9 +73,9 @@ public class MultiMAPEKEntitySystem extends AbstractMultiEntitySystem<MAPEKSyste
 		
 		// Reset system protocol, approximated failure rates table and system cycles
 		for (MAPEKSystemEntity entity : getSystemEntities()) {
-			entity.getManagingSystem().setProtocol(null);
-			entity.getManagingSystem().resetApproximatedServiceFailureRates();
-			entity.getManagingSystem().resetSystemCycle();
+			entity.getManagingSystem().getPlanner().setProtocol(null);
+			entity.getManagingSystem().getKnowledge().resetApproximatedServiceFailureRates();
+			entity.getManagingSystem().getKnowledge().resetSystemCycle();
 		}
 		
 		// Reset current execution cycle
