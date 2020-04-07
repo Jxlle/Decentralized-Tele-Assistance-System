@@ -7,7 +7,7 @@ import java.util.List;
 import javafx.util.Pair;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.ServiceCombination;
-import tas.mape.system.entity.SystemEntity;
+import tas.mape.system.entity.MAPEKSystemEntity;
 
 /**
  * Class used as a probe that handles service combination data used to generate graphs
@@ -23,13 +23,13 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	private HashMap<String, List<Integer>> protocolMessagesCount = new HashMap<>();
 	private HashMap<String, List<Double>> ratings = new HashMap<>();
 	private HashMap<String, Knowledge> knowledges = new HashMap<>();
-	private List<SystemEntity> connectedEntities = new ArrayList<>();
+	private List<MAPEKSystemEntity> connectedEntities = new ArrayList<>();
 	
 	/**
 	 * Register the system probe to the given entity planner probe
 	 * @param entity the given system entity
 	 */
-	public void connect(SystemEntity entity) {
+	public void connect(MAPEKSystemEntity entity) {
 		entity.getManagingSystem().getProbe().register(this);
 		
 		connectedEntities.add(entity);
@@ -53,11 +53,13 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		protocolMessagesCount.clear();
 		
 		// Unregister from connected entities
-		for (SystemEntity entity : connectedEntities) {
+		for (MAPEKSystemEntity entity : connectedEntities) {
 			entity.getManagingSystem().getProbe().unRegister(this);
 		}
 		
 		connectedEntities.clear();
+		
+		System.out.println("RESET");
 	}
 	
 	/**
@@ -105,7 +107,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	 * @param entityName
 	 * @return the connected entity with the given entity name
 	 */
-	public SystemEntity getConnectedEntity(String entityName) {
+	public MAPEKSystemEntity getConnectedEntity(String entityName) {
 		return connectedEntities.stream().filter(x -> x.getEntityName().equals(entityName)).findFirst().orElse(null);
 	}
 	
@@ -159,7 +161,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	 * Update the service combination data for all previous received service combinations
 	 */
 	@Override
-	public void systemRunFinished() {	
+	public void adaptationFinished() {	
 		for (String entity : knowledges.keySet()) {
 			
 			int cycle = systemCycles.get(entity).get(systemCycles.get(entity).size() - 1);

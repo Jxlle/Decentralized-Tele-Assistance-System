@@ -46,7 +46,7 @@ import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalRelation;
 import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.system.entity.MAPEKComponent;
-import tas.mape.system.entity.SystemEntity;
+import tas.mape.system.entity.MAPEKSystemEntity;
 import tas.mape.system.entity.WorkflowExecutor;
 import tas.mape.system.structure.AbstractSystem;
 import tas.mape.system.structure.DoubleEntitySystem;
@@ -121,12 +121,10 @@ public class ApplicationController implements Initializable {
 
     List<ServiceRegistry> serviceRegistries;
     
-    SystemEntity selectedEntity;
-    List<SystemEntity> entities = new ArrayList<>();
+    MAPEKSystemEntity selectedEntity;
+    List<MAPEKSystemEntity> entities = new ArrayList<>();
     Map<String, Boolean> workflowAnalyzed = new HashMap<>(); 
     Map<String, List<ServiceRegistry>> entityRegistries;
-    List<Pair<String, Class<? extends AbstractSystem<SystemEntity>>>> systemLoops = 
-    		Arrays.asList(new Pair<>("Solo Loop System", SingleEntitySystem.class), new Pair<>("Double Loop System", DoubleEntitySystem.class));
     Set<Button> profileRuns = new HashSet<>();
     Map<String, AnchorPane> servicePanes = new ConcurrentHashMap<>();
     Map<String, ListView<AnchorPane>> serviceRegistryPanes = new ConcurrentHashMap<>();
@@ -318,7 +316,7 @@ public class ApplicationController implements Initializable {
 
     }
     
-	public void addEntityToList(SystemEntity entity) {
+	public void addEntityToList(MAPEKSystemEntity entity) {
 		
 		entities.add(entity);
 		workflowAnalyzed.put(entity.getEntityName(), false);
@@ -363,13 +361,13 @@ public class ApplicationController implements Initializable {
     	entityListView.getItems().add(entityPane);
 	}
 	
-	public void analyzeEntity(SystemEntity entity) {
+	public void analyzeEntity(MAPEKSystemEntity entity) {
 		
 		WorkflowAnalyzer.analyzeWorkflow(entity.getManagedSystem().getAssistanceService());
 		Map<Description, Pair<List<ServiceDescription>, Double>> usableServices = WorkflowAnalyzer.getUsableServicesAndChance();
 		
 		// Reset all entity probes, not only the current entity
-		for (SystemEntity e : entities) {
+		for (MAPEKSystemEntity e : entities) {
 			e.getManagingSystem().resetMonitorProbes();
 		}
 		
@@ -404,7 +402,7 @@ public class ApplicationController implements Initializable {
 		}
 		
 		MAPEKComponent component = builder.build();
-		SystemEntity systemEntity = new SystemEntity("Default System Entity", workflowExecutor, component);
+		MAPEKSystemEntity systemEntity = new MAPEKSystemEntity("Default System Entity", workflowExecutor, component);
 		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
 		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.185));
 		addEntityToList(systemEntity);
@@ -426,7 +424,7 @@ public class ApplicationController implements Initializable {
 		}
 		
 		component = builder.build();
-		systemEntity = new SystemEntity("Default System Entity 2", workflowExecutor, component);
+		systemEntity = new MAPEKSystemEntity("Default System Entity 2", workflowExecutor, component);
 		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
 		systemEntity.getManagingSystem().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.185));
 		addEntityToList(systemEntity);
@@ -942,14 +940,16 @@ public class ApplicationController implements Initializable {
     	
     	saveWorkflowButton.setOnAction(new EventHandler<ActionEvent>() {
     	    @Override
-    	    public void handle(ActionEvent event) {
+    	    public void handle(ActionEvent event) {   
+    	    	
     	    	try (PrintWriter out = new PrintWriter(workflowPath)) {
     	    	    out.println(workflowTextArea.getText());
     	    	} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
-    	    	
-    	    	workflowAnalyzed.put(selectedEntity.getEntityName(), true);
+    	    		
+    	    	workflowAnalyzed.put(selectedEntity.getEntityName(), false);
+    	    	updateWorkflowVisual();
     	    }
     	});
     	
@@ -973,6 +973,10 @@ public class ApplicationController implements Initializable {
 		    }
     	});
 
+    }
+    
+    private void updateWorkflowVisual() {
+	    this.generateSequenceDiagram(workflowPath);   	
     }
     
     private void fillSystemProfiles() {
@@ -1075,7 +1079,7 @@ public class ApplicationController implements Initializable {
     	    		    	
     			    		final int index = i;
     			    		
-    			    		SystemEntity entity = entities.stream()
+    			    		MAPEKSystemEntity entity = entities.stream()
     			    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
     			    		
     			    		if (entity == null) {
@@ -1117,7 +1121,7 @@ public class ApplicationController implements Initializable {
     			    		
     			    		final int index = i;
     			    		
-    			    		SystemEntity entity = entities.stream()
+    			    		MAPEKSystemEntity entity = entities.stream()
     			    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
     			    		
     			    		chartController.addEntityToProbe(entity);
@@ -1166,8 +1170,6 @@ public class ApplicationController implements Initializable {
     			progressTask = new Task<Void>() {
     			    @Override
     			    protected Void call() throws Exception {
-    			    	
-    			    	System.out.println(runButton + " " + analyzed + " " + done);
     			    	
     			    	while (WorkflowAnalyzer.getCurrentSteps() < WorkflowAnalyzer.analyzerCycles && !analyzed) {
         				    Platform.runLater(new Runnable() {

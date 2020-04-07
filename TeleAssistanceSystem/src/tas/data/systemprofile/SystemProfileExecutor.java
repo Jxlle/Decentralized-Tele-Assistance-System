@@ -8,7 +8,7 @@ import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractTwoComponentProtocol;
 import tas.mape.planner.Planner;
 import tas.mape.probes.ProtocolProbe;
-import tas.mape.system.entity.SystemEntity;
+import tas.mape.system.entity.MAPEKSystemEntity;
 import tas.mape.system.structure.AbstractMultiEntitySystem;
 import tas.mape.system.structure.AbstractSystem;
 
@@ -69,12 +69,12 @@ public class SystemProfileExecutor {
 	 * @param entityList The given list of participating entities
 	 */
 	@SuppressWarnings("unchecked")
-	public static void execute(List<SystemEntity> entityList) {
+	public static void execute(List<MAPEKSystemEntity> entityList) {
 		
 		SystemProfile profile = SystemProfileDataHandler.activeProfile;
 		
 		// Set the chosen data for all entities
-		for (SystemEntity entity : entityList) {
+		for (MAPEKSystemEntity entity : entityList) {
 			entity.getManagingSystem().setRatingType(profile.getRatingType());
 			entity.getManagingSystem().setRequirementType(profile.getEntityRequirementType(entity.getEntityName()));
 		}
@@ -89,14 +89,14 @@ public class SystemProfileExecutor {
 			
 			// Find system constructor
 			try {
-				systemConstructor = systemClass.getConstructor(SystemEntity.class);
+				systemConstructor = systemClass.getConstructor(MAPEKSystemEntity.class);
 				System.err.print(systemClass + " " + systemConstructor.getDeclaringClass() + "\n");
 			} catch (NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
 			
 			// Find system entity
-			SystemEntity entity = entityList.stream().filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(0))).findFirst().orElse(null);
+			MAPEKSystemEntity entity = entityList.stream().filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(0))).findFirst().orElse(null);
 			
 			if (entity == null) {
 				throw new IllegalArgumentException("The given list of entities doesn't contain the participating system entities!");
@@ -122,17 +122,17 @@ public class SystemProfileExecutor {
 			
 			// Find system constructor
 			try {
-				systemConstructor = systemClass.getConstructor(SystemEntity[].class);
+				systemConstructor = systemClass.getConstructor(MAPEKSystemEntity[].class);
 			} catch (NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
 			
 			// Find system entities
-			SystemEntity[] entities = new SystemEntity[profile.getAmountOfParticipatingEntities()];
+			MAPEKSystemEntity[] entities = new MAPEKSystemEntity[profile.getAmountOfParticipatingEntities()];
 			
 			for (int i = 0; i < profile.getAmountOfParticipatingEntities(); i++) {
 				int i2 = i;
-				SystemEntity entity = entityList.stream().filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(i2))).findFirst().orElse(null);
+				MAPEKSystemEntity entity = entityList.stream().filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(i2))).findFirst().orElse(null);
 				
 				if (entity == null) {
 					throw new IllegalArgumentException("The given list of entities doesn't contain the participating system entities!");

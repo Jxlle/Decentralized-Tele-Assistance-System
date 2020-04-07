@@ -40,7 +40,7 @@ import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 import tas.mape.probes.ProtocolProbe;
 import tas.mape.probes.SystemRunProbe;
-import tas.mape.system.entity.SystemEntity;
+import tas.mape.system.entity.MAPEKSystemEntity;
 
 public class SystemRunResultController {
 	
@@ -56,7 +56,7 @@ public class SystemRunResultController {
 		protocolProbe.connect();
 	}
 	
-	public void addEntityToProbe(SystemEntity entity) {
+	public void addEntityToProbe(MAPEKSystemEntity entity) {
 		systemRunProbe.connect(entity);
 	}
 	

@@ -34,5 +34,4 @@ public abstract class AbstractMultiEntitySystem<T extends AbstractSystemEntity<?
 	 * @param messageContentPercentage percentage indicating how much of the maximum amount of information the protocol uses in its messages
 	 */
 	public abstract void executeSystem(int executionCycles, AbstractProtocol<P1, P2> protocol, int maxIterations, int messageContentPercentage);
-
 }

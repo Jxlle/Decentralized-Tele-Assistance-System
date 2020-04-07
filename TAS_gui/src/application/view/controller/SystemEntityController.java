@@ -49,7 +49,7 @@ import tas.mape.analyzer.CombinationStrategy;
 import tas.mape.knowledge.Goal;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.MAPEKComponent.Builder;
-import tas.mape.system.entity.SystemEntity;
+import tas.mape.system.entity.MAPEKSystemEntity;
 import tas.mape.system.entity.WorkflowExecutor;
 
 public class SystemEntityController implements Initializable {
@@ -541,7 +541,7 @@ public class SystemEntityController implements Initializable {
 			    		component.addGoal(goal);
 		    		}
 		    	
-		    		SystemEntity systemEntity = new SystemEntity(entityName, workflowExecutor, component);
+		    		MAPEKSystemEntity systemEntity = new MAPEKSystemEntity(entityName, workflowExecutor, component);
 		    		parent.addEntityToList(systemEntity);
 		    		stage.close();
 		    	}

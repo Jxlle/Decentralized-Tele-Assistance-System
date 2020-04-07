@@ -24,11 +24,11 @@ public class PlannerObserver extends AbstractProbe<PlannerProbeInterface> {
 	}
 	
 	/**
-	 * Notify subscribed probes that a system run has finished
+	 * Notify subscribed probes that adaptation has finished
 	 */
-	public void systemRunFinished() {
+	public void adaptationFinished() {
     	for (PlannerProbeInterface plannerProbeInterface : subscribers) {
-    		plannerProbeInterface.systemRunFinished();
+    		plannerProbeInterface.adaptationFinished();
     	}
 	}	
 }

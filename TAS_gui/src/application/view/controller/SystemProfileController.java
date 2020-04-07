@@ -61,7 +61,7 @@ import tas.data.systemprofile.SystemType;
 import tas.data.systemprofile.SystemProfile;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.planner.RatingType;
-import tas.mape.system.entity.SystemEntity;
+import tas.mape.system.entity.MAPEKSystemEntity;
 
 public class SystemProfileController implements Initializable {
 
@@ -137,11 +137,11 @@ public class SystemProfileController implements Initializable {
 		this.stage = stage;
 	}
 	
-	public void setEntityData(List<SystemEntity> entities) {
+	public void setEntityData(List<MAPEKSystemEntity> entities) {
 		
 		entityNameList = new ArrayList<>();
 		
-		for (SystemEntity entity : entities) {
+		for (MAPEKSystemEntity entity : entities) {
 			entityNameList.add(entity.getEntityName());
 		}
 	}

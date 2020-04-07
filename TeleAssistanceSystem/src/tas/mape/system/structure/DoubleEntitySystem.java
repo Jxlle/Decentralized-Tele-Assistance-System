@@ -6,14 +6,14 @@ import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.communication.protocol.PlannerProtocolDoNothing;
 import tas.mape.planner.Planner;
-import tas.mape.system.entity.SystemEntity;
+import tas.mape.system.entity.MAPEKSystemEntity;
 
 /**
  * Class representing a double-loop system containing two system entities.
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class DoubleEntitySystem extends AbstractMultiEntitySystem<SystemEntity, PlannerMessage, Planner> {
+public class DoubleEntitySystem extends AbstractMultiEntitySystem<MAPEKSystemEntity, PlannerMessage, Planner> {
 
 	/**
 	 * Create a new double-loop system with two given system entities
@@ -21,7 +21,7 @@ public class DoubleEntitySystem extends AbstractMultiEntitySystem<SystemEntity, 
 	 * @throws IllegalArgumentException throw when the given 
 	 *         amount of entities is not supported by the system
 	 */
-	public DoubleEntitySystem(SystemEntity[] systemEntities) throws IllegalArgumentException {
+	public DoubleEntitySystem(MAPEKSystemEntity[] systemEntities) throws IllegalArgumentException {
 		super(systemEntities);
 	}
 	
@@ -46,8 +46,8 @@ public class DoubleEntitySystem extends AbstractMultiEntitySystem<SystemEntity, 
 	public void executeSystem(int executionCycles, AbstractProtocol<PlannerMessage, Planner> protocol, int maxIterations, int messageContentPercentage) {
 				
 		// System entities
-		SystemEntity entity1 = getSystemEntity(0);
-		SystemEntity entity2 = getSystemEntity(1);
+		MAPEKSystemEntity entity1 = getSystemEntity(0);
+		MAPEKSystemEntity entity2 = getSystemEntity(1);
 		
 		// Set system protocol
 		entity1.getManagingSystem().setProtocol(protocol);
@@ -75,22 +75,20 @@ public class DoubleEntitySystem extends AbstractMultiEntitySystem<SystemEntity, 
 			entity1.getManagingSystem().executeExecutor();
 			entity2.getManagingSystem().executeExecutor();
 			
+			// notify the probe that adaptation is finished (can be any entity, they contain the same probe)
+			entity1.getManagingSystem().getProbe().adaptationFinished();
+			
 			// Execute workflow
 			System.err.println("executing workflow 1");
 			entity1.getManagedSystem().executeWorkflow();
 			System.err.println("executing workflow 2");
 			entity2.getManagedSystem().executeWorkflow();
 			
-			// notify the probe that the system run is finished (can be any entity, they contain the same probe)
-			entity1.getManagingSystem().getProbe().systemRunFinished();
-			
 			// Reset all service loads after each execution cycle
 			GlobalServiceInfo.resetServiceLoads();
 			
 			// Stop execution if forced
 			if (isStopped) {
-				entity1.getManagedSystem().stop();
-				entity2.getManagedSystem().stop();
 				break;
 			}
 		}
@@ -128,13 +126,20 @@ public class DoubleEntitySystem extends AbstractMultiEntitySystem<SystemEntity, 
 	public int getTotalFinishedWorkflowCycles() {
 		
 		// System entities
-		SystemEntity entity1 = getSystemEntity(0);
-		SystemEntity entity2 = getSystemEntity(1);
+		MAPEKSystemEntity entity1 = getSystemEntity(0);
+		MAPEKSystemEntity entity2 = getSystemEntity(1);
 		
 		if (entity1.getManagedSystem().getCurrentSteps() > 0) {
 			return entity1.getManagedSystem().getCurrentSteps();
 		}
 
 		return entity2.getManagedSystem().getCurrentSteps() + SystemProfileDataHandler.activeProfile.getWorkflowCycles();
+	}
+
+	@Override
+	public void stopEntities() {
+		for (MAPEKSystemEntity entity : getSystemEntities()) {
+			entity.getManagedSystem().stop();
+		}
 	}
 }

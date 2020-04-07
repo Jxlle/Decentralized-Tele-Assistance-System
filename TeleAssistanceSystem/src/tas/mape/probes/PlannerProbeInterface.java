@@ -18,7 +18,7 @@ public interface PlannerProbeInterface {
 	public void serviceCombinationChosen(ServiceCombination serviceCombination, Knowledge knowledge, int protocolMessages);
 	
 	/**
-	 * Probe that a system run is finished
+	 * Probe that adaptation finished
 	 */
-	public void systemRunFinished();
+	public void adaptationFinished();
 }

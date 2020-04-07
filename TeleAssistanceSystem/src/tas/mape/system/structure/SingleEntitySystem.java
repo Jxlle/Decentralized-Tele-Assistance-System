@@ -1,14 +1,14 @@
 package tas.mape.system.structure;
 
 import tas.data.serviceinfo.GlobalServiceInfo;
-import tas.mape.system.entity.SystemEntity;
+import tas.mape.system.entity.MAPEKSystemEntity;
 
 /**
  * Class representing a solo-loop system containing one system entity.
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class SingleEntitySystem extends AbstractSystem<SystemEntity> {
+public class SingleEntitySystem extends AbstractSystem<MAPEKSystemEntity> {
 
 	/**
 	 * Create a new solo-loop system with a given system entity
@@ -16,8 +16,8 @@ public class SingleEntitySystem extends AbstractSystem<SystemEntity> {
 	 * @throws IllegalArgumentException throw when the given 
 	 *         amount of entities is not supported by the system
 	 */
-	public SingleEntitySystem(SystemEntity systemEntity) throws IllegalArgumentException {
-		super(new SystemEntity[] {systemEntity});
+	public SingleEntitySystem(MAPEKSystemEntity systemEntity) throws IllegalArgumentException {
+		super(new MAPEKSystemEntity[] {systemEntity});
 	}
 
 	/**
@@ -30,7 +30,7 @@ public class SingleEntitySystem extends AbstractSystem<SystemEntity> {
 		System.err.println("----------------------------------------------------------------------------------");
 		
 		// System entity
-		SystemEntity entity = getSystemEntity(0);
+		MAPEKSystemEntity entity = getSystemEntity(0);
 		
 		for (int i = 0; i < executionCycles; i++) {
 			
@@ -43,18 +43,17 @@ public class SingleEntitySystem extends AbstractSystem<SystemEntity> {
 			entity.getManagingSystem().executePlanner();
 			entity.getManagingSystem().executeExecutor();
 			
+			// notify the probe that adaptation is finished
+			entity.getManagingSystem().getProbe().adaptationFinished();
+			
 			// Execute workflow
 			entity.getManagedSystem().executeWorkflow();
-			
-			// notify the probe that the system run is finished
-			entity.getManagingSystem().getProbe().systemRunFinished();
 			
 			// Reset all service loads after each execution cycle
 			GlobalServiceInfo.resetServiceLoads();
 			
 			// Stop execution if forced
 			if (isStopped) {
-				entity.getManagedSystem().stop();
 				break;
 			}
 		}
@@ -83,5 +82,10 @@ public class SingleEntitySystem extends AbstractSystem<SystemEntity> {
 	@Override
 	public int getTotalFinishedWorkflowCycles() {
 		return getSystemEntity(0).getManagedSystem().getCurrentSteps();
+	}
+
+	@Override
+	public void stopEntities() {	
+		getSystemEntity(0).getManagedSystem().stop();
 	}
 }

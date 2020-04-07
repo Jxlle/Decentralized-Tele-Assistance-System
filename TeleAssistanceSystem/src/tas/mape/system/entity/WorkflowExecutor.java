@@ -23,7 +23,7 @@ public class WorkflowExecutor {
     private boolean isPaused = false;
     private int currentSteps;
     
-    private SystemEntity systemEntity;
+    private MAPEKSystemEntity systemEntity;
     private AssistanceService assistanceService;
     private AssistanceServiceCostProbe probe;
     private String workflowPath, profilePath;
@@ -37,7 +37,7 @@ public class WorkflowExecutor {
 	 * Return the parent system entity
 	 * @return the parent system entity
 	 */
-	public SystemEntity getSystemEntity() {
+	public MAPEKSystemEntity getSystemEntity() {
 		return systemEntity;
 	}
     

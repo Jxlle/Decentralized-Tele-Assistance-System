@@ -41,6 +41,7 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	 */
 	public void stop() {
 		isStopped = true;
+		stopEntities();
 	}
 	
 	/**
@@ -69,6 +70,14 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	}
 	
 	/**
+	 * Return the amount of needed entities in the system
+	 * @return the amount of needed entities in the system
+	 */
+	public int getSystemEntityCount() {
+		return -1;
+	};
+	
+	/**
 	 * Execute the system with a given amount of execution cycles
 	 * @param executionCycles the given amount of execution cycles
 	 */
@@ -81,10 +90,7 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	public abstract int getTotalFinishedWorkflowCycles();
 	
 	/**
-	 * Return the amount of needed entities in the system
-	 * @return the amount of needed entities in the system
+	 * Stop all entity execution
 	 */
-	public int getSystemEntityCount() {
-		return -1;
-	};
+	public abstract void stopEntities();
 }
