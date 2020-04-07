@@ -50,7 +50,7 @@ import tas.mape.system.entity.MAPEKSystemEntity;
 import tas.mape.system.entity.WorkflowExecutor;
 import tas.mape.system.structure.AbstractSystem;
 import tas.mape.system.structure.DoubleEntitySystem;
-import tas.mape.system.structure.SingleEntitySystem;
+import tas.mape.system.structure.SingleMAPEKEntitySystem;
 import tas.workflowAnalyzer.WorkflowAnalyzer;
 import tas.mape.system.entity.MAPEKComponent.Builder;
 import application.MainGui;

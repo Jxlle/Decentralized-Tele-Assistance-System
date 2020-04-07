@@ -6,7 +6,7 @@ import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.system.entity.AbstractSystemEntity;
 
 /**
- * Abstract class representing a multi-loop system containing system entities.
+ * Abstract class representing a multi entity system containing system entities.
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  *
@@ -19,11 +19,12 @@ public abstract class AbstractMultiEntitySystem<T extends AbstractSystemEntity<?
 	/**
 	 * Create a new abstract multi-loop system with given system entities
 	 * @param systemEntities the given system entities
+	 * @param systemEntityCount the amount of entities that the system supports
 	 * @throws IllegalArgumentException throw when the given 
 	 *         amount of entities is not supported by the system
 	 */
-	protected AbstractMultiEntitySystem(T[] systemEntities) throws IllegalArgumentException {
-		super(systemEntities);
+	protected AbstractMultiEntitySystem(int systemEntityCount, T[] systemEntities) throws IllegalArgumentException {
+		super(systemEntityCount, systemEntities);
 	}
 	
 	/**

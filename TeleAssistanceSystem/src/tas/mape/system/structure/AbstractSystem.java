@@ -17,22 +17,27 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	// Variable representing the current execution cycle
 	protected int currentExecutionCycle;
 	
+	// Variable representing the amount of entities that the system supports
+	protected int systemEntityCount;
+	
 	// Boolean indicating that execution has been stopped
 	protected boolean isStopped;
 	
 	/**
 	 * Create a new abstract system with given system entities
 	 * @param systemEntities the given system entities
+	 * @param systemEntityCount the amount of entities that the system supports
 	 * @throws IllegalArgumentException throw when the given
 	 *         amount of entities is not supported by the system
 	 */
-	protected AbstractSystem(T[] systemEntities) throws IllegalArgumentException {
+	protected AbstractSystem(int systemEntityCount, T[] systemEntities) throws IllegalArgumentException {
 		
-		if (systemEntities.length > getSystemEntityCount()) {
+		if (systemEntities.length > systemEntityCount) {
 			throw new IllegalArgumentException("This system doesn't support " + systemEntities.length + " entities! "
-					+ "It supports " + getSystemEntityCount() + " entities.");
+					+ "It supports " + systemEntityCount + " entities.");
 		}
 		
+		this.systemEntityCount = systemEntityCount;
 		this.systemEntities = systemEntities;
 	}
 	
@@ -74,14 +79,8 @@ public abstract class AbstractSystem<T extends AbstractSystemEntity<?, ?>> {
 	 * @return the amount of needed entities in the system
 	 */
 	public int getSystemEntityCount() {
-		return -1;
+		return systemEntityCount;
 	};
-	
-	/**
-	 * Execute the system with a given amount of execution cycles
-	 * @param executionCycles the given amount of execution cycles
-	 */
-	public abstract void executeSystem(int executionCycles);
 	
 	/**
 	 * Return the current amount of finished workflow cycles

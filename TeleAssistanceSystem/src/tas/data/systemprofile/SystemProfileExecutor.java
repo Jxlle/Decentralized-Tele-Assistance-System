@@ -10,6 +10,7 @@ import tas.mape.planner.Planner;
 import tas.mape.probes.ProtocolProbe;
 import tas.mape.system.entity.MAPEKSystemEntity;
 import tas.mape.system.structure.AbstractMultiEntitySystem;
+import tas.mape.system.structure.AbstractSingleEntitySystem;
 import tas.mape.system.structure.AbstractSystem;
 
 /**
@@ -85,12 +86,11 @@ public class SystemProfileExecutor {
 		// Run system with one participating entity
 		if (profile.getAmountOfParticipatingEntities() == 1) {
 			
-			AbstractSystem<?> system = null;
+			AbstractSingleEntitySystem<?> system = null;
 			
 			// Find system constructor
 			try {
 				systemConstructor = systemClass.getConstructor(MAPEKSystemEntity.class);
-				System.err.print(systemClass + " " + systemConstructor.getDeclaringClass() + "\n");
 			} catch (NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
@@ -104,7 +104,7 @@ public class SystemProfileExecutor {
 			
 			// Create system instance
 			try {					
-				system = (AbstractSystem<?>) systemConstructor.newInstance(entity);
+				system = (AbstractSingleEntitySystem<?>) systemConstructor.newInstance(entity);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
 				e.printStackTrace();
@@ -122,7 +122,7 @@ public class SystemProfileExecutor {
 			
 			// Find system constructor
 			try {
-				systemConstructor = systemClass.getConstructor(MAPEKSystemEntity[].class);
+				systemConstructor = systemClass.getConstructor(int.class, MAPEKSystemEntity[].class);
 			} catch (NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
@@ -143,7 +143,7 @@ public class SystemProfileExecutor {
 			
 			// Create system instance
 			try {
-				system = (AbstractMultiEntitySystem<?, PlannerMessage, Planner>) systemConstructor.newInstance(new Object[] {entities});
+				system = (AbstractMultiEntitySystem<?, PlannerMessage, Planner>) systemConstructor.newInstance(new Object[] {profile.getAmountOfParticipatingEntities(), entities});
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
 				e.printStackTrace();

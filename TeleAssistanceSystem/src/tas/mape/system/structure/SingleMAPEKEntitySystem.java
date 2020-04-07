@@ -4,11 +4,11 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.system.entity.MAPEKSystemEntity;
 
 /**
- * Class representing a solo-loop system containing one system entity.
+ * Class representing a single MAPEK entity system containing one system entity.
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class SingleEntitySystem extends AbstractSystem<MAPEKSystemEntity> {
+public class SingleMAPEKEntitySystem extends AbstractSingleEntitySystem<MAPEKSystemEntity> {
 
 	/**
 	 * Create a new solo-loop system with a given system entity
@@ -16,7 +16,7 @@ public class SingleEntitySystem extends AbstractSystem<MAPEKSystemEntity> {
 	 * @throws IllegalArgumentException throw when the given 
 	 *         amount of entities is not supported by the system
 	 */
-	public SingleEntitySystem(MAPEKSystemEntity systemEntity) throws IllegalArgumentException {
+	public SingleMAPEKEntitySystem(MAPEKSystemEntity systemEntity) throws IllegalArgumentException {
 		super(new MAPEKSystemEntity[] {systemEntity});
 	}
 
@@ -64,15 +64,6 @@ public class SingleEntitySystem extends AbstractSystem<MAPEKSystemEntity> {
 		
 		// Reset current execution cycle
 		currentExecutionCycle = 0;
-	}
-
-	/**
-	 * Return the amount of needed entities in the system
-	 * @return the amount of needed entities in the system
-	 */
-	@Override
-	public int getSystemEntityCount() {
-		return 1;
 	}
 
 	/**

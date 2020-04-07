@@ -4,12 +4,11 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractProtocol;
-import tas.mape.communication.protocol.TwoPlannerProtocolDoNothing;
 import tas.mape.planner.Planner;
 import tas.mape.system.entity.MAPEKSystemEntity;
 
 /**
- * Class representing a double-loop system containing two system entities.
+ * Class representing a double MAPEK entity system containing two system entities.
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
@@ -22,17 +21,7 @@ public class DoubleEntitySystem extends AbstractMultiEntitySystem<MAPEKSystemEnt
 	 *         amount of entities is not supported by the system
 	 */
 	public DoubleEntitySystem(MAPEKSystemEntity[] systemEntities) throws IllegalArgumentException {
-		super(systemEntities);
-	}
-	
-	/**
-	 * Execute the double-loop system with a given amount of execution cycles and no protocol
-	 * The system will execute both entities without ever communicating.
-	 * @param executionCycles the given amount of execution cycles
-	 */
-	@Override
-	public void executeSystem(int executionCycles) {
-		executeSystem(executionCycles, new TwoPlannerProtocolDoNothing(), 0, 100);
+		super(2, systemEntities);
 	}
 	
 	/**
