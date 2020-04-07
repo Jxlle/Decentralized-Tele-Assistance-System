@@ -50,6 +50,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		systemCycles.clear();
 		knowledges.clear();
 		ratings.clear();
+		protocolMessagesCount.clear();
 		
 		// Unregister from connected entities
 		for (SystemEntity entity : connectedEntities) {
