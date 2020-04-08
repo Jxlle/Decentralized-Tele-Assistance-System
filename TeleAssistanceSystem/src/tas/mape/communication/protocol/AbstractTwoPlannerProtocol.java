@@ -43,9 +43,9 @@ public abstract class AbstractTwoPlannerProtocol extends AbstractPlannerProtocol
 	
 	/**
 	 * Let a starting communication component send 
-	 * its first message to given receiver(s) to start the protocol.
+	 * its first message to a given receiver to start the protocol.
 	 * @param startIndex the given index of the starting component
-	 * @param receiverIndices the given index of the receiver of the first message
+	 * @param receiverIndices the given list of receiver indices
 	 */
 	@Override
 	protected void sendFirstMessage(int startIndex, List<Integer> receiverIndices) {
@@ -59,6 +59,7 @@ public abstract class AbstractTwoPlannerProtocol extends AbstractPlannerProtocol
 			List<ServiceCombination> bestCombinations = new ArrayList<>();
 			
 			for (ServiceCombination s : sender.getAvailableServiceCombinations()) {
+				System.out.println(sender.getAvailableServiceCombinations().get(0).getRating());
 				if (s.getRating().equals(sender.getAvailableServiceCombinations().get(0).getRating())) {
 					bestCombinations.add(s);
 				}
@@ -77,12 +78,12 @@ public abstract class AbstractTwoPlannerProtocol extends AbstractPlannerProtocol
 		PlannerMessageContent content = sender.generateMessageContent(chosenCombination, sharedRegistryEndpoints, messageContentPercentage);
 		PlannerMessage message = new PlannerMessage(messageID, receiver.getEndpoint(), sender.getEndpoint(), "FIRST_OFFER", content);
 		
-		//System.out.println("-----------------------------------------------------------\nPROTOCOL STARTED");
+		System.out.println("-----------------------------------------------------------\nPROTOCOL STARTED");
 		
 		// Set message ID
 		messageID = 1;
 		
-		//System.err.print(" rating: " + chosenCombination.getRating() + "\n " + chosenCombination.toString() + " \n");
+		System.err.print(" rating: " + chosenCombination.getRating() + "\n " + chosenCombination.toString() + " \n");
 		
 		// Send message
 		sender.sendMessage(message);

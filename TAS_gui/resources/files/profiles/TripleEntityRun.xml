@@ -1,14 +1,18 @@
 <tas.data.systemprofile.SystemProfile>
-  <executionCycles>10</executionCycles>
-  <workflowCycles>5000</workflowCycles>
-  <maxProtocolIterations>100</maxProtocolIterations>
+  <executionCycles>40</executionCycles>
+  <workflowCycles>1000</workflowCycles>
+  <maxProtocolIterations>200</maxProtocolIterations>
   <messageContentPercentage>100</messageContentPercentage>
-  <systemType>DOUBLE_ENTITY</systemType>
-  <protocolType>STANDARD_PROTOCOL_2ENTITIES</protocolType>
+  <systemType>TRIPLE_ENTITY</systemType>
+  <protocolType>STANDARD_PROTOCOL_3ENTITIES</protocolType>
   <ratingType>CLASS</ratingType>
   <entityRequirementTypes>
     <entry>
       <string>Default System Entity</string>
+      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
+    </entry>
+    <entry>
+      <string>Default System Entity 2</string>
       <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
     </entry>
     <entry>
@@ -18,6 +22,7 @@
   </entityRequirementTypes>
   <participatingEntities>
     <string>Default System Entity</string>
+    <string>Default System Entity 2</string>
     <string>Default System Entity 3</string>
   </participatingEntities>
   <variables>

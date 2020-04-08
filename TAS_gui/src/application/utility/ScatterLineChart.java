@@ -23,7 +23,7 @@ import javafx.scene.shape.Line;
 public class ScatterLineChart<X, Y> extends ScatterChart<X, Y> {
 	
 	// Available colors
-	public static List<String> colors = Arrays.asList("red", "blue", "yellow", "green");
+	public static List<String> colors = Arrays.asList("red", "blue", "green", "yellow", "orange", "black");
 
     // data defining horizontal markers, xValues are ignored
     private ObservableList<Data<X, Y>> horizontalMarkers;

@@ -29,7 +29,13 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.Pair;
@@ -194,7 +200,7 @@ public class SystemRunResultController {
 			for (int i = 0; i < dataPoints.get(entity).size(); i++) {	
 				Pair<Double, Double> dataPoint = dataPoints.get(entity).get(i);
 				int cycle = systemRunProbe.getSystemCycles().get(entity).get(i);
-				int protocolMessageCount = systemRunProbe.getProtocolMessageCount().get(entity).get(i);
+				int protocolMessageCount = systemRunProbe.getProtocolMessageCount().get(i);
 				ServiceCombination combination = systemRunProbe.getChosenCombinations().get(entity).get(i);
 				serviceCombinationData.add(new ServiceCombinationEntry(cycle, dataPoint.getValue(), dataPoint.getKey(), protocolMessageCount, combination));
 			}
@@ -278,12 +284,10 @@ public class SystemRunResultController {
 	
 	private void generateFailureRateErrorChart() {
 		
-		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		List<Integer> protocolMessages = systemRunProbe.getProtocolMessageCount();
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
 		
-		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
-			
-			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+		if (protocolMessages.size() > 0) {
 			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
@@ -296,7 +300,7 @@ public class SystemRunResultController {
 			failureRateErrorChart.prefHeightProperty().bind(failureRateErrorChartPane.heightProperty());
 			
 			// Set data points
-			for (String entity : protocolMessagesAll.keySet()) {
+			for (String entity : dataPoints.keySet()) {
 				
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
@@ -316,12 +320,11 @@ public class SystemRunResultController {
 	
 	private void generateRatingChart() {
 		
-		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		List<Integer> protocolMessages = systemRunProbe.getProtocolMessageCount();
 		HashMap<String, List<ServiceCombination>> chosenCombinationsAll = systemRunProbe.getChosenCombinations();
 		
-		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
+		if (protocolMessages.size() > 0) {
 			
-			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
 			List<ServiceCombination> chosenCombinations = new ArrayList<>(chosenCombinationsAll.values()).get(0);
 			RatingType type = chosenCombinations.get(0).getRatingType();
 			
@@ -377,7 +380,7 @@ public class SystemRunResultController {
 			ratingChart.prefHeightProperty().bind(ratingEvolutionChartPane.heightProperty());
 			
 			// Set data points
-			for (String entity : protocolMessagesAll.keySet()) {
+			for (String entity : chosenCombinationsAll.keySet()) {
 				
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
@@ -393,12 +396,11 @@ public class SystemRunResultController {
 	
 	private void generateRatingSystemChart() {
 		
-		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		List<Integer> protocolMessages = systemRunProbe.getProtocolMessageCount();
 		HashMap<String, List<ServiceCombination>> chosenCombinationsAll = systemRunProbe.getChosenCombinations();
 		
-		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
+		if (protocolMessages.size() > 0) {
 			
-			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
 			List<ServiceCombination> chosenCombinations = new ArrayList<>(chosenCombinationsAll.values()).get(0);
 			RatingType type = chosenCombinations.get(0).getRatingType();
 			
@@ -441,7 +443,7 @@ public class SystemRunResultController {
 			ratingSystemChart.prefHeightProperty().bind(ratingEvolutionSystemChartPane.heightProperty());
 			
 			// Set data points
-			for (String entity : protocolMessagesAll.keySet()) {
+			for (String entity : chosenCombinationsAll.keySet()) {
 				
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
@@ -459,12 +461,10 @@ public class SystemRunResultController {
 	}
 	
 	private void generateFailureRateSystemChart() {
-		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		List<Integer> protocolMessages = systemRunProbe.getProtocolMessageCount();
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
 		
-		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
-			
-			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+		if (protocolMessages.size() > 0) {
 			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
@@ -477,7 +477,7 @@ public class SystemRunResultController {
 			failureRateSystemChart.prefHeightProperty().bind(failureRateSystemChartPane.heightProperty());
 			
 			// Set data points
-			for (String entity : protocolMessagesAll.keySet()) {
+			for (String entity : dataPoints.keySet()) {
 				
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
@@ -495,11 +495,9 @@ public class SystemRunResultController {
 	}
 	
 	private void generateFailureRateChart() {
-		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		List<Integer> protocolMessages = systemRunProbe.getProtocolMessageCount();
 		
-		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
-			
-			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+		if (protocolMessages.size() > 0) {
 			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
@@ -512,7 +510,7 @@ public class SystemRunResultController {
 			failureRateChart.prefHeightProperty().bind(failureRateChartPane.heightProperty());
 			
 			// Set data points
-			for (String entity : protocolMessagesAll.keySet()) {
+			for (String entity : systemRunProbe.getDataPoints().keySet()) {
 				
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
@@ -529,12 +527,10 @@ public class SystemRunResultController {
 	}
 	
 	private void generateCostChart() {
-		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		List<Integer> protocolMessages = systemRunProbe.getProtocolMessageCount();
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
 		
-		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
-			
-			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+		if (protocolMessages.size() > 0) {
 			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
@@ -547,7 +543,7 @@ public class SystemRunResultController {
 			costChart.prefHeightProperty().bind(costChartPane.heightProperty());
 			
 			// Set data points
-			for (String entity : protocolMessagesAll.keySet()) {
+			for (String entity : dataPoints.keySet()) {
 				
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
@@ -566,11 +562,9 @@ public class SystemRunResultController {
 	
 	private void generateProtocolMessageChart() {
 		
-		HashMap<String, List<Integer>> protocolMessagesAll = systemRunProbe.getProtocolMessageCount();
+		List<Integer> protocolMessages = systemRunProbe.getProtocolMessageCount();
 		
-		if (protocolMessagesAll.values().stream().anyMatch(x -> x.size() > 0)) {
-			
-			List<Integer> protocolMessages = new ArrayList<>(protocolMessagesAll.values()).get(0);
+		if (protocolMessages.size() > 0) {
 			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
@@ -642,6 +636,16 @@ public class SystemRunResultController {
 				double senderX = lineXList.get(entityCommEndpoints.indexOf(message.sender));
 				double receiverX = lineXList.get(entityCommEndpoints.indexOf(message.receiver));		
 				Text arrowText = new Text(message.messageType);
+				arrowText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, Math.min(15, lineHeightDelta)));  
+				final double textWidth = arrowText.getLayoutBounds().getWidth();
+				final double textHeight = arrowText.getLayoutBounds().getHeight();
+				
+				StackPane stp = new StackPane();
+				Rectangle rect = new Rectangle();
+				rect.setHeight(textHeight);
+				rect.setWidth(textWidth);
+				rect.setFill(Color.rgb(244, 244, 244));
+				stp.getChildren().addAll(rect, arrowText);
 				
 				Arrow arrow = new Arrow();
 				arrow.setStartX(senderX);
@@ -649,14 +653,11 @@ public class SystemRunResultController {
 				arrow.setEndX(receiverX);
 				arrow.setEndY(heightDelta + lineHeightDeltaDelta + i * lineHeightDelta);
 				
-				arrowText.applyCss(); 
-				final double textWidth = arrowText.getLayoutBounds().getWidth();
-				
-				AnchorPane.setLeftAnchor(arrowText, (Math.abs(senderX - receiverX) - textWidth) / 2);
-				AnchorPane.setTopAnchor(arrowText, heightDelta + lineHeightDeltaDelta + i * lineHeightDelta - 20);
+				AnchorPane.setLeftAnchor(stp, Math.min(senderX, receiverX) + (Math.abs(senderX - receiverX) - textWidth) / 2);
+				AnchorPane.setTopAnchor(stp, heightDelta + lineHeightDeltaDelta + i * lineHeightDelta - (textHeight / 2));
 				
 				protocolFlowAnchorPane.getChildren().add(arrow);
-				protocolFlowAnchorPane.getChildren().add(arrowText);
+				protocolFlowAnchorPane.getChildren().add(stp);
 			}
 		}
 	}

@@ -54,6 +54,9 @@ public class MultiMAPEKEntitySystem extends AbstractMultiEntitySystem<MAPEKSyste
 				entity.getManagingSystem().executeExecutor();
 			}
 			
+			//System.out.println("done");
+			//break;
+			
 			// notify the probe that adaptation is finished (can be any entity, they contain the same probe)
 			getSystemEntity(0).getManagingSystem().getPlanner().getObserver().adaptationFinished();
 			

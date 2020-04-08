@@ -20,7 +20,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	private HashMap<String, List<ServiceCombination>> chosenCombinations = new HashMap<>();
 	private HashMap<String, List<Pair<Double, Double>>> dataPoints = new HashMap<>();
 	private HashMap<String, List<Integer>> systemCycles = new HashMap<>();
-	private HashMap<String, List<Integer>> protocolMessagesCount = new HashMap<>();
+	private List<Integer> protocolMessagesCount = new ArrayList<>();
 	private HashMap<String, List<Double>> ratings = new HashMap<>();
 	private HashMap<String, Knowledge> knowledges = new HashMap<>();
 	private List<MAPEKSystemEntity> connectedEntities = new ArrayList<>();
@@ -36,7 +36,6 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		dataPoints.put(entity.getEntityName(), new ArrayList<>());
 		chosenCombinations.put(entity.getEntityName(), new ArrayList<>());
 		systemCycles.put(entity.getEntityName(), new ArrayList<>());
-		protocolMessagesCount.put(entity.getEntityName(), new ArrayList<>());
 		ratings.put(entity.getEntityName(), new ArrayList<>());
 	}
 	
@@ -74,7 +73,7 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	 * Return the probe protocol message count data
 	 * @return the probe protocol message count data
 	 */
-	public HashMap<String, List<Integer>> getProtocolMessageCount() {
+	public List<Integer> getProtocolMessageCount() {
 		return protocolMessagesCount;
 	}
 	
@@ -141,6 +140,20 @@ public class SystemRunProbe implements PlannerProbeInterface {
 	@Override
 	public void serviceCombinationChosen(ServiceCombination serviceCombination, Knowledge knowledge, int protocolMessages) {
 		
+		// Add protocol message count to the data
+		if (protocolMessagesCount.size() > chosenCombinations.get(knowledge.getParentEntityName()).size()) {
+			int currentCount = protocolMessagesCount.get(chosenCombinations.get(knowledge.getParentEntityName()).size());
+			
+			if (currentCount < protocolMessages) {
+				protocolMessagesCount.remove(chosenCombinations.get(knowledge.getParentEntityName()).size());
+				protocolMessagesCount.add(protocolMessages);
+			}
+		}
+		else {
+			System.out.println("ADDED");
+			protocolMessagesCount.add(protocolMessages);
+		}
+		
 		// Add knowledge to data
 		knowledges.put(knowledge.getParentEntityName(), knowledge);
 		
@@ -151,10 +164,6 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		// Add system cycle information to the data
 		List<Integer> systemCyclesData = systemCycles.get(knowledge.getParentEntityName());
 		systemCyclesData.add(knowledge.getSystemCycle());
-		
-		// Add protocol message count to the data
-		List<Integer> protocolMessageCount = protocolMessagesCount.get(knowledge.getParentEntityName());
-		protocolMessageCount.add(protocolMessages);
 	}
 
 	/**

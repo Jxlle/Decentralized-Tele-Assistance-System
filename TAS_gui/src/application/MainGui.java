@@ -47,7 +47,7 @@ public class MainGui extends Application {
 			});
 
 			primaryStage.setScene(scene);
-			primaryStage.setTitle("Tele Assistance System");
+			primaryStage.setTitle("Decentralized Tele Assistance System");
 			primaryStage.show();
 			
 			Screen screen = Screen.getPrimary();

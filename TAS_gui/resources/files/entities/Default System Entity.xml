@@ -5,7 +5,7 @@
 <AnalyzerStrategy>1</AnalyzerStrategy>
 <MonitorFailureChange>0.01</MonitorFailureChange>
 <MonitorMinFailureDelta>0.01</MonitorMinFailureDelta>
-<AnalyzerCombinationLimit>0.01</AnalyzerCombinationLimit>
+<AnalyzerCombinationLimit>100</AnalyzerCombinationLimit>
 <KnowledgeLoadFailureDelta>10</KnowledgeLoadFailureDelta>
 <Registries>
 <RegistryEndpoint>service.shared.registry</RegistryEndpoint>

@@ -28,7 +28,7 @@ import tas.mape.planner.ServiceCombination;
  *    It checks if his best service combination is still the same service combination as before. 
  *    
  *    CLASS:
- *    It checks if his best service combination is still in the same class as before. 
+ *    It checks if the new best service combinations (best class) still include the old combination. his best service combination is still in the same class as before. 
  *    
  *    If this is true, the planner will end the protocol and send its response with type "CONFIRMED_OFFER".
  *    If this is not true, the planner will send his response message as above, with type "NEW_OFFER". The other planner will reason the 
@@ -51,18 +51,20 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 		
 		observer.protocolMessageSent(new ProtocolMessageInformation(message.getSenderEndpoint(), message.getReceiverEndpoint(), message.getType()));
 		String messageType = message.getType();
+		String sender = message.getSenderEndpoint();
 		PlannerMessageContent content = null;
 		PlannerMessage response = null;
 		
-		//System.out.println("\t> " + messageType + " , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
+		System.out.println("\t> " + messageType + " , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 		switch(messageType) {
 		
 		// First offer has been received
 		case "FIRST_OFFER":
-			receiver.setAvailableServiceCombinations(receiver.calculateNewServiceCombinations(message.getContent()));
-			content = receiver.generateMessageContent(receiver.getAvailableServiceCombinations().get(0), sharedRegistryEndpoints, messageContentPercentage);
-			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "NEW_OFFER", content);
+			receiver.addToLoadBuffer(sender, message.getContent());
+			receiver.setAvailableServiceCombinations(receiver.calculateNewServiceCombinations());
 			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
+			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), sharedRegistryEndpoints, messageContentPercentage);
+			response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "NEW_OFFER", content);
 			
 			// Increase message ID
 			messageID++;
@@ -72,7 +74,8 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 		
 		// New offer has been received
 		case "NEW_OFFER":
-			List<ServiceCombination> newServiceCombinations = receiver.calculateNewServiceCombinations(message.getContent());
+			receiver.addToLoadBuffer(sender, message.getContent());
+			List<ServiceCombination> newServiceCombinations = receiver.calculateNewServiceCombinations();
 			ServiceCombination chosenCombination = null;
 			String responseType = null;
 			
@@ -93,31 +96,40 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 			case CLASS:
 				
 				if (messageID != maxIterations) {
-					for (ServiceCombination s : newServiceCombinations) {
-						if (s.hasSameCollection(receiver.getCurrentServiceCombination())) {
-							if (s.getRating().equals(receiver.getCurrentServiceCombination().getRating())) {
-								responseType = "ACCEPTED_OFFER";
-								chosenCombination = s;
-							}
-							else {
-								responseType = "NEW_OFFER";
-								List<ServiceCombination> bestCombinations = new ArrayList<>();
-								
-								for (ServiceCombination s2 : newServiceCombinations) {
-									if (s2.getRating().equals(newServiceCombinations.get(0).getRating())) {
-										bestCombinations.add(s2);
-									}
-								}
-								
-								chosenCombination = bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));
-							}
-							
-							break;
+					
+					List<ServiceCombination> bestCombinations = new ArrayList<>();
+					boolean found =  false;
+					
+					for (ServiceCombination s2 : newServiceCombinations) {
+						if (s2.getRating().equals(newServiceCombinations.get(0).getRating())) {
+							bestCombinations.add(s2);
 						}
 					}
+					
+					for (ServiceCombination s : bestCombinations) {
+						if (s.hasSameCollection(receiver.getCurrentServiceCombination())) {
+							if (!s.getRating().equals(receiver.getCurrentServiceCombination().getRating())) {
+								break;
+							}
+							else {
+								responseType = "ACCEPTED_OFFER";
+								chosenCombination = s;
+								found = true;
+								break;
+							}
+						}
+						
+						break;
+					}
+					
+					if (!found) {
+						responseType = "NEW_OFFER";	
+						chosenCombination = bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));
+					}		
 				}
 				else {
 					responseType = "ACCEPTED_OFFER";
+					chosenCombination = receiver.getAvailableServiceCombinations().get(0);
 				}	
 				
 				break;
@@ -126,13 +138,13 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 				throw new IllegalStateException("The protocol doesn't support this rating type. Type: " + newServiceCombinations.get(0).getRatingType());	
 			}
 			
-			//System.err.print("OLD offer \n" + receiver.getAvailableServiceCombinations().get(0).toString() + ", class: " + receiver.getAvailableServiceCombinations().get(0).getRating() + "score: " + receiver.getAvailableServiceCombinations().get(0).getProperty("FailureRate") + "\n");
-			//System.err.print("NEW offer \n" + chosenCombination.toString() + ", class: " + chosenCombination.getRating() + "score: " +  chosenCombination.getProperty("FailureRate") + "\n");
+			System.err.print("OLD offer \n" + receiver.getAvailableServiceCombinations().get(0).toString() + ", class: " + receiver.getAvailableServiceCombinations().get(0).getRating() + "score: " + receiver.getAvailableServiceCombinations().get(0).getProperty("FailureRate") + "\n");
+			System.err.print("NEW offer \n" + chosenCombination.toString() + ", class: " + chosenCombination.getRating() + "score: " +  chosenCombination.getProperty("FailureRate") + "\n");
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);	
-			content = receiver.generateMessageContent(chosenCombination, sharedRegistryEndpoints, messageContentPercentage);
-			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), responseType, content);
 			receiver.setCurrentServiceCombination(chosenCombination);
+			content = receiver.generateMessageContent(chosenCombination, sharedRegistryEndpoints, messageContentPercentage);
+			response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), responseType, content);
 			
 			if (responseType == "ACCEPTED_OFFER") {
 				receiver.finishedProtocol(messageID + 1);

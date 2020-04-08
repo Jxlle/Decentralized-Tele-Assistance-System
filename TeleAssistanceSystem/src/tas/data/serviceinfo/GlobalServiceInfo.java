@@ -142,6 +142,8 @@ public class GlobalServiceInfo {
      */
     public static void loadData(File file) {
     	GlobalServiceInfoLoader.loadFromXml(file);
+    	/*ChangeToDefaultServices();
+    	GlobalServiceInfoWriter.writeToXml(file);*/
     }
     
     /**
@@ -204,6 +206,13 @@ public class GlobalServiceInfo {
 		alarm5.startService();	
 		alarm5.register(serviceRegistry3);
 		services.add(alarm5);
+		
+		/*AlarmService alarm6 = new AlarmService("AlarmService6", "service.alarmService6");
+		alarm6.getServiceDescription().getCustomProperties().put("Cost", 6.0);
+		alarm6.getServiceDescription().getCustomProperties().put("FailureRate", 0.03);
+		alarm6.startService();	
+		alarm6.register(serviceRegistry3);
+		services.add(alarm6);*/
 	
 		
 		// Medical Analysis Services
@@ -278,5 +287,12 @@ public class GlobalServiceInfo {
 		drugService5.startService();
 		drugService5.register(serviceRegistry3);
 		services.add(drugService5);
+		
+		/*DrugService drugService6 = new DrugService("DrugService6", "service.drug6");
+		drugService6.getServiceDescription().getCustomProperties().put("Cost", 6.0);
+		drugService6.getServiceDescription().getCustomProperties().put("FailureRate", 0.03);
+		drugService6.startService();
+		drugService6.register(serviceRegistry3);
+		services.add(drugService6);*/
     }
 }

@@ -164,9 +164,10 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	protected abstract void InitializeProtocol(int startIndex, List<Integer> receiverIndices);
 	
 	/**
-	 * Let a starting communication component send its first message to given receiver(s) to start the protocol.
+	 * Let a starting communication component send 
+	 * its first message to a given receiver to start the protocol.
 	 * @param startIndex the given index of the starting component
-	 * @param receiverIndices the given indices of the receivers of the first message
+	 * @param receiverIndices the given list of receiver indices
 	 */
 	protected abstract void sendFirstMessage(int startIndex, List<Integer> receiverIndices);
 }

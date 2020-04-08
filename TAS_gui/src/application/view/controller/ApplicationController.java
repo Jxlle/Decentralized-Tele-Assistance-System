@@ -1104,6 +1104,82 @@ public class ApplicationController implements Initializable {
 
     	    if (runButton.getId().equals("runButton")) {
     			
+    			chartController.resetProbes();
+    			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
+    			SystemProfileDataHandler.activeProfile = profile;
+    		    analyzed = false;
+    		    
+    		    // Check profile integrity
+    		    for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
+    		    	
+		    		final int index = i;
+		    		
+		    		MAPEKSystemEntity entity = entities.stream()
+		    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
+		    		
+		    		if (entity == null) {
+		    			
+    				    Platform.runLater(new Runnable() {
+        					@Override
+        					public void run() {	
+    			    			resetProgressBar();
+        						Alert fail = new Alert(AlertType.WARNING);
+    				            fail.setHeaderText("INVALID CONTENT");
+    				            fail.setContentText("System run stopped. Input profile contains unknown system entity.");
+    				            fail.showAndWait();
+        					}
+    				    });
+			            
+		    			runButton.setId("runButton");
+		    			//return null;
+		    		}
+		    		
+		    		if (profile.getEntityRequirementType(profile.getParticipatingEntity(index)) == null) {
+    				    Platform.runLater(new Runnable() {
+        					@Override
+        					public void run() {	
+    			    			resetProgressBar();
+        						Alert fail = new Alert(AlertType.WARNING);
+    				            fail.setHeaderText("INVALID CONTENT");
+    				            fail.setContentText("System run stopped. Input profile misses requirement type for entity " + profile.getParticipatingEntity(index) + ".");
+    				            fail.showAndWait();
+        					}
+    				    });
+			            
+		    			runButton.setId("runButton");
+		    			//return null;
+		    		}
+    		    }
+    		    
+		    	// Analyze entity workflows if needed
+		    	for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
+		    		
+		    		final int index = i;
+		    		
+		    		MAPEKSystemEntity entity = entities.stream()
+		    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
+		    		
+		    		chartController.addEntityToProbe(entity);
+		    		
+		    		if (!workflowAnalyzed.get(entity.getEntityName())) {
+    			    	entityBeingAnalyzed = entity.getEntityName();
+		    			analyzeEntity(entity);
+		    		}
+		    	}
+		    	
+		    	analyzed = true;
+		    	entityBeingAnalyzed = "";
+		    	
+		    	// Set protocol 
+		    	SystemProfileExecutor.setProtocol(profile);
+		    	
+		    	// Set chart protocol probe
+		    	chartController.setProtocolProbe();
+		    	
+		    	// Execute system
+		    	SystemProfileExecutor.execute(entities);
+		    	done = true;
+    	    	
     			Task<Void> task = new Task<Void>() {
     			    @Override
     			    protected Void call() throws Exception {	
@@ -1114,82 +1190,6 @@ public class ApplicationController implements Initializable {
         					    runButton.setId("stopButton");
         					}
     				    });
-    			    	
-    	    			chartController.resetProbes();
-    	    			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
-    	    			SystemProfileDataHandler.activeProfile = profile;
-    	    		    analyzed = false;
-    	    		    
-    	    		    // Check profile integrity
-    	    		    for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
-    	    		    	
-    			    		final int index = i;
-    			    		
-    			    		MAPEKSystemEntity entity = entities.stream()
-    			    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
-    			    		
-    			    		if (entity == null) {
-    			    			
-            				    Platform.runLater(new Runnable() {
-                					@Override
-                					public void run() {	
-            			    			resetProgressBar();
-                						Alert fail = new Alert(AlertType.WARNING);
-            				            fail.setHeaderText("INVALID CONTENT");
-            				            fail.setContentText("System run stopped. Input profile contains unknown system entity.");
-            				            fail.showAndWait();
-                					}
-            				    });
-    				            
-    			    			runButton.setId("runButton");
-    			    			return null;
-    			    		}
-    			    		
-    			    		if (profile.getEntityRequirementType(profile.getParticipatingEntity(index)) == null) {
-            				    Platform.runLater(new Runnable() {
-                					@Override
-                					public void run() {	
-            			    			resetProgressBar();
-                						Alert fail = new Alert(AlertType.WARNING);
-            				            fail.setHeaderText("INVALID CONTENT");
-            				            fail.setContentText("System run stopped. Input profile misses requirement type for entity " + profile.getParticipatingEntity(index) + ".");
-            				            fail.showAndWait();
-                					}
-            				    });
-    				            
-    			    			runButton.setId("runButton");
-    			    			return null;
-    			    		}
-    	    		    }
-    	    		    
-    			    	// Analyze entity workflows if needed
-    			    	for (int i = 0; i < profile.getSystemType().getMaxEntities(); i++) {
-    			    		
-    			    		final int index = i;
-    			    		
-    			    		MAPEKSystemEntity entity = entities.stream()
-    			    				.filter(x -> x.getEntityName().equals(profile.getParticipatingEntity(index))).findFirst().orElse(null);
-    			    		
-    			    		chartController.addEntityToProbe(entity);
-    			    		
-    			    		if (!workflowAnalyzed.get(entity.getEntityName())) {
-    	    			    	entityBeingAnalyzed = entity.getEntityName();
-    			    			analyzeEntity(entity);
-    			    		}
-    			    	}
-    			    	
-    			    	analyzed = true;
-    			    	entityBeingAnalyzed = "";
-    			    	
-    			    	// Set protocol 
-    			    	SystemProfileExecutor.setProtocol(profile);
-    			    	
-    			    	// Set chart protocol probe
-    			    	chartController.setProtocolProbe();
-    			    	
-    			    	// Execute system
-    			    	SystemProfileExecutor.execute(entities);
-    			    	done = true;
 					    
     				    Platform.runLater(new Runnable() {
         					@Override

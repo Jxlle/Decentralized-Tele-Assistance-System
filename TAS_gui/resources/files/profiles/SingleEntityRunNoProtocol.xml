@@ -7,12 +7,12 @@
   <ratingType>CLASS</ratingType>
   <entityRequirementTypes>
     <entry>
-      <string>Default System Entity</string>
-      <profile.SystemRequirementType>RELIABILITY</profile.SystemRequirementType>
+      <string>Default System Entity 3</string>
+      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
     </entry>
   </entityRequirementTypes>
   <participatingEntities>
-    <string>Default System Entity</string>
+    <string>Default System Entity 3</string>
   </participatingEntities>
   <variables>
     <variable>

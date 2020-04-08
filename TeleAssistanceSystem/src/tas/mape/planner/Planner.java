@@ -37,6 +37,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private List<ServiceCombination> availableServiceCombinations;
 	private ServiceCombination currentServiceCombination;
 	private List<PlanComponent> plan;
+	private Map<String, Map<String, Integer>> loadBuffer;
 	
 	/**
 	 * Create a planner with a given knowledge and executor
@@ -92,6 +93,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public void execute(List<ServiceCombination> availableServiceCombinations) {
 		this.availableServiceCombinations = availableServiceCombinations;
+		loadBuffer = new HashMap<>();
 		protocolFinished = false;
 		
 		// If no protocol is used, just use the best service combination
@@ -135,15 +137,37 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	/**
-	 * Calculate the new service combinations list based on a given planner message content object.
+	 * Add given message content from a given sender to the load buffer
+	 * @param sender the given message sender
+	 * @param content the given message content
+	 */
+	public void addToLoadBuffer(String sender, PlannerMessageContent content) {
+		loadBuffer.put(sender,  content.getPublicServiceUsage());
+	}
+	
+	/**
+	 * Calculate the new service combinations list based on the current load buffer.
 	 * This is calculated by re-rating the service combinations based on failure rates calculated 
-	 * from the message content.
-	 * @param content the given planner message content object
+	 * from the load buffer.
 	 * @return the newly calculated service combinations
 	 */
-	public List<ServiceCombination> calculateNewServiceCombinations(PlannerMessageContent content) {
+	public List<ServiceCombination> calculateNewServiceCombinations() {
+		
+		Map<String, Integer> fullLoadMap = new HashMap<>();
+		
+		for (Map<String, Integer> loads : loadBuffer.values()) {
+			for (String key : loads.keySet()) {
+				if (fullLoadMap.get(key) != null) {
+					fullLoadMap.put(key, fullLoadMap.get(key) + loads.get(key));
+				}
+				else {
+					fullLoadMap.put(key, loads.get(key));
+				}
+			}
+		}
+		
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(knowledge.getSystemRequirement());
-		return requirementClass.getNewServiceCombinations(availableServiceCombinations, content.getPublicServiceUsage(), knowledge);
+		return requirementClass.getNewServiceCombinations(availableServiceCombinations, fullLoadMap, knowledge);
 	}
 	
 	/**
