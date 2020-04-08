@@ -312,7 +312,7 @@ public class SystemProfileController implements Initializable {
 		
 		UnaryOperator<Change> integerFilter = change -> {
 		    String newText = change.getControlNewText();
-		    if (newText.matches("-?([1-9][0-9]*)?")) { 
+		    if (newText.matches("-?([1-9][0-9]*)?") || newText.matches("0")) { 
 		        return change;
 		    }
 		    return null;
