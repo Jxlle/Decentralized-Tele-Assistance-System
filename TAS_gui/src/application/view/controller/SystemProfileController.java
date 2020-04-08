@@ -556,6 +556,14 @@ public class SystemProfileController implements Initializable {
 	            fail.showAndWait();
 			}
 			else {
+				
+				if (ratingTypeComboBox.getValue().equals(RatingType.SCORE)) {
+					Alert fail = new Alert(AlertType.INFORMATION);
+		            fail.setHeaderText("Work in progress");
+		            fail.setContentText("Some features may not work correctly / are not finished with the score rating type.");
+		            fail.showAndWait();
+				}
+				
 				profile.clearEntities();
 				profile.setExecutionCycles(Integer.valueOf(executionCyclesTextField.getText()));
 				profile.setWorkflowCycles(Integer.valueOf(workflowCyclesTextField.getText()));
