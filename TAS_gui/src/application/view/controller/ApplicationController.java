@@ -981,14 +981,21 @@ public class ApplicationController implements Initializable {
     	    @Override
     	    public void handle(ActionEvent event) {   
     	    	
-    	    	try (PrintWriter out = new PrintWriter(workflowPath)) {
-    	    	    out.println(workflowTextArea.getText());
-    	    	} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-    	    		
-    	    	workflowAnalyzed.put(selectedEntity.getEntityName(), false);
-    	    	updateWorkflowVisual();
+    	    	if (selectedEntity != null) {
+    				Alert fail = new Alert(AlertType.INFORMATION);
+    	            fail.setHeaderText("INFORMATION");
+    	            fail.setContentText("Not every type of workflow is supported yet. Make sure each service operation is not used multiple times throughout the workflow.");
+    	            fail.showAndWait();
+        	    	
+        	    	try (PrintWriter out = new PrintWriter(workflowPath)) {
+        	    	    out.println(workflowTextArea.getText());
+        	    	} catch (FileNotFoundException e) {
+    					e.printStackTrace();
+    				}
+        	    		
+        	    	workflowAnalyzed.put(selectedEntity.getEntityName(), false);
+        	    	updateWorkflowVisual();
+    	    	}
     	    }
     	});
     	
