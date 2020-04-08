@@ -69,6 +69,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -101,16 +102,16 @@ public class ApplicationController implements Initializable {
     // the path of important files 
     //String workflowPath = "src"+File.separator+"resources" + File.separator + "workflow_test1.txt";
     
-    String baseDir="";
+    static String baseDir="";
     
     String resourceDirPath = baseDir + "resources" + File.separator;
     String resultDirPath = baseDir + "results" + File.separator;
-    String fileDirPath = baseDir + "resources" + File.separator + "files" + File.separator;
+    static String fileDirPath = baseDir + "resources" + File.separator + "files" + File.separator;
     
     String workflowPath;
     String workflowFilePath = fileDirPath + "workflow" + File.separator;
     String profileFilePath = fileDirPath + "profiles" + File.separator;
-    String entityFilePath = fileDirPath + "entities" + File.separator;
+    static String entityFilePath = fileDirPath + "entities" + File.separator;
     String serviceDataFilePath = fileDirPath + "service data" + File.separator;
     String resultFilePath = resultDirPath + "result.csv";
     String logFilePath = resultDirPath + "log.csv";
@@ -340,12 +341,30 @@ public class ApplicationController implements Initializable {
     	deleteButton.setText("Delete");
     	deleteButton.setOnAction(new EventHandler<ActionEvent>() {
 		    @Override
-			public void handle(ActionEvent event) {   	
+			public void handle(ActionEvent event) {   	   	
 		    	AnchorPane parent = (AnchorPane) deleteButton.getParent();
-		    	Button button = (Button) parent.getChildren().get(0);
-		    	entities.removeIf(x -> x.getEntityName().equals(button.getText()));
-		    	entityListView.getItems().remove(parent);
-		    	workflowAnalyzed.remove(button.getText());
+		    	Button button = (Button) parent.getChildren().get(1);
+	    		System.out.println(button.getText());
+		    	
+		    	Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete " + button.getText() + " ? This action can not be reverted.", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+		    	alert.showAndWait();
+
+		    	if (alert.getResult() == ButtonType.YES) {			    	
+			    	File entityFile = new File(entityFilePath + button.getText() + ".xml"); 
+		    		
+			    	if (!entityFile.exists()) {
+						Alert fail = new Alert(AlertType.INFORMATION);
+			            fail.setHeaderText("WARNING");
+			            fail.setContentText("The entity file cannot be deleted. Please make sure that the file has the same name as the entity.");
+			            fail.showAndWait();
+			    	}
+			    	else {
+				    	entities.removeIf(x -> x.getEntityName().equals(button.getText()));
+				    	entityListView.getItems().remove(parent);
+				    	workflowAnalyzed.remove(button.getText());
+			    		entityFile.delete();
+			    	}
+		    	}
 		    }
 		});
     	
@@ -1152,7 +1171,6 @@ public class ApplicationController implements Initializable {
     			    		}
     			    	}
     			    	
-    			    	System.out.println("analyzed");
     			    	analyzed = true;
     			    	entityBeingAnalyzed = "";
     			    	

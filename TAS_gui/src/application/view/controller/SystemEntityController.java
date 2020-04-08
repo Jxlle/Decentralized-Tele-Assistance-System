@@ -50,6 +50,7 @@ import tas.mape.knowledge.Goal;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.MAPEKComponent.Builder;
 import tas.mape.system.entity.MAPEKSystemEntity;
+import tas.mape.system.entity.MAPEKSystemEntityWriter;
 import tas.mape.system.entity.WorkflowExecutor;
 
 public class SystemEntityController implements Initializable {
@@ -542,6 +543,7 @@ public class SystemEntityController implements Initializable {
 		    		}
 		    	
 		    		MAPEKSystemEntity systemEntity = new MAPEKSystemEntity(entityName, workflowExecutor, component);
+		    		MAPEKSystemEntityWriter.writeToXml(systemEntity, new File(ApplicationController.entityFilePath + systemEntity.getEntityName() + ".xml"));
 		    		parent.addEntityToList(systemEntity);
 		    		stage.close();
 		    	}
