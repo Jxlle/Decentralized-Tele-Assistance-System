@@ -1,9 +1,13 @@
 package application.view.controller;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import application.model.ServiceCombinationEntry;
@@ -131,27 +135,27 @@ public class SystemRunResultController {
 			// Table column data
 			TableColumn<ServiceCombinationEntry, Integer> cycleColumn = new TableColumn<ServiceCombinationEntry,Integer>("Cycle");
 			cycleColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Integer>("cycle"));
-			cycleColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(6));
+			cycleColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
 			cycleColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 			
 			TableColumn<ServiceCombinationEntry, Double> totalCostColumn = new TableColumn<ServiceCombinationEntry,Double>("Total Cost");
 			totalCostColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("totalCost"));
-			totalCostColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(6));
+			totalCostColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
 			totalCostColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 
 			TableColumn<ServiceCombinationEntry, Double> totalFailRateColumn = new TableColumn<ServiceCombinationEntry,Double>("Total FailRate");
 			totalFailRateColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("totalFailRate"));
-			totalFailRateColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(6));
+			totalFailRateColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
 			totalFailRateColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 			
 			TableColumn<ServiceCombinationEntry, Double> protocolMessageCountColumn = new TableColumn<ServiceCombinationEntry,Double>("Messages sent during protocol");
 			protocolMessageCountColumn.setCellValueFactory(new PropertyValueFactory<ServiceCombinationEntry, Double>("protocolMessageCount"));
-			protocolMessageCountColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(3));
+			protocolMessageCountColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
 			protocolMessageCountColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 			
 			TableColumn<ServiceCombinationEntry, String> servicesColumn = new TableColumn<>("Services");
 			servicesColumn.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
-			servicesColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(6));
+			servicesColumn.prefWidthProperty().bind(entityResultTable.widthProperty().divide(5));
 			servicesColumn.setSortable(false);
 			
 			Callback<TableColumn<ServiceCombinationEntry, String>, TableCell<ServiceCombinationEntry, String>> cellFactoryShow
@@ -289,9 +293,31 @@ public class SystemRunResultController {
 		
 		if (protocolMessages.size() > 0) {
 			
+			double maxErrorValue = 0;
+			DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
+			DecimalFormat df = new DecimalFormat("#.#", otherSymbols);
+			df.setRoundingMode(RoundingMode.CEILING);
+			
+			for (String entity : dataPoints.keySet()) {
+				
+				XYChart.Series<Number, Number> series = new Series<Number, Number>();
+				series.setName(entity);
+				
+				for (int i = 0; i < dataPoints.get(entity).size(); i++) {
+					
+					double entityFailRate = systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate");
+					double systemFailRate = dataPoints.get(entity).get(i).getKey();
+					double errorValue = Math.abs(entityFailRate - systemFailRate);
+					
+					if (errorValue > maxErrorValue) {
+						maxErrorValue = Double.valueOf(df.format(errorValue));
+					}
+				}
+			}
+			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
-			NumberAxis yAxis = new NumberAxis("Chosen Service Combination Failure Rate error \n(system approximation <-> entity approximation)", 0, 1, 0.1);
+			NumberAxis yAxis = new NumberAxis("Chosen Service Combination Failure Rate error \n(system approximation <-> entity approximation)", 0, maxErrorValue, 0.1);
 			
 			// Set chart position & size
 			LineChart<Number, Number> failureRateErrorChart = new LineChart<Number, Number>(xAxis, yAxis); 
@@ -466,9 +492,23 @@ public class SystemRunResultController {
 		
 		if (protocolMessages.size() > 0) {
 			
+			double maxFailRate = 0;
+			DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
+			DecimalFormat df = new DecimalFormat("#.#", otherSymbols);
+			df.setRoundingMode(RoundingMode.CEILING);
+			
+			for (String entity : dataPoints.keySet()) {	
+				for (int i = 0; i < dataPoints.get(entity).size(); i++) {
+					double systemFailRate = dataPoints.get(entity).get(i).getKey();
+					if (systemFailRate > maxFailRate) {
+						maxFailRate = Double.valueOf(df.format(systemFailRate));
+					}
+				}
+			}
+			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
-			NumberAxis yAxis = new NumberAxis("Total service combination failure rate \n(approximated by workflow analyzer)", 0, 1, 0.1);
+			NumberAxis yAxis = new NumberAxis("Total service combination failure rate \n(approximated by workflow analyzer)", 0, maxFailRate, 0.1);
 			
 			// Set chart position & size
 			LineChart<Number, Number> failureRateSystemChart = new LineChart<Number, Number>(xAxis, yAxis); 
@@ -499,9 +539,26 @@ public class SystemRunResultController {
 		
 		if (protocolMessages.size() > 0) {
 			
+			double maxFailRate = 0;
+			DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
+			DecimalFormat df = new DecimalFormat("#.#", otherSymbols);
+			df.setRoundingMode(RoundingMode.CEILING);
+			
+			// Set data points
+			for (String entity : systemRunProbe.getDataPoints().keySet()) {			
+				for (int i = 0; i < systemRunProbe.getChosenCombinations().get(entity).size(); i++) {
+					double combinationFailRate = systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate");	
+					
+					if (combinationFailRate > maxFailRate) {
+						maxFailRate = Double.valueOf(df.format(combinationFailRate));
+					}
+				}
+			}
+			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
-			NumberAxis yAxis = new NumberAxis("Total service combination failure rate \n(what entity thinks)", 0, 1, 0.1);
+			NumberAxis yAxis = new NumberAxis("Total service combination failure rate \n(what entity thinks)", 0, maxFailRate, 0.1);
+				
 			
 			// Set chart position & size
 			LineChart<Number, Number> failureRateChart = new LineChart<Number, Number>(xAxis, yAxis); 
