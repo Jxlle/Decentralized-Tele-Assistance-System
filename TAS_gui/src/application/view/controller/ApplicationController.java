@@ -344,9 +344,8 @@ public class ApplicationController implements Initializable {
 			public void handle(ActionEvent event) {   	   	
 		    	AnchorPane parent = (AnchorPane) deleteButton.getParent();
 		    	Button button = (Button) parent.getChildren().get(1);
-	    		System.out.println(button.getText());
 		    	
-		    	Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete " + button.getText() + " ? This action can not be reverted.", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+		    	Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete " + button.getText() + "? This action can't be reverted.", ButtonType.YES, ButtonType.NO);
 		    	alert.showAndWait();
 
 		    	if (alert.getResult() == ButtonType.YES) {			    	
@@ -435,7 +434,7 @@ public class ApplicationController implements Initializable {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.shared.registry", "service.individual1.registry")))
 			 	   .initializePlanner()
 				   .initializeAnalyzer(100, 1)
-				   .initializeMonitor(0.01, 0.01);
+				   .initializeMonitor(0.01, 0.02);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
@@ -443,7 +442,7 @@ public class ApplicationController implements Initializable {
 		MAPEKComponent component = builder.build();
 		MAPEKSystemEntity systemEntity = new MAPEKSystemEntity("Default System Entity", workflowExecutor, component);
 		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
-		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.185));
+		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.19));
 		addEntityToList(systemEntity);
 		
 		workflowExecutor = new WorkflowExecutor(
@@ -457,7 +456,7 @@ public class ApplicationController implements Initializable {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.shared.registry", "service.individual2.registry")))
 			 	   .initializePlanner()
 				   .initializeAnalyzer(100, 1)
-				   .initializeMonitor(0.01, 0.01);
+				   .initializeMonitor(0.01, 0.02);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
@@ -465,7 +464,7 @@ public class ApplicationController implements Initializable {
 		component = builder.build();
 		systemEntity = new MAPEKSystemEntity("Default System Entity 2", workflowExecutor, component);
 		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
-		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.185));
+		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.19));
 		addEntityToList(systemEntity);
     }
     

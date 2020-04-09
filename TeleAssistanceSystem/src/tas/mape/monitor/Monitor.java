@@ -223,7 +223,7 @@ public class Monitor {
 		
 		if (Math.abs(failureDelta) >= minFailureDelta) {
 			
-			int deltaCount = (int) (failureDelta / minFailureDelta);
+			int deltaCount = (int) Math.round(failureDelta / (double) minFailureDelta);
 			newFailureRate += deltaCount * failureChange;
 		}
 		

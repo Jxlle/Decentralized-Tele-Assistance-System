@@ -55,14 +55,34 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 		PlannerMessageContent content = null;
 		PlannerMessage response = null;
 		
+		ServiceCombination chosenCombination = null;
+		List<ServiceCombination> newServiceCombinations = null;
+		List<ServiceCombination> bestCombinations = null;
+		List<ServiceCombination> leastOffendingCombinations = null;
+		
 		System.out.println("\t> " + messageType + " , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 		switch(messageType) {
 		
 		// First offer has been received
-		case "FIRST_OFFER":
-			receiver.addToLoadBuffer(sender, message.getContent());
-			receiver.setAvailableServiceCombinations(receiver.calculateNewServiceCombinations());
-			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
+		case "FIRST_OFFER":		
+			receiver.addToLoadBuffer(sender, message.getContent());					
+			newServiceCombinations = receiver.calculateNewServiceCombinations();
+			System.out.println("service count: " + newServiceCombinations.size());
+			bestCombinations = new ArrayList<>();
+			
+			for (ServiceCombination s2 : newServiceCombinations) {
+				if (s2.getRating().equals(newServiceCombinations.get(0).getRating())) {
+					bestCombinations.add(s2);
+				}
+			}
+			
+			leastOffendingCombinations = receiver.getLeastOffendingCombinations(bestCombinations).getKey();
+			
+			receiver.setAvailableServiceCombinations(newServiceCombinations);
+			chosenCombination = leastOffendingCombinations.get(AbstractProtocol.random.nextInt(leastOffendingCombinations.size()));
+			System.err.println("chosen combination rating: " + chosenCombination.getRating() + " combination: "+ chosenCombination);
+			receiver.setCurrentServiceCombination(chosenCombination);
+			
 			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), sharedRegistryEndpoints, messageContentPercentage);
 			response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "NEW_OFFER", content);
 			
@@ -75,8 +95,8 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 		// New offer has been received
 		case "NEW_OFFER":
 			receiver.addToLoadBuffer(sender, message.getContent());
-			List<ServiceCombination> newServiceCombinations = receiver.calculateNewServiceCombinations();
-			ServiceCombination chosenCombination = null;
+			newServiceCombinations = receiver.calculateNewServiceCombinations();
+			chosenCombination = null;
 			String responseType = null;
 			
 			switch (newServiceCombinations.get(0).getRatingType()) {
@@ -85,7 +105,7 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 				
 				chosenCombination = newServiceCombinations.get(0);
 				
-				if (chosenCombination.hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == maxIterations) {				
+				if (chosenCombination.hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == (maxIterations - 1)) {				
 					responseType = "ACCEPTED_OFFER";
 				}
 				else {
@@ -95,41 +115,48 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 				
 			case CLASS:
 				
-				if (messageID != maxIterations) {
+				if (messageID != (maxIterations - 1)) {
 					
-					List<ServiceCombination> bestCombinations = new ArrayList<>();
+					bestCombinations = new ArrayList<>();
 					boolean found =  false;
 					
 					for (ServiceCombination s2 : newServiceCombinations) {
 						if (s2.getRating().equals(newServiceCombinations.get(0).getRating())) {
 							bestCombinations.add(s2);
 						}
+						
+						if (receiver.getCurrentServiceCombination() != null && s2.hasSameCollection(receiver.getCurrentServiceCombination())) {
+							System.out.println(receiver.getServiceCombinationOffences(receiver.getCurrentServiceCombination()) + " new rating: " + s2.getRating() + " , old rating: " + receiver.getCurrentServiceCombination().getRating() +
+									"is in best combinations: " + bestCombinations.contains(s2));
+						}
 					}
+					
+					System.out.println("best combination count : " + bestCombinations.size() + " , rating: " + bestCombinations.get(0).getRating());
 					
 					for (ServiceCombination s : bestCombinations) {
 						if (s.hasSameCollection(receiver.getCurrentServiceCombination())) {
-							if (!s.getRating().equals(receiver.getCurrentServiceCombination().getRating())) {
-								break;
-							}
-							else {
+							//s.getRating().equals(receiver.getCurrentServiceCombination().getRating())
+							System.out.println("least offending value: " + receiver.getLeastOffendingCombinations(bestCombinations).getValue());
+							if (s.getRating().equals(receiver.getCurrentServiceCombination().getRating()) || receiver.getLeastOffendingCombinations(bestCombinations).getValue().equals(receiver.getServiceCombinationOffences(receiver.getCurrentServiceCombination()))) {
 								responseType = "ACCEPTED_OFFER";
 								chosenCombination = s;
 								found = true;
-								break;
 							}
+							
+							break;
 						}
-						
-						break;
 					}
 					
 					if (!found) {
 						responseType = "NEW_OFFER";	
-						chosenCombination = bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));
+						leastOffendingCombinations = receiver.getLeastOffendingCombinations(bestCombinations).getKey();
+						System.out.println("NEW: count: " + leastOffendingCombinations.size() + ", value: " + receiver.getLeastOffendingCombinations(bestCombinations).getValue());
+						chosenCombination = leastOffendingCombinations.get(AbstractProtocol.random.nextInt(leastOffendingCombinations.size()));//bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));
 					}		
 				}
 				else {
 					responseType = "ACCEPTED_OFFER";
-					chosenCombination = receiver.getAvailableServiceCombinations().get(0);
+					chosenCombination = receiver.getCurrentServiceCombination();
 				}	
 				
 				break;
@@ -138,7 +165,7 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 				throw new IllegalStateException("The protocol doesn't support this rating type. Type: " + newServiceCombinations.get(0).getRatingType());	
 			}
 			
-			System.err.print("OLD offer \n" + receiver.getAvailableServiceCombinations().get(0).toString() + ", class: " + receiver.getAvailableServiceCombinations().get(0).getRating() + "score: " + receiver.getAvailableServiceCombinations().get(0).getProperty("FailureRate") + "\n");
+			System.err.print("OLD offer \n" + receiver.getCurrentServiceCombination()+ ", class: " + receiver.getCurrentServiceCombination().getRating() + "score: " + receiver.getCurrentServiceCombination().getProperty("FailureRate") + "\n");
 			System.err.print("NEW offer \n" + chosenCombination.toString() + ", class: " + chosenCombination.getRating() + "score: " +  chosenCombination.getProperty("FailureRate") + "\n");
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);	

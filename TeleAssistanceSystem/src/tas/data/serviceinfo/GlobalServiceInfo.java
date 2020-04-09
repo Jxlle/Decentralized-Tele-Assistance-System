@@ -142,8 +142,8 @@ public class GlobalServiceInfo {
      */
     public static void loadData(File file) {
     	GlobalServiceInfoLoader.loadFromXml(file);
-    	/*ChangeToDefaultServices();
-    	GlobalServiceInfoWriter.writeToXml(file);*/
+    	//ChangeToDefaultServices();
+    	//GlobalServiceInfoWriter.writeToXml(file);
     }
     
     /**
@@ -173,29 +173,29 @@ public class GlobalServiceInfo {
 		
 		// Alarm Services
 		AlarmService alarm1 = new AlarmService("AlarmService1", "service.alarmService1");
-		alarm1.getServiceDescription().getCustomProperties().put("Cost", 8.0);
+		alarm1.getServiceDescription().getCustomProperties().put("Cost", 6.0);
 		alarm1.getServiceDescription().getCustomProperties().put("FailureRate", 0.05);
 		alarm1.startService();
 		alarm1.register(serviceRegistry1);
 		services.add(alarm1);
 		
 		AlarmService alarm2 = new AlarmService("AlarmService2", "service.alarmService2");
-		alarm2.getServiceDescription().getCustomProperties().put("Cost", 6.0);
-		alarm2.getServiceDescription().getCustomProperties().put("FailureRate", 0.08);
+		alarm2.getServiceDescription().getCustomProperties().put("Cost", 5.0);
+		alarm2.getServiceDescription().getCustomProperties().put("FailureRate", 0.07);
 		alarm2.startService();
 		alarm2.register(serviceRegistry1);
 		services.add(alarm2);
 		
 		AlarmService alarm3 = new AlarmService("AlarmService3", "service.alarmService3");
-		alarm3.getServiceDescription().getCustomProperties().put("Cost", 4.0);
-		alarm3.getServiceDescription().getCustomProperties().put("FailureRate", 0.11);
+		alarm3.getServiceDescription().getCustomProperties().put("Cost", 6.0);
+		alarm3.getServiceDescription().getCustomProperties().put("FailureRate", 0.05);
 		alarm3.startService();
 		alarm3.register(serviceRegistry2);
 		services.add(alarm3);
 	
 		AlarmService alarm4 = new AlarmService("AlarmService4", "service.alarmService4");
 		alarm4.getServiceDescription().getCustomProperties().put("Cost", 5.0);
-		alarm4.getServiceDescription().getCustomProperties().put("FailureRate", 0.08);
+		alarm4.getServiceDescription().getCustomProperties().put("FailureRate", 0.07);
 		alarm4.startService();
 		alarm4.register(serviceRegistry2);
 		services.add(alarm4);
@@ -217,15 +217,15 @@ public class GlobalServiceInfo {
 		
 		// Medical Analysis Services
 		MedicalAnalysisService medicalAnalysis1 = new MedicalAnalysisService("MedicalService1", "service.medical1");
-		medicalAnalysis1.getServiceDescription().getCustomProperties().put("Cost", 8.0);
-		medicalAnalysis1.getServiceDescription().getCustomProperties().put("FailureRate", 0.12);
+		medicalAnalysis1.getServiceDescription().getCustomProperties().put("Cost", 4.0);
+		medicalAnalysis1.getServiceDescription().getCustomProperties().put("FailureRate", 0.11);
 		medicalAnalysis1.startService();
 		medicalAnalysis1.register(serviceRegistry1);
 		services.add(medicalAnalysis1);
 	
 		MedicalAnalysisService medicalAnalysis2 = new MedicalAnalysisService("MedicalService2", "service.medical2");
-		medicalAnalysis2.getServiceDescription().getCustomProperties().put("Cost", 6.0);
-		medicalAnalysis2.getServiceDescription().getCustomProperties().put("FailureRate", 0.08);
+		medicalAnalysis2.getServiceDescription().getCustomProperties().put("Cost", 5.0);
+		medicalAnalysis2.getServiceDescription().getCustomProperties().put("FailureRate", 0.07);
 		medicalAnalysis2.startService();
 		medicalAnalysis2.register(serviceRegistry1);
 		services.add(medicalAnalysis2);
@@ -239,7 +239,7 @@ public class GlobalServiceInfo {
 		
 		MedicalAnalysisService medicalAnalysis4 = new MedicalAnalysisService("MedicalService4", "service.medical4");
 		medicalAnalysis4.getServiceDescription().getCustomProperties().put("Cost", 5.0);
-		medicalAnalysis4.getServiceDescription().getCustomProperties().put("FailureRate", 0.08);
+		medicalAnalysis4.getServiceDescription().getCustomProperties().put("FailureRate", 0.07);
 		medicalAnalysis4.startService();
 		medicalAnalysis4.register(serviceRegistry2);
 		services.add(medicalAnalysis4);
@@ -254,22 +254,22 @@ public class GlobalServiceInfo {
 		
 		// Drug Services
 		DrugService drugService = new DrugService("DrugService1", "service.drug1");
-		drugService.getServiceDescription().getCustomProperties().put("Cost", 8.0);
+		drugService.getServiceDescription().getCustomProperties().put("Cost", 6.0);
 		drugService.getServiceDescription().getCustomProperties().put("FailureRate", 0.12);
 		drugService.startService();
 		drugService.register(serviceRegistry1);
 		services.add(drugService);
 		
 		DrugService drugService2 = new DrugService("DrugService2", "service.drug2");
-		drugService2.getServiceDescription().getCustomProperties().put("Cost", 6.0);
+		drugService2.getServiceDescription().getCustomProperties().put("Cost", 5.0);
 		drugService2.getServiceDescription().getCustomProperties().put("FailureRate", 0.08);
 		drugService2.startService();
 		drugService2.register(serviceRegistry1);
 		services.add(drugService2);
 		
 		DrugService drugService3 = new DrugService("DrugService3", "service.drug3");
-		drugService3.getServiceDescription().getCustomProperties().put("Cost", 4.0);
-		drugService3.getServiceDescription().getCustomProperties().put("FailureRate", 0.11);
+		drugService3.getServiceDescription().getCustomProperties().put("Cost", 6.0);
+		drugService3.getServiceDescription().getCustomProperties().put("FailureRate", 0.12);
 		drugService3.startService();
 		drugService3.register(serviceRegistry2);
 		services.add(drugService3);

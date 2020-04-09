@@ -46,28 +46,28 @@ public class WorkflowExecutor {
     	currentSteps = 0;
     }
     
-    private synchronized void start(){
+    private synchronized void start() {
     	isStopped = false;
     }
     
-    public synchronized void pause(){
+    public synchronized void pause() {
     	isPaused = true;
     }
     
-    public synchronized void go(){
+    public synchronized void go() {
     	isPaused = false;
     	this.notifyAll();
     }
     
-    public boolean isStopped(){
+    public boolean isStopped()  {
     	return isStopped;
     }
     
-    public boolean isPaused(){
+    public boolean isPaused() {
     	return isPaused;
     }
     
-    public int getCurrentSteps(){
+    public int getCurrentSteps() {
     	return currentSteps;
     }
     
@@ -150,7 +150,6 @@ public class WorkflowExecutor {
 		    	if (isStopped) {
 		    		break;
 		    	}
-			
 		    }
 		    
 		    stop();

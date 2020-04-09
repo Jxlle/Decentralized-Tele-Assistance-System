@@ -9,7 +9,7 @@
 <Property>
 <Name>Cost</Name>
 <Type>Double</Type>
-<Value>8.0</Value>
+<Value>6.0</Value>
 </Property>
 <Property>
 <Name>FailureRate</Name>
@@ -26,7 +26,7 @@
 <Property>
 <Name>Cost</Name>
 <Type>Double</Type>
-<Value>6.0</Value>
+<Value>5.0</Value>
 </Property>
 <Property>
 <Name>FailureRate</Name>
@@ -43,12 +43,12 @@
 <Property>
 <Name>Cost</Name>
 <Type>Double</Type>
-<Value>4.0</Value>
+<Value>6.0</Value>
 </Property>
 <Property>
 <Name>FailureRate</Name>
 <Type>Double</Type>
-<Value>0.11</Value>
+<Value>0.05</Value>
 </Property>
 </Properties>
 </Service>
@@ -94,12 +94,12 @@
 <Property>
 <Name>Cost</Name>
 <Type>Double</Type>
-<Value>8.0</Value>
+<Value>4.0</Value>
 </Property>
 <Property>
 <Name>FailureRate</Name>
 <Type>Double</Type>
-<Value>0.12</Value>
+<Value>0.11</Value>
 </Property>
 </Properties>
 </Service>
@@ -111,7 +111,7 @@
 <Property>
 <Name>Cost</Name>
 <Type>Double</Type>
-<Value>6.0</Value>
+<Value>5.0</Value>
 </Property>
 <Property>
 <Name>FailureRate</Name>
@@ -179,7 +179,7 @@
 <Property>
 <Name>Cost</Name>
 <Type>Double</Type>
-<Value>8.0</Value>
+<Value>6.0</Value>
 </Property>
 <Property>
 <Name>FailureRate</Name>
@@ -196,7 +196,7 @@
 <Property>
 <Name>Cost</Name>
 <Type>Double</Type>
-<Value>6.0</Value>
+<Value>5.0</Value>
 </Property>
 <Property>
 <Name>FailureRate</Name>

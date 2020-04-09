@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
@@ -145,13 +146,51 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		loadBuffer.put(sender,  content.getPublicServiceUsage());
 	}
 	
-	/**
-	 * Calculate the new service combinations list based on the current load buffer.
-	 * This is calculated by re-rating the service combinations based on failure rates calculated 
-	 * from the load buffer.
-	 * @return the newly calculated service combinations
-	 */
-	public List<ServiceCombination> calculateNewServiceCombinations() {
+	public Pair<List<ServiceCombination>, Integer> getLeastOffendingCombinations(List<ServiceCombination> combinations) {	
+		
+		System.out.println("-------------------------------------------");
+		
+		int LeastOffences = Integer.MAX_VALUE;
+		List<ServiceCombination> bestCombinations = new ArrayList<>();
+		
+		for (ServiceCombination combination : combinations) {		
+			int offences = getServiceCombinationOffences(combination);
+			
+			System.out.println("offences: " + offences);
+			if (offences < LeastOffences) {
+				LeastOffences = offences;
+			}
+		}
+		
+		for (ServiceCombination combination : combinations) {	
+			
+			int offences = getServiceCombinationOffences(combination);
+			
+			if (offences == LeastOffences) {
+				bestCombinations.add(combination);
+			}
+		}
+		
+		return new Pair<List<ServiceCombination>, Integer>(bestCombinations, LeastOffences);
+	}
+	
+	public int getServiceCombinationOffences(ServiceCombination combination) {
+		
+		int offences = 0;
+		
+		for (Description description : combination.getDescriptions()) {			
+			WeightedCollection<ServiceDescription> serviceUsage = combination.getAllServices(description);
+			for (ServiceDescription service : serviceUsage.getItems()) {	
+				if (getFullLoadMap().get(service.getServiceEndpoint()) != null) {
+					offences++;
+				}		
+			}
+		}
+		
+		return offences;
+	}
+	
+	public Map<String, Integer> getFullLoadMap() {
 		
 		Map<String, Integer> fullLoadMap = new HashMap<>();
 		
@@ -166,8 +205,18 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			}
 		}
 		
+		return fullLoadMap;
+	}
+	
+	/**
+	 * Calculate the new service combinations list based on the current load buffer.
+	 * This is calculated by re-rating the service combinations based on failure rates calculated 
+	 * from the load buffer.
+	 * @return the newly calculated service combinations
+	 */
+	public List<ServiceCombination> calculateNewServiceCombinations() {	
 		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(knowledge.getSystemRequirement());
-		return requirementClass.getNewServiceCombinations(availableServiceCombinations, fullLoadMap, knowledge);
+		return requirementClass.getNewServiceCombinations(availableServiceCombinations, getFullLoadMap(), knowledge);
 	}
 	
 	/**

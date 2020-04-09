@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.SystemProfileController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.SystemProfileController">
    <children>
       <Accordion prefHeight="480.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <panes>
@@ -47,13 +47,15 @@
                               <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="152.0" minHeight="10.0" prefHeight="152.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="473.0" minHeight="10.0" prefHeight="357.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="# Execution Cycles: " />
-                              <GridPane GridPane.rowIndex="9">
+                              <GridPane GridPane.rowIndex="11">
                                 <columnConstraints>
                                   <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
@@ -74,7 +76,7 @@
                                     </ListView>
                                  </children>
                               </GridPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
                                  <GridPane.margin>
                                     <Insets top="30.0" />
                                  </GridPane.margin>
@@ -140,8 +142,8 @@
                                     <Label fx:id="protocolTypeLabel" text="A single entity system doesn't use a  protocol." visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
-                              <Label text="Participating entities: " GridPane.rowIndex="8" />
-                              <ListView fx:id="entityListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                              <Label text="Participating entities: " GridPane.rowIndex="10" />
+                              <ListView fx:id="entityListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
@@ -165,6 +167,20 @@
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
+                              </AnchorPane>
+                              <Label text="Max Load Value" GridPane.rowIndex="7" />
+                              <ComboBox prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" right="20.0" />
+                                 </GridPane.margin>
+                              </ComboBox>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <TextField layoutX="48.0" layoutY="1.0" prefWidth="200.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="3.0" />
+                                 </children>
                               </AnchorPane>
                            </children>
                         </GridPane>

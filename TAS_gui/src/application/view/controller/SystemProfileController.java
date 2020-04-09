@@ -340,7 +340,7 @@ public class SystemProfileController implements Initializable {
 				if (newValue.equals(RatingType.SCORE)) {
 					Alert fail = new Alert(AlertType.INFORMATION);
 		            fail.setHeaderText("Work in progress");
-		            fail.setContentText("Some features may not work correctly / are not finished with the score rating type.");
+		            fail.setContentText("Some features may not work correctly or are not finished with the score rating type.");
 		            fail.showAndWait();
 				}
 			}

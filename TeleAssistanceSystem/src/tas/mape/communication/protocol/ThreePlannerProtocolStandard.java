@@ -86,6 +86,9 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 		String sender = message.getSenderEndpoint();
 		PlannerMessageContent content = null;
 		PlannerMessage response = null;
+		List<ServiceCombination> newServiceCombinations = null;
+		List<ServiceCombination> bestCombinations = null;
+		List<ServiceCombination> leastOffendingCombinations = null;
 		
 		System.out.println("\t> " + messageType + " , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 		switch(messageType) {
@@ -113,7 +116,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 		case "NEW_OFFER":
 			
 			receiver.addToLoadBuffer(sender, message.getContent());
-			List<ServiceCombination> newServiceCombinations = receiver.calculateNewServiceCombinations();
+			newServiceCombinations = receiver.calculateNewServiceCombinations();
 			ServiceCombination chosenCombination = null;
 			String responseType = null;
 			
@@ -123,7 +126,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 				
 				chosenCombination = newServiceCombinations.get(0);
 				
-				if (chosenCombination.hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == maxIterations) {						
+				if (chosenCombination.hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == (maxIterations - 2)) {						
 					responseType = "ACCEPTED_OFFER";
 				}
 				else {	
@@ -133,9 +136,9 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 				
 			case CLASS:
 				
-				if (messageID != maxIterations) {
+				if (messageID != (maxIterations - 2)) {
 					
-					List<ServiceCombination> bestCombinations = new ArrayList<>();
+					bestCombinations = new ArrayList<>();
 					boolean found =  false;
 					
 					for (ServiceCombination s2 : newServiceCombinations) {
@@ -144,31 +147,31 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 						}
 					}
 					
+					System.out.println("best combination count : " + bestCombinations.size() + " , rating: " + bestCombinations.get(0).getRating());
+					
 					for (ServiceCombination s : bestCombinations) {
 						if (s.hasSameCollection(receiver.getCurrentServiceCombination())) {
-							if (!s.getRating().equals(receiver.getCurrentServiceCombination().getRating())) {
-								found = false;
-								break;
-							}
-							else {
+							//s.getRating().equals(receiver.getCurrentServiceCombination().getRating())
+							//System.out.println("least offending value: " + receiver.getLeastOffendingCombinations(bestCombinations).getValue());
+							if (s.getRating().equals(receiver.getCurrentServiceCombination().getRating()) || receiver.getLeastOffendingCombinations(bestCombinations).getValue().equals(receiver.getServiceCombinationOffences(receiver.getCurrentServiceCombination()))) {
 								responseType = "ACCEPTED_OFFER";
 								chosenCombination = s;
 								found = true;
-								break;
 							}
+							
+							break;
 						}
-						
-						break;
 					}
 					
 					if (!found) {
-						responseType = "NEW_OFFER";
-						chosenCombination = bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));
+						responseType = "NEW_OFFER";	
+						leastOffendingCombinations = receiver.getLeastOffendingCombinations(bestCombinations).getKey();
+						chosenCombination = leastOffendingCombinations.get(AbstractProtocol.random.nextInt(leastOffendingCombinations.size()));//bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));
 					}		
 				}
 				else {
 					responseType = "ACCEPTED_OFFER";
-					chosenCombination = receiver.getAvailableServiceCombinations().get(0);
+					chosenCombination = receiver.getCurrentServiceCombination();
 				}		
 				
 				break;

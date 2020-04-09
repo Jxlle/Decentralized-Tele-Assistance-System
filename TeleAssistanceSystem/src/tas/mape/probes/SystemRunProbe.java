@@ -57,8 +57,6 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		}
 		
 		connectedEntities.clear();
-		
-		System.out.println("RESET");
 	}
 	
 	/**
@@ -150,7 +148,6 @@ public class SystemRunProbe implements PlannerProbeInterface {
 			}
 		}
 		else {
-			System.out.println("ADDED");
 			protocolMessagesCount.add(protocolMessages);
 		}
 		

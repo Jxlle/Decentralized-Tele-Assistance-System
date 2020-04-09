@@ -1,6 +1,6 @@
 <tas.data.systemprofile.SystemProfile>
-  <executionCycles>40</executionCycles>
-  <workflowCycles>1000</workflowCycles>
+  <executionCycles>100</executionCycles>
+  <workflowCycles>6000</workflowCycles>
   <maxProtocolIterations>200</maxProtocolIterations>
   <messageContentPercentage>100</messageContentPercentage>
   <systemType>TRIPLE_ENTITY</systemType>
