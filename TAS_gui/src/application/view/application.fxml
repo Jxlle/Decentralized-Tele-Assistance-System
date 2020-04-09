@@ -187,7 +187,7 @@
                                                    <items>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                                          <children>
-                                                            <AnchorPane fx:id="systemRunChartPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                            <AnchorPane fx:id="systemRunChartPane" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                          </children>
                                                       </AnchorPane>
                                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -216,12 +216,12 @@
                                                    <items>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                                          <children>
-                                                            <AnchorPane fx:id="protocolMessageChartPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                            <AnchorPane fx:id="protocolMessageChartPane" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                          </children>
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                                          <children>
-                                                            <AnchorPane fx:id="protocolFlowAnchorPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <AnchorPane fx:id="protocolFlowAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <children>
                                                                   <Label fx:id="protocolDetailsText" alignment="CENTER" text="Select a data point to see protocol details" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                                </children></AnchorPane>
@@ -239,7 +239,7 @@
                                                 <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <items>
                                                     <AnchorPane fx:id="ratingEvolutionSystemChartPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
-                                                      <AnchorPane fx:id="ratingEvolutionChartPane" prefHeight="200.0" prefWidth="200.0" />
+                                                      <AnchorPane fx:id="ratingEvolutionChartPane" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
                                                   </items>
                                                 </SplitPane>
                                              </children>
@@ -254,11 +254,11 @@
                                                   <items>
                                                       <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                                                         <items>
-                                                            <AnchorPane fx:id="failureRateSystemChartPane" prefHeight="200.0" prefWidth="200.0" />
+                                                            <AnchorPane fx:id="failureRateSystemChartPane" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
                                                           <AnchorPane fx:id="failureRateChartPane" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
                                                         </items>
                                                       </SplitPane>
-                                                      <AnchorPane fx:id="failureRateErrorChartPane" prefHeight="200.0" prefWidth="200.0" />
+                                                      <AnchorPane fx:id="failureRateErrorChartPane" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
                                                   </items>
                                                 </SplitPane>
                                              </children>
@@ -269,7 +269,7 @@
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
-                                                <AnchorPane fx:id="costChartPane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                <AnchorPane fx:id="costChartPane" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                              </children>
                                           </AnchorPane>
                                       </content>
