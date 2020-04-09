@@ -332,6 +332,19 @@ public class SystemProfileController implements Initializable {
 		ratingTypes.addAll(RatingType.values());
 		ratingTypeComboBox.setItems(ratingTypes);
 		ratingTypeComboBox.setValue(profile.getRatingType());
+		ratingTypeComboBox.valueProperty().addListener(new ChangeListener<RatingType>() {
+
+			@Override
+			public void changed(ObservableValue<? extends RatingType> observable, RatingType oldValue,
+					RatingType newValue) {
+				if (newValue.equals(RatingType.SCORE)) {
+					Alert fail = new Alert(AlertType.INFORMATION);
+		            fail.setHeaderText("Work in progress");
+		            fail.setContentText("Some features may not work correctly / are not finished with the score rating type.");
+		            fail.showAndWait();
+				}
+			}
+			});
 		
 		ObservableList<SystemType> systemTypes = FXCollections.observableArrayList();
 		systemTypes.addAll(SystemType.values());
@@ -555,15 +568,7 @@ public class SystemProfileController implements Initializable {
 	            fail.setContentText("Some participating entity isn't present in the entity list. Choose a valid entity.");
 	            fail.showAndWait();
 			}
-			else {
-				
-				if (ratingTypeComboBox.getValue().equals(RatingType.SCORE)) {
-					Alert fail = new Alert(AlertType.INFORMATION);
-		            fail.setHeaderText("Work in progress");
-		            fail.setContentText("Some features may not work correctly / are not finished with the score rating type.");
-		            fail.showAndWait();
-				}
-				
+			else {				
 				profile.clearEntities();
 				profile.setExecutionCycles(Integer.valueOf(executionCyclesTextField.getText()));
 				profile.setWorkflowCycles(Integer.valueOf(workflowCyclesTextField.getText()));
