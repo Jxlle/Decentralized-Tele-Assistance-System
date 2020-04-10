@@ -127,14 +127,6 @@ public class SystemEntityController implements Initializable {
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
-		initializeStrategyData();
-		initializeWorkflowButton();
-		initializeGoalStuff();
-		initializeAddButton();
-		setTooltips();
-		addPropertyTableEntries();
-		addRegistryChoices();
 	}
 	
 	public void setStage(Stage dialogStage) {
@@ -187,6 +179,10 @@ public class SystemEntityController implements Initializable {
 			        }
 			    }
 			});
+			
+			if (entity != null && entity.getManagingSystem().getKnowledge().getRegistryEndpoints().contains(registry.getServiceDescription().getServiceEndpoint())) {
+				registryBox.setSelected(true);
+			}
 			
 			registryPane.getChildren().addAll(registryLabel, registryBox);
 			registryList.getItems().add(registryPane);
@@ -304,6 +300,29 @@ public class SystemEntityController implements Initializable {
 		entityData.add(new SystemEntityPropertyEntry("Failure Change", "Double", ""));
 		
 		propertyTable.setItems(entityData);
+		
+		if (entity != null) {
+			SystemEntityPropertyEntry entry = propertyTable.getItems().stream().filter(x -> x.getName().equals("Entity Name")).findAny().orElse(null);
+			entry.setValue(entity.getEntityName());
+			entityName = entity.getEntityName();
+			
+			entry = propertyTable.getItems().stream().filter(x -> x.getName().equals("Load Failure Delta")).findAny().orElse(null);
+			entry.setValue(entity.getManagingSystem().getKnowledge().getLoadFailureDelta() + "");
+			loadFailureDelta = entity.getManagingSystem().getKnowledge().getLoadFailureDelta();
+			
+			entry = propertyTable.getItems().stream().filter(x -> x.getName().equals("Combination Limit")).findAny().orElse(null);
+			entry.setValue(entity.getManagingSystem().getAnalyzer().getCombinationLimit() + "");	
+			combinationLimit = entity.getManagingSystem().getAnalyzer().getCombinationLimit();
+			
+			entry = propertyTable.getItems().stream().filter(x -> x.getName().equals("Min Failure Delta")).findAny().orElse(null);
+			entry.setValue(entity.getManagingSystem().getMonitor().getMinFailureDelta() + "");	
+			minFailureDelta = entity.getManagingSystem().getMonitor().getMinFailureDelta();
+			
+			entry = propertyTable.getItems().stream().filter(x -> x.getName().equals("Failure Change")).findAny().orElse(null);
+			entry.setValue(entity.getManagingSystem().getMonitor().getFailureChange() + "");	
+			failureChange = entity.getManagingSystem().getMonitor().getFailureChange();
+		}	
+		
 		propertyTable.setEditable(true);
 		propertyTable.setRowFactory(r -> new TableRow<SystemEntityPropertyEntry>() {	
             private Tooltip tooltip = new Tooltip();
@@ -390,6 +409,10 @@ public class SystemEntityController implements Initializable {
 	            string.equals(x.getStrategy() + ": " + x.getStrategyDescription())).findFirst().orElse(null);
 			}
 		});
+		
+		if (entity != null) {
+			generationStrategyComboBox.setValue(strategies.stream().filter(x -> x.getStrategy().equals(entity.getManagingSystem().getAnalyzer().getServiceGenerationStrategy())).findAny().orElse(null));
+		}
 	}
 	
 	private void initializeWorkflowButton() {
@@ -410,9 +433,20 @@ public class SystemEntityController implements Initializable {
 				}
 		    }
 		});
+		
+		if (entity != null) {
+			workflowBtn.setText(entity.getManagedSystem().getWorkflowPath());
+			workflowPath = entity.getManagedSystem().getWorkflowPath();
+		}
 	}
 	
 	private void initializeGoalStuff() {
+		
+		if (entity != null) {
+			for (Goal goal : entity.getManagingSystem().getKnowledge().getGoals()) {
+				addGoalToList(goal);
+			}
+		}
 		
 		SystemEntityController self = this;
 		
@@ -499,6 +533,10 @@ public class SystemEntityController implements Initializable {
 	
 	private void initializeAddButton() {
 		
+		if (entity != null) {
+			addBtn.setText("Modify System Entity");
+		}
+		
 		addBtn.setOnAction(new EventHandler<ActionEvent>() {
 		    @Override
 			public void handle(ActionEvent event) {
@@ -565,7 +603,12 @@ public class SystemEntityController implements Initializable {
 		    		
 		    		File entityFile = new File(ApplicationController.entityFilePath + systemEntity.getEntityName() + ".xml");
 		    		MAPEKSystemEntityWriter.writeToXml(systemEntity, entityFile);
-		    		parent.addEntityToList(systemEntity, entityFile);
+		    		
+		    		if (entity != null) {
+		    			parent.removeEntityFromList(entity);
+		    		}
+		    		
+		    		parent.addEntityToList(systemEntity, entityFile);	
 		    		stage.close();
 		    	}
 		    }
@@ -573,8 +616,13 @@ public class SystemEntityController implements Initializable {
 	}
 	
 	private boolean entityNameAlreadyExists() {
-		Optional<SystemEntityPropertyEntry> entry = propertyTable.getItems().stream().filter(x -> x.getName() == "Entity Name" && parent.entityNameExists(x.getValue())).findAny();		
-		return entry.isPresent() ? true : false;
+		Optional<SystemEntityPropertyEntry> entry = propertyTable.getItems().stream().filter(x -> x.getName() == "Entity Name" && parent.entityNameExists(x.getValue())).findAny();	
+		
+		if (entry.isPresent() && (entity == null  || !entity.getEntityName().equals(entry.get().getValue()))) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public class SystemEntityPropertyEntry {

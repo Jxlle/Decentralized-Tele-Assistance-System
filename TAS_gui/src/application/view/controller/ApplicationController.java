@@ -317,6 +317,12 @@ public class ApplicationController implements Initializable {
 
     }
     
+    public void removeEntityFromList(MAPEKSystemEntity entity) {
+		entities.remove(entity);
+		workflowAnalyzed.remove(entity.getEntityName());
+		entityListView.getItems().remove(entityListView.getItems().stream().filter(x -> x.getChildren().stream().filter(x2 -> x2 instanceof Button).map(Button.class::cast).anyMatch(x3 -> x3.getText().equals(entity.getEntityName()))).findAny().orElse(null));
+    }
+    
 	public void addEntityToList(MAPEKSystemEntity entity, File entityFile) {
 		
 		if (entities.stream().anyMatch(x -> x.getEntityName().equals(entity.getEntityName()))) {
@@ -373,6 +379,8 @@ public class ApplicationController implements Initializable {
 		    }
 		});
     	
+	    ApplicationController self = this;
+	    
     	Button inspectButton = new Button();
     	inspectButton.setPrefWidth(32);
     	inspectButton.setPrefHeight(32);
@@ -382,25 +390,25 @@ public class ApplicationController implements Initializable {
     	    @Override
     	    public void handle(ActionEvent event) {
         		try {	
-        		    /*FXMLLoader loader = new FXMLLoader();
-        		    loader.setLocation(MainGui.class.getResource("view/systemProfileDialog.fxml"));
-        		    AnchorPane pane = (AnchorPane) loader.load();
-
-        		    Stage dialogStage = new Stage();
-        		    dialogStage.setTitle("System Profile");
-        		    
-        			SystemProfileController controller = (SystemProfileController) loader.getController();
-        			controller.setStage(dialogStage);
-        			controller.setEntityData(entities);
-        			controller.setFilePath(profilePath);
-
-        		    Scene dialogScene = new Scene(pane);
-        		    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
-
-        		    dialogStage.initOwner(primaryStage);
-        		    dialogStage.setResizable(false);
-        		    dialogStage.setScene(dialogScene);
-        		    dialogStage.show();*/    
+	    		    FXMLLoader loader = new FXMLLoader();
+	    		    loader.setLocation(MainGui.class.getResource("view/systemEntity.fxml"));
+	    		    AnchorPane systemEntityPane = (AnchorPane) loader.load();
+	
+	    		    Stage dialogStage = new Stage();
+	    		    dialogStage.setTitle("Add System Entity");
+	    		    dialogStage.setResizable(false);
+	    		    
+	    		    SystemEntityController controller = (SystemEntityController) loader.getController();
+	    		    controller.setStage(dialogStage);
+					controller.setParent(self);
+					controller.setEntity(entity);
+	
+	    		    Scene dialogScene = new Scene(systemEntityPane);
+	        	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
+	    		    dialogStage.initOwner(primaryStage);
+	    		    dialogStage.setScene(dialogScene);
+	        	    dialogStage.setResizable(false);
+	    		    dialogStage.show();   
         		    
         		} catch (Exception e) {
         		    e.printStackTrace();
@@ -478,8 +486,8 @@ public class ApplicationController implements Initializable {
 		try {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.shared.registry", "service.individual1.registry")))
 			 	   .initializePlanner()
-				   .initializeAnalyzer(100, 1)
-				   .initializeMonitor(0.01, 0.02);
+				   .initializeAnalyzer(1000, 1)
+				   .initializeMonitor(0.005, 0.005);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
@@ -503,8 +511,8 @@ public class ApplicationController implements Initializable {
 		try {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.shared.registry", "service.individual2.registry")))
 			 	   .initializePlanner()
-				   .initializeAnalyzer(100, 1)
-				   .initializeMonitor(0.01, 0.02);
+				   .initializeAnalyzer(1000, 1)
+				   .initializeMonitor(0.005, 0.005);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
@@ -969,6 +977,7 @@ public class ApplicationController implements Initializable {
 	    		    SystemEntityController controller = (SystemEntityController) loader.getController();
 	    		    controller.setStage(dialogStage);
 	    		    controller.setParent(self);
+					controller.setEntity(null);
 	
 	    		    Scene dialogScene = new Scene(systemEntityPane);
 	        	    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
