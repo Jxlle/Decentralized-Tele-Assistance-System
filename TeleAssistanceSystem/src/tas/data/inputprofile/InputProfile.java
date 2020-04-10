@@ -286,4 +286,11 @@ public class InputProfile {
 		
 		return null;
 	}
+	
+	/**
+	 * Remove the current variables in this profile.
+	 */
+	public void removeVariables() {
+		variables.clear(); 
+	}
 }

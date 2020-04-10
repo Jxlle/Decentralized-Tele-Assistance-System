@@ -484,6 +484,9 @@ public class SystemProfileController implements Initializable {
 			@Override
 			public void changed(ObservableValue<? extends DataType> observable, DataType oldValue,
 					DataType newValue) {
+				
+            	AddVariableButton.setText("Add Variable");
+				
 				if (!VariableTextField.getText().trim().isEmpty() && !VariableTextField.getText().startsWith(" ") && dataTypeComboBox.getValue() != null) {
 					AddVariableButton.setDisable(false);
 				}
@@ -494,6 +497,9 @@ public class SystemProfileController implements Initializable {
 	    });
 		
 		VariableTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+			
+        	AddVariableButton.setText("Add Variable");
+			
 			if (!VariableTextField.getText().trim().isEmpty() && !newValue.startsWith(" ") && dataTypeComboBox.getValue() != null) {
 				AddVariableButton.setDisable(false);
 			}
@@ -503,9 +509,16 @@ public class SystemProfileController implements Initializable {
 		});
 		
 		AddVariableButton.setOnAction(event -> {
-			variableListView.getItems().add(VariableTextField.getText());
-			inputVariables.add(new Pair<>(new InputProfileVariable(VariableTextField.getText()), dataTypeComboBox.getValue().toString()));
-			VariableTextField.setText("");
+			if (AddVariableButton.getText().equals("Add Variable")) {
+				variableListView.getItems().add(VariableTextField.getText());
+				inputVariables.add(new Pair<>(new InputProfileVariable(VariableTextField.getText()), dataTypeComboBox.getValue().toString()));
+				VariableTextField.setText("");
+			}
+			else if (AddVariableButton.getText().equals("Delete Variable")) {
+				String variableName = variableListView.getSelectionModel().getSelectedItem();
+				inputVariables.remove(inputVariables.stream().filter(x -> x.getKey().getName().equals(variableName)).findAny().orElse(null));
+				variableListView.getItems().remove(variableName);
+			}
     	});
 		
 		
@@ -518,6 +531,9 @@ public class SystemProfileController implements Initializable {
                         String oldVal, String newVal) {
                     	
                     	valueData.clear();
+                    	
+                    	AddVariableButton.setText("Delete Variable");
+                    	AddVariableButton.setDisable(false);
                     	
                     	Pair<InputProfileVariable, String> currentEntry =  inputVariables.stream().filter(x-> x.getKey().getName().equals(newVal)).findAny().orElse(null);
                     	currentVariable = currentEntry.getKey();
@@ -654,6 +670,11 @@ public class SystemProfileController implements Initializable {
 				profile.setWorkflowCycles(Integer.valueOf(workflowCyclesTextField.getText()));
 				profile.setRatingType(ratingTypeComboBox.getValue());
 				profile.setSystemType(systemTypeComboBox.getValue());
+				profile.removeVariables();
+				
+				for (Pair<InputProfileVariable, String> pair : inputVariables) {
+					profile.addVariable(pair.getKey());
+				}
 				
 				if (protocolTypeComboBox.isVisible()) {
 					profile.setProtocolType(protocolTypeComboBox.getValue());
