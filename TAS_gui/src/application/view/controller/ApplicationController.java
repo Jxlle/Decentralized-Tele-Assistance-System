@@ -237,6 +237,9 @@ public class ApplicationController implements Initializable {
     Button saveWorkflowButton;
     
     @FXML
+    Button AddInputProfileButton;
+    
+    @FXML
     MenuItem saveReliabilityGraphMenuItem;
 
     @FXML
@@ -1094,6 +1097,37 @@ public class ApplicationController implements Initializable {
         		
         		if (file != null) {
         			addEntityToList(MAPEKSystemEntityLoader.loadFromXml(file), file);
+        		}
+    	    }
+    	});
+    	
+    	
+    	AddInputProfileButton.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override
+    	    public void handle(ActionEvent event) {
+        		try {	
+        		    FXMLLoader loader = new FXMLLoader();
+        		    loader.setLocation(MainGui.class.getResource("view/systemProfileDialog.fxml"));
+        		    AnchorPane pane = (AnchorPane) loader.load();
+
+        		    Stage dialogStage = new Stage();
+        		    dialogStage.setTitle("System Profile");
+        		    
+        			SystemProfileController controller = (SystemProfileController) loader.getController();
+        			controller.setStage(dialogStage);
+        			controller.setEntityData(entities);
+        			controller.setFilePath(null);
+
+        		    Scene dialogScene = new Scene(pane);
+        		    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
+
+        		    dialogStage.initOwner(primaryStage);
+        		    dialogStage.setResizable(false);
+        		    dialogStage.setScene(dialogScene);
+        		    dialogStage.show();    		    
+        		    
+        		} catch (Exception e) {
+        		    e.printStackTrace();
         		}
     	    }
     	});

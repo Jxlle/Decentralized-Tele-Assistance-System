@@ -8,8 +8,8 @@
 <AnalyzerCombinationLimit>1000</AnalyzerCombinationLimit>
 <KnowledgeLoadFailureDelta>10</KnowledgeLoadFailureDelta>
 <Registries>
-<RegistryEndpoint>service.shared.registry</RegistryEndpoint>
 <RegistryEndpoint>service.individual2.registry</RegistryEndpoint>
+<RegistryEndpoint>service.shared.registry</RegistryEndpoint>
 </Registries>
 <Goals>
 <Goal>

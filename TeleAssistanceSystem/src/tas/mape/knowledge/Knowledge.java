@@ -85,6 +85,7 @@ public class Knowledge {
 		
 		this.loadFailureDelta = loadFailureDelta;	
 		this.registryEndpoints = serviceRegistryEndpoints;
+		System.out.println("made new entity");
 		serviceBlackList = new HashMap<>();
 		cachePlanComponents = new ArrayList<>();
 		usedServices = new HashMap<>();
@@ -274,7 +275,7 @@ public class Knowledge {
 	 * @return the used registry endpoints
 	 */
 	public List<String> getRegistryEndpoints() {
-		return registryEndpoints;
+		return new ArrayList<>(registryEndpoints);
 	}
 
 	/**
@@ -436,7 +437,7 @@ public class Knowledge {
 	 * @return the system goals
 	 */
 	public List<Goal> getGoals() {
-		return goals;
+		return new ArrayList<>(goals);
 	}
 	
 	/**
@@ -475,7 +476,7 @@ public class Knowledge {
 	 * @return the cache plan components 
 	 */
 	public List<PlanComponent> getCachePlanComponents() {
-		return cachePlanComponents;
+		return new ArrayList<>(cachePlanComponents);
 	}
 	
 	/**

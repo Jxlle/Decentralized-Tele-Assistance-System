@@ -1,18 +1,22 @@
-<tas.data.systemprofile.SystemProfile>
+<tas.data.inputprofile.InputProfile>
   <executionCycles>20</executionCycles>
   <workflowCycles>5000</workflowCycles>
   <maxProtocolIterations>0</maxProtocolIterations>
   <messageContentPercentage>0</messageContentPercentage>
   <systemType>SINGLE_ENTITY</systemType>
   <ratingType>CLASS</ratingType>
+  <maxLoadValue>
+    <maxLoadType>CUSTOM_AMOUNT_OF_ENTITIES</maxLoadType>
+    <value>2</value>
+  </maxLoadValue>
   <entityRequirementTypes>
     <entry>
-      <string>Default System Entity 3</string>
-      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
+      <string>Default System Entity</string>
+      <tas.data.inputprofile.SystemRequirementType>COST_AND_RELIABILITY</tas.data.inputprofile.SystemRequirementType>
     </entry>
   </entityRequirementTypes>
   <participatingEntities>
-    <string>Default System Entity 3</string>
+    <string>Default System Entity</string>
   </participatingEntities>
   <variables>
     <variable>
@@ -33,9 +37,9 @@
         </value>
         <value>
           <data class="int">2</data>
-          <ratio>0.25</ratio>
+          <ratio>0.5</ratio>
         </value>
       </values>
     </variable>
   </variables>
-</tas.data.systemprofile.SystemProfile>
+</tas.data.inputprofile.InputProfile>

@@ -179,7 +179,7 @@
                                  <top>
                                     <AnchorPane prefHeight="25.0" prefWidth="400.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <Button layoutX="267.0" layoutY="2.0" mnemonicParsing="false" text="Add Input Profile" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="AddInputProfileButton" layoutX="267.0" layoutY="2.0" mnemonicParsing="false" text="Add Input Profile" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                  </top>

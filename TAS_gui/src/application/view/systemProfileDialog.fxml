@@ -60,8 +60,11 @@
                                   <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="317.0" minHeight="10.0" prefHeight="250.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="317.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="317.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="158.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <Label text="Variables :">
@@ -69,11 +72,26 @@
                                           <Insets left="10.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <ListView fx:id="variableListView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                                    <ListView fx:id="variableListView" prefHeight="288.0" prefWidth="144.0" GridPane.rowIndex="1">
                                        <GridPane.margin>
                                           <Insets bottom="5.0" left="5.0" right="5.0" />
                                        </GridPane.margin>
                                     </ListView>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4">
+                                       <children>
+                                          <Button fx:id="AddVariableButton" disable="true" mnemonicParsing="false" text="Add Variable" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                                       <children>
+                                          <TextField fx:id="VariableTextField" layoutX="33.0" layoutY="8.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
+                                       <children>
+                                          <ComboBox fx:id="dataTypeComboBox" layoutX="2.0" layoutY="2.0" prefWidth="150.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                       </children>
+                                    </AnchorPane>
                                  </children>
                               </GridPane>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
@@ -169,7 +187,7 @@
                                  </GridPane.margin>
                               </AnchorPane>
                               <Label text="Max Load Value" GridPane.rowIndex="7" />
-                              <ComboBox prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                              <ComboBox fx:id="maxLoadTypeComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets left="20.0" right="20.0" />
                                  </GridPane.margin>
@@ -179,7 +197,7 @@
                                     <Insets left="20.0" />
                                  </GridPane.margin>
                                  <children>
-                                    <TextField layoutX="48.0" layoutY="1.0" prefWidth="200.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="3.0" />
+                                    <TextField fx:id="maxLoadValueTextField" layoutX="48.0" layoutY="1.0" prefWidth="200.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="3.0" />
                                  </children>
                               </AnchorPane>
                            </children>

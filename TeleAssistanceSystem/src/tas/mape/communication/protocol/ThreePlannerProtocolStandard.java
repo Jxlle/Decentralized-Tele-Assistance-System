@@ -30,6 +30,11 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 		Planner sender = components.get(startIndex);
 		Planner receiver = components.get(receiverIndices.get(AbstractProtocol.random.nextInt(receiverIndices.size())));
 		
+		// Ask data from third planner
+		PlannerMessage message = new PlannerMessage(messageID, getThirdEntityEndpoint(sender.getEndpoint(), receiver.getEndpoint()), sender.getEndpoint(), "ASK_DATA", null);
+		sender.sendMessage(message);
+		
+		// Choose first service combination
 		if (sender.getAvailableServiceCombinations().get(0).getRatingType() == RatingType.CLASS) {
 			// Choose random best combination
 			List<ServiceCombination> bestCombinations = new ArrayList<>();
@@ -48,10 +53,6 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 		
 		// Set chosen combination
 		sender.setCurrentServiceCombination(chosenCombination);
-		
-		// Ask data from third planner
-		PlannerMessage message = new PlannerMessage(messageID, getThirdEntityEndpoint(sender.getEndpoint(), receiver.getEndpoint()), sender.getEndpoint(), "ASK_DATA", null);
-		sender.sendMessage(message);
 		
 		// Update message ID
 		messageID++;
@@ -86,6 +87,8 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 		String sender = message.getSenderEndpoint();
 		PlannerMessageContent content = null;
 		PlannerMessage response = null;
+		
+		ServiceCombination chosenCombination = null;
 		List<ServiceCombination> newServiceCombinations = null;
 		List<ServiceCombination> bestCombinations = null;
 		List<ServiceCombination> leastOffendingCombinations = null;
@@ -99,10 +102,36 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 			messageID++;
 			
 		    response = new PlannerMessage(messageID, getThirdEntityEndpoint(message.getSenderEndpoint(), receiver.getEndpoint()), receiver.getEndpoint(), "ASK_DATA", null);
-			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));	
 			receiver.sendMessage(response);	
 			
-			receiver.addToLoadBuffer(sender, message.getContent());
+			receiver.addToLoadBuffer(sender, message.getContent());					
+			newServiceCombinations = receiver.calculateNewServiceCombinations();
+			
+			switch (newServiceCombinations.get(0).getRatingType()) {
+			
+				case SCORE:
+					
+					chosenCombination = newServiceCombinations.get(0);
+					break;
+					
+				case CLASS:
+					
+					bestCombinations = new ArrayList<>();
+					
+					for (ServiceCombination s2 : newServiceCombinations) {
+						if (s2.getRating().equals(newServiceCombinations.get(0).getRating())) {
+							bestCombinations.add(s2);
+						}
+					}
+					
+					leastOffendingCombinations = receiver.getLeastOffendingCombinations(bestCombinations).getKey();
+					chosenCombination = leastOffendingCombinations.get(AbstractProtocol.random.nextInt(leastOffendingCombinations.size()));
+					break;
+					
+				default:
+					throw new IllegalStateException("The protocol doesn't support this rating type. Type: " + newServiceCombinations.get(0).getRatingType());	
+			}
+			
 			receiver.setAvailableServiceCombinations(receiver.calculateNewServiceCombinations());
 			receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
 			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), findSharedRegistryEndpoints(sender, receiver.getEndpoint()), messageContentPercentage);
@@ -117,7 +146,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 			
 			receiver.addToLoadBuffer(sender, message.getContent());
 			newServiceCombinations = receiver.calculateNewServiceCombinations();
-			ServiceCombination chosenCombination = null;
+			chosenCombination = null;
 			String responseType = null;
 			
 			switch (newServiceCombinations.get(0).getRatingType()) {
@@ -199,7 +228,6 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 					receiver.finishedProtocol(messageID);
 				}
 				else {
-					
 					response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "GIVE_DATA", content);
 					receiver.sendMessage(response);
 					
@@ -230,7 +258,9 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 			break;
 			
 		case "GIVE_DATA":		
-			receiver.addToLoadBuffer(sender, message.getContent());		
+			receiver.addToLoadBuffer(sender, message.getContent());	
+			newServiceCombinations = receiver.calculateNewServiceCombinations();
+			receiver.setAvailableServiceCombinations(newServiceCombinations);
 			messageID++;		
 			break;
 			

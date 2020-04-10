@@ -67,19 +67,34 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 		case "FIRST_OFFER":		
 			receiver.addToLoadBuffer(sender, message.getContent());					
 			newServiceCombinations = receiver.calculateNewServiceCombinations();
-			System.out.println("service count: " + newServiceCombinations.size());
-			bestCombinations = new ArrayList<>();
 			
-			for (ServiceCombination s2 : newServiceCombinations) {
-				if (s2.getRating().equals(newServiceCombinations.get(0).getRating())) {
-					bestCombinations.add(s2);
-				}
+			switch (newServiceCombinations.get(0).getRatingType()) {
+			
+				case SCORE:
+					
+					chosenCombination = newServiceCombinations.get(0);
+					break;
+					
+				case CLASS:
+					
+					bestCombinations = new ArrayList<>();
+					
+					for (ServiceCombination s2 : newServiceCombinations) {
+						if (s2.getRating().equals(newServiceCombinations.get(0).getRating())) {
+							bestCombinations.add(s2);
+						}
+					}
+					
+					leastOffendingCombinations = receiver.getLeastOffendingCombinations(bestCombinations).getKey();
+					chosenCombination = leastOffendingCombinations.get(AbstractProtocol.random.nextInt(leastOffendingCombinations.size()));
+					break;
+					
+				default:
+					throw new IllegalStateException("The protocol doesn't support this rating type. Type: " + newServiceCombinations.get(0).getRatingType());	
+					
 			}
 			
-			leastOffendingCombinations = receiver.getLeastOffendingCombinations(bestCombinations).getKey();
-			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);
-			chosenCombination = leastOffendingCombinations.get(AbstractProtocol.random.nextInt(leastOffendingCombinations.size()));
 			System.err.println("chosen combination rating: " + chosenCombination.getRating() + " combination: "+ chosenCombination);
 			receiver.setCurrentServiceCombination(chosenCombination);
 			

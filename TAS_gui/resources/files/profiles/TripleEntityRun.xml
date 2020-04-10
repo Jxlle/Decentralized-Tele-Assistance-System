@@ -1,23 +1,27 @@
-<tas.data.systemprofile.SystemProfile>
-  <executionCycles>100</executionCycles>
+<tas.data.inputprofile.InputProfile>
+  <executionCycles>25</executionCycles>
   <workflowCycles>6000</workflowCycles>
   <maxProtocolIterations>200</maxProtocolIterations>
   <messageContentPercentage>100</messageContentPercentage>
   <systemType>TRIPLE_ENTITY</systemType>
   <protocolType>STANDARD_PROTOCOL_3ENTITIES</protocolType>
   <ratingType>CLASS</ratingType>
+  <maxLoadValue>
+    <maxLoadType>CUSTOM_AMOUNT_OF_ENTITIES</maxLoadType>
+    <value>2</value>
+  </maxLoadValue>
   <entityRequirementTypes>
     <entry>
       <string>Default System Entity</string>
-      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
+      <tas.data.inputprofile.SystemRequirementType>COST_AND_RELIABILITY</tas.data.inputprofile.SystemRequirementType>
     </entry>
     <entry>
       <string>Default System Entity 2</string>
-      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
+      <tas.data.inputprofile.SystemRequirementType>COST_AND_RELIABILITY</tas.data.inputprofile.SystemRequirementType>
     </entry>
     <entry>
       <string>Default System Entity 3</string>
-      <profile.SystemRequirementType>COST_AND_RELIABILITY</profile.SystemRequirementType>
+      <tas.data.inputprofile.SystemRequirementType>COST_AND_RELIABILITY</tas.data.inputprofile.SystemRequirementType>
     </entry>
   </entityRequirementTypes>
   <participatingEntities>
@@ -49,4 +53,4 @@
       </values>
     </variable>
   </variables>
-</tas.data.systemprofile.SystemProfile>
+</tas.data.inputprofile.InputProfile>

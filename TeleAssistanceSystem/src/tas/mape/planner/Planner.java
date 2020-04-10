@@ -109,7 +109,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * @return the available service combinations
 	 */
 	public List<ServiceCombination> getAvailableServiceCombinations() {
-		return availableServiceCombinations;
+		return new ArrayList<>(availableServiceCombinations);
 	}
 	
 	/**
@@ -148,15 +148,11 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	
 	public Pair<List<ServiceCombination>, Integer> getLeastOffendingCombinations(List<ServiceCombination> combinations) {	
 		
-		System.out.println("-------------------------------------------");
-		
 		int LeastOffences = Integer.MAX_VALUE;
 		List<ServiceCombination> bestCombinations = new ArrayList<>();
 		
 		for (ServiceCombination combination : combinations) {		
 			int offences = getServiceCombinationOffences(combination);
-			
-			System.out.println("offences: " + offences);
 			if (offences < LeastOffences) {
 				LeastOffences = offences;
 			}
@@ -197,6 +193,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		for (Map<String, Integer> loads : loadBuffer.values()) {
 			for (String key : loads.keySet()) {
 				if (fullLoadMap.get(key) != null) {
+					//System.out.println("UPDATE: " + fullLoadMap.get(key) + " " +  loads.get(key));
 					fullLoadMap.put(key, fullLoadMap.get(key) + loads.get(key));
 				}
 				else {
@@ -205,6 +202,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			}
 		}
 		
+		//System.out.println(fullLoadMap);
 		return fullLoadMap;
 	}
 	

@@ -18,25 +18,50 @@ public class InputProfile {
 	private SystemType systemType;
 	private ProtocolType protocolType;
 	private RatingType ratingType;
+	private MaxLoadValue maxLoadValue;
 	private HashMap<String, SystemRequirementType> entityRequirementTypes = new HashMap<>();
 	private List<String> participatingEntities = new ArrayList<>();
 	private List<InputProfileVariable> variables = new ArrayList<>();
 	
 	/**
-	 * Create an empty system profile
+	 * Create an empty input profile
 	 */
 	public InputProfile() {}
 	
 	/**
-	 * Return the system profile system type
-	 * @return the system profile system type
+	 * Return the max load defined in this input profile
+	 * @return the max load defined in this input profile
+	 */
+	public int getMaxLoad() {
+		return maxLoadValue.getMaxLoad(getAmountOfParticipatingEntities(), workflowCycles);
+	}
+	
+	/**
+	 * Return the input profile max load value
+	 * @return the input profile max load value
+	 */
+	public MaxLoadValue getMaxloadValue() {
+		return maxLoadValue;
+	}
+	
+	/**
+	 * Set the input profile max load value to the given max load value
+	 * @param maxLoadValue the given max load value
+	 */
+	public void setmaxLoadValue(MaxLoadValue maxLoadValue) {
+		this.maxLoadValue = maxLoadValue;
+	}
+	
+	/**
+	 * Return the input profile system type
+	 * @return the input profile system type
 	 */
 	public SystemType getSystemType() {
 		return systemType;
 	}
 	
 	/**
-	 * Set the system profile system type to the given type
+	 * Set the input profile system type to the given type
 	 * @param systemType the given system type
 	 */
 	public void setSystemType(SystemType systemType) {
@@ -44,15 +69,15 @@ public class InputProfile {
 	}
 	
 	/**
-	 * Return the system profile protocol type
-	 * @return the system profile protocol type
+	 * Return the input profile protocol type
+	 * @return the input profile protocol type
 	 */
 	public ProtocolType getProtocolType() {
 		return protocolType;
 	}
 	
 	/**
-	 * Set the system profile protocol class to the given type
+	 * Set the input profile protocol class to the given type
 	 * @param protocolType the given protocol type
 	 */
 	public void setProtocolType(ProtocolType protocolType) {
@@ -60,15 +85,15 @@ public class InputProfile {
 	}
 	
 	/**
-	 * Return the system profile max amount of protocol iterations
-	 * @return the system profile max amount of protocol iterations
+	 * Return the input profile max amount of protocol iterations
+	 * @return the input profile max amount of protocol iterations
 	 */
 	public int getMaxProtocolIterations() {
 		return maxProtocolIterations;
 	}
 	
 	/**
-	 * Set the system profile max amount of protocol iterations to the given value
+	 * Set the input profile max amount of protocol iterations to the given value
 	 * @param executionCycles the given max amount of protocol iterations
 	 */
 	public void setMaxProtocolIterations(int maxProtocolIterations) {
@@ -76,15 +101,15 @@ public class InputProfile {
 	}
 	
 	/**
-	 * Return the system profile amount of execution cycles
-	 * @return the system profile amount of execution cycles
+	 * Return the input profile amount of execution cycles
+	 * @return the input profile amount of execution cycles
 	 */
 	public int getExecutionCycles() {
 		return executionCycles;
 	}
 	
 	/**
-	 * Set the system profile amount of execution cycles to the given value
+	 * Set the input profile amount of execution cycles to the given value
 	 * @param executionCycles the given amount of execution cycles
 	 */
 	public void setExecutionCycles(int executionCycles) {
@@ -92,15 +117,15 @@ public class InputProfile {
 	}
 	
 	/**
-	 * Return the system profile amount of workflow cycles
-	 * @return the system profile amount of workflow cycles
+	 * Return the input profile amount of workflow cycles
+	 * @return the input profile amount of workflow cycles
 	 */
 	public int getWorkflowCycles() {
 		return workflowCycles;
 	}
 	
 	/**
-	 * Set the system profile amount of workflow cycles to the given value
+	 * Set the input profile amount of workflow cycles to the given value
 	 * @param workflowCycles the given amount of workflow cycles
 	 */
 	public void setWorkflowCycles(int workflowCycles) {
@@ -108,15 +133,15 @@ public class InputProfile {
 	}
 	
 	/**
-	 * Return the system profile rating type
-	 * @return the system profile rating type
+	 * Return the input profile rating type
+	 * @return the input profile rating type
 	 */
 	public RatingType getRatingType() {
 		return ratingType;
 	}
 	
 	/**
-	 * Set the system profile rating type to the given system rating type
+	 * Set the input profile rating type to the given system rating type
 	 * @param ratingtype the given system rating type
 	 */
 	public void setRatingType(RatingType ratingType) {
@@ -210,7 +235,7 @@ public class InputProfile {
 	}
 	
 	/**
-	 * Return the participating entity at the given index in the system profile list
+	 * Return the participating entity at the given index in the input profile list
 	 * @param index the given index
 	 * @return the participating entity at the given index
 	 */
@@ -224,6 +249,14 @@ public class InputProfile {
 	 */
 	public void addVariable(InputProfileVariable variable) {
 		this.variables.add(variable);
+	}
+	
+	/**
+	 * Return the list of input profile variables
+	 * @return the list of input profile variables
+	 */
+	public List<InputProfileVariable> getVariables() {
+		return new ArrayList<>(variables);
 	}
 	
 	/**

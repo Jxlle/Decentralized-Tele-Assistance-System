@@ -11,7 +11,7 @@ public class Convert {
 				case "boolean": 
 				case "Boolean":
 				{
-					if (realData.equals("true"))
+					if (data.equals("true"))
 						realData = true;
 					else
 						realData = false;
@@ -71,5 +71,15 @@ public class Convert {
 		}
 		
 		return realData;
+	}
+	
+	public enum DataType {
+		BOOLEAN,
+		SHORT,
+		INTEGER,
+		LONG,
+		FLOAT,
+		DOUBLE,
+		STRING;
 	}
 }

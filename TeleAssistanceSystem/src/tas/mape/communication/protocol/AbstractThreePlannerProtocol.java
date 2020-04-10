@@ -68,5 +68,6 @@ public abstract class AbstractThreePlannerProtocol extends AbstractPlannerProtoc
 		
 		// Update shared registry map
 		sharedRegistryEndpoints.put(components.get(c1).getEndpoint() + components.get(c2).getEndpoint(), sharedRegistryEndpointsLocal);	
+		System.out.println("c1: " + components.get(c1).getEndpoint() + " " + "c2: " + components.get(c2).getEndpoint()  + " " + sharedRegistryEndpointsLocal+ " " + sharedRegistryEndpointsLocal + " " + registryEndpointsOther);
 	}
 }
