@@ -33,6 +33,7 @@
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
                         <MenuButton mnemonicParsing="false" text="Open">
                           <items>
+                              <MenuItem fx:id="OpenSystemEntityMenuItem" mnemonicParsing="false" text="Open System Entity" />
                               <MenuItem fx:id="changeServiceCollectionMenuItem" mnemonicParsing="false" text="Change Service Data" />
                             <MenuItem fx:id="openServicesMenuItem" mnemonicParsing="false" text="Open Available Services" visible="false" />
                               <MenuItem fx:id="configureMenuItem" mnemonicParsing="false" text="Open Configuration" visible="false" />
@@ -60,7 +61,7 @@
                                  <top>
                                     <AnchorPane BorderPane.alignment="CENTER">
                                        <children>
-                                          <Button fx:id="addSystemEntityBtn" mnemonicParsing="false" text="Add system Entity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="addSystemEntityBtn" mnemonicParsing="false" text="Add System Entity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                  </top>
@@ -114,11 +115,6 @@
                                           </AnchorPane>
                                     </content>
                                   </Tab>
-                                    <Tab text="Properties">
-                                      <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                      </content>
-                                    </Tab>
                                 </tabs>
                               </TabPane>
                            </children>
@@ -138,7 +134,7 @@
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
                         <MenuButton mnemonicParsing="false" text="Open">
                            <items>
-                              <MenuItem fx:id="openProfileMenuItem" mnemonicParsing="false" text="Open Profile" />
+                              <MenuItem fx:id="openProfileMenuItem" mnemonicParsing="false" text="Open Input Profile" />
                               <MenuItem fx:id="openRunMenuItem" disable="true" mnemonicParsing="false" text="Open Run" visible="false" />
                               <MenuItem fx:id="openLogMenuItem" disable="true" mnemonicParsing="false" text="Open Log" visible="false" />
                            </items>
@@ -162,17 +158,32 @@
                <center>
                   <SplitPane dividerPositions="0.1" BorderPane.alignment="CENTER">
                     <items>
-                      <AnchorPane maxWidth="400.0" minWidth="350.0" prefWidth="400.0">
+                      <AnchorPane maxWidth="400.0" minWidth="-Infinity" prefWidth="400.0">
                            <children>
-                              <TitledPane animated="false" collapsible="false" layoutX="16.0" prefHeight="255.0" prefWidth="233.0" text="Input Profiles" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <content>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                              <BorderPane minWidth="-Infinity" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <center>
+                                    <AnchorPane prefHeight="200.0" prefWidth="400.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <ListView fx:id="profileListView" prefHeight="318.0" prefWidth="348.0" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0" />
+                                          <TitledPane animated="false" collapsible="false" prefWidth="400.0" text="Input Profiles" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                   <children>
+                                                      <ListView fx:id="profileListView" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0" />
+                                                   </children>
+                                                </AnchorPane>
+                                            </content>
+                                          </TitledPane>
                                        </children>
                                     </AnchorPane>
-                                </content>
-                              </TitledPane>
+                                 </center>
+                                 <top>
+                                    <AnchorPane prefHeight="25.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Button layoutX="267.0" layoutY="2.0" mnemonicParsing="false" text="Add Input Profile" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </top>
+                              </BorderPane>
                            </children>
                         </AnchorPane>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">

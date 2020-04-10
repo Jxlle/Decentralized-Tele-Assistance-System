@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.MainGui;
@@ -514,6 +515,12 @@ public class SystemEntityController implements Initializable {
 		            fail.setContentText("Not all properties in the property table are filled.");
 		            fail.showAndWait();	
 		    	}
+		    	else if (entityNameAlreadyExists()) {
+		    		Alert fail = new Alert(AlertType.WARNING);
+		            fail.setHeaderText("INVALID CONTENT");
+		            fail.setContentText("An entity with the chosen entity name already exists in the system.");
+		            fail.showAndWait();	
+		    	}
 		    	else {
 		    		
 		    		List<String> registryEndpoints = new ArrayList<>();
@@ -543,12 +550,19 @@ public class SystemEntityController implements Initializable {
 		    		}
 		    	
 		    		MAPEKSystemEntity systemEntity = new MAPEKSystemEntity(entityName, workflowExecutor, component);
-		    		MAPEKSystemEntityWriter.writeToXml(systemEntity, new File(ApplicationController.entityFilePath + systemEntity.getEntityName() + ".xml"));
-		    		parent.addEntityToList(systemEntity);
+		    		
+		    		File entityFile = new File(ApplicationController.entityFilePath + systemEntity.getEntityName() + ".xml");
+		    		MAPEKSystemEntityWriter.writeToXml(systemEntity, entityFile);
+		    		parent.addEntityToList(systemEntity, entityFile);
 		    		stage.close();
 		    	}
 		    }
 		});
+	}
+	
+	private boolean entityNameAlreadyExists() {
+		Optional<SystemEntityPropertyEntry> entry = propertyTable.getItems().stream().filter(x -> x.getName() == "Entity Name" && parent.entityNameExists(x.getValue())).findAny();		
+		return entry.isPresent() ? true : false;
 	}
 	
 	public class SystemEntityPropertyEntry {

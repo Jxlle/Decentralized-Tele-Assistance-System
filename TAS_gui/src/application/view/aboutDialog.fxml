@@ -7,6 +7,6 @@
 
 <AnchorPane prefHeight="120.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TextArea editable="false" layoutX="45.0" layoutY="-14.0" prefHeight="120.0" prefWidth="552.3495941162109" text="Decentralized Tele Assistance Service Exemplar - DTAS&#10;Version v1.7 [March 2020]&#10;&#10;The definition of the DTAS exemplar is a joint effort of the Computer Science &#10;Department at Linnaeus University (Sweden), York University (UK) and KULEUVEN (Belgium)&#10;&#10;Contact: AdaptWise Research Group   danny.weyns@lnu.se" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <TextArea editable="false" layoutX="45.0" layoutY="-14.0" prefHeight="120.0" prefWidth="552.3495941162109" text="Decentralized Tele Assistance Service Exemplar - DTAS&#10;Version v1.7 [April 2020]&#10;&#10;The definition of the DTAS exemplar is a joint effort of the Computer Science &#10;Department at Linnaeus University (Sweden), York University (UK) and KULEUVEN (Belgium)&#10;&#10;Contact: AdaptWise Research Group   danny.weyns@lnu.se" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
    </children>
 </AnchorPane>

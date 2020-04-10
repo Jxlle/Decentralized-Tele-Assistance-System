@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +49,7 @@ import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.system.entity.MAPEKComponent;
 import tas.mape.system.entity.MAPEKSystemEntity;
 import tas.mape.system.entity.MAPEKSystemEntityLoader;
+import tas.mape.system.entity.MAPEKSystemEntityWriter;
 import tas.mape.system.entity.WorkflowExecutor;
 import tas.workflowAnalyzer.WorkflowAnalyzer;
 import tas.mape.system.entity.MAPEKComponent.Builder;
@@ -125,7 +127,6 @@ public class ApplicationController implements Initializable {
     List<MAPEKSystemEntity> entities = new ArrayList<>();
     Map<String, Boolean> workflowAnalyzed = new HashMap<>(); 
     Map<String, List<ServiceRegistry>> entityRegistries;
-    Set<Button> profileRuns = new HashSet<>();
     Map<String, AnchorPane> servicePanes = new ConcurrentHashMap<>();
     Map<String, ListView<AnchorPane>> serviceRegistryPanes = new ConcurrentHashMap<>();
     Task<Void> progressTask;
@@ -260,6 +261,9 @@ public class ApplicationController implements Initializable {
     MenuItem changeServiceCollectionMenuItem;
     
     @FXML
+    MenuItem OpenSystemEntityMenuItem;
+    
+    @FXML
     ToolBar toolBar;
     
     @FXML
@@ -316,7 +320,17 @@ public class ApplicationController implements Initializable {
 
     }
     
-	public void addEntityToList(MAPEKSystemEntity entity) {
+	public void addEntityToList(MAPEKSystemEntity entity, File entityFile) {
+		
+		if (entities.stream().anyMatch(x -> x.getEntityName().equals(entity.getEntityName()))) {
+			
+			Alert fail = new Alert(AlertType.WARNING);
+            fail.setHeaderText("FAILURE");
+            fail.setContentText("An entity with the same name already exists in the system.");
+            fail.showAndWait();
+			
+			return;
+		}
 		
 		entities.add(entity);
 		workflowAnalyzed.put(entity.getEntityName(), false);
@@ -341,16 +355,11 @@ public class ApplicationController implements Initializable {
     	deleteButton.setText("Delete");
     	deleteButton.setOnAction(new EventHandler<ActionEvent>() {
 		    @Override
-			public void handle(ActionEvent event) {   	   	
-		    	AnchorPane parent = (AnchorPane) deleteButton.getParent();
-		    	Button button = (Button) parent.getChildren().get(1);
-		    	
-		    	Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete " + button.getText() + "? This action can't be reverted.", ButtonType.YES, ButtonType.NO);
+			public void handle(ActionEvent event) {   	   			    	
+		    	Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete " + entity.getEntityName() + "? This action can't be reverted.", ButtonType.YES, ButtonType.NO);
 		    	alert.showAndWait();
 
-		    	if (alert.getResult() == ButtonType.YES) {			    	
-			    	File entityFile = new File(entityFilePath + button.getText() + ".xml"); 
-		    		
+		    	if (alert.getResult() == ButtonType.YES) {			    		    		
 			    	if (!entityFile.exists()) {
 						Alert fail = new Alert(AlertType.INFORMATION);
 			            fail.setHeaderText("WARNING");
@@ -358,23 +367,62 @@ public class ApplicationController implements Initializable {
 			            fail.showAndWait();
 			    	}
 			    	else {
-				    	entities.removeIf(x -> x.getEntityName().equals(button.getText()));
-				    	entityListView.getItems().remove(parent);
-				    	workflowAnalyzed.remove(button.getText());
+				    	entities.removeIf(x -> x.getEntityName().equals(entity.getEntityName()));
+				    	entityListView.getItems().remove(deleteButton.getParent());
+				    	workflowAnalyzed.remove(entity.getEntityName());
 			    		entityFile.delete();
 			    	}
 		    	}
 		    }
 		});
     	
+    	Button inspectButton = new Button();
+    	inspectButton.setPrefWidth(32);
+    	inspectButton.setPrefHeight(32);
+    	inspectButton.setLayoutY(5);
+    	inspectButton.setId("inspectButton");
+    	inspectButton.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override
+    	    public void handle(ActionEvent event) {
+        		try {	
+        		    /*FXMLLoader loader = new FXMLLoader();
+        		    loader.setLocation(MainGui.class.getResource("view/systemProfileDialog.fxml"));
+        		    AnchorPane pane = (AnchorPane) loader.load();
+
+        		    Stage dialogStage = new Stage();
+        		    dialogStage.setTitle("System Profile");
+        		    
+        			SystemProfileController controller = (SystemProfileController) loader.getController();
+        			controller.setStage(dialogStage);
+        			controller.setEntityData(entities);
+        			controller.setFilePath(profilePath);
+
+        		    Scene dialogScene = new Scene(pane);
+        		    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
+
+        		    dialogStage.initOwner(primaryStage);
+        		    dialogStage.setResizable(false);
+        		    dialogStage.setScene(dialogScene);
+        		    dialogStage.show();*/    
+        		    
+        		} catch (Exception e) {
+        		    e.printStackTrace();
+        		}
+    	    }
+    	});
+    	
     	AnchorPane.setLeftAnchor(selectButton, 10.0);
     	AnchorPane.setTopAnchor(selectButton, 10.0);
     	AnchorPane.setBottomAnchor(selectButton, 10.0);
-    	AnchorPane.setRightAnchor(deleteButton, 10.0);
+    	AnchorPane.setRightAnchor(inspectButton, 10.0);
+    	AnchorPane.setTopAnchor(inspectButton, 10.0);
+    	AnchorPane.setBottomAnchor(inspectButton, 10.0);
+    	AnchorPane.setRightAnchor(inspectButton, 80.0);
     	AnchorPane.setTopAnchor(deleteButton, 10.0);
     	AnchorPane.setBottomAnchor(deleteButton, 10.0);
+    	AnchorPane.setRightAnchor(deleteButton, 10.0);
     	
-    	entityPane.getChildren().addAll(deleteButton, selectButton);
+    	entityPane.getChildren().addAll(inspectButton, deleteButton, selectButton);
     	entityListView.getItems().add(entityPane);
 	}
 	
@@ -410,7 +458,7 @@ public class ApplicationController implements Initializable {
     	    for (File file : files) {
         		if (file.isFile()) {
         		    if (file.getName().lastIndexOf('.') > 0)
-        		    	addEntityToList(MAPEKSystemEntityLoader.loadFromXml(file));
+        		    	addEntityToList(MAPEKSystemEntityLoader.loadFromXml(file), file);
         		}
     	    }
     	    
@@ -443,7 +491,10 @@ public class ApplicationController implements Initializable {
 		MAPEKSystemEntity systemEntity = new MAPEKSystemEntity("Default System Entity", workflowExecutor, component);
 		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
 		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.19));
-		addEntityToList(systemEntity);
+		
+		File entityFile = new File(entityFilePath + systemEntity.getEntityName() + ".xml");
+		MAPEKSystemEntityWriter.writeToXml(systemEntity, entityFile);
+		addEntityToList(systemEntity, entityFile);
 		
 		workflowExecutor = new WorkflowExecutor(
 				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.shared.registry"), 
@@ -464,8 +515,11 @@ public class ApplicationController implements Initializable {
 		component = builder.build();
 		systemEntity = new MAPEKSystemEntity("Default System Entity 2", workflowExecutor, component);
 		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
-		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.19));
-		addEntityToList(systemEntity);
+		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.19));	
+		
+		entityFile = new File(entityFilePath + systemEntity.getEntityName() + ".xml");
+		MAPEKSystemEntityWriter.writeToXml(systemEntity, new File(entityFilePath + systemEntity.getEntityName() + ".xml"));
+		addEntityToList(systemEntity, entityFile);
     }
     
     private void selectEntity() {
@@ -492,6 +546,10 @@ public class ApplicationController implements Initializable {
     	
     	this.serviceRegistries = serviceRegistries;
     	openServicesMenuItem.fire();
+    }
+    
+    public boolean entityNameExists(String name) {
+    	return entities.stream().filter(x -> x.getEntityName().equals(name)).findAny().isPresent() ? true : false;
     }
 
     private void addItems() {
@@ -580,7 +638,7 @@ public class ApplicationController implements Initializable {
     	    @Override
     	    public void handle(ActionEvent event) {
     		FileChooser fileChooser = new FileChooser();
-    		fileChooser.setInitialDirectory(new File(resourceDirPath));
+    		fileChooser.setInitialDirectory(new File(profileFilePath));
     		fileChooser.setTitle("Select profile");
     		FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Add Files(*.xml)", "*.xml");
     		fileChooser.getExtensionFilters().add(extension);
@@ -1017,6 +1075,22 @@ public class ApplicationController implements Initializable {
 				}
 		    }
     	});
+    	
+    	OpenSystemEntityMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override
+    	    public void handle(ActionEvent event) {
+        		FileChooser fileChooser = new FileChooser();
+        		fileChooser.setInitialDirectory(new File(entityFilePath));
+        		fileChooser.setTitle("Select system entity");
+        		FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Add Files(*.xml)", "*.xml");
+        		fileChooser.getExtensionFilters().add(extension);
+        		File file = fileChooser.showOpenDialog(primaryStage);
+        		
+        		if (file != null) {
+        			addEntityToList(MAPEKSystemEntityLoader.loadFromXml(file), file);
+        		}
+    	    }
+    	});
 
     }
     
@@ -1051,7 +1125,44 @@ public class ApplicationController implements Initializable {
     
     private void addSystemProfile(String profilePath) {
     	
+		if (profileListView.getItems().stream().anyMatch(x -> x.getChildren().stream().filter(x2 -> x2 instanceof Label).map(Label.class::cast).anyMatch(x3 -> x3.getText().equals(Paths.get(profilePath).getFileName().toString().split("\\.")[0])))) {
+			
+			Alert fail = new Alert(AlertType.WARNING);
+            fail.setHeaderText("FAILURE");
+            fail.setContentText("This profile is already present in the system.");
+            fail.showAndWait();
+			
+			return;
+		}
+    	
     	AnchorPane itemPane = new AnchorPane();
+    	
+    	Button deleteButton = new Button();
+    	deleteButton.setText("Delete");
+    	deleteButton.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override
+			public void handle(ActionEvent event) {   	   	
+		    	AnchorPane parent = (AnchorPane) deleteButton.getParent();
+		    	
+		    	Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete " + Paths.get(profilePath).getFileName().toString().split("\\.")[0] + "? This action can't be reverted.", ButtonType.YES, ButtonType.NO);
+		    	alert.showAndWait();
+
+		    	if (alert.getResult() == ButtonType.YES) {			    	
+			    	File profileFile = new File(profilePath); 
+		    		
+			    	if (!profileFile.exists()) {
+						Alert fail = new Alert(AlertType.INFORMATION);
+			            fail.setHeaderText("WARNING");
+			            fail.setContentText("The input profile file cannot be deleted.");
+			            fail.showAndWait();
+			    	}
+			    	else {
+    					profileListView.getItems().remove(parent);
+    					profileFile.delete();
+			    	}
+		    	}
+		    }
+		});
 
     	Button inspectButton = new Button();
     	inspectButton.setPrefWidth(32);
@@ -1093,7 +1204,6 @@ public class ApplicationController implements Initializable {
     	runButton.setPrefHeight(32);
     	runButton.setLayoutY(5);
     	runButton.setId("runButton");
-    	profileRuns.add(runButton);
     	
     	runButton.setOnAction(new EventHandler<ActionEvent>() {
     	    @Override
@@ -1297,10 +1407,17 @@ public class ApplicationController implements Initializable {
     	AnchorPane.setTopAnchor(label, 10.0);
     	AnchorPane.setBottomAnchor(label, 10.0);
     	AnchorPane.setLeftAnchor(label, 10.0);
-    	AnchorPane.setRightAnchor(inspectButton, 60.0);
-    	AnchorPane.setRightAnchor(runButton, 10.0);
+    	AnchorPane.setRightAnchor(deleteButton, 10.0);
+    	AnchorPane.setTopAnchor(deleteButton, 10.0);
+    	AnchorPane.setBottomAnchor(deleteButton, 10.0);
+    	AnchorPane.setRightAnchor(inspectButton, 130.0);
+    	AnchorPane.setTopAnchor(inspectButton, 10.0);
+    	AnchorPane.setBottomAnchor(inspectButton, 10.0);
+    	AnchorPane.setRightAnchor(runButton, 80.0);
+    	AnchorPane.setTopAnchor(runButton, 10.0);
+    	AnchorPane.setBottomAnchor(runButton, 10.0);
     	
-    	itemPane.getChildren().setAll(label, runButton, inspectButton);
+    	itemPane.getChildren().setAll(label, deleteButton, runButton, inspectButton);
     	profileListView.getItems().add(itemPane);
     }
 
