@@ -53,13 +53,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
-import profile.SystemProfileValue;
-import profile.SystemProfileVariable;
-import profile.SystemRequirementType;
-import tas.data.systemprofile.ProtocolType;
-import tas.data.systemprofile.SystemType;
-import tas.data.systemprofile.SystemProfile;
-import tas.data.systemprofile.SystemProfileDataHandler;
+import tas.data.inputprofile.InputProfileValue;
+import tas.data.inputprofile.InputProfileVariable;
+import tas.data.inputprofile.ProtocolType;
+import tas.data.inputprofile.InputProfile;
+import tas.data.inputprofile.InputProfileDataHandler;
+import tas.data.inputprofile.SystemRequirementType;
+import tas.data.inputprofile.SystemType;
 import tas.mape.planner.RatingType;
 import tas.mape.system.entity.MAPEKSystemEntity;
 
@@ -125,7 +125,7 @@ public class SystemProfileController implements Initializable {
 	private Stage stage;
 	private String filePath;
 	private ObservableList<ValueEntry> valueData = FXCollections.observableArrayList();
-	private SystemProfileVariable currentVariable = null;
+	private InputProfileVariable currentVariable = null;
 	private List<String> entityNameList;
 	
 	@Override
@@ -246,7 +246,7 @@ public class SystemProfileController implements Initializable {
 		                } 
 		                else {
 		                    btn.setOnAction(event -> {
-		                    	SystemProfileValue value = currentVariable.getValues().stream()
+		                    	InputProfileValue value = currentVariable.getValues().stream()
 		                    			.filter(x -> x.getData().equals(attribute.getRealData(attribute.getData()))).findAny().orElse(null);
 		                    	
 		                    	currentVariable.getValues().remove(value);
@@ -308,7 +308,7 @@ public class SystemProfileController implements Initializable {
 			}
 		});
 		
-		SystemProfile profile = SystemProfileDataHandler.readFromXml(filePath);
+		InputProfile profile = InputProfileDataHandler.readFromXml(filePath);
 		
 		UnaryOperator<Change> integerFilter = change -> {
 		    String newText = change.getControlNewText();
@@ -451,9 +451,9 @@ public class SystemProfileController implements Initializable {
                     	valueData.clear();
                     	
                     	currentVariable=profile.getVariable(newVal);
-                    	List<SystemProfileValue> values=currentVariable.getValues();
+                    	List<InputProfileValue> values=currentVariable.getValues();
                     	for(int i=0;i<values.size();i++){
-                    		SystemProfileValue value=values.get(i);
+                    		InputProfileValue value=values.get(i);
                     		valueData.add(new ValueEntry("value "+i,value.getData().getClass().getSimpleName(),
                     				value.getData().toString(),String.valueOf(value.getRatio()),value));
                     	}
@@ -474,7 +474,7 @@ public class SystemProfileController implements Initializable {
                     		}	 
                     		
                     		if (object != null && value != null) {
-                        		SystemProfileValue newValue = new SystemProfileValue(object, value);
+                        		InputProfileValue newValue = new InputProfileValue(object, value);
                         		currentVariable.getValues().add(newValue);
                         		valueData.add(new ValueEntry("value "+valueData.size(),newValue.getData().getClass().getSimpleName(),
                         				newValue.getData().toString(),String.valueOf(newValue.getRatio()),newValue));
@@ -587,7 +587,7 @@ public class SystemProfileController implements Initializable {
 					profile.addEntity(entityBox.getValue(), requirementBox.getValue());
 				}
 				
-				SystemProfileDataHandler.writeToXml(profile, filePath);
+				InputProfileDataHandler.writeToXml(profile, filePath);
 				stage.close();
 			}
 		});
@@ -653,10 +653,10 @@ public class SystemProfileController implements Initializable {
 	    private  SimpleStringProperty type;
 	    private  SimpleStringProperty data;
 	    private  SimpleStringProperty ratio;
-	    private  SystemProfileValue profileValue;
+	    private  InputProfileValue profileValue;
 	    
 	    
-	    public ValueEntry(String invocations, String name,String type,String data, String ratio, SystemProfileValue profileValue) {
+	    public ValueEntry(String invocations, String name,String type,String data, String ratio, InputProfileValue profileValue) {
 	    	this.invocations = new SimpleStringProperty(invocations);
 	    	this.name = new SimpleStringProperty(name);
 	    	this.type = new SimpleStringProperty(type);
@@ -666,7 +666,7 @@ public class SystemProfileController implements Initializable {
 	    }
 	    
 	    
-	    public ValueEntry(String name,String type,String data, String ratio,SystemProfileValue profileValue) {
+	    public ValueEntry(String name,String type,String data, String ratio,InputProfileValue profileValue) {
 	    	this.name = new SimpleStringProperty(name);
 	    	this.type = new SimpleStringProperty(type);
 	    	this.data = new SimpleStringProperty(data);
@@ -674,7 +674,7 @@ public class SystemProfileController implements Initializable {
 	    	this.profileValue = profileValue;
 	    }
 	    	    
-	    public SystemProfileValue getProfileValue() {
+	    public InputProfileValue getProfileValue() {
 	    	return this.profileValue;
 	    }
 	    

@@ -3,10 +3,10 @@ package tas.mape.probes;
 import java.util.HashMap;
 import java.util.List;
 
-import profile.SystemRequirementType;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.StaticTree;
+import tas.data.inputprofile.SystemRequirementType;
 import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.knowledge.Knowledge;

@@ -3,7 +3,7 @@ package tas.mape.probes;
 import java.util.ArrayList;
 import java.util.List;
 
-import tas.data.systemprofile.SystemProfileExecutor;
+import tas.data.inputprofile.InputProfileExecutor;
 import tas.mape.communication.message.ProtocolMessageInformation;
 
 public class ProtocolProbe implements ProtocolProbeInterface {
@@ -11,11 +11,11 @@ public class ProtocolProbe implements ProtocolProbeInterface {
 	private List<List<ProtocolMessageInformation>> protocolMessages = new ArrayList<>();
 	
 	public void connect() {
-		SystemProfileExecutor.subscribeToCurrentProtocol(this);
+		InputProfileExecutor.subscribeToCurrentProtocol(this);
 	}
 	
 	public void reset() {	
-		SystemProfileExecutor.unsubscribeFromCurrentProtocol(this);
+		InputProfileExecutor.unsubscribeFromCurrentProtocol(this);
 		protocolMessages.clear();
 	}
 	

@@ -1,7 +1,7 @@
 package tas.mape.system.structure;
 
+import tas.data.inputprofile.InputProfileDataHandler;
 import tas.data.serviceinfo.GlobalServiceInfo;
-import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.planner.Planner;
@@ -102,7 +102,7 @@ public class MultiMAPEKEntitySystem extends AbstractMultiEntitySystem<MAPEKSyste
 				break;
 			}
 			
-			currentSteps += SystemProfileDataHandler.activeProfile.getWorkflowCycles();
+			currentSteps += InputProfileDataHandler.activeProfile.getWorkflowCycles();
 		}
 		
 		return currentSteps;

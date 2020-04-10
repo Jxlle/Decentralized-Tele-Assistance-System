@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Random;
 
 import javafx.util.Pair;
-import profile.SystemProfileValue;
-import profile.SystemProfileVariable;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.StaticTree;
@@ -15,8 +13,10 @@ import service.auxiliary.WeightedCollection;
 import service.composite.CompositeService;
 import service.composite.CompositeServiceClient;
 import service.utility.Time;
-import tas.data.systemprofile.SystemProfile;
-import tas.data.systemprofile.SystemProfileDataHandler;
+import tas.data.inputprofile.InputProfileValue;
+import tas.data.inputprofile.InputProfileVariable;
+import tas.data.inputprofile.InputProfile;
+import tas.data.inputprofile.InputProfileDataHandler;
 
 /**
  * Class used to analyze workflows and gather information for the knowledge component
@@ -95,7 +95,7 @@ public class WorkflowAnalyzer {
     	compositeService.getWorkflowProbe().register(workflowAnalyzerProbe);
     	
     	// Get input profile
-    	SystemProfile profile = SystemProfileDataHandler.activeProfile;
+    	InputProfile profile = InputProfileDataHandler.activeProfile;
     	
     	// Execute workflow and gather data
     	compositeService.setTestMode(true);
@@ -136,14 +136,14 @@ public class WorkflowAnalyzer {
      * @param profile the given input profile
      * @param compositeService the given composite service
      */
-	private static void executeWorkflow(SystemProfile profile, CompositeService compositeService) {
+	private static void executeWorkflow(InputProfile profile, CompositeService compositeService) {
 
 		CompositeServiceClient client = new CompositeServiceClient(compositeService.getServiceDescription().getServiceEndpoint());
 		Time.steps.set(0);
 		
 		if (profile != null) {
-		    SystemProfileVariable variable = profile.getVariable("pick");
-		    List<SystemProfileValue> values = variable.getValues();
+		    InputProfileVariable variable = profile.getVariable("pick");
+		    List<InputProfileValue> values = variable.getValues();
 
 		    int patientId = (int) profile.getVariable("patientId").getValues().get(0).getData();
 		    int pick;

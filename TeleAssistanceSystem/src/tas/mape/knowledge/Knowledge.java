@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javafx.util.Pair;
-import profile.SystemRequirementType;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.StaticTree;
-import tas.data.systemprofile.SystemProfileDataHandler;
+import tas.data.inputprofile.InputProfileDataHandler;
+import tas.data.inputprofile.SystemRequirementType;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CostAndReliabilityReq;
 import tas.mape.analyzer.CostReq;
@@ -419,7 +419,7 @@ public class Knowledge {
 	 * @return the service load
 	 */
 	public double getServiceDescriptionLoad(Description description, double usePercentage) {
-		return servicesUsageChance.get(description) * usePercentage * SystemProfileDataHandler.activeProfile.getWorkflowCycles();
+		return servicesUsageChance.get(description) * usePercentage * InputProfileDataHandler.activeProfile.getWorkflowCycles();
 	}
 	
 	/**

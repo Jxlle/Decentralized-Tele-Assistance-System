@@ -1,4 +1,4 @@
-package tas.data.systemprofile;
+package tas.data.inputprofile;
 
 import tas.mape.communication.protocol.AbstractProtocol;
 

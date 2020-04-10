@@ -7,7 +7,7 @@ import javafx.util.Pair;
 import service.atomic.ServiceProfile;
 import service.atomic.ServiceProfileAttribute;
 import service.auxiliary.ServiceDescription;
-import tas.data.systemprofile.SystemProfileDataHandler;
+import tas.data.inputprofile.InputProfileDataHandler;
 
 /**
  * A class used for letting services fail depending on their future load.
@@ -45,7 +45,7 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 	
 	public Map.Entry<Integer, Double> getTableEntry(ServiceDescription description) {
 		
-		int usePercentage = (int) ((description.getLoad() / (double) (SystemProfileDataHandler.activeProfile.getWorkflowCycles() * SystemProfileDataHandler.activeProfile.getAmountOfParticipatingEntities())) * 100);
+		int usePercentage = (int) ((description.getLoad() / (double) (InputProfileDataHandler.activeProfile.getWorkflowCycles() * InputProfileDataHandler.activeProfile.getAmountOfParticipatingEntities())) * 100);
 		//System.err.println("percentage for " + description.getServiceEndpoint() + ": " + usePercentage + " " + description.getLoad() + " " + (double) (SystemProfileDataHandler.activeProfile.getWorkflowCycles() * SystemProfileDataHandler.activeProfile.getAmountOfParticipatingEntities()));
 		
 		Map.Entry<Integer, Double> entry = failureRate.ceilingEntry(usePercentage);

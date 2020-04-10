@@ -123,6 +123,7 @@ public class SystemEntityController implements Initializable {
 	private List<Goal> goals = new ArrayList<>();
 	private ObservableList<SystemEntityPropertyEntry> entityData = FXCollections.observableArrayList();
 	private ObservableList<GoalEntry> goalData = FXCollections.observableArrayList();
+	private MAPEKSystemEntity entity;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -144,14 +145,25 @@ public class SystemEntityController implements Initializable {
 		this.parent = parent;
 	}
 	
+	public void setEntity(MAPEKSystemEntity entity) {
+		this.entity = entity;
+		
+		// Initialize again
+		initializeStrategyData();
+		initializeWorkflowButton();
+		initializeGoalStuff();
+		initializeAddButton();
+		setTooltips();
+		addPropertyTableEntries();
+		addRegistryChoices();
+	}
+	
 	public void addRegistryChoices() {
 		
 		entityRegistries = new ArrayList<>();
 		List<ServiceRegistry> registries = GlobalServiceInfo.getServiceRegistries();
 		AnchorPane registryPane;
 		Label registryLabel;
-		
-		System.err.print(registries.size());
 		
 		for (ServiceRegistry registry : registries) {
 			registryPane = new AnchorPane();

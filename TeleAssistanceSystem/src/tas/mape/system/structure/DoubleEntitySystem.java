@@ -1,7 +1,7 @@
 package tas.mape.system.structure;
 
+import tas.data.inputprofile.InputProfileDataHandler;
 import tas.data.serviceinfo.GlobalServiceInfo;
-import tas.data.systemprofile.SystemProfileDataHandler;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.planner.Planner;
@@ -122,7 +122,7 @@ public class DoubleEntitySystem extends AbstractMultiEntitySystem<MAPEKSystemEnt
 			return entity1.getManagedSystem().getCurrentSteps();
 		}
 
-		return entity2.getManagedSystem().getCurrentSteps() + SystemProfileDataHandler.activeProfile.getWorkflowCycles();
+		return entity2.getManagedSystem().getCurrentSteps() + InputProfileDataHandler.activeProfile.getWorkflowCycles();
 	}
 
 	@Override

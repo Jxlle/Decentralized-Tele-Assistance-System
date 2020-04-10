@@ -1,4 +1,4 @@
-package tas.data.systemprofile;
+package tas.data.inputprofile;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -18,12 +18,12 @@ import tas.mape.system.structure.AbstractSystem;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class SystemProfileExecutor {
+public class InputProfileExecutor {
 	
 	/**
 	 * Private constructor
 	 */
-	private SystemProfileExecutor() {}
+	private InputProfileExecutor() {}
 	
 	/**
 	 * Current system instance (for gui data)
@@ -41,7 +41,7 @@ public class SystemProfileExecutor {
 	 * @return 
 	 */
 	@SuppressWarnings("unchecked")
-	public static void setProtocol(SystemProfile profile) {
+	public static void setProtocol(InputProfile profile) {
 		
 		Class<? extends AbstractPlannerProtocol> protocolClass = null;
 		Constructor<?> protocolConstructor = null;
@@ -72,7 +72,7 @@ public class SystemProfileExecutor {
 	@SuppressWarnings("unchecked")
 	public static void execute(List<MAPEKSystemEntity> entityList) {
 		
-		SystemProfile profile = SystemProfileDataHandler.activeProfile;
+		InputProfile profile = InputProfileDataHandler.activeProfile;
 		
 		// Set the chosen data for all entities
 		for (MAPEKSystemEntity entity : entityList) {

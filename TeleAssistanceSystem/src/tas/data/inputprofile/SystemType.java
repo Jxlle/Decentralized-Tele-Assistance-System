@@ -1,4 +1,4 @@
-package tas.data.systemprofile;
+package tas.data.inputprofile;
 import tas.mape.system.structure.*;
 
 /**

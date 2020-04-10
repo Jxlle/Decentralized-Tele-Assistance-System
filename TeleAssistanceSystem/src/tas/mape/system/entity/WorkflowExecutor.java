@@ -3,14 +3,13 @@ package tas.mape.system.entity;
 import java.util.List;
 import java.util.Random;
 
-import profile.SystemProfileValue;
-import profile.SystemProfileVariable;
-import profile.ProfileExecutor;
 import service.composite.CompositeServiceClient;
 import service.registry.ServiceRegistry;
 import service.utility.Time;
-import tas.data.systemprofile.SystemProfile;
-import tas.data.systemprofile.SystemProfileDataHandler;
+import tas.data.inputprofile.InputProfileValue;
+import tas.data.inputprofile.InputProfileVariable;
+import tas.data.inputprofile.InputProfile;
+import tas.data.inputprofile.InputProfileDataHandler;
 import tas.services.assistance.AssistanceService;
 import tas.services.assistance.AssistanceServiceCostProbe;
 
@@ -26,7 +25,7 @@ public class WorkflowExecutor {
     private MAPEKSystemEntity systemEntity;
     private AssistanceService assistanceService;
     private AssistanceServiceCostProbe probe;
-    private String workflowPath, profilePath;
+    private String workflowPath;
     
 	public WorkflowExecutor(List<ServiceRegistry> serviceRegistries) {
 		amountOfWorkflows++;
@@ -84,15 +83,6 @@ public class WorkflowExecutor {
     	return workflowPath;
     }
     
-    public void setProfilePath(String profilePath) {
-    	this.profilePath = profilePath;
-		ProfileExecutor.readFromXml(profilePath, systemEntity.getEntityName());
-    }
-    
-    public String getProfilePath() {
-    	return profilePath;
-    }
-    
     public AssistanceService getAssistanceService() {
     	return assistanceService;
     }
@@ -116,14 +106,14 @@ public class WorkflowExecutor {
 	
     public void executeWorkflow() {
 
-    	SystemProfile profile = SystemProfileDataHandler.activeProfile;
+    	InputProfile profile = InputProfileDataHandler.activeProfile;
 		CompositeServiceClient client = new CompositeServiceClient(assistanceService.getServiceDescription().getServiceEndpoint());
 		Time.steps.set(0);
 	
 		if (profile != null) {
 			
-		    SystemProfileVariable variable = profile.getVariable("pick");
-		    List<SystemProfileValue> values = variable.getValues();
+		    InputProfileVariable variable = profile.getVariable("pick");
+		    List<InputProfileValue> values = variable.getValues();
 	
 		    int patientId = (int) profile.getVariable("patientId").getValues().get(0).getData();
 		    int pick;

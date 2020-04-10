@@ -2,7 +2,7 @@ package tas.mape.analyzer;
 
 import java.util.List;
 
-import profile.SystemRequirementType;
+import tas.data.inputprofile.SystemRequirementType;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.Planner;
 import tas.mape.planner.RatingType;

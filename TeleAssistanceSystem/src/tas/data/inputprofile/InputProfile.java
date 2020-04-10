@@ -1,11 +1,9 @@
-package tas.data.systemprofile;
+package tas.data.inputprofile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import profile.SystemProfileVariable;
-import profile.SystemRequirementType;
 import tas.mape.planner.RatingType;
 
 /**
@@ -13,7 +11,7 @@ import tas.mape.planner.RatingType;
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be), 
  * based on the old input profile code of Yifan Ruan (ry222ad@student.lnu.se)
  */
-public class SystemProfile {
+public class InputProfile {
 	
 	private int executionCycles, workflowCycles, maxProtocolIterations;
 	private int messageContentPercentage;
@@ -22,12 +20,12 @@ public class SystemProfile {
 	private RatingType ratingType;
 	private HashMap<String, SystemRequirementType> entityRequirementTypes = new HashMap<>();
 	private List<String> participatingEntities = new ArrayList<>();
-	private List<SystemProfileVariable> variables = new ArrayList<>();
+	private List<InputProfileVariable> variables = new ArrayList<>();
 	
 	/**
 	 * Create an empty system profile
 	 */
-	public SystemProfile() {}
+	public InputProfile() {}
 	
 	/**
 	 * Return the system profile system type
@@ -224,7 +222,7 @@ public class SystemProfile {
 	 * Add new input profile variable
 	 * @param variable the specific variable
 	 */
-	public void addVariable(SystemProfileVariable variable) {
+	public void addVariable(InputProfileVariable variable) {
 		this.variables.add(variable);
 	}
 	
@@ -246,9 +244,9 @@ public class SystemProfile {
 	 * @param variableName the name of input profile variable
 	 * @return the input profile variable
 	 */
-	public SystemProfileVariable getVariable(String variableName) {
+	public InputProfileVariable getVariable(String variableName) {
 		
-		for (SystemProfileVariable variable:variables) {
+		for (InputProfileVariable variable:variables) {
 			if (variable.getName().equals(variableName))
 				return variable;
 		}

@@ -14,13 +14,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,10 +36,10 @@ import service.auxiliary.ServiceDescription;
 import service.registry.ServiceRegistry;
 import service.workflow.ast.rspLexer;
 import service.workflow.ast.rspParser;
+import tas.data.inputprofile.InputProfile;
+import tas.data.inputprofile.InputProfileDataHandler;
+import tas.data.inputprofile.InputProfileExecutor;
 import tas.data.serviceinfo.GlobalServiceInfo;
-import tas.data.systemprofile.SystemProfile;
-import tas.data.systemprofile.SystemProfileDataHandler;
-import tas.data.systemprofile.SystemProfileExecutor;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalRelation;
 import tas.mape.knowledge.Goal.GoalType;
@@ -1225,8 +1222,8 @@ public class ApplicationController implements Initializable {
     				    });
     			    	
     	    			chartController.resetProbes();
-    	    			SystemProfile profile = SystemProfileDataHandler.readFromXml(profilePath);
-    	    			SystemProfileDataHandler.activeProfile = profile;
+    	    			InputProfile profile = InputProfileDataHandler.readFromXml(profilePath);
+    	    			InputProfileDataHandler.activeProfile = profile;
     	    		    analyzed = false;
     	    		    
     	    		    // Check profile integrity
@@ -1291,13 +1288,13 @@ public class ApplicationController implements Initializable {
     			    	entityBeingAnalyzed = "";
     			    	
     			    	// Set protocol 
-    			    	SystemProfileExecutor.setProtocol(profile);
+    			    	InputProfileExecutor.setProtocol(profile);
     			    	
     			    	// Set chart protocol probe
     			    	chartController.setProtocolProbe();
     			    	
     			    	// Execute system
-    			    	SystemProfileExecutor.execute(entities);
+    			    	InputProfileExecutor.execute(entities);
     			    	done = true;
 					    
     				    Platform.runLater(new Runnable() {
@@ -1343,13 +1340,13 @@ public class ApplicationController implements Initializable {
             					@Override
             					public void run() {	
         							invocationLabel.setText("Executing system run ["
-            					+ SystemProfileExecutor.getCurrentExecutionCycle() + "/" + SystemProfileDataHandler.activeProfile.getExecutionCycles() 
-            					+ "], [PROGRESS: " + SystemProfileExecutor.getCurrentWorkflowCycle() + "/" + SystemProfileDataHandler.activeProfile.getWorkflowCycles()
-			    						* + SystemProfileDataHandler.activeProfile.getAmountOfParticipatingEntities() + "]");
+            					+ InputProfileExecutor.getCurrentExecutionCycle() + "/" + InputProfileDataHandler.activeProfile.getExecutionCycles() 
+            					+ "], [PROGRESS: " + InputProfileExecutor.getCurrentWorkflowCycle() + "/" + InputProfileDataHandler.activeProfile.getWorkflowCycles()
+			    						* + InputProfileDataHandler.activeProfile.getAmountOfParticipatingEntities() + "]");
             					}
         				    });
         				    
-        				    updateProgress(SystemProfileExecutor.getCurrentExecutionCycle(), SystemProfileDataHandler.activeProfile.getExecutionCycles());
+        				    updateProgress(InputProfileExecutor.getCurrentExecutionCycle(), InputProfileDataHandler.activeProfile.getExecutionCycles());
         				    Thread.sleep(100);
     			    	}
     			    	
@@ -1378,7 +1375,7 @@ public class ApplicationController implements Initializable {
 					public synchronized void run() {	
 						if (analyzed) {
 		    				// Stop system
-		    				SystemProfileExecutor.stopSystemExecution();	
+		    				InputProfileExecutor.stopSystemExecution();	
 		    				
 		    				// Plot current graphs
 							chartController.generateSystemRunCharts();
