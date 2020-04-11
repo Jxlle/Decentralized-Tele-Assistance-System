@@ -1,5 +1,5 @@
 <tas.data.inputprofile.InputProfile>
-  <executionCycles>20</executionCycles>
+  <executionCycles>40</executionCycles>
   <workflowCycles>10</workflowCycles>
   <maxProtocolIterations>100</maxProtocolIterations>
   <messageContentPercentage>100</messageContentPercentage>
@@ -7,8 +7,8 @@
   <protocolType>STANDARD_PROTOCOL_2ENTITIES</protocolType>
   <ratingType>CLASS</ratingType>
   <maxLoadValue>
-    <maxLoadType>CUSTOM_AMOUNT_OF_ENTITIES</maxLoadType>
-    <value>2</value>
+    <maxLoadType>STANDARD</maxLoadType>
+    <value>0</value>
   </maxLoadValue>
   <entityRequirementTypes>
     <entry>

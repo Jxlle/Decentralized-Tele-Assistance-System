@@ -22,7 +22,7 @@ import tas.mape.probes.ProtocolObserver;
 public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends CommunicationComponent<T>> {
 	
 	// Random for generating pseudo random numbers
-	static Random random = new Random();
+	public static Random random = new Random();
 	
 	// Message ID of the last sent message
 	protected int messageID;

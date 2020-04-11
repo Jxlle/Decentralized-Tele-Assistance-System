@@ -85,7 +85,6 @@ public class Knowledge {
 		
 		this.loadFailureDelta = loadFailureDelta;	
 		this.registryEndpoints = serviceRegistryEndpoints;
-		System.out.println("made new entity");
 		serviceBlackList = new HashMap<>();
 		cachePlanComponents = new ArrayList<>();
 		usedServices = new HashMap<>();

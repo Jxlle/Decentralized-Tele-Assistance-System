@@ -23,9 +23,8 @@ public class TwoPlannerProtocolDoNothing extends AbstractTwoPlannerProtocol {
 		
 			// First offer has been received
 			case "FIRST_OFFER":
-				System.err.println("\t> FIRST_OFFER , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 				PlannerMessage response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "ACCEPTED_OFFER", null);
-				receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
+				receiver.setCurrentServiceCombination(receiver.getBestRandomServiceCombination());
 				receiver.finishedProtocol(messageID + 1);
 				
 				// Increase message ID
@@ -35,8 +34,7 @@ public class TwoPlannerProtocolDoNothing extends AbstractTwoPlannerProtocol {
 				
 			// Offer has been accepted, stop protocol
 			case "ACCEPTED_OFFER":
-				System.err.println("\t> ACCEPTED , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
-				receiver.setCurrentServiceCombination(receiver.getAvailableServiceCombinations().get(0));
+				receiver.setCurrentServiceCombination(receiver.getBestRandomServiceCombination());
 				receiver.finishedProtocol(messageID);
 				resetProtocol();
 				break;

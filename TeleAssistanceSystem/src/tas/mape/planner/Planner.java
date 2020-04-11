@@ -99,18 +99,27 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		
 		// If no protocol is used, just use the best service combination
 		if (protocol == null) {
-			
-			List<ServiceCombination> bestCombinations = new ArrayList<>();
-			
-			for (ServiceCombination s : availableServiceCombinations) {
-				if (s.getRating().equals(availableServiceCombinations.get(0).getRating())) {
-					bestCombinations.add(s);
-				}
-			}
-			
-			setCurrentServiceCombination(bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size())));
+			setCurrentServiceCombination(getBestRandomServiceCombination());
 			finishedProtocol(0);
 		}
+	}
+	
+	/**
+	 * Return a randomly chosen service combination with the best possible rating.
+	 * @note a score rating will always return the same combination 
+	 * @return a randomly chosen service combination with the best possible rating
+	 */
+	public ServiceCombination getBestRandomServiceCombination() {
+		
+		List<ServiceCombination> bestCombinations = new ArrayList<>();
+		
+		for (ServiceCombination s : availableServiceCombinations) {
+			if (s.getRating().equals(availableServiceCombinations.get(0).getRating())) {
+				bestCombinations.add(s);
+			}
+		}
+		
+		return bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));
 	}
 	
 	/**

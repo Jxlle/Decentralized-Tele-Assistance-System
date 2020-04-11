@@ -33,6 +33,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 		// Ask data from third planner
 		PlannerMessage message = new PlannerMessage(messageID, getThirdEntityEndpoint(sender.getEndpoint(), receiver.getEndpoint()), sender.getEndpoint(), "ASK_DATA", null);
 		sender.sendMessage(message);
+		sender.calculateNewServiceCombinations();
 		
 		// Choose first service combination
 		if (sender.getAvailableServiceCombinations().get(0).getRatingType() == RatingType.CLASS) {
@@ -259,8 +260,6 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 			
 		case "GIVE_DATA":		
 			receiver.addToLoadBuffer(sender, message.getContent());	
-			newServiceCombinations = receiver.calculateNewServiceCombinations();
-			receiver.setAvailableServiceCombinations(newServiceCombinations);
 			messageID++;		
 			break;
 			

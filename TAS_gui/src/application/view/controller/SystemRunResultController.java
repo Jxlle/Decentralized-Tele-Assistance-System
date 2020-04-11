@@ -2,6 +2,7 @@ package application.view.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -14,6 +15,8 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import  org.apache.poi.hssf.usermodel.HSSFSheet;
+import  org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import application.model.ServiceCombinationEntry;
 import application.utility.Arrow;
@@ -32,13 +35,13 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
@@ -119,15 +122,16 @@ public class SystemRunResultController {
 	}
 	
 	public void saveAll(File directory) throws IOException {
-		String defdaultPath = directory.getPath() + File.separator;
-		saveSystemRunPerformanceChart(defdaultPath + "Performance Graph");
-		SaveProtocolMessageChart(defdaultPath +"Protocol Message Graph");
-		saveCostEvolutionChart(defdaultPath +"Cost evolution Graph");
-		saveChart(ratingChart, defdaultPath + "Entity Rating evolution Graph");
-		saveChart(ratingSystemChart, defdaultPath + "System Rating Graph");
-		saveChart(failureRateChart, defdaultPath + "Entity Failure Rate Graph");
-		saveChart(failureRateSystemChart, defdaultPath + "System Failure Rate Graph");	
-		saveChart(failureRateErrorChart, defdaultPath + "Failure Rate Error Graph");	
+		String defaultPath = directory.getPath() + File.separator;
+		saveSystemRunPerformanceChart(defaultPath + "Performance Graph");
+		SaveProtocolMessageChart(defaultPath +"Protocol Message Graph");
+		saveCostEvolutionChart(defaultPath +"Cost Evolution Graph");
+		saveChart(ratingChart, defaultPath + "Entity Rating Evolution Graph");
+		saveChart(ratingSystemChart, defaultPath + "System Rating Graph");
+		saveChart(failureRateChart, defaultPath + "Entity Failure Rate Graph");
+		saveChart(failureRateSystemChart, defaultPath + "System Failure Rate Graph");	
+		saveChart(failureRateErrorChart, defaultPath + "Failure Rate Error Graph");	
+		saveRunData(defaultPath + "Run Results");
 	}
 	
 	public void saveSystemRunPerformanceChart(String filePath) throws IOException {
@@ -164,8 +168,33 @@ public class SystemRunResultController {
 		saveChart(costChart, filePath);
 	}
 	
-	public void saveRunData(String filePath) {
-		
+	public void saveRunData(String filePath) throws IOException {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("FirstSheet");  
+        
+        FileOutputStream fileOut = new FileOutputStream(filePath + ".xls");
+        workbook.write(fileOut);
+        fileOut.close();
+        workbook.close();
+
+        //TODO todo;
+        /*HSSFRow rowhead = sheet.createRow((short)0);
+        rowhead.createCell(0).setCellValue("No.");
+        rowhead.createCell(1).setCellValue("Name");
+        rowhead.createCell(2).setCellValue("Address");
+        rowhead.createCell(3).setCellValue("Email");
+
+        HSSFRow row = sheet.createRow((short)1);
+        row.createCell(0).setCellValue("1");
+        row.createCell(1).setCellValue("Sankumarsingh");
+        row.createCell(2).setCellValue("India");
+        row.createCell(3).setCellValue("sankumarsingh@gmail.com");
+
+        FileOutputStream fileOut = new FileOutputStream(filename);
+        workbook.write(fileOut);
+        fileOut.close();
+        workbook.close();
+        System.out.println("Your excel file has been generated!");*/
 	}
 	
 	public void generateSystemRunCharts() {

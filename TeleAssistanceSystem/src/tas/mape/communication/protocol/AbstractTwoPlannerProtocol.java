@@ -59,7 +59,6 @@ public abstract class AbstractTwoPlannerProtocol extends AbstractPlannerProtocol
 			List<ServiceCombination> bestCombinations = new ArrayList<>();
 			
 			for (ServiceCombination s : sender.getAvailableServiceCombinations()) {
-				System.out.println(sender.getAvailableServiceCombinations().get(0).getRating());
 				if (s.getRating().equals(sender.getAvailableServiceCombinations().get(0).getRating())) {
 					bestCombinations.add(s);
 				}

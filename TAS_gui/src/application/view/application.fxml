@@ -140,15 +140,15 @@
                            </items>
                         </MenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
-                        <MenuButton disable="true" mnemonicParsing="false" text="Save">
+                        <MenuButton fx:id="saveMenuButton" disable="true" mnemonicParsing="false" text="Save">
                            <items>
-                              <MenuItem fx:id="saveRunMenuItem" mnemonicParsing="false" text="Save Run" />
-                              <MenuItem fx:id="saveLogMenuItem" mnemonicParsing="false" text="Save Log" />
-                              <MenuItem fx:id="saveInvMenuItem" mnemonicParsing="false" text="Save Invocations" />
-                              <MenuItem fx:id="saveReliabilityGraphMenuItem" mnemonicParsing="false" text="Save Reliability Graph" />
-                              <MenuItem fx:id="savePerformanceGraphMenuItem" mnemonicParsing="false" text="Save Performance Graph" />
-                              <MenuItem fx:id="saveCostGraphMenuItem" mnemonicParsing="false" text="Save Cost Graph" />
-                              <MenuItem fx:id="saveInvCostGraphMenuItem" mnemonicParsing="false" text="Save Invocation Cost Graph" />
+                              <MenuItem fx:id="saveRunMenuItem" mnemonicParsing="false" text="Save run (everything)" />
+                              <MenuItem fx:id="saveResultDataMenuItem" mnemonicParsing="false" text="Save result data (excel document)" />
+                              <MenuItem fx:id="saveSystemRunPerformanceMenuItem" mnemonicParsing="false" text="Save system run performance graph" />
+                              <MenuItem fx:id="saveProtocolMessageMenuItem" mnemonicParsing="false" text="Save protocol message graph" />
+                              <MenuItem fx:id="saveRatingEvolutionMenuItem" mnemonicParsing="false" text="Save rating evolution graphs" />
+                              <MenuItem fx:id="saveFailureRateEvolutionMenuItem" mnemonicParsing="false" text="Save failure rate evolution graphs" />
+                              <MenuItem fx:id="saveCostEvolutionMenuItem" mnemonicParsing="false" text="Save cost evolution graph" />
                            </items>
                         </MenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />

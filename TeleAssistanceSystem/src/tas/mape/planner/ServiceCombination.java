@@ -112,7 +112,7 @@ public class ServiceCombination implements Comparable<ServiceCombination> {
 	 * @param property the given property
 	 * @return the property value for the given property
 	 */
-	public double getProperty(String property) {
+	public Double getProperty(String property) {
 		return properties.get(property);
 	}
 	
