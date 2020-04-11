@@ -303,14 +303,15 @@ public class SystemRunResultController {
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
 				
-				for (int i = 0; i < dataPoints.get(entity).size(); i++) {
-					
-					double entityFailRate = systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate");
-					double systemFailRate = dataPoints.get(entity).get(i).getKey();
-					double errorValue = Math.abs(entityFailRate - systemFailRate);
-					
-					if (errorValue > maxErrorValue) {
-						maxErrorValue = Double.valueOf(df.format(errorValue));
+				for (int i = 0; i < dataPoints.get(entity).size(); i++) {			
+					if (systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate") != null) {
+						double entityFailRate = systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate");
+						double systemFailRate = dataPoints.get(entity).get(i).getKey();
+						double errorValue = Math.abs(entityFailRate - systemFailRate);
+						
+						if (errorValue > maxErrorValue) {
+							maxErrorValue = Double.valueOf(df.format(errorValue));
+						}
 					}
 				}
 			}
@@ -333,10 +334,15 @@ public class SystemRunResultController {
 				
 				for (int i = 0; i < dataPoints.get(entity).size(); i++) {
 					
-					double entityFailRate = systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate");
-					double systemFailRate = dataPoints.get(entity).get(i).getKey();
-					
-					series.getData().add(new XYChart.Data<Number, Number>(i + 1, Math.abs(entityFailRate - systemFailRate)));
+					if (systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate") != null) {
+						double entityFailRate = systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate");
+						double systemFailRate = dataPoints.get(entity).get(i).getKey();
+						
+						series.getData().add(new XYChart.Data<Number, Number>(i + 1, Math.abs(entityFailRate - systemFailRate)));
+					}
+					else {
+						series.getData().add(new XYChart.Data<Number, Number>(i + 1, 0));
+					}
 				}
 				
 				failureRateErrorChart.getData().add(series);
@@ -546,11 +552,13 @@ public class SystemRunResultController {
 			
 			// Set data points
 			for (String entity : systemRunProbe.getDataPoints().keySet()) {			
-				for (int i = 0; i < systemRunProbe.getChosenCombinations().get(entity).size(); i++) {
-					double combinationFailRate = systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate");	
-					
-					if (combinationFailRate > maxFailRate) {
-						maxFailRate = Double.valueOf(df.format(combinationFailRate));
+				for (int i = 0; i < systemRunProbe.getChosenCombinations().get(entity).size(); i++) {		
+					if (systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate") != null) {
+						double combinationFailRate = systemRunProbe.getChosenCombinations().get(entity).get(i).getProperty("FailureRate");	
+						
+						if (combinationFailRate > maxFailRate) {
+							maxFailRate = Double.valueOf(df.format(combinationFailRate));
+						}
 					}
 				}
 			}
@@ -574,8 +582,14 @@ public class SystemRunResultController {
 				
 				for (int i = 0; i < systemRunProbe.getChosenCombinations().get(entity).size(); i++) {
 			
-					ServiceCombination serviceCombination = systemRunProbe.getChosenCombinations().get(entity).get(i);		
-					series.getData().add(new XYChart.Data<Number, Number>(i + 1, serviceCombination.getProperty("FailureRate")));
+					ServiceCombination serviceCombination = systemRunProbe.getChosenCombinations().get(entity).get(i);	
+					
+					if (serviceCombination.getProperty("FailureRate") != null) {
+						series.getData().add(new XYChart.Data<Number, Number>(i + 1, serviceCombination.getProperty("FailureRate")));
+					}	
+					else {
+						series.getData().add(new XYChart.Data<Number, Number>(i + 1, 0));
+					}
 				}
 				
 				failureRateChart.getData().add(series);

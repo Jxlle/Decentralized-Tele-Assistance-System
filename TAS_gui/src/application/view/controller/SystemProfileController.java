@@ -607,12 +607,7 @@ public class SystemProfileController implements Initializable {
 						+ "The system type and participating entity count don't match!");
 			}
 			
-			if (profile.getProtocolType() != null && !ProtocolType.findProtocolTypes(profile.getSystemType()).contains(profile.getProtocolType())) {
-				throw new IllegalStateException("The current selected profile has an illegal XML file. "
-						+ "The system type and the protocol are not compatible! \n\tsystem type: " + profile.getSystemType() + ", protocol: " + profile.getProtocolType());
-			}
-			
-			if (profile.getProtocolType() != null && !ProtocolType.findProtocolTypes(profile.getSystemType()).contains(profile.getProtocolType())) {
+			if (profile.getProtocolType() != null && profile.getSystemType().getMaxEntities() > 1 && !ProtocolType.findProtocolTypes(profile.getSystemType()).contains(profile.getProtocolType())) {
 				throw new IllegalStateException("The current selected profile has an illegal XML file. "
 						+ "The system type and the protocol are not compatible! \n\tsystem type: " + profile.getSystemType() + ", protocol: " + profile.getProtocolType());
 			}
