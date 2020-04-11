@@ -1,6 +1,5 @@
 package application.view.controller;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,7 +10,6 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,8 +19,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
-import javax.imageio.ImageIO;
 
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -57,20 +53,19 @@ import application.model.ReliabilityEntry;
 import application.utility.NodeVisitor;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
@@ -80,11 +75,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -104,7 +99,7 @@ public class ApplicationController implements Initializable {
     static String baseDir="";
     
     String resourceDirPath = baseDir + "resources" + File.separator;
-    String resultDirPath = baseDir + "results" + File.separator;
+    static String resultDirPath = baseDir + "results" + File.separator;
     static String fileDirPath = baseDir + "resources" + File.separator + "files" + File.separator;
     
     String workflowPath;
@@ -165,7 +160,10 @@ public class ApplicationController implements Initializable {
     MenuItem saveRunMenuItem;
     
     @FXML
-    MenuItem saveLogMenuItem;
+    MenuButton saveMenuButton;
+    
+    @FXML
+    MenuItem saveResultDataMenuItem;
 
     @FXML
     AnchorPane reliabilityChartPane;
@@ -238,18 +236,6 @@ public class ApplicationController implements Initializable {
     
     @FXML
     Button AddInputProfileButton;
-    
-    @FXML
-    MenuItem saveReliabilityGraphMenuItem;
-
-    @FXML
-    MenuItem saveCostGraphMenuItem;
-    
-    @FXML
-    MenuItem saveInvCostGraphMenuItem;
-    
-    @FXML
-    MenuItem savePerformanceGraphMenuItem;
 
     @FXML
     MenuItem helpMenuItem;
@@ -262,6 +248,21 @@ public class ApplicationController implements Initializable {
     
     @FXML
     MenuItem OpenSystemEntityMenuItem;
+    
+    @FXML
+    MenuItem saveSystemRunPerformanceMenuItem;
+    
+    @FXML
+    MenuItem saveProtocolMessageMenuItem;
+    
+    @FXML
+    MenuItem saveRatingEvolutionMenuItem;
+    
+    @FXML
+    MenuItem saveFailureRateEvolutionMenuItem;
+    
+    @FXML
+    MenuItem saveCostEvolutionMenuItem;
     
     @FXML
     ToolBar toolBar;
@@ -660,17 +661,18 @@ public class ApplicationController implements Initializable {
     	saveRunMenuItem.setOnAction(new EventHandler<ActionEvent>() {
     	    @Override
     	    public void handle(ActionEvent event) {
-    		FileChooser fileChooser = new FileChooser();
-    		fileChooser.setInitialDirectory(new File(resourceDirPath));
-    		fileChooser.setTitle("Save Run");
-    		File file = fileChooser.showSaveDialog(primaryStage);
-    		if (file != null) {
-    		    try {
-    			Files.copy(Paths.get(resultFilePath), Paths.get(file.getPath() + ".csv"), StandardCopyOption.REPLACE_EXISTING);
-    		    } catch (IOException e) {
-    			e.printStackTrace();
-    		    }
-    		}
+    	    	DirectoryChooser chooser = new DirectoryChooser();
+    	    	chooser.setTitle("Choose result directory");
+    	    	File defaultDirectory = new File(resultDirPath);
+    	    	chooser.setInitialDirectory(defaultDirectory);
+    	    	File selectedDirectory = chooser.showDialog(primaryStage);
+    	    	
+    	    	try {
+					chartController.saveAll(selectedDirectory);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     	    }
     	});
 
@@ -709,232 +711,6 @@ public class ApplicationController implements Initializable {
     		    }
     		}
     	    }
-    	});
-
-    	saveLogMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-    	    @Override
-    	    public void handle(ActionEvent event) {
-    		FileChooser fileChooser = new FileChooser();
-    		fileChooser.setInitialDirectory(new File(resultDirPath));
-    		fileChooser.setTitle("Save Log");
-    		File file = fileChooser.showSaveDialog(primaryStage);
-    		if (file != null) {
-    		    try {
-    			Files.copy(Paths.get(logFilePath), Paths.get(file.getPath() + ".csv"), StandardCopyOption.REPLACE_EXISTING);
-    		    } catch (IOException e) {
-    			e.printStackTrace();
-    		    }
-    		}
-    	    }
-    	});
-
-    	saveReliabilityGraphMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-    	    @Override
-    	    public void handle(ActionEvent event) {
-    		try {
-    		    FileChooser fileChooser = new FileChooser();
-    		    fileChooser.setInitialDirectory(new File(resultDirPath));
-    		    fileChooser.setTitle("Save Reliability Graph");
-    		    File file = fileChooser.showSaveDialog(primaryStage);
-    		    if (file != null) {
-    			try {
-    			    SnapshotParameters param = new SnapshotParameters();
-    			    param.setDepthBuffer(true);
-    			    // TODO
-    			    WritableImage snapshot = null;//chartController.reliabilityChart.snapshot(param, null);
-    			    BufferedImage tempImg = SwingFXUtils.fromFXImage(snapshot, null);
-
-    			    File outputfile = new File(file.getPath() + ".png");
-    			    ImageIO.write(tempImg, "png", outputfile);
-
-    			} catch (IOException e) {
-    			    e.printStackTrace();
-    			}
-    		    }
-    		} catch (Exception e) {
-    		    e.printStackTrace();
-    		}
-    	    }
-    	});
-
-    	saveCostGraphMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-    	    @Override
-    	    public void handle(ActionEvent event) {
-    		try {
-    		    FileChooser fileChooser = new FileChooser();
-    		    fileChooser.setInitialDirectory(new File(resultDirPath));
-    		    fileChooser.setTitle("Save Cost Graph");
-    		    File file = fileChooser.showSaveDialog(primaryStage);
-    		    if (file != null) {
-    			try {
-    			    SnapshotParameters param = new SnapshotParameters();
-    			    param.setDepthBuffer(true);
-    			    // TODO
-    			    WritableImage snapshot = null; //chartController.costChart.snapshot(param, null);
-    			    BufferedImage tempImg = SwingFXUtils.fromFXImage(snapshot, null);
-
-    			    File outputfile = new File(file.getPath() + ".png");
-    			    ImageIO.write(tempImg, "png", outputfile);
-
-    			} catch (IOException e) {
-    			    e.printStackTrace();
-    			}
-    		    }
-    		} catch (Exception e) {
-    		    e.printStackTrace();
-    		}
-    	    }
-    	});
-    	
-    	
-    	saveInvCostGraphMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-    	    @Override
-    	    public void handle(ActionEvent event) {
-    		try {
-    		    FileChooser fileChooser = new FileChooser();
-    		    fileChooser.setInitialDirectory(new File(resultDirPath));
-    		    fileChooser.setTitle("Save Invocation Cost Graph");
-    		    File file = fileChooser.showSaveDialog(primaryStage);
-    		    if (file != null) {
-    			try {
-    			    SnapshotParameters param = new SnapshotParameters();
-    			    param.setDepthBuffer(true);
-    			    // TODO
-    			    WritableImage snapshot = null;//chartController.invCostChart.snapshot(param, null);
-    			    BufferedImage tempImg = SwingFXUtils.fromFXImage(snapshot, null);
-
-    			    File outputfile = new File(file.getPath() + ".png");
-    			    ImageIO.write(tempImg, "png", outputfile);
-
-    			} catch (IOException e) {
-    			    e.printStackTrace();
-    			}
-    		    }
-    		} catch (Exception e) {
-    		    e.printStackTrace();
-    		}
-    	    }
-    	});
-
-    	savePerformanceGraphMenuItem.setOnAction(event->{
-    		try {
-    		    FileChooser fileChooser = new FileChooser();
-    		    fileChooser.setInitialDirectory(new File(resultDirPath));
-    		    fileChooser.setTitle("Save Performance Graph");
-    		    File file = fileChooser.showSaveDialog(primaryStage);
-    		    if (file != null) {
-    			try {
-    			    SnapshotParameters param = new SnapshotParameters();
-    			    param.setDepthBuffer(true);
-    			    // TODO
-    			    WritableImage snapshot = null;//chartController.performanceChart.snapshot(param, null);
-    			    BufferedImage tempImg = SwingFXUtils.fromFXImage(snapshot, null);
-
-    			    File outputfile = new File(file.getPath() + ".png");
-    			    ImageIO.write(tempImg, "png", outputfile);
-
-    			} catch (IOException e) {
-    			    e.printStackTrace();
-    			}
-    		    }
-    		} catch (Exception e) {
-    		    e.printStackTrace();
-    		}
-    	});
-    	
-    	
-    	saveInvMenuItem.setOnAction(event-> {
-    		
-    		// TODO saving
-    		/*try {
-    		    FileChooser fileChooser = new FileChooser();
-    		    fileChooser.setInitialDirectory(new File(resultDirPath));
-    		    fileChooser.setTitle("Save Invocations");
-    		    File file = fileChooser.showSaveDialog(primaryStage);
-    		    if (file != null) {
-    		    	    		        		    	
-    		    	List<String> services = new ArrayList<>();
-    		    	for(String serviceName : tasStart.getServiceTypes().keySet())
-    		    		services.add(serviceName);
-    		    	
-    				FileManager writer=new FileManager(file.getPath()+".csv");
-    				writer.setMode(FileManager.WRITING);
-    				writer.open();
-    				
-    				LinkedHashMap<Integer,Double> failureRates=chartController.failureRates;
-    				LinkedHashMap<Integer,Double> responseTimes=chartController.responseTimes;
-    				LinkedHashMap<Integer,Double> costs=chartController.costs;   
-    				LinkedHashMap<Integer,Map<String,Double>> invocationRates=chartController.invocationRates;
-    				
-    				StringBuilder build;
-    				InputProfile profile = ProfileExecutor.profiles.get("test");
-    				
-    				if (profile != null) {
-    					
-    					Requirement reliabilityReq=profile.getRequirement("reliability");
-    					Requirement performanceReq=profile.getRequirement("performance");
-    					
-    					List<Integer> frInvocations=new ArrayList<>();
-    					String curFailureRate="0";
-    					int frIndex=1;
-    					List<Integer> rtInvocations=new ArrayList<>();
-    					String curResponseTime="0";
-    					int rtIndex=1;
-    					
-    					if(reliabilityReq!=null){
-    						for(int invocations: reliabilityReq.getValues().keySet()){
-    							frInvocations.add(invocations);
-    						}
-    						curFailureRate=reliabilityReq.getValues().get(0);
-    					}
-
-    					if(performanceReq!=null){
-    						for(int invocations:performanceReq.getValues().keySet()){
-    							rtInvocations.add(invocations);
-    						}
-    						curResponseTime=performanceReq.getValues().get(0);
-    					}
-    					
-        				for(int invocations:failureRates.keySet()){
-        					build=new StringBuilder();
-        					
-        					if(reliabilityReq!=null){
-        						if(frIndex<frInvocations.size()){
-        							if(invocations>=frInvocations.get(frIndex)){
-        								curFailureRate=reliabilityReq.getValues().get(frInvocations.get(frIndex));
-        								frIndex++;
-        							}
-        						}
-        					}
-        					
-        					if(performanceReq!=null){
-        						if(rtIndex<rtInvocations.size()){
-        							if(invocations>=rtInvocations.get(rtIndex)){
-        								curResponseTime=performanceReq.getValues().get(rtInvocations.get(rtIndex));
-        								rtIndex++;
-        							}
-        						}
-        					}
-        					
-        					build.append(invocations+","+failureRates.get(invocations)+","+curFailureRate+","+
-        							responseTimes.get(invocations)+","+curResponseTime+","+costs.get(invocations)+",");
-        									
-        					Map<String,Double> rates=invocationRates.get(invocations);
-        					for(String service:services){ 						
-        						Double rate=0.0;
-        						if(rates.containsKey(service))
-        							rate=rates.get(service);
-        						build.append(rate+",");
-        					}
-        					//System.out.println(build.toString());
-        					writer.write(build.toString());
-        				}
-    				}
-    				writer.close();	    		    	
-    		    }
-    		} catch (Exception e) {
-    		    e.printStackTrace();
-    		}*/
     	});
     	
     	aboutButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -1132,7 +908,101 @@ public class ApplicationController implements Initializable {
         		}
     	    }
     	});
+    	
+    	saveSystemRunPerformanceMenuItem.setOnAction(event->{
+    		try {
+    		    FileChooser fileChooser = new FileChooser();
+    		    fileChooser.setInitialDirectory(new File(resultDirPath));
+    		    fileChooser.setTitle("Save system run performance graph");
+    		    File file = fileChooser.showSaveDialog(primaryStage);
+    		    if (file != null) {
+    			try {
+    				chartController.saveSystemRunPerformanceChart(file.getPath());
 
+    			} catch (IOException e) {
+    			    e.printStackTrace();
+    			}
+    		    }
+    		} catch (Exception e) {
+    		    e.printStackTrace();
+    		}
+    	});
+    	
+    	saveProtocolMessageMenuItem.setOnAction(event->{
+    		try {
+    		    FileChooser fileChooser = new FileChooser();
+    		    fileChooser.setInitialDirectory(new File(resultDirPath));
+    		    fileChooser.setTitle("Save protocol message graph");
+    		    File file = fileChooser.showSaveDialog(primaryStage);
+    		    if (file != null) {
+    			try {
+    				chartController.SaveProtocolMessageChart(file.getPath());
+
+    			} catch (IOException e) {
+    			    e.printStackTrace();
+    			}
+    		    }
+    		} catch (Exception e) {
+    		    e.printStackTrace();
+    		}
+    	});
+    	
+    	saveRatingEvolutionMenuItem.setOnAction(event->{
+    		try {
+    		    FileChooser fileChooser = new FileChooser();
+    		    fileChooser.setInitialDirectory(new File(resultDirPath));
+    		    fileChooser.setTitle("Save rating evolution graphs");
+    		    File file = fileChooser.showSaveDialog(primaryStage);
+    		    if (file != null) {
+    			try {
+    				chartController.saveRatingCharts(file.getPath());
+
+    			} catch (IOException e) {
+    			    e.printStackTrace();
+    			}
+    		    }
+    		} catch (Exception e) {
+    		    e.printStackTrace();
+    		}
+    	});
+    	
+    	saveFailureRateEvolutionMenuItem.setOnAction(event->{
+    		try {
+    		    FileChooser fileChooser = new FileChooser();
+    		    fileChooser.setInitialDirectory(new File(resultDirPath));
+    		    fileChooser.setTitle("Save failure rate evolution graphs");
+    		    File file = fileChooser.showSaveDialog(primaryStage);
+    		    if (file != null) {
+    			try {
+    				chartController.saveFailureRateEvolutionCharts(file.getPath());
+
+    			} catch (IOException e) {
+    			    e.printStackTrace();
+    			}
+    		    }
+    		} catch (Exception e) {
+    		    e.printStackTrace();
+    		}
+    	});
+    	
+    	saveCostEvolutionMenuItem.setOnAction(event->{
+    		try {
+    		    FileChooser fileChooser = new FileChooser();
+    		    fileChooser.setInitialDirectory(new File(resultDirPath));
+    		    fileChooser.setTitle("Save cost evolution graph");
+    		    File file = fileChooser.showSaveDialog(primaryStage);
+    		    if (file != null) {
+    			try {
+    				chartController.saveCostEvolutionChart(file.getPath());
+
+    			} catch (IOException e) {
+    			    e.printStackTrace();
+    			}
+    		    }
+    		} catch (Exception e) {
+    		    e.printStackTrace();
+    		}
+    	});
     }
     
     private void updateWorkflowVisual() {
@@ -1347,6 +1217,7 @@ public class ApplicationController implements Initializable {
         						chartController.clear();			
         						chartController.generateSystemRunCharts();
         						chartController.generateSystemRunTables();
+        						saveMenuButton.setDisable(false);
         						
         					    resetProgressBar();
         					    runButton.setId("runButton");
@@ -1424,6 +1295,7 @@ public class ApplicationController implements Initializable {
 		    				// Plot current graphs
 							chartController.generateSystemRunCharts();
 							chartController.generateSystemRunTables();
+							saveMenuButton.setDisable(false);
 						}
 						else {
 							// Stop analyzer

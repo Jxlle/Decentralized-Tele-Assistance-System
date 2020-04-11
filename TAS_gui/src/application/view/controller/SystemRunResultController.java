@@ -1,5 +1,8 @@
 package application.view.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -10,13 +13,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 import application.model.ServiceCombinationEntry;
 import application.utility.Arrow;
 import application.utility.ScatterLineChart;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.chart.Chart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -32,6 +40,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -61,6 +70,9 @@ public class SystemRunResultController {
 	private SystemRunProbe systemRunProbe = new SystemRunProbe();
 	private ProtocolProbe protocolProbe = new ProtocolProbe();
 	private int maximumDelta = 10;
+	private ScatterLineChart<Number, Number> systemRunChart;
+	private LineChart<Number, Number> failureRateErrorChart, ratingChart, ratingSystemChart, failureRateSystemChart, failureRateChart, 
+	costChart, protocolMessageChart;
 	
 	public void setProtocolProbe() {
 		protocolProbe.connect();
@@ -104,6 +116,56 @@ public class SystemRunResultController {
 		
 		protocolFlowAnchorPane.getChildren().add(protocolDetailsText);
 		protocolDetailsText.setDisable(false);
+	}
+	
+	public void saveAll(File directory) throws IOException {
+		String defdaultPath = directory.getPath() + File.separator;
+		saveSystemRunPerformanceChart(defdaultPath + "Performance Graph");
+		SaveProtocolMessageChart(defdaultPath +"Protocol Message Graph");
+		saveCostEvolutionChart(defdaultPath +"Cost evolution Graph");
+		saveChart(ratingChart, defdaultPath + "Entity Rating evolution Graph");
+		saveChart(ratingSystemChart, defdaultPath + "System Rating Graph");
+		saveChart(failureRateChart, defdaultPath + "Entity Failure Rate Graph");
+		saveChart(failureRateSystemChart, defdaultPath + "System Failure Rate Graph");	
+		saveChart(failureRateErrorChart, defdaultPath + "Failure Rate Error Graph");	
+	}
+	
+	public void saveSystemRunPerformanceChart(String filePath) throws IOException {
+		// Save system run chart
+		saveChart(systemRunChart, filePath);
+	}
+	
+	public void SaveProtocolMessageChart(String filePath) throws IOException {
+		// Saving protocol message chart
+		saveChart(protocolMessageChart, filePath);
+	}
+	
+	public void saveRatingCharts(String filePath) throws IOException {
+		// Save entity rating chart
+		saveChart(ratingChart, filePath + "1");
+		
+		// Save system rating chart
+		saveChart(ratingSystemChart, filePath + "2");
+	}
+	
+	public void saveFailureRateEvolutionCharts(String filePath) throws IOException {
+		// Save entity failure rate chart
+		saveChart(failureRateChart, filePath + "1");
+		
+		// Save system failure rate chart
+		saveChart(failureRateSystemChart, filePath + "2");
+		
+		// Save failure rate error chart
+		saveChart(failureRateErrorChart, filePath + "3");
+	}
+	
+	public void saveCostEvolutionChart(String filePath) throws IOException {
+		// Save cost evolution chart
+		saveChart(costChart, filePath);
+	}
+	
+	public void saveRunData(String filePath) {
+		
 	}
 	
 	public void generateSystemRunCharts() {
@@ -216,6 +278,14 @@ public class SystemRunResultController {
 		}
 	}
 	
+	private void saveChart(Chart chart, String filePath) throws IOException {
+		WritableImage image = chart.snapshot(new SnapshotParameters(), null);
+		BufferedImage awtImage = SwingFXUtils.fromFXImage(image, null);
+
+	    File outputfile = new File(filePath + ".png");
+	    ImageIO.write(awtImage, "png", outputfile);
+	}
+	
 	private void generatePerformanceChart() {
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
 		
@@ -225,7 +295,7 @@ public class SystemRunResultController {
 			NumberAxis yAxis = new NumberAxis("Total service combination cost", 0, (systemRunProbe.getMaxCost() + maximumDelta), 1);
 			
 			// Set chart position & size
-			ScatterLineChart<Number, Number> systemRunChart = new ScatterLineChart<Number, Number>(xAxis, yAxis); 
+			systemRunChart = new ScatterLineChart<Number, Number>(xAxis, yAxis); 
 			systemRunChartPane.getChildren().add(systemRunChart);
 			systemRunChart.prefWidthProperty().bind(systemRunChartPane.widthProperty());
 			systemRunChart.prefHeightProperty().bind(systemRunChartPane.heightProperty());
@@ -321,7 +391,7 @@ public class SystemRunResultController {
 			NumberAxis yAxis = new NumberAxis("Chosen Service Combination Failure Rate error \n(system approximation <-> entity approximation)", 0, maxErrorValue, 0.1);
 			
 			// Set chart position & size
-			LineChart<Number, Number> failureRateErrorChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			failureRateErrorChart = new LineChart<Number, Number>(xAxis, yAxis); 
 			failureRateErrorChartPane.getChildren().add(failureRateErrorChart);
 			failureRateErrorChart.prefWidthProperty().bind(failureRateErrorChartPane.widthProperty());
 			failureRateErrorChart.prefHeightProperty().bind(failureRateErrorChartPane.heightProperty());
@@ -384,7 +454,7 @@ public class SystemRunResultController {
 				
 				case SCORE:
 					
-					// TODO ECHTE SCORE
+					// TODO REAL SCORE
 					double maxScore = 0;
 					
 					for (String entity : chosenCombinationsAll.keySet()) {
@@ -406,7 +476,7 @@ public class SystemRunResultController {
 			}
 			
 			// Set chart position & size
-			LineChart<Number, Number> ratingChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			ratingChart = new LineChart<Number, Number>(xAxis, yAxis); 
 			ratingEvolutionChartPane.getChildren().add(ratingChart);
 			ratingChart.prefWidthProperty().bind(ratingEvolutionChartPane.widthProperty());
 			ratingChart.prefHeightProperty().bind(ratingEvolutionChartPane.heightProperty());
@@ -469,7 +539,7 @@ public class SystemRunResultController {
 			}
 			
 			// Set chart position & size
-			LineChart<Number, Number> ratingSystemChart = new LineChart<Number, Number>(xAxis, yAxis);
+			ratingSystemChart = new LineChart<Number, Number>(xAxis, yAxis);
 			ratingEvolutionSystemChartPane.getChildren().add(ratingSystemChart);
 			ratingSystemChart.prefWidthProperty().bind(ratingEvolutionSystemChartPane.widthProperty());
 			ratingSystemChart.prefHeightProperty().bind(ratingEvolutionSystemChartPane.heightProperty());
@@ -517,7 +587,7 @@ public class SystemRunResultController {
 			NumberAxis yAxis = new NumberAxis("Total service combination failure rate \n(approximated by workflow analyzer)", 0, maxFailRate, 0.1);
 			
 			// Set chart position & size
-			LineChart<Number, Number> failureRateSystemChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			failureRateSystemChart = new LineChart<Number, Number>(xAxis, yAxis); 
 			failureRateSystemChartPane.getChildren().add(failureRateSystemChart);
 			failureRateSystemChart.prefWidthProperty().bind(failureRateSystemChartPane.widthProperty());
 			failureRateSystemChart.prefHeightProperty().bind(failureRateSystemChartPane.heightProperty());
@@ -569,7 +639,7 @@ public class SystemRunResultController {
 				
 			
 			// Set chart position & size
-			LineChart<Number, Number> failureRateChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			failureRateChart = new LineChart<Number, Number>(xAxis, yAxis); 
 			failureRateChartPane.getChildren().add(failureRateChart);
 			failureRateChart.prefWidthProperty().bind(failureRateChartPane.widthProperty());
 			failureRateChart.prefHeightProperty().bind(failureRateChartPane.heightProperty());
@@ -608,7 +678,7 @@ public class SystemRunResultController {
 			NumberAxis yAxis = new NumberAxis("Total service combination cost", 0, (systemRunProbe.getMaxCost() + maximumDelta), 1);
 			
 			// Set chart position & size
-			LineChart<Number, Number> costChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			costChart = new LineChart<Number, Number>(xAxis, yAxis); 
 			costChartPane.getChildren().add(costChart);
 			costChart.prefWidthProperty().bind(costChartPane.widthProperty());
 			costChart.prefHeightProperty().bind(costChartPane.heightProperty());
@@ -642,7 +712,7 @@ public class SystemRunResultController {
 			NumberAxis yAxis = new NumberAxis("Messages sent during protocol", 0, Collections.max(protocolMessages) + 5, 1);
 			
 			// Set chart position & size
-			LineChart<Number, Number> protocolMessageChart = new LineChart<Number, Number>(xAxis, yAxis); 
+			protocolMessageChart = new LineChart<Number, Number>(xAxis, yAxis); 
 			protocolMessageChartPane.getChildren().add(protocolMessageChart);
 			protocolMessageChart.prefWidthProperty().bind(protocolMessageChartPane.widthProperty());
 			protocolMessageChart.prefHeightProperty().bind(protocolMessageChartPane.heightProperty());
