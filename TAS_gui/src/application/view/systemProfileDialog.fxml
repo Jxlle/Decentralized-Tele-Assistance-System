@@ -166,7 +166,7 @@
                                     <Insets left="20.0" />
                                  </GridPane.margin>
                               </ListView>
-                              <Label text="Max Protocol Iterations: " GridPane.rowIndex="2" />
+                              <Label text="Max Protocol Messages: " GridPane.rowIndex="2" />
                               <AnchorPane prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <children>
                                     <TextField fx:id="maxProtocolIterations" maxWidth="-Infinity" prefWidth="200.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="3.0" />
@@ -176,7 +176,7 @@
                                     <Insets left="20.0" />
                                  </GridPane.margin>
                               </AnchorPane>
-                              <Label text="Protocol data Percentage" GridPane.rowIndex="3" />
+                              <Label text="Protocol Data Usage %: " GridPane.rowIndex="3" />
                               <AnchorPane prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <children>
                                     <TextField fx:id="protocolData" prefWidth="200.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="3.0" />
@@ -186,7 +186,7 @@
                                     <Insets left="20.0" />
                                  </GridPane.margin>
                               </AnchorPane>
-                              <Label text="Max Load Value" GridPane.rowIndex="7" />
+                              <Label text="Max Load Value: " GridPane.rowIndex="7" />
                               <ComboBox fx:id="maxLoadTypeComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets left="20.0" right="20.0" />
@@ -200,6 +200,12 @@
                                     <TextField fx:id="maxLoadValueTextField" layoutX="48.0" layoutY="1.0" prefWidth="200.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="3.0" />
                                  </children>
                               </AnchorPane>
+                              <TextField fx:id="profileNameTextField" maxWidth="-Infinity" prefWidth="200.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" right="20.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label fx:id="profileNameLabel" text="Profile Name: " visible="false" GridPane.rowIndex="9" />
                            </children>
                         </GridPane>
                         <Button fx:id="saveButton2" mnemonicParsing="false" prefWidth="60.0" text="Save" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />

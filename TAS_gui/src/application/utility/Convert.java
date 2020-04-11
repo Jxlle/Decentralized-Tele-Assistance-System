@@ -10,6 +10,7 @@ public class Convert {
 			
 				case "boolean": 
 				case "Boolean":
+				case "BOOLEAN":
 				{
 					if (data.equals("true"))
 						realData = true;
@@ -20,13 +21,16 @@ public class Convert {
 				
 				case "short":
 				case "Short":
+				case "SHORT":
 				{
 					realData = Short.parseShort(data);
 					break;
 				}
 				
 				case "int": 
+				case "INT":
 				case "Integer": 
+				case "INTEGER":
 				{
 					realData = Integer.parseInt(data);
 					break;
@@ -34,6 +38,7 @@ public class Convert {
 				
 				case "long": 
 				case "Long": 
+				case "LONG":
 				{
 					realData = Long.parseLong(data);
 					break;
@@ -41,6 +46,7 @@ public class Convert {
 				
 				case "float": 
 				case "Float": 
+				case "FLOAT":
 				{
 					realData = Float.parseFloat(data);
 					break;
@@ -48,6 +54,7 @@ public class Convert {
 				
 				case "double":
 				case "Double": 
+				case "DOUBLE":
 				{
 					realData = Double.parseDouble(data);
 					break;
@@ -55,6 +62,7 @@ public class Convert {
 				
 				case "string":
 				case "String":
+				case "STRING":
 				{
 					realData = data;
 					break;

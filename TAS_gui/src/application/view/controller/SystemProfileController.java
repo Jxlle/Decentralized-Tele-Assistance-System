@@ -57,6 +57,7 @@ import javafx.util.Pair;
 import javafx.util.converter.IntegerStringConverter;
 import tas.data.inputprofile.InputProfileValue;
 import tas.data.inputprofile.InputProfileVariable;
+import tas.data.inputprofile.MaxLoadValue;
 import tas.data.inputprofile.MaxLoadValue.MaxLoadType;
 import tas.data.inputprofile.ProtocolType;
 import tas.data.inputprofile.InputProfile;
@@ -117,6 +118,9 @@ public class SystemProfileController implements Initializable {
 	TextField maxLoadValueTextField;
 	
 	@FXML
+	TextField profileNameTextField;
+	
+	@FXML
 	Button addValueButton;
 	
 	@FXML
@@ -138,6 +142,9 @@ public class SystemProfileController implements Initializable {
 	Label protocolDataLabel;
 	
 	@FXML
+	Label profileNameLabel;
+	
+	@FXML
 	ListView<BorderPane> entityListView;
 	
 	private Stage stage;
@@ -146,6 +153,7 @@ public class SystemProfileController implements Initializable {
 	private InputProfileVariable currentVariable = null;
 	private List<String> entityNameList;
 	private List<Pair<InputProfileVariable, String>> inputVariables = new ArrayList<>();
+	private ApplicationController parent;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -154,6 +162,10 @@ public class SystemProfileController implements Initializable {
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
+	}
+	
+	public void setParent(ApplicationController parent) {
+		this.parent = parent;
 	}
 	
 	public void setEntityData(List<MAPEKSystemEntity> entities) {
@@ -335,6 +347,10 @@ public class SystemProfileController implements Initializable {
 		
 		if (filePath == null) {
 			saveButton1.setDisable(true);
+			profileNameLabel.setVisible(true);
+			profileNameTextField.setVisible(true);
+			saveButton2.setText("Create");
+			prof = new InputProfile();
 		}
 		else {
 			prof = InputProfileDataHandler.readFromXml(filePath);
@@ -604,7 +620,14 @@ public class SystemProfileController implements Initializable {
 		
 		saveButton2.setOnAction(event -> {
 			
-			if (Integer.parseInt(executionCyclesTextField.getText()) <= 0) {
+			
+			if (saveButton2.getText().equals("Create") && (profileNameTextField.getText().trim().isEmpty() || profileNameTextField.getText().startsWith(" "))) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("INVALID CONTENT");
+	            fail.setContentText("The profile name is missing or starts with illegal characters.");
+	            fail.showAndWait();
+			}		
+			else if (Integer.parseInt(executionCyclesTextField.getText()) <= 0) {
 	    		Alert fail = new Alert(AlertType.WARNING);
 	            fail.setHeaderText("INVALID CONTENT");
 	            fail.setContentText("The amount of execution cycles must be greater than 0.");
@@ -625,7 +648,7 @@ public class SystemProfileController implements Initializable {
 			else if (Integer.parseInt(protocolData.getText()) < 0 || Integer.parseInt(protocolData.getText()) > 100) {
 	    		Alert fail = new Alert(AlertType.WARNING);
 	            fail.setHeaderText("INVALID CONTENT");
-	            fail.setContentText("The amount of protocol data must be a value from 0 to 100.");
+	            fail.setContentText("The protocol data percentage must be a value from 0 to 100.");
 	            fail.showAndWait();
 			}
 			else if (maxProtocolIterations.isVisible() && Integer.parseInt(maxProtocolIterations.getText()) <= 0) {
@@ -634,16 +657,40 @@ public class SystemProfileController implements Initializable {
 	            fail.setContentText("The maximum amount of protocol iterations must be greater than 0.");
 	            fail.showAndWait();
 			}
-			else if (protocolTypeComboBox.isVisible() && protocolTypeComboBox.getValue() == null) {
-	    		Alert fail = new Alert(AlertType.WARNING);
-	            fail.setHeaderText("MISSING CONTENT");
-	            fail.setContentText("No protocol type selected.");
-	            fail.showAndWait();
-			}
 			else if (!uniqueEntityList(entityListView.getItems())) {
 	    		Alert fail = new Alert(AlertType.WARNING);
 	            fail.setHeaderText("INVALID CONTENT");
 	            fail.setContentText("Some participating entities are duplicates.");
+	            fail.showAndWait();
+			}
+			else if (invalidEntities(entityListView.getItems())) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("INVALID CONTENT");
+	            fail.setContentText("Some participating entity isn't present in the entity list. Choose a valid entity.");
+	            fail.showAndWait();
+			}
+			else if (systemTypeComboBox.getValue() == null) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("MISSING CONTENT");
+	            fail.setContentText("No system type selected.");
+	            fail.showAndWait();
+			}
+			else if (ratingTypeComboBox.getValue() == null) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("MISSING CONTENT");
+	            fail.setContentText("No rating type selected.");
+	            fail.showAndWait();
+			}
+			else if (maxLoadTypeComboBox.getValue() == null) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("MISSING CONTENT");
+	            fail.setContentText("No max load type selected.");
+	            fail.showAndWait();
+			}
+			else if (protocolTypeComboBox.isVisible() && protocolTypeComboBox.getValue() == null) {
+	    		Alert fail = new Alert(AlertType.WARNING);
+	            fail.setHeaderText("MISSING CONTENT");
+	            fail.setContentText("No protocol type selected.");
 	            fail.showAndWait();
 			}
 			else if (emptyEntities(entityListView.getItems())) {
@@ -658,13 +705,8 @@ public class SystemProfileController implements Initializable {
 	            fail.setContentText("Not all requirements for the participating entities are selected.");
 	            fail.showAndWait();
 			}
-			else if (invalidEntities(entityListView.getItems())) {
-	    		Alert fail = new Alert(AlertType.WARNING);
-	            fail.setHeaderText("INVALID CONTENT");
-	            fail.setContentText("Some participating entity isn't present in the entity list. Choose a valid entity.");
-	            fail.showAndWait();
-			}
 			else {				
+				
 				profile.clearEntities();
 				profile.setExecutionCycles(Integer.valueOf(executionCyclesTextField.getText()));
 				profile.setWorkflowCycles(Integer.valueOf(workflowCyclesTextField.getText()));
@@ -674,6 +716,13 @@ public class SystemProfileController implements Initializable {
 				
 				for (Pair<InputProfileVariable, String> pair : inputVariables) {
 					profile.addVariable(pair.getKey());
+				}
+				
+				if (maxLoadValueTextField.isVisible()) {
+					profile.setmaxLoadValue(new MaxLoadValue(maxLoadTypeComboBox.getValue(), Integer.parseInt(maxLoadValueTextField.getText())));
+				}
+				else {
+					profile.setmaxLoadValue(new MaxLoadValue(maxLoadTypeComboBox.getValue(), 0));
 				}
 				
 				if (protocolTypeComboBox.isVisible()) {
@@ -688,7 +737,15 @@ public class SystemProfileController implements Initializable {
 					profile.addEntity(entityBox.getValue(), requirementBox.getValue());
 				}
 				
-				InputProfileDataHandler.writeToXml(profile, filePath);
+				if (filePath == null) {
+					filePath = ApplicationController.profileFilePath + profileNameTextField.getText() + ".xml";
+					InputProfileDataHandler.writeToXml(profile, filePath);
+					parent.addSystemProfile(filePath);
+				}
+				else {
+					InputProfileDataHandler.writeToXml(profile, filePath);
+				}
+				
 				stage.close();
 			}
 		});

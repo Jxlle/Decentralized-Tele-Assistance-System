@@ -109,7 +109,7 @@ public class ApplicationController implements Initializable {
     
     String workflowPath;
     String workflowFilePath = fileDirPath + "workflow" + File.separator;
-    String profileFilePath = fileDirPath + "profiles" + File.separator;
+    static String profileFilePath = fileDirPath + "profiles" + File.separator;
     static String entityFilePath = fileDirPath + "entities" + File.separator;
     String serviceDataFilePath = fileDirPath + "service data" + File.separator;
     String resultFilePath = resultDirPath + "result.csv";
@@ -1117,6 +1117,7 @@ public class ApplicationController implements Initializable {
         			controller.setStage(dialogStage);
         			controller.setEntityData(entities);
         			controller.setFilePath(null);
+        			controller.setParent(self);
 
         		    Scene dialogScene = new Scene(pane);
         		    dialogScene.getStylesheets().add(MainGui.class.getResource("view/application.css").toExternalForm());
@@ -1163,7 +1164,7 @@ public class ApplicationController implements Initializable {
 	    analyzed = false;
     }
     
-    private void addSystemProfile(String profilePath) {
+    public void addSystemProfile(String profilePath) {
     	
 		if (profileListView.getItems().stream().anyMatch(x -> x.getChildren().stream().filter(x2 -> x2 instanceof Label).map(Label.class::cast).anyMatch(x3 -> x3.getText().equals(Paths.get(profilePath).getFileName().toString().split("\\.")[0])))) {
 			
