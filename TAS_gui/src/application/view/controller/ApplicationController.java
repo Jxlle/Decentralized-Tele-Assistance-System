@@ -1152,6 +1152,7 @@ public class ApplicationController implements Initializable {
         					@Override
         					public void run() {
         					    runButton.setId("stopButton");
+        						saveMenuButton.setDisable(true);
         					}
     				    });
     			    	

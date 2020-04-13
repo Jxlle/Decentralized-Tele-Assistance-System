@@ -333,9 +333,43 @@ public class SystemRunResultController {
         mainSccRow.createCell(0).setCellValue("SERVICE COMBINATION CHOICES");
         mainSccRow.getCell(0).setCellStyle(bold);
         
+        rowIndex++;
+        
+        HSSFRow helpRow = sccSheet.createRow((short)rowIndex);
+        helpRow.createCell(0).setCellValue("(click on cell to format correctly)");
+        
         rowIndex += 2;
         
-        // TODO
+        // Set data points
+		for (String entity : chosenCombinationsAll.keySet()) {
+			
+			HSSFRow chosenCombinationRootRootRow = sccSheet.createRow((short)rowIndex);
+			chosenCombinationRootRootRow.createCell(0).setCellValue(entity);
+			chosenCombinationRootRootRow.getCell(0).setCellStyle(bold);
+			
+			rowIndex++;
+			
+	        HSSFRow chosenCombinationRootRow = sccSheet.createRow((short)rowIndex);
+	        chosenCombinationRootRow.createCell(0).setCellValue("Cycle");
+	        chosenCombinationRootRow.createCell(1).setCellValue("Chosen Service Combination");
+	        
+	        for (int i = 0; i < 2; i++) {
+	        	chosenCombinationRootRow.getCell(i).setCellStyle(bold);
+	        }
+	        
+	        rowIndex++;
+			
+			for (int i = 0; i < chosenCombinationsAll.get(entity).size(); i++) {	
+		        String comboString = chosenCombinationsAll.get(entity).get(i).toString().replace("\n", "\r\n");
+				HSSFRow chosenCombinationRow = sccSheet.createRow((short)rowIndex);
+				chosenCombinationRow.createCell(0).setCellValue(i + 1);		
+				chosenCombinationRow.createCell(1).setCellValue(comboString);
+				
+		        rowIndex++;
+			}
+			
+			rowIndex++;
+		}
         
         
         // PROTOCOL COMMUNICATION RESULTS
