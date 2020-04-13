@@ -668,7 +668,7 @@ public class ApplicationController implements Initializable {
     	    	File selectedDirectory = chooser.showDialog(primaryStage);
     	    	
     	    	try {
-					chartController.saveAll(selectedDirectory);
+					chartController.saveAll(selectedDirectory, entities);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -994,6 +994,25 @@ public class ApplicationController implements Initializable {
     		    if (file != null) {
     			try {
     				chartController.saveCostEvolutionChart(file.getPath());
+
+    			} catch (IOException e) {
+    			    e.printStackTrace();
+    			}
+    		    }
+    		} catch (Exception e) {
+    		    e.printStackTrace();
+    		}
+    	});
+    	
+    	saveResultDataMenuItem.setOnAction(event->{
+    		try {
+    		    FileChooser fileChooser = new FileChooser();
+    		    fileChooser.setInitialDirectory(new File(resultDirPath));
+    		    fileChooser.setTitle("Save run data");
+    		    File file = fileChooser.showSaveDialog(primaryStage);
+    		    if (file != null) {
+    			try {
+    				chartController.saveRunData(file.getPath(), entities);
 
     			} catch (IOException e) {
     			    e.printStackTrace();

@@ -143,7 +143,7 @@
                         <MenuButton fx:id="saveMenuButton" disable="true" mnemonicParsing="false" text="Save">
                            <items>
                               <MenuItem fx:id="saveRunMenuItem" mnemonicParsing="false" text="Save run (everything)" />
-                              <MenuItem fx:id="saveResultDataMenuItem" mnemonicParsing="false" text="Save result data (excel document)" />
+                              <MenuItem fx:id="saveResultDataMenuItem" mnemonicParsing="false" text="Save run data (excel document)" />
                               <MenuItem fx:id="saveSystemRunPerformanceMenuItem" mnemonicParsing="false" text="Save system run performance graph" />
                               <MenuItem fx:id="saveProtocolMessageMenuItem" mnemonicParsing="false" text="Save protocol message graph" />
                               <MenuItem fx:id="saveRatingEvolutionMenuItem" mnemonicParsing="false" text="Save rating evolution graphs" />

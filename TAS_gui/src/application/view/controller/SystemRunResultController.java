@@ -15,8 +15,12 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import  org.apache.poi.hssf.usermodel.HSSFSheet;
 import  org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
 
 import application.model.ServiceCombinationEntry;
 import application.utility.Arrow;
@@ -55,6 +59,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.Pair;
+import service.atomic.AtomicService;
+import service.registry.ServiceRegistry;
+import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.communication.message.ProtocolMessageInformation;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalType;
@@ -121,7 +128,7 @@ public class SystemRunResultController {
 		protocolDetailsText.setDisable(false);
 	}
 	
-	public void saveAll(File directory) throws IOException {
+	public void saveAll(File directory, List<MAPEKSystemEntity> entities) throws IOException {
 		String defaultPath = directory.getPath() + File.separator;
 		saveSystemRunPerformanceChart(defaultPath + "Performance Graph");
 		SaveProtocolMessageChart(defaultPath +"Protocol Message Graph");
@@ -131,7 +138,7 @@ public class SystemRunResultController {
 		saveChart(failureRateChart, defaultPath + "Entity Failure Rate Graph");
 		saveChart(failureRateSystemChart, defaultPath + "System Failure Rate Graph");	
 		saveChart(failureRateErrorChart, defaultPath + "Failure Rate Error Graph");	
-		saveRunData(defaultPath + "Run Results");
+		saveRunData(defaultPath + "Run Results", entities);
 	}
 	
 	public void saveSystemRunPerformanceChart(String filePath) throws IOException {
@@ -168,33 +175,141 @@ public class SystemRunResultController {
 		saveChart(costChart, filePath);
 	}
 	
-	public void saveRunData(String filePath) throws IOException {
+	public void saveRunData(String filePath, List<MAPEKSystemEntity> entities) throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("FirstSheet");  
+        HSSFSheet envSheet = workbook.createSheet("Environment Data");  
+        int rowIndex = 2;
+        
+        HSSFFont font = workbook.createFont();
+        CellStyle bold = workbook.createCellStyle();
+    	font.setBold(true);
+    	bold.setFont(font);
+    	
+    	
+    	// Service information
+        HSSFRow mainServiceRow = envSheet.createRow((short)0);
+        mainServiceRow.createCell(0).setCellValue("SERVICE INFORMATION");
+        mainServiceRow.getCell(0).setCellStyle(bold);
+        
+        for (ServiceRegistry registry : GlobalServiceInfo.getServiceRegistries()) {
+        	
+            HSSFRow registryRow = envSheet.createRow((short)rowIndex);
+            registryRow.createCell(0).setCellValue(registry.getServiceDescription().getServiceEndpoint());
+            registryRow.getCell(0).setCellStyle(bold);
+            
+            rowIndex ++;
+            
+            HSSFRow serviceRootRow = envSheet.createRow((short)rowIndex);
+            serviceRootRow.createCell(0).setCellValue("Name");
+            serviceRootRow.createCell(1).setCellValue("Endpoint");
+            serviceRootRow.createCell(2).setCellValue("Cost");
+            serviceRootRow.createCell(3).setCellValue("Failure Rate");
+            // add column here if service gets new custom property
+            
+            for (int i = 0; i < 4; i++) {
+            	serviceRootRow.getCell(i).setCellStyle(bold);
+            }
+            
+            rowIndex ++;
+            
+            for (String serviceName : registry.getAllServiceNames()) {
+            	AtomicService service = GlobalServiceInfo.getService(serviceName);
+                HSSFRow serviceRow = envSheet.createRow((short)rowIndex);
+                serviceRow.createCell(0).setCellValue(service.getServiceDescription().getServiceName());
+                serviceRow.createCell(1).setCellValue(service.getServiceDescription().getServiceEndpoint());
+                
+                if (service.getServiceDescription().getCustomProperties().get("Cost") != null) {
+                    serviceRow.createCell(2).setCellValue((double) service.getServiceDescription().getCustomProperties().get("Cost"));
+                }
+                else {
+                    serviceRow.createCell(2).setCellValue(0);
+                }
+                
+                if (service.getServiceDescription().getCustomProperties().get("FailureRate") != null) {
+                    serviceRow.createCell(3).setCellValue((double) service.getServiceDescription().getCustomProperties().get("FailureRate"));
+                }
+                else {
+                    serviceRow.createCell(3).setCellValue(0);
+                }
+                
+                rowIndex++;
+            }
+            
+            rowIndex += 4;
+        }
+        
+        rowIndex += 4;
+        
+        
+        // Entity information
+        HSSFRow mainEntityRow = envSheet.createRow((short)rowIndex);
+        mainEntityRow.createCell(0).setCellValue("ENTITY INFORMATION");
+        mainEntityRow.getCell(0).setCellStyle(bold);
+        
+        rowIndex++;
+        
+        HSSFRow entityRootRow = envSheet.createRow((short)rowIndex);
+        entityRootRow.createCell(0).setCellValue("Name");
+        entityRootRow.createCell(1).setCellValue("Load Failure Delta");
+        entityRootRow.createCell(2).setCellValue("Combination Limit");
+        entityRootRow.createCell(3).setCellValue("Min Failure Delta");
+        entityRootRow.createCell(4).setCellValue("Failure Change");
+        entityRootRow.createCell(5).setCellValue("Analyzer Generation Strategy");
+        entityRootRow.createCell(6).setCellValue("Goals");
+        entityRootRow.createCell(7).setCellValue("Used Service Registries");
+        entityRootRow.createCell(8).setCellValue("Workflow Path");
+        // add column here if entity gets new custom property
+        
+        for (int i = 0; i < 9; i++) {
+        	entityRootRow.getCell(i).setCellStyle(bold);
+        }
+        
+        rowIndex++;
+        
+        for (MAPEKSystemEntity entity : entities) {
+        	
+        	String goalString = "{";
+        	
+        	for (Goal goal : entity.getManagingSystem().getKnowledge().getGoals()) {
+        		goalString += goal.getType() + " " + goal.getRelation() + " " + goal.getValue() + ", ";
+        	}
+        	
+        	goalString += "}";
+        	
+        	List<String> registries = entity.getManagingSystem().getKnowledge().getRegistryEndpoints();
+        	String registryString = "{";
+        	
+        	for (int i = 0; i < registries.size(); i++) {
+        		if (i == registries.size() - 1) {
+            		registryString += registries.get(i) + "}";
+        		}
+        		else {
+            		registryString += registries.get(i) + ", ";
+        		}
+        	}
+        	
+            HSSFRow entityRow = envSheet.createRow((short)rowIndex);
+            entityRow.createCell(0).setCellValue(entity.getEntityName());
+            entityRow.createCell(1).setCellValue(entity.getManagingSystem().getKnowledge().getLoadFailureDelta());
+            entityRow.createCell(2).setCellValue(entity.getManagingSystem().getAnalyzer().getCombinationLimit());
+            entityRow.createCell(3).setCellValue(entity.getManagingSystem().getMonitor().getMinFailureDelta());
+            entityRow.createCell(4).setCellValue(entity.getManagingSystem().getMonitor().getFailureChange());
+            entityRow.createCell(5).setCellValue(entity.getManagingSystem().getAnalyzer().getServiceGenerationStrategy());
+            entityRow.createCell(6).setCellValue(goalString);
+            entityRow.createCell(7).setCellValue(registryString);
+            entityRow.createCell(8).setCellValue(entity.getManagedSystem().getWorkflowPath());
+            
+            rowIndex++;
+        }
+        
+        for (int i = 0; i < 20; i++) {
+        	envSheet.autoSizeColumn(i);
+        }
         
         FileOutputStream fileOut = new FileOutputStream(filePath + ".xls");
         workbook.write(fileOut);
         fileOut.close();
         workbook.close();
-
-        //TODO todo;
-        /*HSSFRow rowhead = sheet.createRow((short)0);
-        rowhead.createCell(0).setCellValue("No.");
-        rowhead.createCell(1).setCellValue("Name");
-        rowhead.createCell(2).setCellValue("Address");
-        rowhead.createCell(3).setCellValue("Email");
-
-        HSSFRow row = sheet.createRow((short)1);
-        row.createCell(0).setCellValue("1");
-        row.createCell(1).setCellValue("Sankumarsingh");
-        row.createCell(2).setCellValue("India");
-        row.createCell(3).setCellValue("sankumarsingh@gmail.com");
-
-        FileOutputStream fileOut = new FileOutputStream(filename);
-        workbook.write(fileOut);
-        fileOut.close();
-        workbook.close();
-        System.out.println("Your excel file has been generated!");*/
 	}
 	
 	public void generateSystemRunCharts() {

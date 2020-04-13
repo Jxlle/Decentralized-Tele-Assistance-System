@@ -1,5 +1,5 @@
 <tas.data.inputprofile.InputProfile>
-  <executionCycles>30</executionCycles>
+  <executionCycles>40</executionCycles>
   <workflowCycles>6000</workflowCycles>
   <maxProtocolIterations>200</maxProtocolIterations>
   <messageContentPercentage>100</messageContentPercentage>
