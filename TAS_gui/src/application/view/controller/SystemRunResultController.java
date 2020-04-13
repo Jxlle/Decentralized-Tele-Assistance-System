@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -79,6 +80,7 @@ public class SystemRunResultController {
 	private Label protocolDetailsText;
 	private SystemRunProbe systemRunProbe = new SystemRunProbe();
 	private ProtocolProbe protocolProbe = new ProtocolProbe();
+	private Map<String, List<Double>> failureRateErrors, entityFailureRate;
 	private int maximumDelta = 10;
 	private ScatterLineChart<Number, Number> systemRunChart;
 	private LineChart<Number, Number> failureRateErrorChart, ratingChart, ratingSystemChart, failureRateSystemChart, failureRateChart, 
@@ -177,6 +179,8 @@ public class SystemRunResultController {
 	
 	public void saveRunData(String filePath, List<MAPEKSystemEntity> entities) throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
+        
+        // ENVIRONMENT DATA
         HSSFSheet envSheet = workbook.createSheet("Environment Data");  
         int rowIndex = 2;
         
@@ -302,9 +306,213 @@ public class SystemRunResultController {
             rowIndex++;
         }
         
+        
+        
+        // USED INPUT PROFILE
+        HSSFSheet profileSheet = workbook.createSheet("Used Input Profile");  
+        rowIndex = 0; 
+        
+        HSSFRow mainProfileRow = profileSheet.createRow((short)rowIndex);
+        mainProfileRow.createCell(0).setCellValue("USED INPUT PROFILE");
+        mainProfileRow.getCell(0).setCellStyle(bold);
+        
+        rowIndex += 2;
+        
+        // TODO
+        
+        
+		List<Integer> protocolMessages = systemRunProbe.getProtocolMessageCount();
+        HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
+        HashMap<String, List<ServiceCombination>> chosenCombinationsAll = systemRunProbe.getChosenCombinations();
+        
+        
+        
+        // SERVICE COMBINATION CHOICES
+        HSSFSheet sccSheet = workbook.createSheet("Service Combination Choices");  
+        rowIndex = 0; 
+        
+        HSSFRow mainSccRow = sccSheet.createRow((short)rowIndex);
+        mainSccRow.createCell(0).setCellValue("SERVICE COMBINATION CHOICES");
+        mainSccRow.getCell(0).setCellStyle(bold);
+        
+        rowIndex += 2;
+        
+        // TODO
+        
+        
+        // PROTOCOL COMMUNICATION RESULTS
+        HSSFSheet procomSheet = workbook.createSheet("Protocol Communication Results"); 
+        rowIndex = 0; 
+        
+        HSSFRow mainprocomRow = procomSheet.createRow((short)rowIndex);
+        mainprocomRow.createCell(0).setCellValue("PROTOCOL COMMUNICATION RESULTS");
+        mainprocomRow.getCell(0).setCellStyle(bold);
+        
+        rowIndex += 2;
+        
+        HSSFRow protocolMessageCountRootRow = procomSheet.createRow((short)rowIndex);
+        protocolMessageCountRootRow.createCell(0).setCellValue("Cycle");
+        protocolMessageCountRootRow.createCell(1).setCellValue("Protocol Messages");
+        
+        for (int i = 0; i < 2; i++) {
+        	protocolMessageCountRootRow.getCell(i).setCellStyle(bold);
+        }
+        
+        rowIndex++;
+        
+		for (int i = 0; i < protocolMessages.size(); i++) {
+			HSSFRow protocolMessageCountRow = procomSheet.createRow((short)rowIndex);
+			protocolMessageCountRow.createCell(0).setCellValue(i + 1);
+			protocolMessageCountRow.createCell(1).setCellValue(protocolMessages.get(i));		
+			
+	        rowIndex++;
+		}
+        
+        
+        
+        // RATING RESULTS
+        HSSFSheet ratingSheet = workbook.createSheet("Rating Results"); 
+        rowIndex = 0; 
+        
+        HSSFRow mainRatingRow = ratingSheet.createRow((short)rowIndex);
+        mainRatingRow.createCell(0).setCellValue("RATING RESULTS");
+        mainRatingRow.getCell(0).setCellStyle(bold);
+        
+        rowIndex += 2;
+        
+        // Set data points
+		for (String entity : chosenCombinationsAll.keySet()) {
+			
+			HSSFRow entityRatingRootRootRow = ratingSheet.createRow((short)rowIndex);
+			entityRatingRootRootRow.createCell(0).setCellValue(entity);
+			entityRatingRootRootRow.getCell(0).setCellStyle(bold);
+			
+			rowIndex++;
+			
+	        HSSFRow entityRatingRootRow = ratingSheet.createRow((short)rowIndex);
+	        entityRatingRootRow.createCell(0).setCellValue("Cycle");
+	        entityRatingRootRow.createCell(1).setCellValue("Entity Rating");
+	        entityRatingRootRow.createCell(2).setCellValue("System Rating");
+	        
+	        for (int i = 0; i < 3; i++) {
+	        	entityRatingRootRow.getCell(i).setCellStyle(bold);
+	        }
+	        
+	        rowIndex++;
+			
+			for (int i = 0; i < chosenCombinationsAll.get(entity).size(); i++) {		
+				HSSFRow entityRatingRow = ratingSheet.createRow((short)rowIndex);
+				entityRatingRow.createCell(0).setCellValue(i + 1);
+				entityRatingRow.createCell(1).setCellValue(Double.valueOf(chosenCombinationsAll.get(entity).get(i).getRating().toString()));
+				entityRatingRow.createCell(2).setCellValue(systemRunProbe.getRatings().get(entity).get(i));			
+				
+		        rowIndex++;
+			}
+			
+			rowIndex++;
+		}
+        
+        
+        // FAILURE RATE RESULTS
+        HSSFSheet failureRateSheet = workbook.createSheet("Failure Rate Results");  
+        rowIndex = 0; 
+        
+        HSSFRow mainFailurerateRow = failureRateSheet.createRow((short)rowIndex);
+        mainFailurerateRow.createCell(0).setCellValue("FAILURE RATE RESULTS");
+        mainFailurerateRow.getCell(0).setCellStyle(bold);
+        
+        rowIndex += 2;
+        
+        
+        // Set data points
+		for (String entity : chosenCombinationsAll.keySet()) {
+			
+			HSSFRow entityFailureRateRootRootRow = failureRateSheet.createRow((short)rowIndex);
+			entityFailureRateRootRootRow.createCell(0).setCellValue(entity);
+			entityFailureRateRootRootRow.getCell(0).setCellStyle(bold);
+			
+			rowIndex++;
+			
+	        HSSFRow entityFailureRateRootRow = failureRateSheet.createRow((short)rowIndex);
+	        entityFailureRateRootRow.createCell(0).setCellValue("Cycle");
+	        entityFailureRateRootRow.createCell(1).setCellValue("Entity Failure Rate");
+	        entityFailureRateRootRow.createCell(2).setCellValue("System Failure Rate");
+	        entityFailureRateRootRow.createCell(3).setCellValue("Failure Rate Error");
+	        
+	        for (int i = 0; i < 4; i++) {
+	        	entityFailureRateRootRow.getCell(i).setCellStyle(bold);
+	        }
+	        
+	        rowIndex++;
+			
+			for (int i = 0; i < chosenCombinationsAll.get(entity).size(); i++) {		
+				HSSFRow entityFailureRateRow = failureRateSheet.createRow((short)rowIndex);
+				entityFailureRateRow.createCell(0).setCellValue(i + 1);
+				System.out.println(entityFailureRate.get(entity).get(i) + " "  + i);
+				entityFailureRateRow.createCell(1).setCellValue(entityFailureRate.get(entity).get(i));
+				entityFailureRateRow.createCell(2).setCellValue(dataPoints.get(entity).get(i).getKey());			
+				entityFailureRateRow.createCell(3).setCellValue(failureRateErrors.get(entity).get(i));	
+				
+		        rowIndex++;
+			}
+			
+			rowIndex++;
+		}
+        
+        
+        
+        
+        // COST RESULTS
+        HSSFSheet costSheet = workbook.createSheet("Cost Results");  
+        rowIndex = 0; 
+        
+        HSSFRow mainCostRow = costSheet.createRow((short)rowIndex);
+        mainCostRow.createCell(0).setCellValue("COST RESULTS");
+        mainCostRow.getCell(0).setCellStyle(bold);
+        
+        rowIndex += 2;
+        
+		// Set data points
+		for (String entity : dataPoints.keySet()) {
+			
+			HSSFRow entityCostRootRootRow = costSheet.createRow((short)rowIndex);
+			entityCostRootRootRow.createCell(0).setCellValue(entity);
+			entityCostRootRootRow.getCell(0).setCellStyle(bold);
+			
+			rowIndex++;
+			
+	        HSSFRow entityCostRootRow = costSheet.createRow((short)rowIndex);
+	        entityCostRootRow.createCell(0).setCellValue("Cycle");
+	        entityCostRootRow.createCell(1).setCellValue("Cost");
+	        
+	        for (int i = 0; i < 2; i++) {
+	        	entityCostRootRow.getCell(i).setCellStyle(bold);
+	        }
+	        
+	        rowIndex++;
+			
+			for (int i = 0; i < dataPoints.get(entity).size(); i++) {
+				HSSFRow entityCostRow = costSheet.createRow((short)rowIndex);
+				entityCostRow.createCell(0).setCellValue(i + 1);
+				entityCostRow.createCell(1).setCellValue(dataPoints.get(entity).get(i).getValue());
+		        rowIndex++;
+			}
+			
+	        rowIndex++;
+		}
+        
+        
         for (int i = 0; i < 20; i++) {
         	envSheet.autoSizeColumn(i);
+        	profileSheet.autoSizeColumn(i);
+        	procomSheet.autoSizeColumn(i);
+        	ratingSheet.autoSizeColumn(i);
+        	failureRateSheet.autoSizeColumn(i);
+        	costSheet.autoSizeColumn(i);
+        	sccSheet.autoSizeColumn(i);
         }
+        
+        
         
         FileOutputStream fileOut = new FileOutputStream(filePath + ".xls");
         workbook.write(fileOut);
@@ -541,8 +749,10 @@ public class SystemRunResultController {
 			failureRateErrorChart.prefHeightProperty().bind(failureRateErrorChartPane.heightProperty());
 			
 			// Set data points
+			failureRateErrors = new HashMap<>();
 			for (String entity : dataPoints.keySet()) {
 				
+				failureRateErrors.put(entity, new ArrayList<>());
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
 				
@@ -553,9 +763,11 @@ public class SystemRunResultController {
 						double systemFailRate = dataPoints.get(entity).get(i).getKey();
 						
 						series.getData().add(new XYChart.Data<Number, Number>(i + 1, Math.abs(entityFailRate - systemFailRate)));
+						failureRateErrors.get(entity).add(Math.abs(entityFailRate - systemFailRate));
 					}
 					else {
 						series.getData().add(new XYChart.Data<Number, Number>(i + 1, 0));
+						failureRateErrors.get(entity).add(0.0);
 					}
 				}
 				
@@ -598,7 +810,6 @@ public class SystemRunResultController {
 				
 				case SCORE:
 					
-					// TODO REAL SCORE
 					double maxScore = 0;
 					
 					for (String entity : chosenCombinationsAll.keySet()) {
@@ -789,8 +1000,10 @@ public class SystemRunResultController {
 			failureRateChart.prefHeightProperty().bind(failureRateChartPane.heightProperty());
 			
 			// Set data points
+			entityFailureRate = new HashMap<>();
 			for (String entity : systemRunProbe.getDataPoints().keySet()) {
 				
+				entityFailureRate.put(entity, new ArrayList<>());
 				XYChart.Series<Number, Number> series = new Series<Number, Number>();
 				series.setName(entity);
 				
@@ -800,9 +1013,12 @@ public class SystemRunResultController {
 					
 					if (serviceCombination.getProperty("FailureRate") != null) {
 						series.getData().add(new XYChart.Data<Number, Number>(i + 1, serviceCombination.getProperty("FailureRate")));
+						System.out.println(entity + " added fr " + serviceCombination.getProperty("FailureRate"));
+						entityFailureRate.get(entity).add(serviceCombination.getProperty("FailureRate"));
 					}	
 					else {
 						series.getData().add(new XYChart.Data<Number, Number>(i + 1, 0));
+						entityFailureRate.get(entity).add(0.0);
 					}
 				}
 				
