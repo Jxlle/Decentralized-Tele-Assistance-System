@@ -110,6 +110,7 @@ public class ApplicationController implements Initializable {
     String resultFilePath = resultDirPath + "result.csv";
     String logFilePath = resultDirPath + "log.csv";
     String defaultServiceDataPath = serviceDataFilePath + "DefaultServiceData.xml";
+	String latestProfilePath;
 
     ScheduledExecutorService scheduExec = Executors.newScheduledThreadPool(5);
 
@@ -668,7 +669,7 @@ public class ApplicationController implements Initializable {
     	    	File selectedDirectory = chooser.showDialog(primaryStage);
     	    	
     	    	try {
-					chartController.saveAll(selectedDirectory, entities);
+					chartController.saveAll(selectedDirectory, entities, latestProfilePath);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -1012,7 +1013,7 @@ public class ApplicationController implements Initializable {
     		    File file = fileChooser.showSaveDialog(primaryStage);
     		    if (file != null) {
     			try {
-    				chartController.saveRunData(file.getPath(), entities);
+    				chartController.saveRunData(file.getPath(), entities, latestProfilePath);
 
     			} catch (IOException e) {
     			    e.printStackTrace();
@@ -1219,6 +1220,9 @@ public class ApplicationController implements Initializable {
     			    	
     			    	analyzed = true;
     			    	entityBeingAnalyzed = "";
+    			    	
+    			    	// Set latest profile path
+    			    	latestProfilePath = profilePath;
     			    	
     			    	// Set protocol 
     			    	InputProfileExecutor.setProtocol(profile);

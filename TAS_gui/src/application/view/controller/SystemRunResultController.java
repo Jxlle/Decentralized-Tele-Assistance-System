@@ -130,7 +130,7 @@ public class SystemRunResultController {
 		protocolDetailsText.setDisable(false);
 	}
 	
-	public void saveAll(File directory, List<MAPEKSystemEntity> entities) throws IOException {
+	public void saveAll(File directory, List<MAPEKSystemEntity> entities, String latestProfilePath) throws IOException {
 		String defaultPath = directory.getPath() + File.separator;
 		saveSystemRunPerformanceChart(defaultPath + "Performance Graph");
 		SaveProtocolMessageChart(defaultPath +"Protocol Message Graph");
@@ -140,7 +140,7 @@ public class SystemRunResultController {
 		saveChart(failureRateChart, defaultPath + "Entity Failure Rate Graph");
 		saveChart(failureRateSystemChart, defaultPath + "System Failure Rate Graph");	
 		saveChart(failureRateErrorChart, defaultPath + "Failure Rate Error Graph");	
-		saveRunData(defaultPath + "Run Results", entities);
+		saveRunData(defaultPath + "Run Results", entities, latestProfilePath);
 	}
 	
 	public void saveSystemRunPerformanceChart(String filePath) throws IOException {
@@ -177,23 +177,35 @@ public class SystemRunResultController {
 		saveChart(costChart, filePath);
 	}
 	
-	public void saveRunData(String filePath, List<MAPEKSystemEntity> entities) throws IOException {
+	public void saveRunData(String filePath, List<MAPEKSystemEntity> entities, String latestProfilePath) throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         
         // ENVIRONMENT DATA
         HSSFSheet envSheet = workbook.createSheet("Environment Data");  
-        int rowIndex = 2;
+        int rowIndex = 0;
         
         HSSFFont font = workbook.createFont();
         CellStyle bold = workbook.createCellStyle();
     	font.setBold(true);
     	bold.setFont(font);
     	
+        HSSFRow mainProfileRow = envSheet.createRow((short)rowIndex);
+        mainProfileRow.createCell(0).setCellValue("USED INPUT PROFILE");
+        mainProfileRow.getCell(0).setCellStyle(bold);
     	
+        rowIndex++;
+        
+        HSSFRow profileRow = envSheet.createRow((short)rowIndex);
+        profileRow.createCell(0).setCellValue(latestProfilePath);
+        
+        rowIndex += 3;
+        
     	// Service information
-        HSSFRow mainServiceRow = envSheet.createRow((short)0);
+        HSSFRow mainServiceRow = envSheet.createRow((short)rowIndex);
         mainServiceRow.createCell(0).setCellValue("SERVICE INFORMATION");
         mainServiceRow.getCell(0).setCellStyle(bold);
+        
+        rowIndex++;
         
         for (ServiceRegistry registry : GlobalServiceInfo.getServiceRegistries()) {
         	
@@ -239,10 +251,10 @@ public class SystemRunResultController {
                 rowIndex++;
             }
             
-            rowIndex += 4;
+            rowIndex ++;
         }
         
-        rowIndex += 4;
+        rowIndex ++;
         
         
         // Entity information
@@ -305,20 +317,6 @@ public class SystemRunResultController {
             
             rowIndex++;
         }
-        
-        
-        
-        // USED INPUT PROFILE
-        HSSFSheet profileSheet = workbook.createSheet("Used Input Profile");  
-        rowIndex = 0; 
-        
-        HSSFRow mainProfileRow = profileSheet.createRow((short)rowIndex);
-        mainProfileRow.createCell(0).setCellValue("USED INPUT PROFILE");
-        mainProfileRow.getCell(0).setCellStyle(bold);
-        
-        rowIndex += 2;
-        
-        // TODO
         
         
 		List<Integer> protocolMessages = systemRunProbe.getProtocolMessageCount();
@@ -448,7 +446,6 @@ public class SystemRunResultController {
 			for (int i = 0; i < chosenCombinationsAll.get(entity).size(); i++) {		
 				HSSFRow entityFailureRateRow = failureRateSheet.createRow((short)rowIndex);
 				entityFailureRateRow.createCell(0).setCellValue(i + 1);
-				System.out.println(entityFailureRate.get(entity).get(i) + " "  + i);
 				entityFailureRateRow.createCell(1).setCellValue(entityFailureRate.get(entity).get(i));
 				entityFailureRateRow.createCell(2).setCellValue(dataPoints.get(entity).get(i).getKey());			
 				entityFailureRateRow.createCell(3).setCellValue(failureRateErrors.get(entity).get(i));	
@@ -504,7 +501,6 @@ public class SystemRunResultController {
         
         for (int i = 0; i < 20; i++) {
         	envSheet.autoSizeColumn(i);
-        	profileSheet.autoSizeColumn(i);
         	procomSheet.autoSizeColumn(i);
         	ratingSheet.autoSizeColumn(i);
         	failureRateSheet.autoSizeColumn(i);
@@ -1013,7 +1009,6 @@ public class SystemRunResultController {
 					
 					if (serviceCombination.getProperty("FailureRate") != null) {
 						series.getData().add(new XYChart.Data<Number, Number>(i + 1, serviceCombination.getProperty("FailureRate")));
-						System.out.println(entity + " added fr " + serviceCombination.getProperty("FailureRate"));
 						entityFailureRate.get(entity).add(serviceCombination.getProperty("FailureRate"));
 					}	
 					else {

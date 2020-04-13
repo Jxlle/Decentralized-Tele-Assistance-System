@@ -13,7 +13,7 @@
   <entityRequirementTypes>
     <entry>
       <string>Default System Entity</string>
-      <tas.data.inputprofile.SystemRequirementType>COST</tas.data.inputprofile.SystemRequirementType>
+      <tas.data.inputprofile.SystemRequirementType>RELIABILITY</tas.data.inputprofile.SystemRequirementType>
     </entry>
     <entry>
       <string>Default System Entity 2</string>
