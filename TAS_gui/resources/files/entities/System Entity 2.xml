@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MAPEKSystemEntity>
-<Name>Default System Entity 3</Name>
+<Name>Default System Entity 2</Name>
 <WorkflowPath>resources\files\workflow\TeleAssistanceWorkflow.txt</WorkflowPath>
 <AnalyzerStrategy>1</AnalyzerStrategy>
 <MonitorFailureChange>0.005</MonitorFailureChange>
@@ -8,9 +8,9 @@
 <AnalyzerCombinationLimit>1000</AnalyzerCombinationLimit>
 <KnowledgeLoadFailureDelta>10</KnowledgeLoadFailureDelta>
 <Registries>
-<RegistryEndpoint>service.individual1.registry</RegistryEndpoint>
-<RegistryEndpoint>service.individual2.registry</RegistryEndpoint>
-<RegistryEndpoint>service.shared.registry</RegistryEndpoint>
+<RegistryEndpoint>service.private2.registry</RegistryEndpoint>
+<RegistryEndpoint>service.public1.registry</RegistryEndpoint>
+<RegistryEndpoint>service.public2.registry</RegistryEndpoint>
 </Registries>
 <Goals>
 <Goal>
