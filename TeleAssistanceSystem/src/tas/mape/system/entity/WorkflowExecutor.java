@@ -22,7 +22,6 @@ public class WorkflowExecutor {
     private boolean isPaused = false;
     private int currentSteps;
     
-    private MAPEKSystemEntity systemEntity;
     private AssistanceService assistanceService;
     private AssistanceServiceCostProbe probe;
     private String workflowPath;
@@ -30,14 +29,6 @@ public class WorkflowExecutor {
 	public WorkflowExecutor(List<ServiceRegistry> serviceRegistries) {
 		amountOfWorkflows++;
 		initializeWorkFlowExecutor(serviceRegistries);
-	}
-	
-	/**
-	 * Return the parent system entity
-	 * @return the parent system entity
-	 */
-	public MAPEKSystemEntity getSystemEntity() {
-		return systemEntity;
 	}
     
     public synchronized void stop(){

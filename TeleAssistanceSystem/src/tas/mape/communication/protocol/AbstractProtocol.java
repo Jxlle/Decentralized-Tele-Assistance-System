@@ -34,10 +34,10 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	protected int maxIterations;
 	
 	// Percentage indicating how much of the maximum amount of information the protocol uses in its messages
-	protected int messageContentPercentage;
+	protected int usedMessageContentPercentage;
 	
 	// The list of components that are using this protocol
-	protected List<E> components = new ArrayList<>();
+	protected List<E> participatingComponents = new ArrayList<>();
 	
 	// Protocol observer for getting protocol messaging data
 	protected ProtocolObserver observer = new ProtocolObserver();
@@ -57,17 +57,17 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	 * Execute the protocol with the currently used communication components that will communicate, a 
 	 * given maximum amount of iterations and how much information its going to use in its messages
 	 * @param maxIterations the given maximum amount of iterations
-	 * @param messageContentPercentage percentage indicating how much of the maximum amount of information the protocol uses in its messages
+	 * @param usedMessageContentPercentage percentage indicating how much of the maximum amount of information the protocol uses in its messages
 	 * @throws IllegalArgumentException throw when the used protocol doesn't support the given amount of components
 	 */
-	public void executeProtocol(int maxIterations, int messageContentPercentage) throws IllegalArgumentException {
+	public void executeProtocol(int maxIterations, int usedMessageContentPercentage) throws IllegalArgumentException {
 		
-		if (components.size() != getNeededAmountOfComponents()) {
-			throw new IllegalArgumentException("The used protocol doesn't support the current amount of components: " + components.size());
+		if (participatingComponents.size() != getNeededAmountOfComponents()) {
+			throw new IllegalArgumentException("The used protocol doesn't support the current amount of components: " + participatingComponents.size());
 		}
 		
 		this.maxIterations = maxIterations;
-		this.messageContentPercentage = messageContentPercentage;
+		this.usedMessageContentPercentage = usedMessageContentPercentage;
 		observer.protocolStarted();
 		startProtocol();
 	}
@@ -78,7 +78,7 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	 * @param component the given component
 	 */
 	public void addComponent(E component) {
-		components.add(component);
+		participatingComponents.add(component);
 		messageHost.register(component);
 	}
 	
@@ -88,7 +88,7 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	 * @param component the given component to be removed
 	 */
 	public void removeComponent(E component) {
-		components.remove(component);
+		participatingComponents.remove(component);
 		messageHost.unRegister(component);
 	}
 	
@@ -96,7 +96,7 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	 * Clear protocol components
 	 */
 	public void resetComponents() {
-		components.clear();
+		participatingComponents.clear();
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 		int senderIndex = getRandomComponentIndex();
 		List<Integer> receiverIndices = new ArrayList<>();
 		
-		for (int i = 0; i < components.size(); i++) {
+		for (int i = 0; i < participatingComponents.size(); i++) {
 			if (i != senderIndex) {
 				receiverIndices.add(i);
 			}

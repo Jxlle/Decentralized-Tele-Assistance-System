@@ -31,8 +31,8 @@ public abstract class AbstractMultiEntitySystem<T extends AbstractSystemEntity<?
 	 * Execute the system with a given amount of execution cycles following a certain protocol
 	 * @param executionCycles the given amount of execution cycles
 	 * @param protocol the given protocol
-	 * @param maxIterations the given maximum amount of iterations
-	 * @param messageContentPercentage percentage indicating how much of the maximum amount of information the protocol uses in its messages
+	 * @param maxProtocolterations the given maximum amount of iterations
+	 * @param usedMessageContentPercentage percentage indicating how much of the maximum amount of information the protocol uses in its messages
 	 */
-	public abstract void executeSystem(int executionCycles, AbstractProtocol<P1, P2> protocol, int maxIterations, int messageContentPercentage);
+	public abstract void executeSystem(int executionCycles, AbstractProtocol<P1, P2> protocol, int maxProtocolterations, int usedMessageContentPercentage);
 }

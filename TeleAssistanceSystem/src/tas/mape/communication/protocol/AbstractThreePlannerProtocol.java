@@ -60,13 +60,13 @@ public abstract class AbstractThreePlannerProtocol extends AbstractPlannerProtoc
 	 * @param c2 given component index 2
 	 */
 	private void updateSharedRegistryEndpoints(int c1, int c2) {
-		List<String> sharedRegistryEndpointsLocal = components.get(c1).getRegistryEndpoints();
-		List<String> registryEndpointsOther = components.get(c2).getRegistryEndpoints();
+		List<String> sharedRegistryEndpointsLocal = participatingComponents.get(c1).getRegistryEndpoints();
+		List<String> registryEndpointsOther = participatingComponents.get(c2).getRegistryEndpoints();
 		
 		// Calculate shared registry endpoints
 		sharedRegistryEndpointsLocal.retainAll(registryEndpointsOther);
 		
 		// Update shared registry map
-		sharedRegistryEndpoints.put(components.get(c1).getEndpoint() + components.get(c2).getEndpoint(), sharedRegistryEndpointsLocal);	
+		sharedRegistryEndpoints.put(participatingComponents.get(c1).getEndpoint() + participatingComponents.get(c2).getEndpoint(), sharedRegistryEndpointsLocal);	
 	}
 }

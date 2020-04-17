@@ -1,6 +1,8 @@
 package tas.mape.analyzer;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import tas.data.inputprofile.SystemRequirementType;
 import tas.mape.knowledge.Knowledge;
@@ -23,6 +25,15 @@ public class Analyzer {
 	private RatingType ratingType;
 	private int serviceGenerationStrategy;
 	private List<ServiceCombination> chosenServicesList;
+	
+	// map containing all possible requirement and abstract workflow requirement classes pairs
+	private static HashMap<SystemRequirementType, AbstractWorkflowQoSRequirement> QoSRequirementClasses = new HashMap<SystemRequirementType, AbstractWorkflowQoSRequirement>() {
+		private static final long serialVersionUID = 1L;
+	{
+        put(SystemRequirementType.COST, new CostReq());
+        put(SystemRequirementType.RELIABILITY, new ReliabilityReq());
+        put(SystemRequirementType.COST_AND_RELIABILITY, new CostAndReliabilityReq());
+    }};;
 	
 	/**
 	 * Create a new analyzer with a given knowledge and planner component, a combination limit and a service generation strategy
@@ -77,7 +88,7 @@ public class Analyzer {
 	public void execute() throws IllegalStateException {	
 		
 		// Choose service combinations
-		chosenServicesList = chooseServices();
+		chosenServicesList = chooseServiceCombinations();
 		
 		// throw exception when no service combinations are found
 		if (chosenServicesList.size() == 0) {
@@ -99,21 +110,31 @@ public class Analyzer {
 	}
 	
 	/**
-	 * Return the chosen services of the analyzer.
+	 * Return the chosen service combinations of the analyzer.
 	 * This method applies a strategy for a certain QoS requirement and returns the N (based on combination limit) best 
 	 * service combinations rated with the analyzer rating type.
 	 * @return The list of the best N chosen service combinations
 	 * @throws IllegalStateException throws when the rating type has not been set
 	 */
-	private List<ServiceCombination> chooseServices() throws IllegalStateException {
+	private List<ServiceCombination> chooseServiceCombinations() throws IllegalStateException {
 		
 		if (ratingType == null) {
 			throw new IllegalStateException("The rating type has not been set!");
 		}
 		
-		SystemRequirementType requirement = knowledge.getSystemRequirement();
-		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(requirement);
-		
+		AbstractWorkflowQoSRequirement requirementClass = QoSRequirementClasses.get(knowledge.getSystemRequirement());	
 		return requirementClass.getServiceCombinations(serviceGenerationStrategy, combinationLimit, ratingType, knowledge);
+	}
+	
+	/**
+	 * Calculate the new service combinations list based on the current load buffer.
+	 * This is calculated by re-rating the service combinations based on failure rates calculated 
+	 * from the load buffer.
+	 * @param fullLoadmap a map containing additional service loads from other entities
+	 * @return the newly calculated service combinations
+	 */
+	public List<ServiceCombination> calculateNewServiceCombinations(Map<String, Integer> fullLoadmap) {	
+		AbstractWorkflowQoSRequirement requirementClass = QoSRequirementClasses.get(knowledge.getSystemRequirement());
+		return requirementClass.getNewServiceCombinations(chosenServicesList, fullLoadmap, knowledge);
 	}
 }

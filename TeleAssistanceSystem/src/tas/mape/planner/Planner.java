@@ -10,7 +10,7 @@ import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
-import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
+import tas.mape.analyzer.Analyzer;
 import tas.mape.communication.CommunicationComponent;
 import tas.mape.communication.message.PlannerMessage;
 import tas.mape.communication.message.PlannerMessageContent;
@@ -32,6 +32,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private static int id;
 	private Executor executor;
 	private Knowledge knowledge;
+	private Analyzer analyzer;
 	private PlannerObserver observer;
 	private boolean executed, protocolFinished;
 	private AbstractProtocol<PlannerMessage, Planner> protocol;
@@ -59,6 +60,14 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public PlannerObserver getObserver() {
 		return observer;
+	}
+	
+	/**
+	 * Set the analyzer to the given analyzer
+	 * @param analyzer the given analyzer
+	 */
+	public void setAnalyzer(Analyzer analyzer) {
+		this.analyzer = analyzer;
 	}
 	
 	/**
@@ -231,8 +240,7 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * @return the newly calculated service combinations
 	 */
 	public List<ServiceCombination> calculateNewServiceCombinations() {	
-		AbstractWorkflowQoSRequirement requirementClass = knowledge.getQoSRequirementClass(knowledge.getSystemRequirement());
-		return requirementClass.getNewServiceCombinations(availableServiceCombinations, getFullLoadMap(), knowledge);
+		return analyzer.calculateNewServiceCombinations(getFullLoadMap());
 	}
 	
 	/**

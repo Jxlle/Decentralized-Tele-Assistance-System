@@ -12,10 +12,6 @@ import service.auxiliary.ServiceDescription;
 import service.auxiliary.StaticTree;
 import tas.data.inputprofile.InputProfileDataHandler;
 import tas.data.inputprofile.SystemRequirementType;
-import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
-import tas.mape.analyzer.CostAndReliabilityReq;
-import tas.mape.analyzer.CostReq;
-import tas.mape.analyzer.ReliabilityReq;
 import tas.mape.planner.PlanComponent;
 
 /**
@@ -66,15 +62,6 @@ public class Knowledge {
 	
 	// Map of used services. This is a map of all usable services without the blacklisted service entries.
 	private Map<Description, List<ServiceDescription>> usedServices;
-	
-	// map containing all possible requirement and abstract workflow requirement classes pairs
-	private static HashMap<SystemRequirementType, AbstractWorkflowQoSRequirement> QoSRequirementClasses = new HashMap<SystemRequirementType, AbstractWorkflowQoSRequirement>() {
-		private static final long serialVersionUID = 1L;
-	{
-        put(SystemRequirementType.COST, new CostReq());
-        put(SystemRequirementType.RELIABILITY, new ReliabilityReq());
-        put(SystemRequirementType.COST_AND_RELIABILITY, new CostAndReliabilityReq());
-    }};;
 	
 	/**
 	 * Create a new knowledge with given starting information
@@ -275,30 +262,6 @@ public class Knowledge {
 	 */
 	public List<String> getRegistryEndpoints() {
 		return new ArrayList<>(registryEndpoints);
-	}
-
-	/**
-	 * Return the requirement class that represents the given requirement name
-	 * @param requirement the given requirement
-	 * @return the QoS requirement class
-	 */
-	public AbstractWorkflowQoSRequirement getQoSRequirementClass(SystemRequirementType requirement) {
-		return QoSRequirementClasses.get(requirement);
-	}
-	
-	/**
-	 * Add a new requirement class linked to a given requirement name
-	 * @param requirement the given requirement
-	 * @param requirementClass the new requirement class
-	 * @throws IllegalArgumentException throw when the given requirement name is already linked to a requirement class
-	 */
-	public void AddQoSRequirementClass(SystemRequirementType requirement, AbstractWorkflowQoSRequirement requirementClass) throws IllegalArgumentException {
-	
-		if (QoSRequirementClasses.get(requirement) == null) {
-			throw new IllegalArgumentException("The given requirement is already linked to a requirement class!");
-		}
-		
-		QoSRequirementClasses.put(requirement, requirementClass);
 	}
 	
 	/**

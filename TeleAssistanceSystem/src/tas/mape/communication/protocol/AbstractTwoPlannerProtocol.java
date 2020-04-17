@@ -34,8 +34,8 @@ public abstract class AbstractTwoPlannerProtocol extends AbstractPlannerProtocol
 	 */
 	@Override
 	protected void InitializeProtocol(int startIndex, List<Integer> receiverIndices) {
-		sharedRegistryEndpoints = components.get(0).getRegistryEndpoints();
-		List<String> registryEndpointsOther = components.get(1).getRegistryEndpoints();
+		sharedRegistryEndpoints = participatingComponents.get(0).getRegistryEndpoints();
+		List<String> registryEndpointsOther = participatingComponents.get(1).getRegistryEndpoints();
 		
 		// Calculate shared registry endpoints
 		sharedRegistryEndpoints.retainAll(registryEndpointsOther);
@@ -51,8 +51,8 @@ public abstract class AbstractTwoPlannerProtocol extends AbstractPlannerProtocol
 	protected void sendFirstMessage(int startIndex, List<Integer> receiverIndices) {
 	
 		ServiceCombination chosenCombination;
-		Planner sender = components.get(startIndex);
-		Planner receiver = components.get(receiverIndices.get(0));
+		Planner sender = participatingComponents.get(startIndex);
+		Planner receiver = participatingComponents.get(receiverIndices.get(0));
 		
 		if (sender.getAvailableServiceCombinations().get(0).getRatingType() == RatingType.CLASS) {
 			// Choose random best combination
@@ -74,7 +74,7 @@ public abstract class AbstractTwoPlannerProtocol extends AbstractPlannerProtocol
 		sender.setCurrentServiceCombination(chosenCombination);
 		
 		// Make message
-		PlannerMessageContent content = sender.generateMessageContent(chosenCombination, sharedRegistryEndpoints, messageContentPercentage);
+		PlannerMessageContent content = sender.generateMessageContent(chosenCombination, sharedRegistryEndpoints, usedMessageContentPercentage);
 		PlannerMessage message = new PlannerMessage(messageID, receiver.getEndpoint(), sender.getEndpoint(), "FIRST_OFFER", content);
 		
 		System.out.println("-----------------------------------------------------------\nPROTOCOL STARTED");

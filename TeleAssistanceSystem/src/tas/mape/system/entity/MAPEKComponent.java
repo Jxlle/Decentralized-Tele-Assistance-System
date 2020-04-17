@@ -87,6 +87,7 @@ public class MAPEKComponent {
 			}
 			
 			analyzer = new Analyzer(knowledge, planner, combinationLimit, serviceGenerationStrategy);
+			planner.setAnalyzer(analyzer);
 			return this;
 		}
 		

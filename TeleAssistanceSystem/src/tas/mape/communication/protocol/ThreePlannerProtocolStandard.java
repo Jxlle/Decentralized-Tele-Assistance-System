@@ -27,8 +27,8 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 	protected void sendFirstMessage(int startIndex, List<Integer> receiverIndices) {
 		
 		ServiceCombination chosenCombination;
-		Planner sender = components.get(startIndex);
-		Planner receiver = components.get(receiverIndices.get(AbstractProtocol.random.nextInt(receiverIndices.size())));
+		Planner sender = participatingComponents.get(startIndex);
+		Planner receiver = participatingComponents.get(receiverIndices.get(AbstractProtocol.random.nextInt(receiverIndices.size())));
 		
 		// Ask data from third planner
 		PlannerMessage message = new PlannerMessage(messageID, getThirdEntityEndpoint(sender.getEndpoint(), receiver.getEndpoint()), sender.getEndpoint(), "ASK_DATA", null);
@@ -60,7 +60,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 		messageID++;
 		
 		// Make message
-		PlannerMessageContent content = sender.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender.getEndpoint(), receiver.getEndpoint()), messageContentPercentage);
+		PlannerMessageContent content = sender.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender.getEndpoint(), receiver.getEndpoint()), usedMessageContentPercentage);
 		message = new PlannerMessage(messageID, receiver.getEndpoint(), sender.getEndpoint(), "FIRST_OFFER", content);
 		
 		//System.out.println("-----------------------------------------------------------\nPROTOCOL STARTED");
@@ -136,7 +136,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);
 			receiver.setCurrentServiceCombination(chosenCombination);
-			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), findSharedRegistryEndpoints(sender, receiver.getEndpoint()), messageContentPercentage);
+			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
 			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "NEW_OFFER", content);
 			receiver.sendMessage(response);	
 			
@@ -220,28 +220,28 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 			
 			if (responseType == "ACCEPTED_OFFER") {
 				if (messageType == "NEW_OFFER2") {		
-					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), messageContentPercentage);
+					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
 					response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "ACCEPTED_OFFER2", content);				
 					receiver.sendMessage(response);	
 					
-					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), messageContentPercentage);
+					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), usedMessageContentPercentage);
 					response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "ACCEPTED_OFFER2", content);
 					receiver.sendMessage(response);
 					
 					receiver.finishedProtocol(messageID);
 				}
 				else {
-					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), messageContentPercentage);
+					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), usedMessageContentPercentage);
 					response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "GIVE_DATA", content);
 					receiver.sendMessage(response);
 					
-					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), messageContentPercentage);
+					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
 					response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "ACCEPTED_OFFER", content);				
 					receiver.sendMessage(response);	
 				}
 			}
 			else {
-				content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), messageContentPercentage);
+				content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
 				response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), responseType, content);				
 				receiver.sendMessage(response);	
 			}
@@ -257,7 +257,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 				combo = receiver.getAvailableServiceCombinations().get(0);
 			}
 			
-			content = receiver.generateMessageContent(combo, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), messageContentPercentage);
+			content = receiver.generateMessageContent(combo, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
 			response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "GIVE_DATA", content);
 			messageID++;	
 			receiver.sendMessage(response);	
@@ -270,7 +270,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 			
 		// Offer has been accepted
 		case "ACCEPTED_OFFER":		
-			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), findSharedRegistryEndpoints(sender, receiver.getEndpoint()), messageContentPercentage);
+			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
 			response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "NEW_OFFER2", content);
 			messageID++;
 			receiver.sendMessage(response);	
@@ -296,7 +296,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 	 * @throws IllegalStateException throw when no third entity was found.
 	 */
 	private String getThirdEntityEndpoint(String e1, String e2) throws IllegalStateException {
-		for (Planner planner : components) {
+		for (Planner planner : participatingComponents) {
 			if (planner.getEndpoint() != e1 && planner.getEndpoint() != e2) {
 				return planner.getEndpoint();
 			}

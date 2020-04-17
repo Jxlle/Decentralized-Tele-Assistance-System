@@ -75,7 +75,7 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 			//System.err.println("chosen combination rating: " + chosenCombination.getRating() + " combination: "+ chosenCombination);
 			receiver.setCurrentServiceCombination(chosenCombination);
 			
-			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), sharedRegistryEndpoints, messageContentPercentage);
+			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), sharedRegistryEndpoints, usedMessageContentPercentage);
 			response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "NEW_OFFER", content);
 			
 			// Increase message ID
@@ -156,7 +156,7 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);	
 			receiver.setCurrentServiceCombination(chosenCombination);
-			content = receiver.generateMessageContent(chosenCombination, sharedRegistryEndpoints, messageContentPercentage);
+			content = receiver.generateMessageContent(chosenCombination, sharedRegistryEndpoints, usedMessageContentPercentage);
 			response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), responseType, content);
 			
 			if (responseType == "ACCEPTED_OFFER") {
