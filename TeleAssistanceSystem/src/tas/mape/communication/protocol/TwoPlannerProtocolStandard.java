@@ -37,6 +37,7 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 		List<ServiceCombination> bestCombinations = null;
 		List<ServiceCombination> leastOffendingCombinations = null;
 		
+		messageID++;
 		System.out.println("\t> " + messageType + " , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
 		switch(messageType) {
 		
@@ -78,8 +79,6 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), sharedRegistryEndpoints, usedMessageContentPercentage);
 			response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "NEW_OFFER", content);
 			
-			// Increase message ID
-			messageID++;
 			receiver.sendMessage(response);	
 			
 			break;
@@ -125,7 +124,7 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 							//s.getRating().equals(receiver.getCurrentServiceCombination().getRating())
 							System.out.println("least offending value: " + receiver.getLeastOffendingCombinations(bestCombinations).getValue());
 							if (s.getRating().equals(receiver.getCurrentServiceCombination().getRating()) || receiver.getLeastOffendingCombinations(bestCombinations).getValue().equals(receiver.getServiceCombinationOffences(receiver.getCurrentServiceCombination()))) {
-								responseType = "ACCEPTED_OFFER";
+								responseType = "AGREED_OFFER";
 								chosenCombination = s;
 								found = true;
 							}
@@ -141,7 +140,7 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 					}		
 				}
 				else {
-					responseType = "ACCEPTED_OFFER";
+					responseType = "AGREED_OFFER";
 					chosenCombination = receiver.getCurrentServiceCombination();
 				}	
 				
@@ -159,18 +158,16 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 			content = receiver.generateMessageContent(chosenCombination, sharedRegistryEndpoints, usedMessageContentPercentage);
 			response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), responseType, content);
 			
-			if (responseType == "ACCEPTED_OFFER") {
+			if (responseType == "AGREED_OFFER") {
 				receiver.finishedProtocol(messageID + 1);
 			}
 			
-			// Increase message ID
-			messageID++;
 			receiver.sendMessage(response);	
 			
 			break;
 		
 		// Offer has been accepted, stop protocol
-		case "ACCEPTED_OFFER":
+		case "AGREED_OFFER":
 			receiver.finishedProtocol(messageID);
 			resetProtocol();
 			break;

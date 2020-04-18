@@ -18,22 +18,22 @@ public class TwoPlannerProtocolDoNothing extends AbstractTwoPlannerProtocol {
 	
 		observer.protocolMessageSent(new ProtocolMessageInformation(message.getSenderEndpoint(), message.getReceiverEndpoint(), message.getType()));
 		String messageType = message.getType();
+		messageID++;
 		
 		switch(messageType) {
 		
 			// First offer has been received
 			case "FIRST_OFFER":
-				PlannerMessage response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "ACCEPTED_OFFER", null);
+				PlannerMessage response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "AGREED_OFFER", null);
 				receiver.setCurrentServiceCombination(receiver.getBestRandomServiceCombination());
-				receiver.finishedProtocol(messageID + 1);
 				
 				// Increase message ID
-				messageID++;
 				receiver.sendMessage(response);	
+				receiver.finishedProtocol(messageID);
 				break;
 				
 			// Offer has been accepted, stop protocol
-			case "ACCEPTED_OFFER":
+			case "AGREED_OFFER":
 				receiver.setCurrentServiceCombination(receiver.getBestRandomServiceCombination());
 				receiver.finishedProtocol(messageID);
 				resetProtocol();

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MAPEKSystemEntity>
-<Name>Default System Entity 3</Name>
+<Name>System Entity 3</Name>
 <WorkflowPath>resources\files\workflow\TeleAssistanceWorkflow.txt</WorkflowPath>
 <AnalyzerStrategy>1</AnalyzerStrategy>
 <MonitorFailureChange>0.005</MonitorFailureChange>

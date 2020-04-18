@@ -15,7 +15,7 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalRelation;
 import tas.mape.knowledge.Goal.GoalType;
-import tas.mape.system.entity.MAPEKComponent.Builder;
+import tas.mape.system.entity.MAPEKFeedbackLoop.Builder;
 
 public class MAPEKSystemEntityLoader {
 	
@@ -68,7 +68,7 @@ public class MAPEKSystemEntityLoader {
             }
             
             // Build and return system entity
-    		MAPEKComponent.Builder builder = new Builder();
+    		MAPEKFeedbackLoop.Builder builder = new Builder();
     		
     		try {
     			builder.initializeKnowledge(knowledgeLoadFailureDelta, registryEndpoints)
@@ -86,8 +86,8 @@ public class MAPEKSystemEntityLoader {
     		}
     		
     		
-    		MAPEKComponent component = builder.build();
-    		WorkflowExecutor workflowExecutor = new WorkflowExecutor(registryList);
+    		MAPEKFeedbackLoop component = builder.build();
+    		LocalServiceSystem workflowExecutor = new LocalServiceSystem(registryList);
     		workflowExecutor.setWorkflowPath(workflowPath);	
     		MAPEKSystemEntity systemEntity = new MAPEKSystemEntity(entityName, workflowExecutor, component);
     		

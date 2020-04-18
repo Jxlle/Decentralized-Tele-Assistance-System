@@ -13,7 +13,7 @@ import tas.data.inputprofile.InputProfileDataHandler;
 import tas.services.assistance.AssistanceService;
 import tas.services.assistance.AssistanceServiceCostProbe;
 
-public class WorkflowExecutor {
+public class LocalServiceSystem {
 
 	// Fields	
 	public static int amountOfWorkflows = 0; 
@@ -26,7 +26,7 @@ public class WorkflowExecutor {
     private AssistanceServiceCostProbe probe;
     private String workflowPath;
     
-	public WorkflowExecutor(List<ServiceRegistry> serviceRegistries) {
+	public LocalServiceSystem(List<ServiceRegistry> serviceRegistries) {
 		amountOfWorkflows++;
 		initializeWorkFlowExecutor(serviceRegistries);
 	}

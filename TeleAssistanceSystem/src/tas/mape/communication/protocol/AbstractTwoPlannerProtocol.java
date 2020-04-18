@@ -79,9 +79,6 @@ public abstract class AbstractTwoPlannerProtocol extends AbstractPlannerProtocol
 		
 		System.out.println("-----------------------------------------------------------\nPROTOCOL STARTED");
 		
-		// Set message ID
-		messageID = 1;
-		
 		System.err.print(" rating: " + chosenCombination.getRating() + "\n " + chosenCombination.toString() + " \n");
 		
 		// Send message

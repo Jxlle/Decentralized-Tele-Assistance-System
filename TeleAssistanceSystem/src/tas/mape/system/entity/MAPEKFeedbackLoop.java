@@ -12,7 +12,7 @@ import tas.mape.planner.Planner;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class MAPEKComponent {
+public class MAPEKFeedbackLoop {
 	
 	/**
 	 * Private class used as a builder to build MAPE-K component objects.
@@ -118,9 +118,9 @@ public class MAPEKComponent {
 		 * @return the built MAPE-K component
 		 * @throws IllegalStateException throw when some components haven't been initialized.
 		 */
-		public MAPEKComponent build() throws IllegalStateException {
+		public MAPEKFeedbackLoop build() throws IllegalStateException {
 			
-			MAPEKComponent component = new MAPEKComponent();
+			MAPEKFeedbackLoop component = new MAPEKFeedbackLoop();
 			
 			if (monitor == null) {
 				throw new IllegalStateException("The build process can't be started, some components haven't been initialized!");
@@ -147,7 +147,7 @@ public class MAPEKComponent {
 	 * Create a new MAPE-K component.
 	 * @note The constructor is private because the only way to create this component is through the builder class.
 	 */
-	private MAPEKComponent() {}
+	private MAPEKFeedbackLoop() {}
 	
 	/**
 	 * the monitor component

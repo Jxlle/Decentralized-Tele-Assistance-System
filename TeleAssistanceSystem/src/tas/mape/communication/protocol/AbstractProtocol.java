@@ -25,7 +25,7 @@ public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends 
 	public static Random random = new Random();
 	
 	// Message ID of the last sent message
-	protected int messageID;
+	protected int messageID = 0;
 	
 	// Needed amount of components to start the protocol
 	protected int neededAmountOfComponents;

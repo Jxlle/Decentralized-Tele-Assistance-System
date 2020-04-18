@@ -672,8 +672,13 @@ public class SystemRunResultController {
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
 		
 		if (dataPoints.values().stream().anyMatch(x -> x.size() > 0)) {
+			
+			DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
+			DecimalFormat df = new DecimalFormat("#.#", otherSymbols);
+			df.setRoundingMode(RoundingMode.CEILING);
+			
 			// Define chart axis
-			NumberAxis xAxis = new NumberAxis("Total service combination failure rate \n(approximated by workflow analyzer)", 0, 1, 0.1);
+			NumberAxis xAxis = new NumberAxis("Total service combination failure rate \n(approximated by workflow analyzer)", 0, Double.valueOf(df.format(systemRunProbe.getMaxFailureRate())), 0.1);
 			NumberAxis yAxis = new NumberAxis("Total service combination cost", 0, (systemRunProbe.getMaxCost() + maximumDelta), 1);
 			
 			// Set chart position & size

@@ -1,7 +1,7 @@
 <tas.data.inputprofile.InputProfile>
-  <executionCycles>40</executionCycles>
+  <executionCycles>25</executionCycles>
   <workflowCycles>6000</workflowCycles>
-  <maxProtocolIterations>200</maxProtocolIterations>
+  <maxProtocolIterations>40</maxProtocolIterations>
   <messageContentPercentage>100</messageContentPercentage>
   <systemType>TRIPLE_ENTITY</systemType>
   <protocolType>STANDARD_PROTOCOL_3ENTITIES</protocolType>
@@ -12,7 +12,7 @@
   </maxLoadValue>
   <entityRequirementTypes>
     <entry>
-      <string>System Entity 1</string>
+      <string>System Entity 3</string>
       <tas.data.inputprofile.SystemRequirementType>COST_AND_RELIABILITY</tas.data.inputprofile.SystemRequirementType>
     </entry>
     <entry>
@@ -20,7 +20,7 @@
       <tas.data.inputprofile.SystemRequirementType>COST_AND_RELIABILITY</tas.data.inputprofile.SystemRequirementType>
     </entry>
     <entry>
-      <string>System Entity 3</string>
+      <string>System Entity 1</string>
       <tas.data.inputprofile.SystemRequirementType>COST_AND_RELIABILITY</tas.data.inputprofile.SystemRequirementType>
     </entry>
   </entityRequirementTypes>

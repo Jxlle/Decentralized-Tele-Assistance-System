@@ -467,7 +467,6 @@ public class Knowledge {
 		// Loop over all service descriptions
 		for (List<ServiceDescription> serviceDescriptions : usedServices.values()) {
 			for (ServiceDescription serviceDescription : serviceDescriptions) {		
-				System.err.print(serviceDescription.getServiceEndpoint() + ", INIT APPROX FAIL RATE\n");
 				InitializeApproximatedServiceFailureRates(serviceDescription);
 			}
 		}

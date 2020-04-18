@@ -39,13 +39,13 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalRelation;
 import tas.mape.knowledge.Goal.GoalType;
-import tas.mape.system.entity.MAPEKComponent;
+import tas.mape.system.entity.MAPEKFeedbackLoop;
 import tas.mape.system.entity.MAPEKSystemEntity;
 import tas.mape.system.entity.MAPEKSystemEntityLoader;
 import tas.mape.system.entity.MAPEKSystemEntityWriter;
-import tas.mape.system.entity.WorkflowExecutor;
+import tas.mape.system.entity.LocalServiceSystem;
 import tas.workflowAnalyzer.WorkflowAnalyzer;
-import tas.mape.system.entity.MAPEKComponent.Builder;
+import tas.mape.system.entity.MAPEKFeedbackLoop.Builder;
 import application.MainGui;
 import application.model.CostEntry;
 import application.model.PerformanceEntry;
@@ -483,10 +483,10 @@ public class ApplicationController implements Initializable {
     
     private void addDefaultEntities() {
     	
-		WorkflowExecutor workflowExecutor = new WorkflowExecutor(
+		LocalServiceSystem workflowExecutor = new LocalServiceSystem(
 				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.shared.registry"), GlobalServiceInfo.getServiceRegistry("service.individual1.registry")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");		
-		MAPEKComponent.Builder builder = new Builder();
+		MAPEKFeedbackLoop.Builder builder = new Builder();
 		
 		try {
 			builder.initializeKnowledge(10, new ArrayList<String>(Arrays.asList("service.shared.registry", "service.individual1.registry")))
@@ -497,7 +497,7 @@ public class ApplicationController implements Initializable {
 			e.printStackTrace();
 		}
 		
-		MAPEKComponent component = builder.build();
+		MAPEKFeedbackLoop component = builder.build();
 		MAPEKSystemEntity systemEntity = new MAPEKSystemEntity("Default System Entity", workflowExecutor, component);
 		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.COST, GoalRelation.LOWER_THAN, 18));
 		systemEntity.getManagingSystem().getKnowledge().addGoal(new Goal(GoalType.FAILURE_RATE, GoalRelation.LOWER_THAN, 0.19));
@@ -506,7 +506,7 @@ public class ApplicationController implements Initializable {
 		MAPEKSystemEntityWriter.writeToXml(systemEntity, entityFile);
 		addEntityToList(systemEntity, entityFile);
 		
-		workflowExecutor = new WorkflowExecutor(
+		workflowExecutor = new LocalServiceSystem(
 				Arrays.asList(GlobalServiceInfo.getServiceRegistry("service.shared.registry"), 
 						GlobalServiceInfo.getServiceRegistry("service.individual2.registry")));	
 		workflowExecutor.setWorkflowPath(workflowFilePath + "TeleAssistanceWorkflow.txt");

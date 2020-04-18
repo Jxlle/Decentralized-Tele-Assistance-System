@@ -6,7 +6,7 @@ package tas.mape.system.entity;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class MAPEKSystemEntity extends AbstractSystemEntity<WorkflowExecutor, MAPEKComponent> {
+public class MAPEKSystemEntity extends AbstractSystemEntity<LocalServiceSystem, MAPEKFeedbackLoop> {
 	
 	/**
 	 * Create a new system entity with a given managed and managing system and link them together
@@ -14,7 +14,7 @@ public class MAPEKSystemEntity extends AbstractSystemEntity<WorkflowExecutor, MA
 	 * @param managedSystem the given workflow executer
 	 * @param managingSystem the given MAPE-K component
 	 */
-	public MAPEKSystemEntity(String entityName, WorkflowExecutor managedSystem, MAPEKComponent managingSystem) {
+	public MAPEKSystemEntity(String entityName, LocalServiceSystem managedSystem, MAPEKFeedbackLoop managingSystem) {
 		super(entityName, managedSystem, managingSystem);
 		this.managingSystem.getKnowledge().setParentEntityName(entityName);
 	}

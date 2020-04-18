@@ -128,6 +128,27 @@ public class SystemRunProbe implements PlannerProbeInterface {
 		
 		return max;
 	}
+	
+	/**
+	 * Return the maximum failure rate value in the probe data
+	 * @return the maximum failure rate value in the probe data
+	 */
+	public double getMaxFailureRate() {
+		
+		double max = 0;
+		
+		for (List<Pair<Double, Double>> pointList : dataPoints.values()) {
+			for (Pair<Double, Double> point : pointList) {
+				
+				if (point.getKey() > max) {
+					max = point.getKey();
+				}
+				
+			}
+		}
+		
+		return max;
+	}
 
 	/**
 	 * Update the current service combination data with the given service combination, knowledge

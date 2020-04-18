@@ -17,6 +17,12 @@ import tas.mape.planner.ServiceCombination;
  */
 public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 
+	// These are protocol specific data properties / methods. In a real protocol, these would be inside the communicating component.
+	// These are placed here to improve the flexibility of creating new protocols.
+	Planner coordinator;
+	int acceptedOffers = 0;
+	boolean maxReached = false;	
+	
 	/**
 	 * Let a starting communication component send 
 	 * its first message to a given receiver to start the protocol.
@@ -26,23 +32,32 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 	@Override
 	protected void sendFirstMessage(int startIndex, List<Integer> receiverIndices) {
 		
+		maxReached = false;
+		acceptedOffers = 0;
+		
 		ServiceCombination chosenCombination;
-		Planner sender = participatingComponents.get(startIndex);
+		coordinator = participatingComponents.get(startIndex);
 		Planner receiver = participatingComponents.get(receiverIndices.get(AbstractProtocol.random.nextInt(receiverIndices.size())));
 		
-		// Ask data from third planner
-		PlannerMessage message = new PlannerMessage(messageID, getThirdEntityEndpoint(sender.getEndpoint(), receiver.getEndpoint()), sender.getEndpoint(), "ASK_DATA", null);
-		sender.sendMessage(message);
-		List<ServiceCombination> newServiceCombinations = sender.calculateNewServiceCombinations();
-		sender.setAvailableServiceCombinations(newServiceCombinations);
+		System.out.println("-----------------------------------------------------------\nPROTOCOL STARTED");
+		
+		// Ask data from other planners
+		PlannerMessage message = new PlannerMessage(messageID, receiver.getEndpoint(), coordinator.getEndpoint(), "EXCHANGE_DATA", null);
+		coordinator.sendMessage(message);
+		
+		message = new PlannerMessage(messageID, getThirdEntityEndpoint(coordinator.getEndpoint(), receiver.getEndpoint()), coordinator.getEndpoint(), "EXCHANGE_DATA", null);
+		coordinator.sendMessage(message);
+		
+		List<ServiceCombination> newServiceCombinations = coordinator.calculateNewServiceCombinations();
+		coordinator.setAvailableServiceCombinations(newServiceCombinations);
 		
 		// Choose first service combination
-		if (sender.getAvailableServiceCombinations().get(0).getRatingType() == RatingType.CLASS) {
+		if (coordinator.getAvailableServiceCombinations().get(0).getRatingType() == RatingType.CLASS) {
 			// Choose random best combination
 			List<ServiceCombination> bestCombinations = new ArrayList<>();
 			
-			for (ServiceCombination s : sender.getAvailableServiceCombinations()) {
-				if (s.getRating().equals(sender.getAvailableServiceCombinations().get(0).getRating())) {
+			for (ServiceCombination s : coordinator.getAvailableServiceCombinations()) {
+				if (s.getRating().equals(coordinator.getAvailableServiceCombinations().get(0).getRating())) {
 					bestCombinations.add(s);
 				}
 			}
@@ -50,28 +65,20 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 			chosenCombination = bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));
 		}
 		else {
-			chosenCombination = sender.getAvailableServiceCombinations().get(0);
+			chosenCombination = coordinator.getAvailableServiceCombinations().get(0);
 		}
 		
 		// Set chosen combination
-		sender.setCurrentServiceCombination(chosenCombination);
-		
-		// Update message ID
-		messageID++;
+		coordinator.setCurrentServiceCombination(chosenCombination);
 		
 		// Make message
-		PlannerMessageContent content = sender.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender.getEndpoint(), receiver.getEndpoint()), usedMessageContentPercentage);
-		message = new PlannerMessage(messageID, receiver.getEndpoint(), sender.getEndpoint(), "FIRST_OFFER", content);
+		PlannerMessageContent content = coordinator.generateMessageContentEverything(chosenCombination, findSharedRegistryEndpoints(coordinator.getEndpoint(), receiver.getEndpoint()), usedMessageContentPercentage);
+		message = new PlannerMessage(messageID, receiver.getEndpoint(), coordinator.getEndpoint(), "FIRST_OFFER", content);
 		
-		//System.out.println("-----------------------------------------------------------\nPROTOCOL STARTED");
-		
-		// Update message ID
-		messageID++;
-		
-		//System.err.print(" rating: " + chosenCombination.getRating() + "\n " + chosenCombination.toString() + " \n");
+		System.err.print(" rating: " + chosenCombination.getRating() + "\n " + chosenCombination.toString() + " \n");
 		
 		// Send message
-		sender.sendMessage(message);
+		coordinator.sendMessage(message);
 	}
 	
 	/**
@@ -95,55 +102,12 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 		List<ServiceCombination> bestCombinations = null;
 		List<ServiceCombination> leastOffendingCombinations = null;
 		
-		System.out.println("\t> " + messageType + " , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
+		System.out.println("\t> id " + messageID + " " + messageType + " , receiver: " + receiver.getEndpoint() + " sender: " + message.getSenderEndpoint());
+		messageID++;
 		switch(messageType) {
 		
-		// First offer has been received
-		case "FIRST_OFFER":	
-			
-			messageID++;
-			
-		    response = new PlannerMessage(messageID, getThirdEntityEndpoint(message.getSenderEndpoint(), receiver.getEndpoint()), receiver.getEndpoint(), "ASK_DATA", null);
-			receiver.sendMessage(response);	
-			
-			receiver.addToLoadBuffer(sender, message.getContent());					
-			newServiceCombinations = receiver.calculateNewServiceCombinations();
-			
-			switch (newServiceCombinations.get(0).getRatingType()) {
-			
-				case SCORE:
-					
-					chosenCombination = newServiceCombinations.get(0);
-					break;
-					
-				case CLASS:
-					
-					bestCombinations = new ArrayList<>();
-					
-					for (ServiceCombination s2 : newServiceCombinations) {
-						if (s2.getRating().equals(newServiceCombinations.get(0).getRating())) {
-							bestCombinations.add(s2);
-						}
-					}
-					
-					leastOffendingCombinations = receiver.getLeastOffendingCombinations(bestCombinations).getKey();
-					chosenCombination = leastOffendingCombinations.get(AbstractProtocol.random.nextInt(leastOffendingCombinations.size()));
-					break;
-					
-				default:
-					throw new IllegalStateException("The protocol doesn't support this rating type. Type: " + newServiceCombinations.get(0).getRatingType());	
-			}
-			
-			receiver.setAvailableServiceCombinations(newServiceCombinations);
-			receiver.setCurrentServiceCombination(chosenCombination);
-			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
-			response = new PlannerMessage(messageID, message.getSenderEndpoint(), receiver.getEndpoint(), "NEW_OFFER", content);
-			receiver.sendMessage(response);	
-			
-			break;
-		
 		// New offer has been received
-		case "NEW_OFFER2":
+		case "FIRST_OFFER":
 		case "NEW_OFFER":
 			
 			receiver.addToLoadBuffer(sender, message.getContent());
@@ -159,6 +123,10 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 				
 				if (chosenCombination.hasSameCollection(receiver.getAvailableServiceCombinations().get(0)) || messageID == (maxIterations - 2)) {						
 					responseType = "ACCEPTED_OFFER";
+					
+					if (messageID == (maxIterations - 1)) {
+						maxReached = true;
+					}
 				}
 				else {	
 					responseType = "NEW_OFFER";
@@ -167,7 +135,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 				
 			case CLASS:
 				
-				if (messageID != (maxIterations - 2)) {
+				if (messageID < (maxIterations - 2)) {
 					
 					bestCombinations = new ArrayList<>();
 					boolean found =  false;
@@ -178,13 +146,12 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 						}
 					}
 					
-					System.out.println("best combination count : " + bestCombinations.size() + " , rating: " + bestCombinations.get(0).getRating());
-					
+					//System.out.println("best combination count : " + bestCombinations.size() + " , rating: " + bestCombinations.get(0).getRating());	
+					//System.out.println("least offending " + receiver.getLeastOffendingCombinations(bestCombinations).getValue());
 					for (ServiceCombination s : bestCombinations) {
 						if (s.hasSameCollection(receiver.getCurrentServiceCombination())) {
-							//s.getRating().equals(receiver.getCurrentServiceCombination().getRating())
-							//System.out.println("least offending value: " + receiver.getLeastOffendingCombinations(bestCombinations).getValue());
 							if (s.getRating().equals(receiver.getCurrentServiceCombination().getRating()) || receiver.getLeastOffendingCombinations(bestCombinations).getValue().equals(receiver.getServiceCombinationOffences(receiver.getCurrentServiceCombination()))) {
+								//System.out.println("same as before");
 								responseType = "ACCEPTED_OFFER";
 								chosenCombination = s;
 								found = true;
@@ -195,7 +162,8 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 					}
 					
 					if (!found) {
-						responseType = "NEW_OFFER";	
+						//System.out.println("not found");
+						responseType = "NEW_OFFER";
 						leastOffendingCombinations = receiver.getLeastOffendingCombinations(bestCombinations).getKey();
 						chosenCombination = leastOffendingCombinations.get(AbstractProtocol.random.nextInt(leastOffendingCombinations.size()));//bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));
 					}		
@@ -203,6 +171,8 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 				else {
 					responseType = "ACCEPTED_OFFER";
 					chosenCombination = receiver.getCurrentServiceCombination();
+					maxReached = true;
+					//System.out.println("MAX REACHED");
 				}		
 				
 				break;
@@ -210,45 +180,60 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 				throw new IllegalStateException("The protocol doesn't support this rating type. Type: " + newServiceCombinations.get(0).getRatingType());	
 			}
 			
-			System.err.print("OLD offer \n" + receiver.getAvailableServiceCombinations().get(0).toString() + ", class: " + receiver.getAvailableServiceCombinations().get(0).getRating() + "score: " + receiver.getAvailableServiceCombinations().get(0).getProperty("FailureRate") + "\n");
-			System.err.print("NEW offer \n" + chosenCombination.toString() + ", class: " + chosenCombination.getRating() + "score: " +  chosenCombination.getProperty("FailureRate") + "\n");
+			//System.err.print("OLD offer " + receiver.getEndpoint() + "\n" + receiver.getCurrentServiceCombination() + ", class: " + receiver.getCurrentServiceCombination().getRating() + "score: " + receiver.getCurrentServiceCombination().getProperty("FailureRate") + "\n");
+			//System.err.print("NEW offer " + receiver.getEndpoint() + "\n" + chosenCombination.toString() + ", class: " + chosenCombination.getRating() + "score: " +  chosenCombination.getProperty("FailureRate") + "\n");
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);	
 			receiver.setCurrentServiceCombination(chosenCombination);
 			
-			messageID++;
-			
 			if (responseType == "ACCEPTED_OFFER") {
-				if (messageType == "NEW_OFFER2") {		
-					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
-					response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "ACCEPTED_OFFER2", content);				
-					receiver.sendMessage(response);	
-					
-					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), usedMessageContentPercentage);
-					response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "ACCEPTED_OFFER2", content);
-					receiver.sendMessage(response);
-					
-					receiver.finishedProtocol(messageID);
+				
+				acceptedOffers++;
+				
+				if (receiver == coordinator) {
+					if (acceptedOffers == participatingComponents.size() - 1 || maxReached) {
+						response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "AGREED_OFFER", null);
+						receiver.sendMessage(response);	
+						response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "AGREED_OFFER", null);
+						receiver.sendMessage(response);	
+						
+						receiver.finishedProtocol(messageID);
+						resetProtocol();
+					}
+					else {
+						response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "ACCEPTED_OFFER", null);				
+						receiver.sendMessage(response);
+						
+						content = receiver.generateMessageContentEverything(chosenCombination, findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), usedMessageContentPercentage);
+						response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "FIRST_OFFER", content);				
+						receiver.sendMessage(response);
+					}
 				}
 				else {
-					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), usedMessageContentPercentage);
-					response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "GIVE_DATA", content);
+					response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "ACCEPTED_OFFER", null);				
 					receiver.sendMessage(response);
-					
-					content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
-					response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "ACCEPTED_OFFER", content);				
-					receiver.sendMessage(response);	
 				}
 			}
 			else {
-				content = receiver.generateMessageContent(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
-				response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), responseType, content);				
-				receiver.sendMessage(response);	
+				
+				System.out.println("CLEARED");
+				acceptedOffers = 0;
+				
+				if (receiver == coordinator) {
+					content = receiver.generateMessageContentEverything(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
+					response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), responseType, content);				
+					receiver.sendMessage(response);
+				}
+				else {
+					content = receiver.generateMessageContent(chosenCombination, receiver.getRegistryEndpoints(), usedMessageContentPercentage);
+					response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), responseType, content);				
+					receiver.sendMessage(response);
+				}
 			}
 			
 			break;
 			
-		case "ASK_DATA":
+		case "EXCHANGE_DATA":
 			
 			ServiceCombination combo = receiver.getCurrentServiceCombination();
 			
@@ -257,29 +242,39 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 				combo = receiver.getAvailableServiceCombinations().get(0);
 			}
 			
-			content = receiver.generateMessageContent(combo, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
+			content = receiver.generateMessageContent(combo, receiver.getRegistryEndpoints(), usedMessageContentPercentage);
 			response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "GIVE_DATA", content);
-			messageID++;	
 			receiver.sendMessage(response);	
 			break;
 			
 		case "GIVE_DATA":		
-			receiver.addToLoadBuffer(sender, message.getContent());	
-			messageID++;		
+			receiver.addToLoadBuffer(sender, message.getContent());
 			break;
 			
 		// Offer has been accepted
 		case "ACCEPTED_OFFER":		
-			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
-			response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "NEW_OFFER2", content);
-			messageID++;
-			receiver.sendMessage(response);	
+			if (receiver == coordinator) {
+				if (acceptedOffers == participatingComponents.size() - 1 || maxReached) {
+					response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "AGREED_OFFER", null);
+					receiver.sendMessage(response);
+					response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "AGREED_OFFER", null);
+					receiver.sendMessage(response);	
+					
+					receiver.finishedProtocol(messageID);
+					resetProtocol();
+				}
+				else {
+					content = receiver.generateMessageContentEverything(receiver.getCurrentServiceCombination(), findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), usedMessageContentPercentage);
+					response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "FIRST_OFFER", content);				
+					receiver.sendMessage(response);
+				}
+			}
+			
 			break;
 			
 		// Offer has been accepted, stop protocol
-		case "ACCEPTED_OFFER2":
+		case "AGREED_OFFER":
 			receiver.finishedProtocol(messageID);
-			resetProtocol();
 			break;
 			
 		// Exception state

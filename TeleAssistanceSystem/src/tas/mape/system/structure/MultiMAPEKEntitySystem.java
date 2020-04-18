@@ -49,6 +49,8 @@ public class MultiMAPEKEntitySystem extends AbstractMultiEntitySystem<MAPEKSyste
 			// Execute protocol, planners communicate in this step
 			protocol.executeProtocol(maxIterations, messageContentPercentage);
 			
+			
+			
 			// Execute executers
 			for (MAPEKSystemEntity entity : getSystemEntities()) {
 				entity.getManagingSystem().executeExecutor();

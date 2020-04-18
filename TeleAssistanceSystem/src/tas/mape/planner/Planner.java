@@ -326,6 +326,40 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		return new PlannerMessageContent(serviceLoads);
 	}
 	
+	public PlannerMessageContent generateMessageContentEverything(ServiceCombination serviceCombination, List<String> registryEndpoints, int messageContentPercentage) {
+		
+		// TODO
+		Map<String, Integer> personalServiceLoads = generateMessageContent(serviceCombination, registryEndpoints, 100).getPublicServiceUsage();
+		Map<String, Integer> fullLoadMap = getFullLoadMap();
+		Map<String, Integer> usedDescriptions = new HashMap<>();
+		
+		for (Map.Entry<String, Integer> entry : personalServiceLoads.entrySet()) {
+			if (fullLoadMap.get(entry.getKey()) != null) {
+				fullLoadMap.put(entry.getKey(), fullLoadMap.get(entry.getKey()) + personalServiceLoads.get(entry.getKey()));
+			}
+			else {
+				fullLoadMap.put(entry.getKey(), personalServiceLoads.get(entry.getKey()));
+			}
+		}
+		
+		int usedDescriptionsCount = (int) Math.ceil(fullLoadMap.size() * (messageContentPercentage / (double) 100));
+		
+		/*if (usedDescriptionsCount == fullLoadMap.size()) {
+			usedDescriptions = fullLoadMap;
+		}
+		else {		
+			for (int i = 0; i < usedDescriptionsCount; i++) {				
+				int randomIndex = new Random().nextInt(fullLoadMap.size());
+				usedDescriptions.add(fullLoadMap.get(randomIndex));
+				availables.remove(randomIndex);
+			}
+			
+			//System.out.println("CHANGED Registry endpoints, \n\tcount: " + usedDescriptionsCount + "\n\tnormal: " + availableDescriptions +" \n\tchanged: " +  usedDescriptions);
+		}*/
+		
+		return new PlannerMessageContent(fullLoadMap);
+	}
+	
 	/**
 	 * Return the currently stored registry endpoints in the knowledge component
 	 * @return the currently stored registry endpoints in the knowledge component
@@ -351,7 +385,6 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		
 		// Extra: update cache with new registry info
 		if (knowledge.getCachePlanComponents().size() != 0) {
-			
 			for (PlanComponent registryPlanComponent : knowledge.getCachePlanComponents()) {
 				plan.add(registryPlanComponent);
 			}

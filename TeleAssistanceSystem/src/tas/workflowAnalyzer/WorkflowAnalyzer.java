@@ -124,8 +124,6 @@ public class WorkflowAnalyzer {
 		
 		workflowServiceTree = workflowAnalyzerProbe.getServiceTree();
 		
-		
-		System.err.print("TREE: " + workflowServiceTree.getTreeSize() + " \n");
 		// TODO 
 		// - in new invokeservice compositeservice method, add all services in cache to list first, or a certain amount
 		// - do not reset cache when disabling services in registry in gui to aquire correct chance values

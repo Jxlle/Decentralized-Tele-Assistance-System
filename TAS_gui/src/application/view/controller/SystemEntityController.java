@@ -48,11 +48,11 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CombinationStrategy;
 import tas.mape.knowledge.Goal;
-import tas.mape.system.entity.MAPEKComponent;
-import tas.mape.system.entity.MAPEKComponent.Builder;
+import tas.mape.system.entity.MAPEKFeedbackLoop;
+import tas.mape.system.entity.MAPEKFeedbackLoop.Builder;
 import tas.mape.system.entity.MAPEKSystemEntity;
 import tas.mape.system.entity.MAPEKSystemEntityWriter;
-import tas.mape.system.entity.WorkflowExecutor;
+import tas.mape.system.entity.LocalServiceSystem;
 
 public class SystemEntityController implements Initializable {
 
@@ -579,10 +579,10 @@ public class SystemEntityController implements Initializable {
 		    			registryEndpoints.add(registry.getServiceDescription().getServiceEndpoint());
 		    		}
 		    		
-		    		WorkflowExecutor workflowExecutor = new WorkflowExecutor(entityRegistries);
+		    		LocalServiceSystem workflowExecutor = new LocalServiceSystem(entityRegistries);
 		    		workflowExecutor.setWorkflowPath(workflowPath);
 		    		
-		    		MAPEKComponent.Builder builder = new Builder();
+		    		MAPEKFeedbackLoop.Builder builder = new Builder();
 		    		
 		    		try {
 						builder.initializeKnowledge(loadFailureDelta, registryEndpoints)
@@ -593,7 +593,7 @@ public class SystemEntityController implements Initializable {
 						e.printStackTrace();
 					}
 		    		
-		    		MAPEKComponent component = builder.build();
+		    		MAPEKFeedbackLoop component = builder.build();
 		    		
 		    		for (Goal goal : goals) {
 			    		component.getKnowledge().addGoal(goal);

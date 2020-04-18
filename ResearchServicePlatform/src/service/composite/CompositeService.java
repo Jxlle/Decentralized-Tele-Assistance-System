@@ -256,7 +256,7 @@ public class CompositeService extends AbstractService {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					System.out.println("The operation name or params are not valid. Please check and send again!");
+					System.out.println("The operation name or params are not valid. OpName: " + opName + ", params: " + params);
 				}
 			}
 		}
