@@ -12,12 +12,13 @@ import tas.mape.planner.ServiceCombination;
 
 /**
  * Class representing a standard three-component planner protocol.
+ * @note Can easily be upgraded to more entities, can be made abstract for undefined amount of entities.
  *    
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */
-public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
+public class CoordinatingPlanners extends AbstractThreePlannerProtocol {
 
-	// These are protocol specific data properties / methods. In a real protocol, these would be inside the communicating component.
+	// These are protocol specific data properties. In a real protocol, these would be inside the communicating component.
 	// These are placed here to improve the flexibility of creating new protocols.
 	Planner coordinator;
 	int acceptedOffers = 0;
@@ -72,10 +73,10 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 		coordinator.setCurrentServiceCombination(chosenCombination);
 		
 		// Make message
-		PlannerMessageContent content = coordinator.generateMessageContentEverything(chosenCombination, findSharedRegistryEndpoints(coordinator.getEndpoint(), receiver.getEndpoint()), usedMessageContentPercentage);
+		PlannerMessageContent content = coordinator.generateMessageContentEverything(chosenCombination, findSharedRegistryEndpoints(coordinator.getEndpoint(), receiver.getEndpoint()), receiver.getEndpoint(), usedMessageContentPercentage);
 		message = new PlannerMessage(messageID, receiver.getEndpoint(), coordinator.getEndpoint(), "FIRST_OFFER", content);
 		
-		System.err.print(" rating: " + chosenCombination.getRating() + "\n " + chosenCombination.toString() + " \n");
+		//System.err.print(" rating: " + chosenCombination.getRating() + "\n " + chosenCombination.toString() + " \n");
 		
 		// Send message
 		coordinator.sendMessage(message);
@@ -172,7 +173,6 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 					responseType = "ACCEPTED_OFFER";
 					chosenCombination = receiver.getCurrentServiceCombination();
 					maxReached = true;
-					//System.out.println("MAX REACHED");
 				}		
 				
 				break;
@@ -204,7 +204,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 						response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), "ACCEPTED_OFFER", null);				
 						receiver.sendMessage(response);
 						
-						content = receiver.generateMessageContentEverything(chosenCombination, findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), usedMessageContentPercentage);
+						content = receiver.generateMessageContentEverything(chosenCombination, findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), getThirdEntityEndpoint(sender, receiver.getEndpoint()), usedMessageContentPercentage);
 						response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "FIRST_OFFER", content);				
 						receiver.sendMessage(response);
 					}
@@ -215,12 +215,10 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 				}
 			}
 			else {
-				
-				System.out.println("CLEARED");
 				acceptedOffers = 0;
 				
 				if (receiver == coordinator) {
-					content = receiver.generateMessageContentEverything(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), usedMessageContentPercentage);
+					content = receiver.generateMessageContentEverything(chosenCombination, findSharedRegistryEndpoints(sender, receiver.getEndpoint()), receiver.getEndpoint(), usedMessageContentPercentage);
 					response = new PlannerMessage(messageID, sender, receiver.getEndpoint(), responseType, content);				
 					receiver.sendMessage(response);
 				}
@@ -264,7 +262,7 @@ public class ThreePlannerProtocolStandard extends AbstractThreePlannerProtocol {
 					resetProtocol();
 				}
 				else {
-					content = receiver.generateMessageContentEverything(receiver.getCurrentServiceCombination(), findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), usedMessageContentPercentage);
+					content = receiver.generateMessageContentEverything(receiver.getCurrentServiceCombination(), findSharedRegistryEndpoints(getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint()), getThirdEntityEndpoint(sender, receiver.getEndpoint()), usedMessageContentPercentage);
 					response = new PlannerMessage(messageID, getThirdEntityEndpoint(sender, receiver.getEndpoint()), receiver.getEndpoint(), "FIRST_OFFER", content);				
 					receiver.sendMessage(response);
 				}

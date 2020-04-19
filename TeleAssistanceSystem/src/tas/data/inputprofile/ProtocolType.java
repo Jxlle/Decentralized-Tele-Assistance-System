@@ -17,7 +17,7 @@ public enum ProtocolType {
 	// Available protocol types
 	DO_NOTHING_PROTOCOL(TwoPlannerProtocolDoNothing.class, SystemType.DOUBLE_ENTITY),
 	STANDARD_PROTOCOL_2ENTITIES(TwoPlannerProtocolStandard.class, SystemType.DOUBLE_ENTITY),
-	STANDARD_PROTOCOL_3ENTITIES(ThreePlannerProtocolStandard.class, SystemType.TRIPLE_ENTITY);
+	COORDINATING_PLANNERS(CoordinatingPlanners.class, SystemType.TRIPLE_ENTITY);
 	
 	private Class<? extends AbstractProtocol<?, ?>> protocolClass;
 	private SystemType systemType;

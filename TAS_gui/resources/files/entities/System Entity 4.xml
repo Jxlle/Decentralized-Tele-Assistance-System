@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<MAPEKSystemEntity>
+<Name>System Entity 4</Name>
+<WorkflowPath>C:\Users\jelle\Desktop\TAS\TAS_gui\resources\files\workflow\TeleAssistanceWorkflow.txt</WorkflowPath>
+<AnalyzerStrategy>1</AnalyzerStrategy>
+<MonitorFailureChange>0.005</MonitorFailureChange>
+<MonitorMinFailureDelta>0.005</MonitorMinFailureDelta>
+<AnalyzerCombinationLimit>1000</AnalyzerCombinationLimit>
+<KnowledgeLoadFailureDelta>5</KnowledgeLoadFailureDelta>
+<Registries>
+<RegistryEndpoint>service.private2.registry</RegistryEndpoint>
+<RegistryEndpoint>service.public1.registry</RegistryEndpoint>
+</Registries>
+<Goals>
+<Goal>
+<Type>COST</Type>
+<Relation>LOWER_THAN</Relation>
+<Value>0.19</Value>
+</Goal>
+<Goal>
+<Type>FAILURE_RATE</Type>
+<Relation>LOWER_THAN</Relation>
+<Value>0.19</Value>
+</Goal>
+</Goals>
+</MAPEKSystemEntity>

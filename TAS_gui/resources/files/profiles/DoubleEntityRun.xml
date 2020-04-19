@@ -12,17 +12,17 @@
   </maxLoadValue>
   <entityRequirementTypes>
     <entry>
-      <string>System Entity 1</string>
+      <string>System Entity 4</string>
       <tas.data.inputprofile.SystemRequirementType>COST_AND_RELIABILITY</tas.data.inputprofile.SystemRequirementType>
     </entry>
     <entry>
-      <string>System Entity 2</string>
+      <string>System Entity 1</string>
       <tas.data.inputprofile.SystemRequirementType>COST_AND_RELIABILITY</tas.data.inputprofile.SystemRequirementType>
     </entry>
   </entityRequirementTypes>
   <participatingEntities>
     <string>System Entity 1</string>
-    <string>System Entity 2</string>
+    <string>System Entity 4</string>
   </participatingEntities>
   <variables>
     <variable>

@@ -214,17 +214,21 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	}
 	
 	public Map<String, Integer> getFullLoadMap() {
-		
+		return getFullLoadMap("");
+	}
+	
+	public Map<String, Integer> getFullLoadMap(String receiverEndpoint) {
 		Map<String, Integer> fullLoadMap = new HashMap<>();
 		
-		for (Map<String, Integer> loads : loadBuffer.values()) {
-			for (String key : loads.keySet()) {
-				if (fullLoadMap.get(key) != null) {
-					//System.out.println("UPDATE: " + fullLoadMap.get(key) + " " +  loads.get(key));
-					fullLoadMap.put(key, fullLoadMap.get(key) + loads.get(key));
-				}
-				else {
-					fullLoadMap.put(key, loads.get(key));
+		for (String endpoint : loadBuffer.keySet()) {
+			if (endpoint != receiverEndpoint) {
+				for (String key : loadBuffer.get(endpoint).keySet()) {
+					if (fullLoadMap.get(key) != null) {
+						fullLoadMap.put(key, fullLoadMap.get(key) + loadBuffer.get(endpoint).get(key));
+					}
+					else {
+						fullLoadMap.put(key, loadBuffer.get(endpoint).get(key));
+					}
 				}
 			}
 		}
@@ -311,27 +315,23 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			usedDescriptions = availableDescriptions;
 		}
 		else {		
-			
 			List<ServiceDescription> availables = new ArrayList<ServiceDescription>(availableDescriptions);
 			for (int i = 0; i < usedDescriptionsCount; i++) {				
 				int randomIndex = new Random().nextInt(availables.size());
 				usedDescriptions.add(availables.get(randomIndex));
 				availables.remove(randomIndex);
 			}
-			
-			//System.out.println("CHANGED Registry endpoints, \n\tcount: " + usedDescriptionsCount + "\n\tnormal: " + availableDescriptions +" \n\tchanged: " +  usedDescriptions);
 		}
 		
 		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination, usedDescriptions);
 		return new PlannerMessageContent(serviceLoads);
 	}
 	
-	public PlannerMessageContent generateMessageContentEverything(ServiceCombination serviceCombination, List<String> registryEndpoints, int messageContentPercentage) {
-		
-		// TODO
+	public PlannerMessageContent generateMessageContentEverything(ServiceCombination serviceCombination, List<String> registryEndpoints, String receiverEndpoint, int messageContentPercentage) {
 		Map<String, Integer> personalServiceLoads = generateMessageContent(serviceCombination, registryEndpoints, 100).getPublicServiceUsage();
-		Map<String, Integer> fullLoadMap = getFullLoadMap();
-		Map<String, Integer> usedDescriptions = new HashMap<>();
+		Map<String, Integer> fullLoadMap = getFullLoadMap(receiverEndpoint);
+		Map<String, Integer> usedLoads = new HashMap<>();
+		List<String> services = new ArrayList<>(fullLoadMap.keySet());
 		
 		for (Map.Entry<String, Integer> entry : personalServiceLoads.entrySet()) {
 			if (fullLoadMap.get(entry.getKey()) != null) {
@@ -344,20 +344,18 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		
 		int usedDescriptionsCount = (int) Math.ceil(fullLoadMap.size() * (messageContentPercentage / (double) 100));
 		
-		/*if (usedDescriptionsCount == fullLoadMap.size()) {
-			usedDescriptions = fullLoadMap;
+		if (usedDescriptionsCount == fullLoadMap.size()) {
+			usedLoads = fullLoadMap;
 		}
 		else {		
 			for (int i = 0; i < usedDescriptionsCount; i++) {				
-				int randomIndex = new Random().nextInt(fullLoadMap.size());
-				usedDescriptions.add(fullLoadMap.get(randomIndex));
-				availables.remove(randomIndex);
+				int randomIndex = new Random().nextInt(services.size());
+				usedLoads.put(services.get(randomIndex), fullLoadMap.get(services.get(randomIndex)));
+				services.remove(randomIndex);
 			}
-			
-			//System.out.println("CHANGED Registry endpoints, \n\tcount: " + usedDescriptionsCount + "\n\tnormal: " + availableDescriptions +" \n\tchanged: " +  usedDescriptions);
-		}*/
+		}
 		
-		return new PlannerMessageContent(fullLoadMap);
+		return new PlannerMessageContent(usedLoads);
 	}
 	
 	/**

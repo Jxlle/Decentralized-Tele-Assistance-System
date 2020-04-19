@@ -1,10 +1,10 @@
 <tas.data.inputprofile.InputProfile>
-  <executionCycles>25</executionCycles>
+  <executionCycles>50</executionCycles>
   <workflowCycles>6000</workflowCycles>
   <maxProtocolIterations>40</maxProtocolIterations>
   <messageContentPercentage>100</messageContentPercentage>
   <systemType>TRIPLE_ENTITY</systemType>
-  <protocolType>STANDARD_PROTOCOL_3ENTITIES</protocolType>
+  <protocolType>COORDINATING_PLANNERS</protocolType>
   <ratingType>CLASS</ratingType>
   <maxLoadValue>
     <maxLoadType>CUSTOM_AMOUNT_OF_ENTITIES</maxLoadType>

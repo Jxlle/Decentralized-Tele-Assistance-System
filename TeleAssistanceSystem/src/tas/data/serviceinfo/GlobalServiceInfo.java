@@ -196,7 +196,7 @@ public class GlobalServiceInfo {
 		
 		AlarmService alarm3 = new AlarmService("AlarmService3", "service.alarmService3");
 		alarm3.getServiceDescription().getCustomProperties().put("Cost", 6.0);
-		alarm3.getServiceDescription().getCustomProperties().put("FailureRate", 0.04);
+		alarm3.getServiceDescription().getCustomProperties().put("FailureRate", 0.05);
 		alarm3.startService();
 		alarm3.register(privateServiceRegistry2);
 		services.add(alarm3);
@@ -254,14 +254,14 @@ public class GlobalServiceInfo {
 	
 		MedicalAnalysisService medicalAnalysis3 = new MedicalAnalysisService("MedicalService3", "service.medical3");
 		medicalAnalysis3.getServiceDescription().getCustomProperties().put("Cost", 4.0);
-		medicalAnalysis3.getServiceDescription().getCustomProperties().put("FailureRate", 0.09);
+		medicalAnalysis3.getServiceDescription().getCustomProperties().put("FailureRate", 0.11);
 		medicalAnalysis3.startService();
 		medicalAnalysis3.register(privateServiceRegistry2);
 		services.add(medicalAnalysis3);
 		
 		MedicalAnalysisService medicalAnalysis4 = new MedicalAnalysisService("MedicalService4", "service.medical4");
 		medicalAnalysis4.getServiceDescription().getCustomProperties().put("Cost", 5.0);
-		medicalAnalysis4.getServiceDescription().getCustomProperties().put("FailureRate", 0.05);
+		medicalAnalysis4.getServiceDescription().getCustomProperties().put("FailureRate", 0.07);
 		medicalAnalysis4.startService();
 		medicalAnalysis4.register(privateServiceRegistry2);
 		services.add(medicalAnalysis4);
