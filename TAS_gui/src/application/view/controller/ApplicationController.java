@@ -239,7 +239,7 @@ public class ApplicationController implements Initializable {
     Button AddInputProfileButton;
 
     @FXML
-    MenuItem helpMenuItem;
+    Button helpButton;
     
     @FXML 
     MenuItem exampleScenariosMenuItem;
@@ -772,7 +772,7 @@ public class ApplicationController implements Initializable {
     	    }
     	});
 
-    	helpMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+    	helpButton.setOnAction(new EventHandler<ActionEvent>() {
     	    @Override
     	    public void handle(ActionEvent event) {
     		try {

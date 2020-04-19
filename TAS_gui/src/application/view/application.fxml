@@ -26,7 +26,7 @@
                <top>
                   <ToolBar BorderPane.alignment="CENTER">
                     <items>
-                        <Label text="DTAS Configuration">
+                        <Label text="dTAS Configuration">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
@@ -42,11 +42,7 @@
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
                         <Button fx:id="configureButton" mnemonicParsing="false" text="Configure" />
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
-                        <MenuButton mnemonicParsing="false" text="Help">
-                          <items>
-                            <MenuItem fx:id="helpMenuItem" mnemonicParsing="false" text="User Interface" />
-                          </items>
-                        </MenuButton>
+                        <Button fx:id="helpButton" mnemonicParsing="false" text="Help" />
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
                         <Button fx:id="aboutButton" mnemonicParsing="false" text="About" wrapText="true" />
                     </items>
@@ -130,7 +126,7 @@
                <top>
                   <ToolBar fx:id="toolBar" BorderPane.alignment="CENTER">
                      <items>
-                        <Label text="DTAS Experimentation" />
+                        <Label text="dTAS Experimentation" />
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="27.0" />
                         <MenuButton mnemonicParsing="false" text="Open">
                            <items>
