@@ -138,7 +138,7 @@ public class ServiceCombination implements Comparable<ServiceCombination> {
 	 * @return whether the given service combination has the same collection 
 	 */
 	public boolean hasSameCollection(ServiceCombination other) {
-		return allServices.equals(other.allServices);
+		return this.toString().equals(other.toString());
 	}
 	
 	/**

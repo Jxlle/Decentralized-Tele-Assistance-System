@@ -285,12 +285,16 @@ public class SystemRunResultController {
         for (MAPEKSystemEntity entity : entities) {
         	
         	String goalString = "{";
+        	List<Goal> goals = entity.getManagingSystem().getKnowledge().getGoals();
         	
-        	for (Goal goal : entity.getManagingSystem().getKnowledge().getGoals()) {
-        		goalString += goal.getType() + " " + goal.getRelation() + " " + goal.getValue() + ", ";
+        	for (int i = 0; i < goals.size(); i++) {
+        		if (i == goals.size() - 1) {
+            		goalString += goals.get(i).getType() + " " + goals.get(i).getRelation() + " " + goals.get(i).getValue() + "}";
+        		}
+        		else {
+            		goalString += goals.get(i).getType() + " " + goals.get(i).getRelation() + " " + goals.get(i).getValue() + ", ";
+        		}
         	}
-        	
-        	goalString += "}";
         	
         	List<String> registries = entity.getManagingSystem().getKnowledge().getRegistryEndpoints();
         	String registryString = "{";
@@ -775,7 +779,7 @@ public class SystemRunResultController {
 			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
-			NumberAxis yAxis = new NumberAxis("Chosen Service Combination Failure Rate error \n(system approximation <-> entity approximation)", 0, maxErrorValue, 0.1);
+			NumberAxis yAxis = new NumberAxis("Chosen Service Combination Failure Rate error \n(system approximation <-> entity approximation)", 0, 0.2, 0.1);
 			
 			// Set chart position & size
 			failureRateErrorChart = new LineChart<Number, Number>(xAxis, yAxis); 

@@ -147,12 +147,9 @@ public class CoordinatingPlanners extends AbstractThreePlannerProtocol {
 						}
 					}
 					
-					//System.out.println("best combination count : " + bestCombinations.size() + " , rating: " + bestCombinations.get(0).getRating());	
-					//System.out.println("least offending " + receiver.getLeastOffendingCombinations(bestCombinations).getValue());
 					for (ServiceCombination s : bestCombinations) {
 						if (s.hasSameCollection(receiver.getCurrentServiceCombination())) {
 							if (s.getRating().equals(receiver.getCurrentServiceCombination().getRating()) || receiver.getLeastOffendingCombinations(bestCombinations).getValue().equals(receiver.getServiceCombinationOffences(receiver.getCurrentServiceCombination()))) {
-								//System.out.println("same as before");
 								responseType = "ACCEPTED_OFFER";
 								chosenCombination = s;
 								found = true;
@@ -163,7 +160,6 @@ public class CoordinatingPlanners extends AbstractThreePlannerProtocol {
 					}
 					
 					if (!found) {
-						//System.out.println("not found");
 						responseType = "NEW_OFFER";
 						leastOffendingCombinations = receiver.getLeastOffendingCombinations(bestCombinations).getKey();
 						chosenCombination = leastOffendingCombinations.get(AbstractProtocol.random.nextInt(leastOffendingCombinations.size()));//bestCombinations.get(AbstractProtocol.random.nextInt(bestCombinations.size()));

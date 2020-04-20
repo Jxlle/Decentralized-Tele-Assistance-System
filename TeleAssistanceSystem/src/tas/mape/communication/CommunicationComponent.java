@@ -8,16 +8,20 @@ import tas.mape.communication.message.ComponentMessageHost;
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  * 
- * @param <T> the message type
+ * @param <T> the message type used by this component while communicating
+ * @param <B> the buffer type of this component to store additional data
  * @note Connection between multiple hosts currently not supported
  */
-public abstract class CommunicationComponent<T extends ComponentMessage<?>> {
+public abstract class CommunicationComponent<T extends ComponentMessage<?>, B extends Object> {
 	
 	// Unique endpoint for identification
 	private String endpoint;
 	
 	// Message host of this communication component
 	private ComponentMessageHost<T> messageHost;
+	
+	// Buffer to store additional data
+	protected B buffer;
 	
 	/**
 	 * Create a new communication component with a given endpoint

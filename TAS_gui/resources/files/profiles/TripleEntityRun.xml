@@ -1,14 +1,14 @@
 <tas.data.inputprofile.InputProfile>
-  <executionCycles>50</executionCycles>
+  <executionCycles>20</executionCycles>
   <workflowCycles>6000</workflowCycles>
   <maxProtocolIterations>40</maxProtocolIterations>
-  <messageContentPercentage>100</messageContentPercentage>
+  <messageContentPercentage>0</messageContentPercentage>
   <systemType>TRIPLE_ENTITY</systemType>
   <protocolType>COORDINATING_PLANNERS</protocolType>
   <ratingType>CLASS</ratingType>
   <maxLoadValue>
-    <maxLoadType>CUSTOM_AMOUNT_OF_ENTITIES</maxLoadType>
-    <value>2</value>
+    <maxLoadType>STANDARD</maxLoadType>
+    <value>0</value>
   </maxLoadValue>
   <entityRequirementTypes>
     <entry>

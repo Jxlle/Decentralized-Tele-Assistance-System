@@ -48,7 +48,7 @@
 <Property>
 <Name>FailureRate</Name>
 <Type>Double</Type>
-<Value>0.05</Value>
+<Value>0.04</Value>
 </Property>
 </Properties>
 </Service>
@@ -184,7 +184,7 @@
 <Property>
 <Name>FailureRate</Name>
 <Type>Double</Type>
-<Value>0.11</Value>
+<Value>0.9</Value>
 </Property>
 </Properties>
 </Service>
@@ -201,7 +201,7 @@
 <Property>
 <Name>FailureRate</Name>
 <Type>Double</Type>
-<Value>0.07</Value>
+<Value>0.05</Value>
 </Property>
 </Properties>
 </Service>

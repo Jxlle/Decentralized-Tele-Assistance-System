@@ -19,7 +19,7 @@ import tas.mape.probes.ProtocolObserver;
  * @param <E> the communication component type
  * @note Currently only supports communication between components of the same type, sending the same type of messages
  */
-public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends CommunicationComponent<T>> {
+public abstract class AbstractProtocol<T extends ComponentMessage<?>, E extends CommunicationComponent<T, ?>> {
 	
 	// Random for generating pseudo random numbers
 	public static Random random = new Random();

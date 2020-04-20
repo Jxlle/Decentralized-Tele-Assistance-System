@@ -178,9 +178,7 @@ public class InputProfileExecutor {
 	 * @param probe the given protocol probe
 	 */
 	public static void subscribeToCurrentProtocol(ProtocolProbe probe) {
-		System.err.println("SUBSCRIBE? " + protocol);
 		if (protocol != null) {
-			System.err.println("SUBSCRIBED");
 			protocol.getObserver().register(probe);
 		}
 	}

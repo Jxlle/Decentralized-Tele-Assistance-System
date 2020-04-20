@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Abstract class representing the structure of a three-component planner protocol.
- * This could be generalized to an n-component planner protocol
+ * Abstract class representing the structure of a three-component planner protocol
+ * described in the paper. This protocol supports both rating types, although
+ * the score rating type is not so special.
+ * 
+ * @note This protocol could be generalized to an n-component planner protocol
  * 
  * @author Jelle Van De Sijpe (jelle.vandesijpe@student.kuleuven.be)
  */

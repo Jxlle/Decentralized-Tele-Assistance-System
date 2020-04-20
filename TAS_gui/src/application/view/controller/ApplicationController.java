@@ -855,6 +855,8 @@ public class ApplicationController implements Initializable {
 				if (file != null) {
 					GlobalServiceInfo.loadData(file);
 					
+					//for 
+					
 					if (selectedEntity != null) {
 						selectEntity();
 					}

@@ -13,14 +13,14 @@
 </Registries>
 <Goals>
 <Goal>
-<Type>COST</Type>
+<Type>FAILURE_RATE</Type>
 <Relation>LOWER_THAN</Relation>
 <Value>0.19</Value>
 </Goal>
 <Goal>
-<Type>FAILURE_RATE</Type>
+<Type>COST</Type>
 <Relation>LOWER_THAN</Relation>
-<Value>0.19</Value>
+<Value>18.0</Value>
 </Goal>
 </Goals>
 </MAPEKSystemEntity>

@@ -375,6 +375,11 @@ public class SystemProfileController implements Initializable {
 		ObservableList<RatingType> ratingTypes = FXCollections.observableArrayList();
 		ratingTypes.addAll(RatingType.values());
 		ratingTypeComboBox.setItems(ratingTypes);
+		
+		if (filePath != null) {
+			ratingTypeComboBox.setValue(profile.getRatingType());
+		}
+		
 		ratingTypeComboBox.valueProperty().addListener(new ChangeListener<RatingType>() {
 
 			@Override
@@ -382,8 +387,10 @@ public class SystemProfileController implements Initializable {
 					RatingType newValue) {
 				if (newValue.equals(RatingType.SCORE)) {
 					Alert fail = new Alert(AlertType.INFORMATION);
-		            fail.setHeaderText("Work in progress");
-		            fail.setContentText("Some features may not work correctly or are not finished with the score rating type.");
+		            fail.setHeaderText("INFORMATION");
+		            fail.setContentText("Some features may not be fully functional when choosing the score rating type. "
+		            		+ "It can be further worked out in the source code, it's currently here to show that more than one rating types can be supported."
+		            		+ "\n\nThis rating type does not use threshold goals and rates a service combination based on its properties depending on the minimization goals. ");
 		            fail.showAndWait();
 				}
 			}
@@ -592,7 +599,6 @@ public class SystemProfileController implements Initializable {
 			executionCyclesTextField.setText(profile.getExecutionCycles() + "");
 			workflowCyclesTextField.setText(profile.getWorkflowCycles() + "");
 			maxLoadValueTextField.setText(profile.getMaxloadValue().getValue() + "");
-			ratingTypeComboBox.setValue(profile.getRatingType());
 			maxLoadTypeComboBox.setValue(profile.getMaxloadValue().getMaxLoadType());
 			systemTypeComboBox.setValue(profile.getSystemType());
 			variableListView.getItems().addAll(profile.getVariableNames());

@@ -113,8 +113,9 @@ public class CompositeService extends AbstractService {
 		if (configuration.SDCacheMode == false){
 		    System.err.println("Warning! Cache mode cannot be turned off.");
 		}
+		// This feature is not needed anymore
 		else if (configuration.SDCacheShared == false){
-		    System.err.println("Warning! Cache mode sharing cannot be turned off.");
+		    //System.err.println("Warning! Cache mode sharing cannot be turned off.");
 		}
 		else if (configuration.SDCacheSize == 0){
 		    System.err.println("Warning! Cache size cannot be equal to zero.");

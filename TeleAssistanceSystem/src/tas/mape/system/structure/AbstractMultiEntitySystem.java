@@ -15,7 +15,7 @@ import tas.mape.system.entity.AbstractSystemEntity;
  * @param <P2> protocol communication component type parameter
  */
 public abstract class AbstractMultiEntitySystem<T extends AbstractSystemEntity<?, ?>, P1 extends ComponentMessage<?>, 
-                      P2 extends CommunicationComponent<P1>> extends AbstractSystem<T> {
+                      P2 extends CommunicationComponent<P1, ?>> extends AbstractSystem<T> {
 	/**
 	 * Create a new abstract multi-loop system with given system entities
 	 * @param systemEntities the given system entities

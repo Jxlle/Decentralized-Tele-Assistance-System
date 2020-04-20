@@ -26,7 +26,7 @@ import tas.mape.probes.PlannerObserver;
  * 
  * @note Planners that communicate should use the same protocol
  */
-public class Planner extends CommunicationComponent<PlannerMessage> {
+public class Planner extends CommunicationComponent<PlannerMessage, Map<String, Map<String, Integer>>> {
 
 	// Fields
 	private static int id;
@@ -39,7 +39,6 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	private List<ServiceCombination> availableServiceCombinations;
 	private ServiceCombination currentServiceCombination;
 	private List<PlanComponent> plan;
-	private Map<String, Map<String, Integer>> loadBuffer;
 	
 	/**
 	 * Create a planner with a given knowledge and executor
@@ -103,7 +102,8 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public void execute(List<ServiceCombination> availableServiceCombinations) {
 		this.availableServiceCombinations = availableServiceCombinations;
-		loadBuffer = new HashMap<>();
+		currentServiceCombination = null;
+		buffer = new HashMap<>();
 		protocolFinished = false;
 		
 		// If no protocol is used, just use the best service combination
@@ -111,6 +111,79 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 			setCurrentServiceCombination(getBestRandomServiceCombination());
 			finishedProtocol(0);
 		}
+	}
+	
+	/**
+	 * Method that is called when the protocol is finished, given protocol data.
+	 * This method indicates that the protocol is finished.
+	 * @param protocolMessages the amount of messages that were sent during the protocol
+	 */
+	public void finishedProtocol(int protocolMessages) {
+		protocolFinished = true;
+		observer.serviceCombinationChosen(currentServiceCombination, knowledge, protocolMessages);
+		makePlan(currentServiceCombination);
+	}
+	
+	/**
+	 * Trigger the executor when the planner has been executed and
+	 * when the protocol is finished when there is one
+	 */
+	public void triggerExecutor() {
+		if (executed && protocolFinished) {
+			executor.execute(plan);
+			executed = false;
+			protocolFinished = false;
+		}
+	}
+
+	/**
+	 * Receive a given message and handle the response with the currently used protocol 
+	 * @param message the received message
+	 */
+	@Override
+	public void receiveMessage(PlannerMessage message) throws NullPointerException {
+		
+		if (protocol == null) {
+			throw new NullPointerException("Planner can't handle message message receivement, no protocol selected.");
+		}
+		
+		protocol.receiveAndHandleMessage(message, this);
+	}
+	
+	/**
+	 * Return the currently stored registry endpoints in the knowledge component
+	 * @return the currently stored registry endpoints in the knowledge component
+	 */
+	public List<String> getRegistryEndpoints() {
+		return knowledge.getRegistryEndpoints();
+	}
+	
+	/**
+	 * Make a plan for the executor to execute based on a given service combination
+	 * and data in the knowledge component.
+	 * @param serviceCombination the given service combination
+	 */
+	private void makePlan(ServiceCombination serviceCombination) {
+		
+		plan = new ArrayList<PlanComponent>();	
+		plan.add(new PlanComponent(PlanComponentType.SET_USED_SERVICES, serviceCombination.getAllServiceEndpoints()));
+		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination);
+		
+		for (String loadEndpoint : serviceLoads.keySet()) {
+			System.out.println("increase load " + loadEndpoint + " " + serviceLoads.get(loadEndpoint));
+			plan.add(new PlanComponent(PlanComponentType.INCREASE_LOAD, loadEndpoint, serviceLoads.get(loadEndpoint)));
+		}
+		
+		// Extra: update cache with new registry info
+		if (knowledge.getCachePlanComponents().size() != 0) {
+			for (PlanComponent registryPlanComponent : knowledge.getCachePlanComponents()) {
+				plan.add(registryPlanComponent);
+			}
+			
+			knowledge.resetRegistryPlanComponents();
+		}
+		
+		executed = true;
 	}
 	
 	/**
@@ -152,7 +225,6 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * @param serviceCombination the given service combination
 	 */
 	public void setCurrentServiceCombination(ServiceCombination serviceCombination) {
-		//System.out.println(serviceCombination);
 		currentServiceCombination = serviceCombination;
 	}
 	
@@ -170,9 +242,16 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 * @param content the given message content
 	 */
 	public void addToLoadBuffer(String sender, PlannerMessageContent content) {
-		loadBuffer.put(sender,  content.getPublicServiceUsage());
+		buffer.put(sender,  content.getPublicServiceUsage());
 	}
 	
+	/**
+	 * Get the service combinations in the given list that have the least services in common with
+	 * the services in the buffer.
+	 * @param combinations the given combination list
+	 * @return the service combinations in the given list that have the least services in common with
+	 * 	       the services in the buffer.
+	 */
 	public Pair<List<ServiceCombination>, Integer> getLeastOffendingCombinations(List<ServiceCombination> combinations) {	
 		
 		int LeastOffences = Integer.MAX_VALUE;
@@ -197,6 +276,11 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		return new Pair<List<ServiceCombination>, Integer>(bestCombinations, LeastOffences);
 	}
 	
+	/**
+	 * Calculate the amount of services in the given service combination that are also in the buffer. 
+	 * @param combination the given service combination
+	 * @return the amount of services in the given service combination that are also in the buffer. 
+	 */
 	public int getServiceCombinationOffences(ServiceCombination combination) {
 		
 		int offences = 0;
@@ -213,27 +297,36 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		return offences;
 	}
 	
+	/**
+	 * Generate a map containing service usage from the current buffer content.
+	 * @return the full service usage map 
+	 */
 	public Map<String, Integer> getFullLoadMap() {
 		return getFullLoadMap("");
 	}
 	
+	/**
+	 * Generate a map containing service usage from the current buffer content, without the load
+	 * data from the given receiver endpoint.
+	 * @param receiverEndpoint the given receiver endpoint
+	 * @return the full service usage map without the receiver data
+	 */
 	public Map<String, Integer> getFullLoadMap(String receiverEndpoint) {
 		Map<String, Integer> fullLoadMap = new HashMap<>();
 		
-		for (String endpoint : loadBuffer.keySet()) {
+		for (String endpoint : buffer.keySet()) {
 			if (endpoint != receiverEndpoint) {
-				for (String key : loadBuffer.get(endpoint).keySet()) {
+				for (String key : buffer.get(endpoint).keySet()) {
 					if (fullLoadMap.get(key) != null) {
-						fullLoadMap.put(key, fullLoadMap.get(key) + loadBuffer.get(endpoint).get(key));
+						fullLoadMap.put(key, fullLoadMap.get(key) + buffer.get(endpoint).get(key));
 					}
 					else {
-						fullLoadMap.put(key, loadBuffer.get(endpoint).get(key));
+						fullLoadMap.put(key, buffer.get(endpoint).get(key));
 					}
 				}
 			}
 		}
 		
-		//System.out.println(fullLoadMap);
 		return fullLoadMap;
 	}
 	
@@ -245,43 +338,6 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 	 */
 	public List<ServiceCombination> calculateNewServiceCombinations() {	
 		return analyzer.calculateNewServiceCombinations(getFullLoadMap());
-	}
-	
-	/**
-	 * Method that is called when the protocol is finished, given protocol data.
-	 * This method indicates that the protocol is finished.
-	 * @param protocolMessages the amount of messages that were sent during the protocol
-	 */
-	public void finishedProtocol(int protocolMessages) {
-		protocolFinished = true;
-		observer.serviceCombinationChosen(currentServiceCombination, knowledge, protocolMessages);
-		makePlan(currentServiceCombination);
-	}
-	
-	/**
-	 * Trigger the executor when the planner has been executed and
-	 * when the protocol is finished when there is one
-	 */
-	public void triggerExecutor() {
-		if (executed && protocolFinished) {
-			executor.execute(plan);
-			executed = false;
-			protocolFinished = false;
-		}
-	}
-
-	/**
-	 * Receive a given message and handle the response with the currently used protocol 
-	 * @param message the received message
-	 */
-	@Override
-	public void receiveMessage(PlannerMessage message) throws NullPointerException {
-		
-		if (protocol == null) {
-			throw new NullPointerException("Planner can't handle message message receivement, no protocol selected.");
-		}
-		
-		protocol.receiveAndHandleMessage(message, this);
 	}
 	
 	/**
@@ -327,6 +383,15 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		return new PlannerMessageContent(serviceLoads);
 	}
 	
+	/**
+	 * Generate planner message content that includes a map of service loads for each service inside 
+	 * the given service combination and the current load map, without the data of the receiver.
+	 * @param serviceCombination the given service combination
+	 * @param registryEndpoints the given registry endpoints
+	 * @param receiverEndpoint The endpoint of the receiver this message content is going to be sent to
+	 * @param messageContentPercentage percentage of information that is given out
+	 * @return the planner message content
+	 */
 	public PlannerMessageContent generateMessageContentEverything(ServiceCombination serviceCombination, List<String> registryEndpoints, String receiverEndpoint, int messageContentPercentage) {
 		Map<String, Integer> personalServiceLoads = generateMessageContent(serviceCombination, registryEndpoints, 100).getPublicServiceUsage();
 		Map<String, Integer> fullLoadMap = getFullLoadMap(receiverEndpoint);
@@ -356,41 +421,6 @@ public class Planner extends CommunicationComponent<PlannerMessage> {
 		}
 		
 		return new PlannerMessageContent(usedLoads);
-	}
-	
-	/**
-	 * Return the currently stored registry endpoints in the knowledge component
-	 * @return the currently stored registry endpoints in the knowledge component
-	 */
-	public List<String> getRegistryEndpoints() {
-		return knowledge.getRegistryEndpoints();
-	}
-	
-	/**
-	 * Make a plan for the executor to execute based on a given service combination
-	 * and data in the knowledge component.
-	 * @param serviceCombination the given service combination
-	 */
-	private void makePlan(ServiceCombination serviceCombination) {
-		
-		plan = new ArrayList<PlanComponent>();	
-		plan.add(new PlanComponent(PlanComponentType.SET_USED_SERVICES, serviceCombination.getAllServiceEndpoints()));
-		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination);
-		
-		for (String loadEndpoint : serviceLoads.keySet()) {
-			plan.add(new PlanComponent(PlanComponentType.INCREASE_LOAD, loadEndpoint, serviceLoads.get(loadEndpoint)));
-		}
-		
-		// Extra: update cache with new registry info
-		if (knowledge.getCachePlanComponents().size() != 0) {
-			for (PlanComponent registryPlanComponent : knowledge.getCachePlanComponents()) {
-				plan.add(registryPlanComponent);
-			}
-			
-			knowledge.resetRegistryPlanComponents();
-		}
-		
-		executed = true;
 	}
 	
 	/**

@@ -17,7 +17,7 @@ import tas.mape.communication.CommunicationComponent;
 public class ComponentMessageHost<T extends ComponentMessage<?>> {
 	
 	// All communication components connected to this message host
-	private Map<String, CommunicationComponent<T>> listeners;
+	private Map<String, CommunicationComponent<T, ?>> listeners;
 	
 	/**
 	 * Create a new message host
@@ -30,7 +30,7 @@ public class ComponentMessageHost<T extends ComponentMessage<?>> {
 	 * Return the list of listeners
 	 * @return the list of listeners
 	 */
-	public Map<String, CommunicationComponent<T>> getListeners() {
+	public Map<String, CommunicationComponent<T, ?>> getListeners() {
 		return listeners;
 	}
 	
@@ -38,7 +38,7 @@ public class ComponentMessageHost<T extends ComponentMessage<?>> {
 	 * Register a given communication component to this host
 	 * @param component the communication component to be registered
 	 */
-	public void register(CommunicationComponent<T> component) {
+	public void register(CommunicationComponent<T, ?> component) {
 		listeners.put(component.getEndpoint(), component);
 		component.setMessageHost(this);
 	}
@@ -48,7 +48,7 @@ public class ComponentMessageHost<T extends ComponentMessage<?>> {
 	 * @param component the communication component to be unregistered
 	 * @throws IllegalArgumentException throw when the given component is not registered to this host
 	 */
-	public void unRegister(CommunicationComponent<T> component) throws IllegalArgumentException {
+	public void unRegister(CommunicationComponent<T, ?> component) throws IllegalArgumentException {
 		
 		if (listeners.get(component.getEndpoint()) == null) {
 			throw new IllegalArgumentException("Given component is not registered!");

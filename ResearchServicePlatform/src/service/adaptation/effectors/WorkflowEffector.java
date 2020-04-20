@@ -38,7 +38,6 @@ public class WorkflowEffector extends AbstractEffector {
      * @param usedServicesInfo new service endpoints and accumulated use chances
      */
     public void updateUsedServicesInfo(Map<Description, WeightedCollection<String>> usedServicesInfo) {
-    	System.out.println("USING SERVICES: " + usedServicesInfo);
     	compositeService.setUsedServicesInfo(usedServicesInfo);
     }
     
