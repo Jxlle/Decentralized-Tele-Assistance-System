@@ -83,7 +83,7 @@ public class ServiceRegistry extends AtomicService implements ServiceRegistryInt
     	}	
     	
     	serviceRegistryProbe.notifyServiceAddedToRegistry(description);
-    	System.out.println("Service " + description.getServiceType() + " is registered with ID " + description.getRegisterID() + " and registry endpoint " + description.getServiceRegistryEndpoint() + " .");	
+    	System.out.println("Service " + description.getServiceType() + " is registered with ID " + description.getRegisterID() + " and registry endpoint " + description.getServiceRegistryEndpoint() + ".");	
     }
 
     @ServiceOperation

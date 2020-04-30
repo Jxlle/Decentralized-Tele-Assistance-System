@@ -1,5 +1,5 @@
 package tas.data.inputprofile;
-import tas.mape.system.structure.*;
+import tas.system.structure.*;
 
 /**
  * Enum representing the different system types

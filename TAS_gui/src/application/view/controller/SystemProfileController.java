@@ -65,7 +65,7 @@ import tas.data.inputprofile.InputProfileDataHandler;
 import tas.data.inputprofile.SystemRequirementType;
 import tas.data.inputprofile.SystemType;
 import tas.mape.planner.RatingType;
-import tas.mape.system.entity.MAPEKSystemEntity;
+import tas.system.entity.MAPEKSystemEntity;
 
 public class SystemProfileController implements Initializable {
 

@@ -1,7 +1,7 @@
 package tas.mape.probes;
 
 import service.adaptation.probes.AbstractProbe;
-import tas.mape.communication.message.ProtocolMessageInformation;
+import tas.communication.message.ProtocolMessageInformation;
 
 /**
  * Class that monitors sent protocol messages during the communication step inside the planner

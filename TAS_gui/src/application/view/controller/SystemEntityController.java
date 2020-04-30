@@ -48,11 +48,11 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.analyzer.AbstractWorkflowQoSRequirement;
 import tas.mape.analyzer.CombinationStrategy;
 import tas.mape.knowledge.Goal;
-import tas.mape.system.entity.MAPEKFeedbackLoop;
-import tas.mape.system.entity.MAPEKFeedbackLoop.Builder;
-import tas.mape.system.entity.MAPEKSystemEntity;
-import tas.mape.system.entity.MAPEKSystemEntityWriter;
-import tas.mape.system.entity.LocalServiceSystem;
+import tas.system.entity.LocalServiceSystem;
+import tas.system.entity.MAPEKFeedbackLoop;
+import tas.system.entity.MAPEKSystemEntity;
+import tas.system.entity.MAPEKSystemEntityWriter;
+import tas.system.entity.MAPEKFeedbackLoop.Builder;
 
 public class SystemEntityController implements Initializable {
 

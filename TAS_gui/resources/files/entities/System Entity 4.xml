@@ -6,7 +6,7 @@
 <MonitorFailureChange>0.005</MonitorFailureChange>
 <MonitorMinFailureDelta>0.005</MonitorMinFailureDelta>
 <AnalyzerCombinationLimit>1000</AnalyzerCombinationLimit>
-<KnowledgeLoadFailureDelta>5</KnowledgeLoadFailureDelta>
+<KnowledgeLoadFailureDelta>10</KnowledgeLoadFailureDelta>
 <Registries>
 <RegistryEndpoint>service.private2.registry</RegistryEndpoint>
 <RegistryEndpoint>service.public1.registry</RegistryEndpoint>

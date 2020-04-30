@@ -1,4 +1,4 @@
-package tas.mape.system.entity;
+package tas.system.entity;
 
 /**
  * Class representing a system entity consisting of a workflow executer (managed system) 

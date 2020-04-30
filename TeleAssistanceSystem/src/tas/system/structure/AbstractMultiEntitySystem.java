@@ -1,9 +1,9 @@
-package tas.mape.system.structure;
+package tas.system.structure;
 
-import tas.mape.communication.CommunicationComponent;
-import tas.mape.communication.message.ComponentMessage;
-import tas.mape.communication.protocol.AbstractProtocol;
-import tas.mape.system.entity.AbstractSystemEntity;
+import tas.communication.CommunicationComponent;
+import tas.communication.message.ComponentMessage;
+import tas.communication.protocol.AbstractProtocol;
+import tas.system.entity.AbstractSystemEntity;
 
 /**
  * Abstract class representing a multi entity system containing system entities.

@@ -10,11 +10,11 @@ import javafx.util.Pair;
 import service.auxiliary.Description;
 import service.auxiliary.ServiceDescription;
 import service.auxiliary.WeightedCollection;
+import tas.communication.CommunicationComponent;
+import tas.communication.message.PlannerMessage;
+import tas.communication.message.PlannerMessageContent;
+import tas.communication.protocol.AbstractProtocol;
 import tas.mape.analyzer.Analyzer;
-import tas.mape.communication.CommunicationComponent;
-import tas.mape.communication.message.PlannerMessage;
-import tas.mape.communication.message.PlannerMessageContent;
-import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.executor.Executor;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.probes.PlannerObserver;
@@ -101,6 +101,8 @@ public class Planner extends CommunicationComponent<PlannerMessage, Map<String, 
 	 * @param availableServiceCombinations the given list of service combinations
 	 */
 	public void execute(List<ServiceCombination> availableServiceCombinations) {
+		
+		knowledge.resetLoadKeys();
 		this.availableServiceCombinations = availableServiceCombinations;
 		currentServiceCombination = null;
 		buffer = new HashMap<>();
@@ -121,6 +123,7 @@ public class Planner extends CommunicationComponent<PlannerMessage, Map<String, 
 	public void finishedProtocol(int protocolMessages) {
 		protocolFinished = true;
 		observer.serviceCombinationChosen(currentServiceCombination, knowledge, protocolMessages);
+		setLoadKeys(currentServiceCombination);
 		makePlan(currentServiceCombination);
 	}
 	
@@ -158,6 +161,16 @@ public class Planner extends CommunicationComponent<PlannerMessage, Map<String, 
 		return knowledge.getRegistryEndpoints();
 	}
 	
+	private void setLoadKeys(ServiceCombination serviceCombination) {
+		
+		Map<String, Integer> loadKeys = getFullLoadMapPlusOwnLoads(serviceCombination, getRegistryEndpoints(), ""); 
+
+		for (String loadEndpoint : loadKeys.keySet()) {
+			System.out.println("added load key: " + loadEndpoint + " " + loadKeys.get(loadEndpoint));
+			knowledge.addLoadKey(loadEndpoint, loadKeys.get(loadEndpoint));
+		}
+	}
+	
 	/**
 	 * Make a plan for the executor to execute based on a given service combination
 	 * and data in the knowledge component.
@@ -170,7 +183,7 @@ public class Planner extends CommunicationComponent<PlannerMessage, Map<String, 
 		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination);
 		
 		for (String loadEndpoint : serviceLoads.keySet()) {
-			System.out.println("increase load " + loadEndpoint + " " + serviceLoads.get(loadEndpoint));
+			System.out.println("added load " + loadEndpoint + " " + serviceLoads.get(loadEndpoint));
 			plan.add(new PlanComponent(PlanComponentType.INCREASE_LOAD, loadEndpoint, serviceLoads.get(loadEndpoint)));
 		}
 		
@@ -311,7 +324,7 @@ public class Planner extends CommunicationComponent<PlannerMessage, Map<String, 
 	 * @param receiverEndpoint the given receiver endpoint
 	 * @return the full service usage map without the receiver data
 	 */
-	public Map<String, Integer> getFullLoadMap(String receiverEndpoint) {
+	private Map<String, Integer> getFullLoadMap(String receiverEndpoint) {
 		Map<String, Integer> fullLoadMap = new HashMap<>();
 		
 		for (String endpoint : buffer.keySet()) {
@@ -324,6 +337,22 @@ public class Planner extends CommunicationComponent<PlannerMessage, Map<String, 
 						fullLoadMap.put(key, buffer.get(endpoint).get(key));
 					}
 				}
+			}
+		}
+		
+		return fullLoadMap;
+	}
+	
+	private Map<String, Integer> getFullLoadMapPlusOwnLoads(ServiceCombination serviceCombination, List<String> registryEndpoints, String receiverEndpoint) {
+		Map<String, Integer> personalServiceLoads = generateMessageContent(serviceCombination, registryEndpoints, 100).getPublicServiceUsage();
+		Map<String, Integer> fullLoadMap = getFullLoadMap(receiverEndpoint);
+		
+		for (Map.Entry<String, Integer> entry : personalServiceLoads.entrySet()) {
+			if (fullLoadMap.get(entry.getKey()) != null) {
+				fullLoadMap.put(entry.getKey(), fullLoadMap.get(entry.getKey()) + personalServiceLoads.get(entry.getKey()));
+			}
+			else {
+				fullLoadMap.put(entry.getKey(), personalServiceLoads.get(entry.getKey()));
 			}
 		}
 		
@@ -393,19 +422,9 @@ public class Planner extends CommunicationComponent<PlannerMessage, Map<String, 
 	 * @return the planner message content
 	 */
 	public PlannerMessageContent generateMessageContentEverything(ServiceCombination serviceCombination, List<String> registryEndpoints, String receiverEndpoint, int messageContentPercentage) {
-		Map<String, Integer> personalServiceLoads = generateMessageContent(serviceCombination, registryEndpoints, 100).getPublicServiceUsage();
-		Map<String, Integer> fullLoadMap = getFullLoadMap(receiverEndpoint);
+		Map<String, Integer> fullLoadMap = getFullLoadMapPlusOwnLoads(serviceCombination, registryEndpoints, receiverEndpoint);
 		Map<String, Integer> usedLoads = new HashMap<>();
 		List<String> services = new ArrayList<>(fullLoadMap.keySet());
-		
-		for (Map.Entry<String, Integer> entry : personalServiceLoads.entrySet()) {
-			if (fullLoadMap.get(entry.getKey()) != null) {
-				fullLoadMap.put(entry.getKey(), fullLoadMap.get(entry.getKey()) + personalServiceLoads.get(entry.getKey()));
-			}
-			else {
-				fullLoadMap.put(entry.getKey(), personalServiceLoads.get(entry.getKey()));
-			}
-		}
 		
 		int usedDescriptionsCount = (int) Math.ceil(fullLoadMap.size() * (messageContentPercentage / (double) 100));
 		

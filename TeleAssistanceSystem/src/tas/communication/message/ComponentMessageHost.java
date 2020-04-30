@@ -1,9 +1,9 @@
-package tas.mape.communication.message;
+package tas.communication.message;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import tas.mape.communication.CommunicationComponent;
+import tas.communication.CommunicationComponent;
 
 /**
  * Class used for handling message sending and receiving between components

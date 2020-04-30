@@ -1,7 +1,7 @@
-package tas.mape.communication;
+package tas.communication;
 
-import tas.mape.communication.message.ComponentMessage;
-import tas.mape.communication.message.ComponentMessageHost;
+import tas.communication.message.ComponentMessage;
+import tas.communication.message.ComponentMessageHost;
 
 /**
  * Abstract class representing a component that has the ability to communicate with other components of this type.

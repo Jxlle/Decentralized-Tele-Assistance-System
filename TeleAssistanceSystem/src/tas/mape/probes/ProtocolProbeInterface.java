@@ -1,6 +1,6 @@
 package tas.mape.probes;
 
-import tas.mape.communication.message.ProtocolMessageInformation;
+import tas.communication.message.ProtocolMessageInformation;
 
 /**
  * Interface used for probes that collect protocol message data

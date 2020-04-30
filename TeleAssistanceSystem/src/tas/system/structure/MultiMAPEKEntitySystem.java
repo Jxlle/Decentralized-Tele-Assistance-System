@@ -1,11 +1,11 @@
-package tas.mape.system.structure;
+package tas.system.structure;
 
+import tas.communication.message.PlannerMessage;
+import tas.communication.protocol.AbstractProtocol;
 import tas.data.inputprofile.InputProfileDataHandler;
 import tas.data.serviceinfo.GlobalServiceInfo;
-import tas.mape.communication.message.PlannerMessage;
-import tas.mape.communication.protocol.AbstractProtocol;
 import tas.mape.planner.Planner;
-import tas.mape.system.entity.MAPEKSystemEntity;
+import tas.system.entity.MAPEKSystemEntity;
 
 public class MultiMAPEKEntitySystem extends AbstractMultiEntitySystem<MAPEKSystemEntity, PlannerMessage, Planner> {
 

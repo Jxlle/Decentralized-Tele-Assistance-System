@@ -1,7 +1,7 @@
-package tas.mape.system.structure;
+package tas.system.structure;
 
 import tas.data.serviceinfo.GlobalServiceInfo;
-import tas.mape.system.entity.MAPEKSystemEntity;
+import tas.system.entity.MAPEKSystemEntity;
 
 /**
  * Class representing a single MAPEK entity system containing one system entity.

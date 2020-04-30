@@ -1,4 +1,4 @@
-package tas.mape.system.entity;
+package tas.system.entity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import tas.data.serviceinfo.GlobalServiceInfo;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalRelation;
 import tas.mape.knowledge.Goal.GoalType;
-import tas.mape.system.entity.MAPEKFeedbackLoop.Builder;
+import tas.system.entity.MAPEKFeedbackLoop.Builder;
 
 public class MAPEKSystemEntityLoader {
 	

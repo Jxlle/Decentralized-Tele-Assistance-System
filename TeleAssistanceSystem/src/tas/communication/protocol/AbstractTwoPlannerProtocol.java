@@ -1,10 +1,10 @@
-package tas.mape.communication.protocol;
+package tas.communication.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import tas.mape.communication.message.PlannerMessage;
-import tas.mape.communication.message.PlannerMessageContent;
+import tas.communication.message.PlannerMessage;
+import tas.communication.message.PlannerMessageContent;
 import tas.mape.planner.Planner;
 import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;

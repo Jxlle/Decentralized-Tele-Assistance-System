@@ -141,12 +141,12 @@ public class GlobalServiceInfo {
      * @param file the given file
      */
     public static void loadData(File file) {
-    	//GlobalServiceInfoLoader.loadFromXml(file);
+    	GlobalServiceInfoLoader.loadFromXml(file);
     	
     	// Uncomment these lines if you want to change the xml file easily by defining your service
     	// environment in the method below.
-    	ChangeToDefaultServices();
-    	GlobalServiceInfoWriter.writeToXml(file);
+    	//ChangeToDefaultServices();
+    	//GlobalServiceInfoWriter.writeToXml(file);
     }
     
     /**

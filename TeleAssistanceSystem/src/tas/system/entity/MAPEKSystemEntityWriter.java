@@ -1,4 +1,4 @@
-package tas.mape.system.entity;
+package tas.system.entity;
 
 import java.io.File;
 

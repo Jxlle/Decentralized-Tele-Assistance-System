@@ -1,11 +1,9 @@
 package tas.data.inputprofile;
 
-import tas.mape.communication.protocol.AbstractProtocol;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import tas.mape.communication.protocol.*;
+import tas.communication.protocol.*;
 
 /**
  * Enum representing the different protocol types

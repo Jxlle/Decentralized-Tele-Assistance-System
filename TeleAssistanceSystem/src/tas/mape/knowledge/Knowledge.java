@@ -48,6 +48,9 @@ public class Knowledge {
 	// Map containing service usage chance from analyzing the workflow
 	private Map<Description, Double> servicesUsageChance;
 	
+	// Stores last load keys to update approximated failure rates in monitor
+	private Map<String, Integer> lastLoadKeys = new HashMap<>();
+	
 	// Map containing information about the approximated service failure rates
 	private Map<String, TreeMap<Integer, Double>> approximatedServiceFailureRates;
 	
@@ -127,6 +130,18 @@ public class Knowledge {
 		}
 		
 		this.parentEntityName = parentEntityName;
+	}
+	
+	public void addLoadKey(String serviceEndpoint, int load) {
+		lastLoadKeys.put(serviceEndpoint, load);
+	}
+	
+	public int getLoadKey(String serviceEndpoint) {
+		return lastLoadKeys.get(serviceEndpoint);
+	}
+	
+	public void resetLoadKeys() {
+		lastLoadKeys.clear();
 	}
 		
 	/**

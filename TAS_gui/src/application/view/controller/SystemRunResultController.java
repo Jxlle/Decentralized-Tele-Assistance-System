@@ -62,15 +62,15 @@ import javafx.util.Callback;
 import javafx.util.Pair;
 import service.atomic.AtomicService;
 import service.registry.ServiceRegistry;
+import tas.communication.message.ProtocolMessageInformation;
 import tas.data.serviceinfo.GlobalServiceInfo;
-import tas.mape.communication.message.ProtocolMessageInformation;
 import tas.mape.knowledge.Goal;
 import tas.mape.knowledge.Goal.GoalType;
 import tas.mape.planner.RatingType;
 import tas.mape.planner.ServiceCombination;
 import tas.mape.probes.ProtocolProbe;
 import tas.mape.probes.SystemRunProbe;
-import tas.mape.system.entity.MAPEKSystemEntity;
+import tas.system.entity.MAPEKSystemEntity;
 
 public class SystemRunResultController {
 	
@@ -135,7 +135,7 @@ public class SystemRunResultController {
 		saveSystemRunPerformanceChart(defaultPath + "Performance Graph");
 		SaveProtocolMessageChart(defaultPath +"Protocol Message Graph");
 		saveCostEvolutionChart(defaultPath +"Cost Evolution Graph");
-		saveChart(ratingChart, defaultPath + "Entity Rating Evolution Graph");
+		saveChart(ratingChart, defaultPath + "Entity Rating Graph");
 		saveChart(ratingSystemChart, defaultPath + "System Rating Graph");
 		saveChart(failureRateChart, defaultPath + "Entity Failure Rate Graph");
 		saveChart(failureRateSystemChart, defaultPath + "System Failure Rate Graph");	
@@ -779,7 +779,7 @@ public class SystemRunResultController {
 			
 			// Define chart axis
 			NumberAxis xAxis = new NumberAxis("System cycle", 1, protocolMessages.size(), 1);
-			NumberAxis yAxis = new NumberAxis("Chosen Service Combination Failure Rate error \n(system approximation <-> entity approximation)", 0, 0.2, 0.1);
+			NumberAxis yAxis = new NumberAxis("Chosen Service Combination Failure Rate error \n(system approximation <-> entity approximation)", 0, maxErrorValue, 0.1);
 			
 			// Set chart position & size
 			failureRateErrorChart = new LineChart<Number, Number>(xAxis, yAxis); 

@@ -38,8 +38,8 @@ public class ServiceFailureLoadProfile extends ServiceProfile {
 		failureRate.put(0, 1.0);
 		failureRate.put(20, 0.98);
 		failureRate.put(35, 0.96);
-		failureRate.put(55, 0.90);
-		failureRate.put(65, 0.87);
+		failureRate.put(55, 0.93);
+		failureRate.put(65, 0.89);
 		failureRate.put(70, 0.85);
 	}
 	

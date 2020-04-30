@@ -3,8 +3,8 @@ package tas.mape.probes;
 import java.util.ArrayList;
 import java.util.List;
 
+import tas.communication.message.ProtocolMessageInformation;
 import tas.data.inputprofile.InputProfileExecutor;
-import tas.mape.communication.message.ProtocolMessageInformation;
 
 public class ProtocolProbe implements ProtocolProbeInterface {
 

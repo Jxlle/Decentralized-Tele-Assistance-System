@@ -1,6 +1,6 @@
-package tas.mape.communication.protocol;
+package tas.communication.protocol;
 
-import tas.mape.communication.message.PlannerMessage;
+import tas.communication.message.PlannerMessage;
 import tas.mape.planner.Planner;
 
 /**

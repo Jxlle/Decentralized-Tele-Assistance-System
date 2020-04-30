@@ -1,6 +1,6 @@
-package tas.mape.system.structure;
+package tas.system.structure;
 
-import tas.mape.system.entity.AbstractSystemEntity;
+import tas.system.entity.AbstractSystemEntity;
 
 /**
  * Abstract class representing a single entity system containing one system entity.

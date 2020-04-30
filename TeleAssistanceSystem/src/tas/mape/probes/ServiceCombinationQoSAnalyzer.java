@@ -99,6 +99,7 @@ public class ServiceCombinationQoSAnalyzer {
 				}
 			
 			case SCORE:
+				// TODO not finished
 				return 0;
 				
 			default:
@@ -139,7 +140,7 @@ public class ServiceCombinationQoSAnalyzer {
 				// failure rate = chance that this service for this service type is used 
 				//            * actual fail rate (= 1 - (success rate * profile success rate multiplier (depends on the service load)))
 				double useChance = combination.getAllServices(description).getChance(service);	
-				//System.err.println("FAIL CALC " + useChance + " " + (1 - (1 - (double) service.getCustomProperties().get("FailureRate")) * profile.getTableEntry(service).getValue()) + " " + profile.getTableEntry(service).getValue());
+				System.err.println("FAIL CALC " + service.getServiceEndpoint() + " " + (useChance * (1 - (1 - (double) service.getCustomProperties().get("FailureRate")) * profile.getTableEntry(service).getValue())));
 				totalValue += (useChance * (1 - (1 - (double) service.getCustomProperties().get("FailureRate")) * profile.getTableEntry(service).getValue()));
 			}
 		}

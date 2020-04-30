@@ -1,13 +1,13 @@
-package tas.mape.communication.protocol;
+package tas.communication.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import tas.mape.communication.CommunicationComponent;
-import tas.mape.communication.message.ComponentMessage;
-import tas.mape.communication.message.ComponentMessageHost;
+import tas.communication.CommunicationComponent;
+import tas.communication.message.ComponentMessage;
+import tas.communication.message.ComponentMessageHost;
 import tas.mape.probes.ProtocolObserver;
 
 /**

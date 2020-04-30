@@ -1,4 +1,4 @@
-package tas.mape.communication.message;
+package tas.communication.message;
 
 public class ProtocolMessageInformation {
 	

@@ -7,7 +7,7 @@ import java.util.List;
 import javafx.util.Pair;
 import tas.mape.knowledge.Knowledge;
 import tas.mape.planner.ServiceCombination;
-import tas.mape.system.entity.MAPEKSystemEntity;
+import tas.system.entity.MAPEKSystemEntity;
 
 /**
  * Class used as a probe that handles service combination data used to generate graphs

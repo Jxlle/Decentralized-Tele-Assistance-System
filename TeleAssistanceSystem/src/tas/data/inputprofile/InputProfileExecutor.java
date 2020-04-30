@@ -4,14 +4,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import tas.mape.communication.message.PlannerMessage;
-import tas.mape.communication.protocol.AbstractPlannerProtocol;
+import tas.communication.message.PlannerMessage;
+import tas.communication.protocol.AbstractPlannerProtocol;
 import tas.mape.planner.Planner;
 import tas.mape.probes.ProtocolProbe;
-import tas.mape.system.entity.MAPEKSystemEntity;
-import tas.mape.system.structure.AbstractMultiEntitySystem;
-import tas.mape.system.structure.AbstractSingleEntitySystem;
-import tas.mape.system.structure.AbstractSystem;
+import tas.system.entity.MAPEKSystemEntity;
+import tas.system.structure.AbstractMultiEntitySystem;
+import tas.system.structure.AbstractSingleEntitySystem;
+import tas.system.structure.AbstractSystem;
 
 /**
  * Class used to execute system profiles.
