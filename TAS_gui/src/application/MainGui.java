@@ -26,7 +26,7 @@ public class MainGui extends Application {
 			
 	    	//Utility.createFile(logFile);
 	    	//Utility.createFile(resultFile);
-	    	Log.initialize(logFile);
+	    	//Log.initialize(logFile);
  
 			//System.out.println("Start services");
 			FXMLLoader loader = new FXMLLoader();
@@ -41,7 +41,7 @@ public class MainGui extends Application {
 			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent arg0) {
-					Log.stop();
+					//Log.stop();
 		    		System.exit(0);
 				}
 			});

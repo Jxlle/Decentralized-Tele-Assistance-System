@@ -257,7 +257,7 @@ public class GlobalServiceInfo {
 	
 		MedicalAnalysisService medicalAnalysis3 = new MedicalAnalysisService("MedicalService3", "service.medical3");
 		medicalAnalysis3.getServiceDescription().getCustomProperties().put("Cost", 4.0);
-		medicalAnalysis3.getServiceDescription().getCustomProperties().put("FailureRate", 0.9);
+		medicalAnalysis3.getServiceDescription().getCustomProperties().put("FailureRate", 0.09);
 		medicalAnalysis3.startService();
 		medicalAnalysis3.register(privateServiceRegistry2);
 		services.add(medicalAnalysis3);

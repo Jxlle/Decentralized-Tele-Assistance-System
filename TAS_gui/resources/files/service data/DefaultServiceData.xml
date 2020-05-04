@@ -184,7 +184,7 @@
 <Property>
 <Name>FailureRate</Name>
 <Type>Double</Type>
-<Value>0.9</Value>
+<Value>0.09</Value>
 </Property>
 </Properties>
 </Service>
