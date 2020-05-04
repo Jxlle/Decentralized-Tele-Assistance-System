@@ -271,7 +271,7 @@ public class SystemRunResultController {
         entityRootRow.createCell(2).setCellValue("Combination Limit");
         entityRootRow.createCell(3).setCellValue("Min Failure Delta");
         entityRootRow.createCell(4).setCellValue("Failure Change");
-        entityRootRow.createCell(5).setCellValue("Analyzer Generation Strategy");
+        entityRootRow.createCell(5).setCellValue("Service selection");
         entityRootRow.createCell(6).setCellValue("Goals");
         entityRootRow.createCell(7).setCellValue("Used Service Registries");
         entityRootRow.createCell(8).setCellValue("Workflow Path");
