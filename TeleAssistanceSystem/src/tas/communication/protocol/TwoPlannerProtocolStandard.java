@@ -73,7 +73,6 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 			}
 			
 			receiver.setAvailableServiceCombinations(newServiceCombinations);
-			//System.err.println("chosen combination rating: " + chosenCombination.getRating() + " combination: "+ chosenCombination);
 			receiver.setCurrentServiceCombination(chosenCombination);
 			
 			content = receiver.generateMessageContent(receiver.getCurrentServiceCombination(), sharedRegistryEndpoints, usedMessageContentPercentage);
@@ -121,8 +120,6 @@ public class TwoPlannerProtocolStandard extends AbstractTwoPlannerProtocol {
 					
 					for (ServiceCombination s : bestCombinations) {
 						if (s.hasSameCollection(receiver.getCurrentServiceCombination())) {
-							//s.getRating().equals(receiver.getCurrentServiceCombination().getRating())
-							System.out.println("least offending value: " + receiver.getLeastOffendingCombinations(bestCombinations).getValue());
 							if (s.getRating().equals(receiver.getCurrentServiceCombination().getRating()) || receiver.getLeastOffendingCombinations(bestCombinations).getValue().equals(receiver.getServiceCombinationOffences(receiver.getCurrentServiceCombination()))) {
 								responseType = "AGREED_OFFER";
 								chosenCombination = s;

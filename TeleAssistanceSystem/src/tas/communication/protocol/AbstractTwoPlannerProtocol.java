@@ -77,9 +77,7 @@ public abstract class AbstractTwoPlannerProtocol extends AbstractPlannerProtocol
 		PlannerMessageContent content = sender.generateMessageContent(chosenCombination, sharedRegistryEndpoints, usedMessageContentPercentage);
 		PlannerMessage message = new PlannerMessage(messageID, receiver.getEndpoint(), sender.getEndpoint(), "FIRST_OFFER", content);
 		
-		System.out.println("-----------------------------------------------------------\nPROTOCOL STARTED");
-		
-		System.err.print(" rating: " + chosenCombination.getRating() + "\n " + chosenCombination.toString() + " \n");
+		System.out.println("PROTOCOL STARTED");
 		
 		// Send message
 		sender.sendMessage(message);
