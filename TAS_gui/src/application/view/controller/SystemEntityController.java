@@ -220,7 +220,7 @@ public class SystemEntityController implements Initializable {
 		reqStratTooltip.setText(
 			    "Choose how service combinations are chosen.\n"
 			    + "This option changes what service combinations are chosen during the analyzer phase.\n\n"
-			    + "See the combo box options for more information about each strategy."
+			    + "See the combo box options for more information about each method."
 		);
 		
 		Tooltip propertyTooltip = new Tooltip();
