@@ -85,7 +85,7 @@
                                     </TableView>
                                  </center>
                               </BorderPane>
-                              <Label fx:id="reqStratLabel" text="Analyzer Service Generation Strategy: " GridPane.rowIndex="1" />
+                              <Label fx:id="reqStratLabel" text="Service selection" GridPane.rowIndex="1" />
                               <ComboBox fx:id="generationStrategyComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets left="20.0" />

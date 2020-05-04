@@ -178,6 +178,7 @@ public class SystemRunResultController {
 	}
 	
 	public void saveRunData(String filePath, List<MAPEKSystemEntity> entities, String latestProfilePath) throws IOException {
+		
         HSSFWorkbook workbook = new HSSFWorkbook();
         
         // ENVIRONMENT DATA
@@ -570,6 +571,10 @@ public class SystemRunResultController {
 		
 		HashMap<String, List<Pair<Double, Double>>> dataPoints = systemRunProbe.getDataPoints();
 		
+		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
+		DecimalFormat df = new DecimalFormat("#.#####", otherSymbols);
+		df.setRoundingMode(RoundingMode.HALF_UP);
+		
 		for (String entity : dataPoints.keySet()) {
 			
 			// Add entity tab
@@ -654,7 +659,7 @@ public class SystemRunResultController {
 				int cycle = systemRunProbe.getSystemCycles().get(entity).get(i);
 				int protocolMessageCount = systemRunProbe.getProtocolMessageCount().get(i);
 				ServiceCombination combination = systemRunProbe.getChosenCombinations().get(entity).get(i);
-				serviceCombinationData.add(new ServiceCombinationEntry(cycle, dataPoint.getValue(), dataPoint.getKey(), protocolMessageCount, combination));
+				serviceCombinationData.add(new ServiceCombinationEntry(cycle, dataPoint.getValue(), Double.valueOf(df.format(dataPoint.getKey())), protocolMessageCount, combination));
 			}
 			
 			// Set table data

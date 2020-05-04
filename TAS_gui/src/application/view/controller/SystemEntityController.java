@@ -218,8 +218,8 @@ public class SystemEntityController implements Initializable {
 		
 		Tooltip reqStratTooltip = new Tooltip();
 		reqStratTooltip.setText(
-			    "Choose the used service generation strategy.\n"
-			    + "This strategy changes what service combinations are generated during the analyzer phase.\n\n"
+			    "Choose how service combinations are generated.\n"
+			    + "This option changes what service combinations are generated during the analyzer phase.\n\n"
 			    + "See the combo box options for more information about each strategy."
 		);
 		
