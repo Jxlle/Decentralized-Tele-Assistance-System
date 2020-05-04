@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1150.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.SystemEntityController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1150.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.controller.SystemEntityController">
    <children>
       <TitledPane animated="false" collapsible="false" layoutX="184.0" layoutY="94.0" text="New System Entity (hover mouse over the labels for help)" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <content>
@@ -85,7 +85,7 @@
                                     </TableView>
                                  </center>
                               </BorderPane>
-                              <Label fx:id="reqStratLabel" text="Service selection" GridPane.rowIndex="1" />
+                              <Label fx:id="reqStratLabel" text="Service selection:" GridPane.rowIndex="1" />
                               <ComboBox fx:id="generationStrategyComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
