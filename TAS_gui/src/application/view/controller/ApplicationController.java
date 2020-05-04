@@ -99,7 +99,7 @@ public class ApplicationController implements Initializable {
     static String baseDir="";
     
     String resourceDirPath = baseDir + "resources" + File.separator;
-    static String resultDirPath = baseDir + "results" + File.separator;
+    static String resultDirPath = baseDir + "resources" + File.separator + "results" + File.separator;
     static String fileDirPath = baseDir + "resources" + File.separator + "files" + File.separator;
     
     String workflowPath;

@@ -38,7 +38,7 @@ public class MultiMAPEKEntitySystem extends AbstractMultiEntitySystem<MAPEKSyste
 			
 			// Update current execution cycle
 			currentExecutionCycle = i;
-			System.out.println("----------------------------------------execution " + i + "  ----------------------------------------        ");
+			System.out.println("----------------------------------------[execution " + (i+1) + "]----------------------------------------        ");
 			
 			// Execute MAPE-K loop for each entity until the communication step
 			for (MAPEKSystemEntity entity : getSystemEntities()) {

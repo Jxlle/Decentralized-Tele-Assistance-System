@@ -27,8 +27,6 @@ public class SingleMAPEKEntitySystem extends AbstractSingleEntitySystem<MAPEKSys
 	@Override
 	public void executeSystem(int executionCycles) {
 		
-		System.err.println("----------------------------------------------------------------------------------");
-		
 		// System entity
 		MAPEKSystemEntity entity = getSystemEntity(0);
 		
@@ -36,6 +34,7 @@ public class SingleMAPEKEntitySystem extends AbstractSingleEntitySystem<MAPEKSys
 			
 			// Update current execution cycle
 			currentExecutionCycle = i;
+			System.out.println("----------------------------------------[execution " + (i+1) + "]----------------------------------------        ");
 			
 			// Execute MAPE-K loop
 			entity.getManagingSystem().executeMonitor();

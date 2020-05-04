@@ -17,15 +17,15 @@ import javafx.scene.control.SplitPane;
 
 public class MainGui extends Application {	
 	
-	static final String logFile="results"+File.separator+"log.csv";
-	static final String resultFile="results"+File.separator+"result.csv";
+	static final String logFile="resources" + File.separator + "results"+File.separator+"log.csv";
+	static final String resultFile="resources" + File.separator + "results"+File.separator+"result.csv";
 
 	@Override
 	public void start(Stage primaryStage) {
 		try {
 			
-	    	Utility.createFile(logFile);
-	    	Utility.createFile(resultFile);
+	    	//Utility.createFile(logFile);
+	    	//Utility.createFile(resultFile);
 	    	Log.initialize(logFile);
  
 			//System.out.println("Start services");

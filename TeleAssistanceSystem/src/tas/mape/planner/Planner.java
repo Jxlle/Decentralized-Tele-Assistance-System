@@ -166,7 +166,6 @@ public class Planner extends CommunicationComponent<PlannerMessage, Map<String, 
 		Map<String, Integer> loadKeys = getFullLoadMapPlusOwnLoads(serviceCombination, getRegistryEndpoints(), ""); 
 
 		for (String loadEndpoint : loadKeys.keySet()) {
-			System.out.println("added load key: " + loadEndpoint + " " + loadKeys.get(loadEndpoint));
 			knowledge.addLoadKey(loadEndpoint, loadKeys.get(loadEndpoint));
 		}
 	}
@@ -183,7 +182,6 @@ public class Planner extends CommunicationComponent<PlannerMessage, Map<String, 
 		Map<String, Integer> serviceLoads = getServiceLoads(serviceCombination);
 		
 		for (String loadEndpoint : serviceLoads.keySet()) {
-			System.out.println("added load " + loadEndpoint + " " + serviceLoads.get(loadEndpoint));
 			plan.add(new PlanComponent(PlanComponentType.INCREASE_LOAD, loadEndpoint, serviceLoads.get(loadEndpoint)));
 		}
 		

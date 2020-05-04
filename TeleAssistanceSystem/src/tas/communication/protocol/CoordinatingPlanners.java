@@ -40,7 +40,7 @@ public class CoordinatingPlanners extends AbstractThreePlannerProtocol {
 		coordinator = participatingComponents.get(startIndex);
 		Planner receiver = participatingComponents.get(receiverIndices.get(AbstractProtocol.random.nextInt(receiverIndices.size())));
 		
-		System.out.println("-----------------------------------------------------------\nPROTOCOL STARTED");
+		System.out.println("PROTOCOL STARTED");
 		
 		// Ask data from other planners
 		PlannerMessage message = new PlannerMessage(messageID, receiver.getEndpoint(), coordinator.getEndpoint(), "EXCHANGE_DATA", null);
@@ -75,8 +75,6 @@ public class CoordinatingPlanners extends AbstractThreePlannerProtocol {
 		// Make message
 		PlannerMessageContent content = coordinator.generateMessageContentEverything(chosenCombination, findSharedRegistryEndpoints(coordinator.getEndpoint(), receiver.getEndpoint()), receiver.getEndpoint(), usedMessageContentPercentage);
 		message = new PlannerMessage(messageID, receiver.getEndpoint(), coordinator.getEndpoint(), "FIRST_OFFER", content);
-		
-		//System.err.print(" rating: " + chosenCombination.getRating() + "\n " + chosenCombination.toString() + " \n");
 		
 		// Send message
 		coordinator.sendMessage(message);

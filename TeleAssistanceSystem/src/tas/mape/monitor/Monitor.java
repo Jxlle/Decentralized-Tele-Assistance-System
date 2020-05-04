@@ -152,7 +152,7 @@ public class Monitor {
 			double currentServiceFailureRate = knowledge.getApproximatedServiceFailureRate(serviceEndpoint, serviceInvocations.get(serviceEndpoint));
 			double newServiceFailureRate = getNewFailureRate(approximatedServiceFailureRate, currentServiceFailureRate);
 			
-			System.err.print("MONITOR UPDATE " + knowledge.getParentEntityName() + ": " + knowledge.getLoadKey(serviceEndpoint) + " " + serviceEndpoint + " " + approximatedServiceFailureRate + " " + newServiceFailureRate + " " + currentServiceFailureRate + "\n");
+			//System.err.print("MONITOR UPDATE " + knowledge.getParentEntityName() + ": " + knowledge.getLoadKey(serviceEndpoint) + " " + serviceEndpoint + " " + approximatedServiceFailureRate + " " + newServiceFailureRate + " " + currentServiceFailureRate + "\n");
 			
 			if (newServiceFailureRate != currentServiceFailureRate) {			
 				knowledge.setApproximatedServiceFailureRate(serviceEndpoint, knowledge.getLoadKey(serviceEndpoint), newServiceFailureRate);
