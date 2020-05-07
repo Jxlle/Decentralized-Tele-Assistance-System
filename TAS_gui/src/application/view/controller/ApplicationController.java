@@ -106,7 +106,7 @@ public class ApplicationController implements Initializable {
     String workflowFilePath = fileDirPath + "workflow" + File.separator;
     static String profileFilePath = fileDirPath + "profiles" + File.separator;
     static String entityFilePath = fileDirPath + "entities" + File.separator;
-    String serviceDataFilePath = fileDirPath + "service data" + File.separator;
+    String serviceDataFilePath = fileDirPath + "serviceData" + File.separator;
     String resultFilePath = resultDirPath + "result.csv";
     String logFilePath = resultDirPath + "log.csv";
     String defaultServiceDataPath = serviceDataFilePath + "DefaultServiceData.xml";
@@ -240,6 +240,9 @@ public class ApplicationController implements Initializable {
 
     @FXML
     Button helpButton;
+    
+    @FXML
+    Button clearResultsBtn;
     
     @FXML 
     MenuItem exampleScenariosMenuItem;
@@ -1024,6 +1027,10 @@ public class ApplicationController implements Initializable {
     		} catch (Exception e) {
     		    e.printStackTrace();
     		}
+    	});
+    	
+    	clearResultsBtn.setOnAction(event->{
+			chartController.clear();	
     	});
     }
     
