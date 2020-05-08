@@ -2,8 +2,6 @@ package application;
 	
 import java.io.File;
 
-import tas.services.log.Log;
-import application.utility.Utility;
 import application.view.controller.ApplicationController;
 import javafx.application.Application;
 import javafx.event.EventHandler;

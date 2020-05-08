@@ -429,6 +429,7 @@ public class SystemEntityController implements Initializable {
 				
 				if (file != null) {
 					workflowPath = file.getPath();
+					workflowPath = workflowPath.replace(File.separatorChar,'/');
 					workflowBtn.setText(workflowPath);
 				}
 		    }
